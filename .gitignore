@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.pnpm-store/
 
 # testing
 /coverage
@@ -23,6 +24,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+.eslintcache
 
 # local env files
 .env*.local
@@ -34,3 +37,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IntelliJ / JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.idea_modules/
+atlassian-ide-plugin.xml
+
+# Editors / OS misc
+*.swp
+*.swo
+.vscode/
+Thumbs.db

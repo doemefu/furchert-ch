@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "about": "Über mich",
+    "it": "IT",
+    "rowing": "Rudern",
+    "projects": "Projekte",
+    "automation": "Automation",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "label": "Software Engineer · Zürich",
+    "title1": "Technologie,",
+    "title2": " die Wirkung erzeugt.",
+    "sub": "Ich baue Systeme — von der ESP32-Firmware bis zum Kubernetes-Cluster. Präzise, pragmatisch, mit Blick für das Ganze.",
+    "cta1": "Mehr über mich",
+    "cta2": "AI-Automation entdecken",
+    "seeProjects": "Projekte ansehen"
+  },
+  "teasers": {
+    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing — vom Mainframe bis zum Kubernetes-Cluster." },
+    "rowing": { "title": "Rudern", "text": "Präsident RCRJ. OK-Chef Sicherheit Nationale Regatta Schmerikon." },
+    "projects": { "title": "Projekte", "text": "IoT-Plattform, Homelab k3s Cluster, Club Assist mit AI." },
+    "automation": { "title": "AI-Automation", "text": "Ich automatisiere manuelle Prozesse in Industriebetrieben — in Wochen." },
+    "more": "→ Mehr"
+  },
+  "about": {
+    "label": "Über mich",
+    "exp": "Erfahrung",
+    "eng": "Engagement & Rollen",
+    "p1": "Ich kombiniere technische Tiefe mit organisatorischer Führung — und bewege mich genauso souverän in einem Kubernetes-Cluster wie in einer Vorstandssitzung.",
+    "p2": "Aktuell: BSc Software Systems an der UZH, SoPra FS26 (Karaokee), Homelab-Infrastruktur mit Ansible + k3s, Club-Management-Tool für den RCRJ."
+  },
+  "cta": {
+    "together": "Zusammenarbeiten?",
+    "togsub": "Ich freue mich über spannende Projekte — von Infrastruktur bis Fullstack."
+  },
+  "contact": {
+    "label": "Kontakt",
+    "title": "Schreib mir",
+    "sub": "Ich antworte in der Regel innerhalb von 24 Stunden.",
+    "send": "Nachricht senden",
+    "name": "Name",
+    "email": "E-Mail",
+    "msg": "Nachricht",
+    "ref": "Oder direkt:"
+  },
+  "footer": {
+    "copy": "© 2026 Dominic Furchert",
+    "navigation": "Navigation",
+    "contact": "Kontakt",
+    "social": "Social",
+    "role": "Software Engineer · Zürich",
+    "location": "Rapperswil-Jona, CH",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz"
+  },
+  "dashboard": {
+    "signin": "Mit Google anmelden",
+    "email": "E-Mail-Adresse",
+    "continue": "Weiter",
+    "gate": "Zugang beschränkt",
+    "gatesub": "Diese Seite ist mit Cloudflare Access geschützt.",
+    "back": "← Zurück zur Website"
+  },
+  "common": {
+    "menu": "Menu",
+    "homelab": "Homelab"
+  }
+}

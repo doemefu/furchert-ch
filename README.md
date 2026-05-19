@@ -20,7 +20,7 @@ Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
 | Phase | Scope | State |
 |-------|-------|-------|
 | 0 | Claude scaffold + repo conventions | done |
-| 1 | Next.js skeleton + ETHON design system | pending |
+| 1 | Next.js skeleton + ETHON design system | done |
 | 2 | Public pages | pending |
 | 3 | Automation section (mockup) | pending |
 | 4 | Real OIDC dashboard auth | pending |

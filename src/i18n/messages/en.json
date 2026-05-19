@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "about": "About",
+    "it": "IT",
+    "rowing": "Rowing",
+    "projects": "Projects",
+    "automation": "Automation",
+    "contact": "Contact"
+  },
+  "hero": {
+    "label": "Software Engineer · Zurich",
+    "title1": "Technology",
+    "title2": " that creates impact.",
+    "sub": "I build systems — from ESP32 firmware to Kubernetes clusters. Precise, pragmatic, with an eye for the bigger picture.",
+    "cta1": "About me",
+    "cta2": "AI Automation",
+    "seeProjects": "See projects"
+  },
+  "teasers": {
+    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing — from mainframe to Kubernetes." },
+    "rowing": { "title": "Rowing", "text": "President RCRJ. Safety Chief, National Rowing Regatta Schmerikon." },
+    "projects": { "title": "Projects", "text": "IoT platform, homelab k3s cluster, AI-powered club assistant." },
+    "automation": { "title": "AI Automation", "text": "I automate manual processes in manufacturing SMEs — in weeks." },
+    "more": "→ More"
+  },
+  "about": {
+    "label": "About me",
+    "exp": "Experience",
+    "eng": "Engagement & Roles",
+    "p1": "I combine technical depth with organisational leadership — equally at home in a Kubernetes cluster and a board meeting.",
+    "p2": "Currently: BSc Software Systems at UZH, SoPra FS26 (Karaokee), homelab infrastructure with Ansible + k3s, club management tool for RCRJ."
+  },
+  "cta": {
+    "together": "Work together?",
+    "togsub": "I welcome interesting projects — from infrastructure to fullstack."
+  },
+  "contact": {
+    "label": "Contact",
+    "title": "Write to me",
+    "sub": "I usually reply within 24 hours.",
+    "send": "Send message",
+    "name": "Name",
+    "email": "Email",
+    "msg": "Message",
+    "ref": "Or directly:"
+  },
+  "footer": {
+    "copy": "© 2026 Dominic Furchert",
+    "navigation": "Navigation",
+    "contact": "Contact",
+    "social": "Social",
+    "role": "Software Engineer · Zurich",
+    "location": "Rapperswil-Jona, CH",
+    "imprint": "Imprint",
+    "privacy": "Privacy"
+  },
+  "dashboard": {
+    "signin": "Sign in with Google",
+    "email": "Email address",
+    "continue": "Continue",
+    "gate": "Access restricted",
+    "gatesub": "This page is protected by Cloudflare Access.",
+    "back": "← Back to website"
+  },
+  "common": {
+    "menu": "Menu",
+    "homelab": "Homelab"
+  }
+}
