@@ -2,6 +2,60 @@
 
 <!-- Newest entry at the top. Each block: date, decision/status, worklog link, open items. Never put memory content anywhere but here / linked files. -->
 
+## 2026-05-20 — Phase 2: Public pages (Home, About, IT, Rowing, Projects + detail, Contact)
+
+**Decision:** Ported the 7 public routes pixel-faithfully from
+`pages.jsx` into the App Router. Fully bilingual DE+EN (user explicit
+choice) via **per-record locale-map** typed `src/data/*` modules — DE/EN
+length-drift structurally impossible, invariant fields (icons/tags/slug/
+github/status/`year`/`value`) shared once. Short structural labels in
+next-intl `pages.*`. RSC-default; only `ContactForm` is `'use client'`,
+and the prototype's `onMouseEnter` bg hover became a CSS `.hover-card`
+rule on server-rendered `<Link>` (no client component, no JS hover
+flicker). Contact form posts to a real `'use server'` action that
+validates + server-logs + returns `{ok:true|false}`; success only on
+real ok response (CLAUDE.md "no silent fake success"). Per-route
+`generateMetadata` with hreflang alternates; `app/robots.ts` + locale-
+aware `app/sitemap.ts` via next-intl `getPathname`.
+**Worklog:** `.claude/worklogs/20260519-085214-phase2-public-pages-38b9.md`
+**Status:** done — `pnpm typecheck`/`lint`/`build` all pass; every
+`/de`+`/en` route SSGs (incl. 12 project-detail paths); curl matrix 200
+for all; `robots.txt` disallows locale-prefixed `/dashboard`;
+`sitemap.xml` emits `<xhtml:link hreflang>` alternates. **Pending commit
+by user.**
+**Key context for future sessions:**
+- **next-intl 3.26.4 does NOT export `hasLocale`** (added later). Use
+  the local `isLocale` type guard exported from `@/i18n/routing`. It
+  narrows `locale: string` → `Locale`. Don't try to import `hasLocale`
+  from `'next-intl'`.
+- **Btn primitive** gained additive `type?: 'button'|'submit'` and
+  `disabled` props (default `type='button'`). Needed because the
+  prototype relied on a button's default in-form submit; the Phase-1
+  port hardcoded `type="button"`. Existing call sites unaffected.
+- **F2 fix:** the layout `<main>` provides `paddingTop:var(--header-h)`.
+  The home hero must NOT also set it (prototype did; 2× pad otherwise).
+- **Bilingual content shape** = per-record `{...invariant, i18n:
+  Record<Locale, …prose>}[]` — NOT `Record<Locale, T[]>`. Apply this
+  shape to any new bilingual structured data in `src/data/*`.
+- **Contact action** logs only `{name, email, messageLength}` (NEVER
+  the body); `TODO(phase7)` marks where real delivery wires in.
+- **`PROJECTS.summary`/`detail`** are now `Record<Locale, string>` —
+  read as `p.i18n[locale].summary`. No consumers outside `projects.ts`
+  today (verified via `rg`); other phases reading projects must update.
+- A code-reviewer "fidelity" claim was wrong about the projects-list
+  flex layout — the prototype `pages.jsx:417` DOES use
+  `display:'flex'/flexDirection:'column'/gap:'1rem'` and the tag row
+  uses `marginTop:'auto'`. Always grep the prototype before applying
+  reviewer fidelity fixes.
+**Open:**
+- User must `git commit` Phase 2. Suggested message:
+  `feat: public pages — bilingual DE/EN port (Phase 2)`
+- Next: Phase 3 (master plan) — `/automation` + `/automation/scan`
+  as a clearly-labelled visual mockup only (no backend, no Claude API).
+- Phase 7 follow-ups: wire real contact delivery, revisit PII logging
+  scope, optional `rel="noopener noreferrer"` sweep, optional
+  `@media (hover: hover)` gate on `.hover-card`.
+
 ## 2026-05-19 — Phase 1: Next.js skeleton + ETHON design system
 
 **Decision:** Built the buildable Next.js App Router skeleton: ETHON design

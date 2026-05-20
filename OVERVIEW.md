@@ -20,7 +20,16 @@ whole cluster — there is no separate admin app.
 | `/[locale]/projects`, `/projects/[slug]` | Projects + detail |
 | `/[locale]/contact` | Contact |
 
-Locales: `de` (default) and `en`; `/` redirects to `/de`.
+Locales: `de` (default) and `en`; `/` redirects to `/de`. Each public route
+emits locale-aware `<title>` / `<meta description>` and hreflang alternates;
+`/robots.txt` and `/sitemap.xml` are served from `src/app/{robots,sitemap}.ts`
+(sitemap covers every public route × locale; robots disallows `/dashboard`
+including the locale-prefixed variants).
+
+The contact form posts to a typed `'use server'` action that validates and
+server-logs the submission (Phase 7 wires real delivery — Formspree or a
+dedicated API route). The success state renders only on a real
+`{ok:true}` response; thrown / invalid responses surface a visible error.
 
 ### Automation (MOCKUP ONLY)
 | Route | Page |

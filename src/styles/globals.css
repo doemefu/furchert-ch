@@ -79,3 +79,12 @@ input:focus, textarea:focus {
 
 /* ── LINK HOVER HELPER ── */
 a[href]:hover { opacity: .85; }
+
+/* ── HOVER CARD ──
+   Prototype teaser/project cards were <div onClick> with an inline
+   onMouseEnter/Leave background swap. We render them as locale-aware
+   <Link> (server component, no client JS) and reproduce that exact
+   behaviour with CSS. Opt out of the global link opacity hover so the
+   whole card does not dim (the prototype only changed the background). */
+a.hover-card { display: block; text-decoration: none; color: inherit; transition: background .2s; }
+a.hover-card:hover { opacity: 1; background: var(--n-10); }

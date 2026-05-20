@@ -9,10 +9,24 @@ interface BtnProps {
   dark?: boolean;
   outline?: boolean;
   small?: boolean;
+  // `submit` is needed for real forms (e.g. the contact form); the prototype
+  // relied on a button's default in-form submit. Default stays `button` so
+  // existing call sites are unchanged.
+  type?: 'button' | 'submit';
+  disabled?: boolean;
   children: ReactNode;
 }
 
-export function Btn({ onClick, href, dark, outline, small, children }: BtnProps) {
+export function Btn({
+  onClick,
+  href,
+  dark,
+  outline,
+  small,
+  type = 'button',
+  disabled,
+  children,
+}: BtnProps) {
   const base: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -59,7 +73,12 @@ export function Btn({ onClick, href, dark, outline, small, children }: BtnProps)
   }
 
   return (
-    <button type="button" onClick={onClick} style={base}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      style={{ ...base, ...(disabled ? { opacity: 0.6, cursor: 'not-allowed' } : null) }}
+    >
       {children}
     </button>
   );

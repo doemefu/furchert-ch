@@ -42,7 +42,46 @@
     "name": "Name",
     "email": "E-Mail",
     "msg": "Nachricht",
-    "ref": "Oder direkt:"
+    "ref": "Oder direkt:",
+    "sent": "Nachricht gesendet!",
+    "sentSub": "Ich melde mich in der Regel innerhalb von 24 Stunden.",
+    "errorInvalid": "Bitte fülle alle Felder mit einer gültigen E-Mail-Adresse aus.",
+    "errorServer": "Senden fehlgeschlagen. Bitte versuche es später erneut oder schreibe direkt an dominic@furchert.ch."
+  },
+  "pages": {
+    "home": {
+      "areas": "Bereiche",
+      "areasTitle": "Was mich ausmacht."
+    },
+    "about": {
+      "headerLabel": "Über mich",
+      "headerTitle": "Software Engineer. Vereinspräsident. Feuerwehrmann.",
+      "headerSub": "Drei Rollen, ein roter Faden: Systeme bauen, die im echten Leben funktionieren.",
+      "timeline": "Timeline",
+      "interests": "Interessen"
+    },
+    "it": {
+      "headerLabel": "IT & Tech",
+      "headerTitle": "Vom Mainframe zur Microservice-Architektur.",
+      "headerSub": "Professionelle Erfahrung in Grossbanken, Beratung, Formula Student und eigenem Studium.",
+      "techStack": "Tech Stack"
+    },
+    "rowing": {
+      "headerLabel": "Rudern",
+      "headerTitle": "200 Mitglieder. Eine nationale Regatta. Ein CHF-5M-Projekt.",
+      "headerSub": "Ehrenamtlich — und mindestens so lehrreich wie jedes Informatik-Modul.",
+      "photoCaption": "foto — regatta schmerikon"
+    },
+    "projects": {
+      "headerLabel": "Projekte",
+      "headerTitle": "Was ich baue — von Sensoren bis Servern.",
+      "headerSub": "Open-source wo möglich. Infrastructure as Code. End-to-end.",
+      "techStack": "Tech Stack",
+      "details": "Details →",
+      "allRepos": "Alle Repos auf GitHub",
+      "crumbBack": "Projekte",
+      "backAll": "← Alle Projekte"
+    }
   },
   "footer": {
     "copy": "© 2026 Dominic Furchert",

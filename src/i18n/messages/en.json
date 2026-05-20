@@ -42,7 +42,46 @@
     "name": "Name",
     "email": "Email",
     "msg": "Message",
-    "ref": "Or directly:"
+    "ref": "Or directly:",
+    "sent": "Message sent!",
+    "sentSub": "I usually reply within 24 hours.",
+    "errorInvalid": "Please fill in all fields with a valid email address.",
+    "errorServer": "Sending failed. Please try again later or email dominic@furchert.ch directly."
+  },
+  "pages": {
+    "home": {
+      "areas": "Areas",
+      "areasTitle": "What defines me."
+    },
+    "about": {
+      "headerLabel": "About me",
+      "headerTitle": "Software Engineer. Club President. Firefighter.",
+      "headerSub": "Three roles, one common thread: building systems that work in real life.",
+      "timeline": "Timeline",
+      "interests": "Interests"
+    },
+    "it": {
+      "headerLabel": "IT & Tech",
+      "headerTitle": "From mainframe to microservice architecture.",
+      "headerSub": "Professional experience in major banks, consulting, Formula Student and my own studies.",
+      "techStack": "Tech Stack"
+    },
+    "rowing": {
+      "headerLabel": "Rowing",
+      "headerTitle": "200 members. A national regatta. A CHF 5M project.",
+      "headerSub": "Voluntary — and at least as instructive as any computer-science module.",
+      "photoCaption": "photo — regatta schmerikon"
+    },
+    "projects": {
+      "headerLabel": "Projects",
+      "headerTitle": "What I build — from sensors to servers.",
+      "headerSub": "Open-source where possible. Infrastructure as Code. End-to-end.",
+      "techStack": "Tech Stack",
+      "details": "Details →",
+      "allRepos": "All repos on GitHub",
+      "crumbBack": "Projects",
+      "backAll": "← All projects"
+    }
   },
   "footer": {
     "copy": "© 2026 Dominic Furchert",
