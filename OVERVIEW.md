@@ -31,13 +31,20 @@ server-logs the submission (Phase 7 wires real delivery — Formspree or a
 dedicated API route). The success state renders only on a real
 `{ok:true}` response; thrown / invalid responses surface a visible error.
 
-### Automation (MOCKUP ONLY)
-| Route | Page |
-|-------|------|
-| `/[locale]/automation` | Business landing — static mockup |
-| `/[locale]/automation/scan` | Scanner wizard — static visual mockup, no backend |
+### Automation
 
-No Claude API, no `/api/scan/*`, no persistence. Non-functional by design.
+| Route | Page | Status |
+|-------|------|--------|
+| `/[locale]/automation` | Business landing (real product) | real, indexable |
+| `/[locale]/automation/scan` | 4-step scan wizard (visual preview) | **mockup**, `robots:noindex`, sitemap-excluded |
+
+The landing page is real product. The scan wizard is a **clearly-labelled
+visual preview** — every step carries a persistent "Demo / Mockup" banner
+and Step 4 is marked as a "Beispiel-Report / Sample report". The wizard
+performs no network calls, runs no Claude API, has no `/api/scan/*` route,
+and stores nothing. Step-3 contact fields are not transmitted; copy says
+so explicitly. Master-plan Phase 7 wires real delivery for the contact
+form; the scan is intentionally not part of that plan.
 
 ### Private (real, OIDC-gated via auth.furchert.ch)
 | Route | Page |
