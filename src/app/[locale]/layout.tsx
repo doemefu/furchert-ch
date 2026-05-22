@@ -6,6 +6,7 @@ import { routing } from '@/i18n/routing';
 import { dmSans, dmMono } from '@/lib/fonts';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { Providers } from '@/components/Providers';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
@@ -35,11 +36,13 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${dmSans.variable} ${dmMono.variable}`}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="page-enter" style={{ paddingTop: 'var(--header-h)' }}>
-            {children}
-          </main>
-          <Footer />
+          <Providers>
+            <Header />
+            <main className="page-enter" style={{ paddingTop: 'var(--header-h)' }}>
+              {children}
+            </main>
+            <Footer />
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -94,11 +94,15 @@
     "privacy": "Datenschutz"
   },
   "dashboard": {
-    "signin": "Mit Google anmelden",
-    "email": "E-Mail-Adresse",
-    "continue": "Weiter",
     "gate": "Zugang beschränkt",
-    "gatesub": "Diese Seite ist mit Cloudflare Access geschützt.",
+    "gatesub": "Dieser Bereich ist dem Homelab-Betreiber vorbehalten. Melde dich über furchert.ch an, um fortzufahren.",
+    "signInOidc": "Mit furchert.ch anmelden",
+    "protectedBy": "Geschützt durch OIDC · auth.furchert.ch",
+    "authedTitle": "Angemeldet",
+    "user": "Benutzer",
+    "role": "Rolle",
+    "placeholder": "Authentifizierung funktioniert. Die Dashboard-Übersicht (Cluster-Nodes, App-Kacheln) folgt in Phase 5.",
+    "signOut": "Abmelden",
     "back": "← Zurück zur Website"
   },
   "common": {

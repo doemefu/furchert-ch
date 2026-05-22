@@ -2,6 +2,65 @@
 
 <!-- Newest entry at the top. Each block: date, decision/status, worklog link, open items. Never put memory content anywhere but here / linked files. -->
 
+## 2026-05-22 — Phase 4: Real OIDC dashboard auth (Auth.js v5 → auth.furchert.ch)
+
+**Branch:** `auth-dashboard` (from `dev`). **Phase 3 (automation) is NOT on this
+branch** — it lives on its own branch; independent (different routes), merges
+cleanly. README/CHANGELOG/OVERVIEW here reflect Phase 0/1/2/4 only.
+
+**Decision:** Wired real OIDC with **Auth.js v5** (`next-auth@5.0.0-beta.31`,
+pinned exact). `/[locale]/dashboard` is gated by a **server-side `auth()` check
+in the RSC** (page-level gate = authoritative; D-A), rendering a real sign-in
+gate (replacing the prototype's fake email/Cloudflare mock) or a minimal authed
+placeholder (name + role + sign-out). Real overview shell = Phase 5.
+**Worklog:** `.claude/worklogs/20260522-103903-phase4-oidc-auth-f002.md`
+**Status:** done — `pnpm lint`/`typecheck`/`build` pass; public pages stay SSG;
+unauth `/dashboard` renders the real gate; providers + callback URL correct;
+federated logout 307s to `/connect/logout`. **Pending commit by user** +
+cross-repo client registration + secret.
+**Key context for future sessions:**
+- **`next-auth@5.0.0-beta.31`** pinned exact (no range). v5 env names:
+  **`AUTH_SECRET`** (not `NEXTAUTH_SECRET`), `AUTH_URL` (not `NEXTAUTH_URL`).
+- **Config split:** `src/auth.config.ts` (edge-safe, provider + callbacks) →
+  `src/auth.ts` (`NextAuth(authConfig)` → `handlers/auth/signIn/signOut`) →
+  `src/app/api/auth/[...nextauth]/route.ts`. Custom inline OIDC provider reads
+  `process.env.OIDC_CLIENT_ID/SECRET` **explicitly** (v5 auto-env is built-in
+  providers only). **Do NOT hardcode `checks`** — PKCE/nonce derived from
+  discovery (SAS advertises it).
+- **Token confinement (D-C):** access/id tokens live ONLY on the server JWT;
+  the browser `session` exposes `role` only. Verified: no `idToken`/`accessToken`
+  in `.next/static`. **Phase 4 persists only `id_token`** (for logout);
+  `access_token` is intentionally deferred to Phase 6 (avoids cookie chunking).
+- **Federated sign-out** = server route `src/app/api/federated-logout/route.ts`
+  (`getToken` → `/connect/logout?id_token_hint=…&post_logout_redirect_uri=origin`,
+  clears session cookie incl. chunked `.0…` variants). `SignOutButton` just
+  navigates there. Keeps id_token off the client.
+- **SSG preserved (D-B):** never call `auth()` in `[locale]/layout.tsx`. Header
+  auth state via client `<SessionProvider>`+`useSession()` (`src/components/
+  Providers.tsx` wraps the layout subtree). Only `/dashboard` is dynamic
+  (`force-dynamic`). Note: Next labels it `●` (because parent
+  `generateStaticParams`) but it is NOT prerendered (no `*dashboard*.html`) →
+  functionally dynamic.
+- **Role is fail-closed:** `profile()` maps `role === 'ADMIN' ? 'ADMIN' : 'USER'`
+  (explicit equality, not a cast). Phase-6 admin gating MUST check
+  `role === 'ADMIN'` server-side in every route handler (middleware is NOT
+  authorization — middleware left intl-only this phase, F-Q2).
+- **Cross-repo (user action):** register `furchert-ch` client in
+  `../auth-service` — see `DEPLOYMENT.md` for the ready-to-apply
+  `application.yaml` + `deployment.yaml` diff and the **JDBC `psql` seed** note
+  (YAML is bootstrap-only; StaticClientSeeder skips existing clients on a running
+  instance). Secret via SOPS. We never touch secret/age/.sops files.
+**Open:**
+- User must: register the client (+`psql` seed) in `../auth-service`, provision
+  `furchert-ch-client-secret` via SOPS, create `.env.local` (`AUTH_SECRET` +
+  `OIDC_CLIENT_SECRET`), then `git commit` Phase 4. Full login round-trip is only
+  testable after that.
+- **Pre-existing:** `next@14.2.23` has a known security advisory (flagged at
+  install) — a Next bump is out of scope here and needs user approval (separate).
+- Next: Phase 5 — dashboard overview shell (cluster nodes, app tiles from
+  `dashboard.jsx`); then Phase 6 admin GUIs (reintroduce `access_token` + role
+  gating + chunk-aware logout).
+
 ## 2026-05-20 — Phase 2: Public pages (Home, About, IT, Rowing, Projects + detail, Contact)
 
 **Decision:** Ported the 7 public routes pixel-faithfully from

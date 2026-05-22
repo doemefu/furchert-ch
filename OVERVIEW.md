@@ -40,11 +40,17 @@ dedicated API route). The success state renders only on a real
 No Claude API, no `/api/scan/*`, no persistence. Non-functional by design.
 
 ### Private (real, OIDC-gated via auth.furchert.ch)
-| Route | Page |
-|-------|------|
-| `/[locale]/dashboard` | Homelab overview (cluster nodes, app/service tiles) |
-| `/[locale]/dashboard/auth` | auth-service admin GUI (real REST API) |
-| `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) |
+| Route | Page | Status |
+|-------|------|--------|
+| `/[locale]/dashboard` | Homelab overview (cluster nodes, app/service tiles) | **auth live (Phase 4)**; overview content = Phase 5 (placeholder for now) |
+| `/[locale]/dashboard/auth` | auth-service admin GUI (real REST API) | Phase 6 |
+| `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 |
+
+`/dashboard` is gated by **real OIDC** (Auth.js v5 → auth.furchert.ch, Auth Code +
+PKCE). The authoritative gate is a server-side `auth()` check in the page (and, in
+Phase 6, in every admin route handler with `role === 'ADMIN'`). OIDC access/ID
+tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.md`
+§1 and `DEPLOYMENT.md` for the client contract and required secrets.
 
 ## Real vs. mock vs. deferred
 

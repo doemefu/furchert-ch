@@ -18,10 +18,13 @@ pnpm lint
 pnpm build
 ```
 
-Local OIDC: copy `.env.example` → `.env.local` (never committed) and set
-`NEXTAUTH_SECRET`, `OIDC_CLIENT_SECRET` (provided by the user). Callback
-`http://localhost:3000/api/auth/callback/furchert-ch` must be an allowed redirect
-URI on the auth-service `furchert-ch` client.
+Local OIDC (Auth.js v5): copy `.env.local.example` → `.env.local` (never
+committed) and set `AUTH_SECRET` (`openssl rand -base64 33`) and the plaintext
+`OIDC_CLIENT_SECRET`. The callback
+`http://localhost:3000/api/auth/callback/furchert-ch` and post-logout
+`http://localhost:3000` must be allowed on the auth-service `furchert-ch` client
+(register it per `DEPLOYMENT.md` — note the JDBC `psql` seed step). Sign-out goes
+through `/api/federated-logout` (RP-initiated, ends the IdP session).
 
 Reach backends locally:
 ```bash
