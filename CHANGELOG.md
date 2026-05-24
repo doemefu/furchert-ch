@@ -16,6 +16,23 @@ All notable changes per milestone. Newest first.
   cross-repo `furchert-ch` client registration documented in DEPLOYMENT.md
   (user applies + provisions the secret via SOPS). Middleware left intl-only;
   edge gating revisited in Phase 6.
+- Phase 3: `/automation` landing (real product, verbatim port of the
+  prototype) and `/automation/scan` (clearly-labelled **visual mockup
+  only**). Wizard split into a `WizardShell` state machine + 4 step
+  components (Website, Questions, Contact, Report). Persistent
+  "Demo / Mockup" banner on every step; `robots:{index:false,follow:true}`
+  on the `/scan` page metadata; sitemap includes `/automation` but
+  excludes `/scan`. Step-4 carries a "Beispiel-Report / Sample report"
+  badge and explicitly omits the PDF-download CTA. Bilingual DE+EN via
+  per-record locale maps in `src/data/{automation-faqs,scan}.ts`; demo
+  report prose route-private in `_demo-report.ts`. New ETHON tokens
+  `--tier-high/mid/long` for status accents. CLAUDE.md "Automation =
+  mockup" non-negotiable enforced both at UI controls (no `pattern`
+  validation, no email-report checkbox, no fake loading state, no PDF
+  download) AND at copy level (every step's text accurately describes
+  what the preview does — no fake promises). Verified by 5 grep gates
+  returning 0 matches (no `fetch`, no `/api/scan`, no Claude SDK,
+  no `'use server'`, no external `<Script>`/`<img>`).
 - Phase 2: Public pages ported pixel-faithfully from the prototype — Home,
   About, IT, Rowing, Projects (+ `/projects/[slug]` detail), Contact. Fully
   bilingual DE/EN via per-record locale-map typed `src/data/*` modules and

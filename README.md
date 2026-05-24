@@ -22,7 +22,7 @@ Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
 | 0 | Claude scaffold + repo conventions | done |
 | 1 | Next.js skeleton + ETHON design system | done |
 | 2 | Public pages | done |
-| 3 | Automation section (mockup) | pending |
+| 3 | Automation section (mockup) | done |
 | 4 | Real OIDC dashboard auth | done |
 | 5 | Dashboard shell | pending |
 | 6 | Integrated admin GUIs | pending |
