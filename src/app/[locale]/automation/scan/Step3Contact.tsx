@@ -8,13 +8,16 @@ import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
-import { SCAN_ROLES } from '@/data/scan';
+import { SCAN_ROLES, type RoleId } from '@/data/scan';
 import type { ContactDraft } from './WizardShell';
 
 interface Step3ContactProps {
   locale: Locale;
   contact: ContactDraft;
-  onChange: (next: ContactDraft) => void;
+  // Reducer-backed patch updates: the parent owns the canonical state and
+  // merges the patch via `updateContact`. Avoids re-broadcasting unchanged
+  // fields every keystroke.
+  onChange: (patch: Partial<ContactDraft>) => void;
   onBack: () => void;
   onSubmit: () => void;
 }
@@ -80,7 +83,7 @@ export function Step3Contact({ locale, contact, onChange, onBack, onSubmit }: St
           type="text"
           required
           value={contact.name}
-          onChange={(e) => onChange({ ...contact, name: e.target.value })}
+          onChange={(e) => onChange({ name: e.target.value })}
           style={inputStyle}
         />
       </div>
@@ -94,7 +97,7 @@ export function Step3Contact({ locale, contact, onChange, onBack, onSubmit }: St
           type="email"
           required
           value={contact.email}
-          onChange={(e) => onChange({ ...contact, email: e.target.value })}
+          onChange={(e) => onChange({ email: e.target.value })}
           style={inputStyle}
         />
       </div>
@@ -107,7 +110,7 @@ export function Step3Contact({ locale, contact, onChange, onBack, onSubmit }: St
           id="scan-phone"
           type="tel"
           value={contact.phone}
-          onChange={(e) => onChange({ ...contact, phone: e.target.value })}
+          onChange={(e) => onChange({ phone: e.target.value })}
           style={inputStyle}
         />
       </div>
@@ -119,7 +122,12 @@ export function Step3Contact({ locale, contact, onChange, onBack, onSubmit }: St
         <select
           id="scan-role"
           value={contact.role}
-          onChange={(e) => onChange({ ...contact, role: e.target.value })}
+          onChange={(e) => {
+            const v = e.target.value;
+            // The select's options come from SCAN_ROLES, so any non-empty
+            // value here is guaranteed to be a valid RoleId.
+            onChange({ role: v === '' ? '' : (v as RoleId) });
+          }}
           style={inputStyle}
         >
           <option value="">{t('step3RolePlaceholder')}</option>
@@ -135,7 +143,7 @@ export function Step3Contact({ locale, contact, onChange, onBack, onSubmit }: St
         <input
           type="checkbox"
           checked={contact.consent}
-          onChange={(e) => onChange({ ...contact, consent: e.target.checked })}
+          onChange={(e) => onChange({ consent: e.target.checked })}
           style={{ marginTop: '.25rem', flexShrink: 0 }}
         />
         <span>{t('step3Consent')}</span>

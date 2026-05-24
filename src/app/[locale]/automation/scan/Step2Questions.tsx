@@ -6,17 +6,17 @@
 // (worklog F-Q3). Optionality is data-driven (F9 — `q.optional`).
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import type { ScanQuestion } from '@/data/scan';
+import type { ScanQuestion, QuestionId } from '@/data/scan';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
-import type { Answer } from './WizardShell';
+import type { Answer, Answers } from './WizardShell';
 
 interface Step2QuestionsProps {
   locale: Locale;
-  questions: ScanQuestion[];
+  questions: readonly ScanQuestion[];
   qIndex: number;
-  answers: Record<string, Answer>;
-  onAnswer: (questionId: string, value: Answer) => void;
+  answers: Answers;
+  onAnswer: (questionId: QuestionId, value: Answer) => void;
   onBack: () => void;
   onNext: () => void;
 }
@@ -60,7 +60,12 @@ export function Step2Questions({
 }: Step2QuestionsProps) {
   const t = useTranslations('pages.scan');
   const q = questions[qIndex];
-  const current = answers[q.id];
+  // The `questions` prop widens the catalog's literal `id`s to `string` at
+  // the boundary. The values still come from `SCAN_QUESTIONS`, so casting
+  // back to `QuestionId` is safe and lets `answers` (which is keyed on the
+  // QuestionId union) remain strictly typed.
+  const qid = q.id as QuestionId;
+  const current = answers[qid];
   const required = q.optional !== true;
   const nextDisabled = required && answerIsEmpty(current);
 
@@ -97,7 +102,7 @@ export function Step2Questions({
                   type="radio"
                   name={q.id}
                   checked={checked}
-                  onChange={() => onAnswer(q.id, opt.id)}
+                  onChange={() => onAnswer(qid, opt.id)}
                   style={{ marginTop: '.15rem' }}
                 />
                 <span>{opt.i18n[locale].label}</span>
@@ -122,7 +127,7 @@ export function Step2Questions({
                   checked={checked}
                   onChange={() => {
                     const next = checked ? arr.filter((id) => id !== opt.id) : [...arr, opt.id];
-                    onAnswer(q.id, next);
+                    onAnswer(qid, next);
                   }}
                   style={{ marginTop: '.15rem' }}
                 />
@@ -136,7 +141,7 @@ export function Step2Questions({
       {q.type === 'textarea' && (
         <textarea
           value={typeof current === 'string' ? current : ''}
-          onChange={(e) => onAnswer(q.id, e.target.value)}
+          onChange={(e) => onAnswer(qid, e.target.value)}
           rows={5}
           placeholder={q.i18n[locale].placeholder ?? ''}
           style={{

@@ -10,6 +10,12 @@
 //
 // CLAUDE.md "Automation = mockup": the wizard renders this catalog
 // purely client-side. No data leaves the browser.
+//
+// Types use `as const satisfies readonly …[]` so the literal option /
+// question / role `id` strings flow into the derived union types
+// below. A typo in any wizard callsite (`answers['compny_size']`,
+// `contact.role = 'cto'`) is therefore a compile error, not a silent
+// runtime miss.
 import type { Locale } from '@/i18n/routing';
 
 export interface ScanOption {
@@ -17,17 +23,26 @@ export interface ScanOption {
   i18n: Record<Locale, { label: string }>;
 }
 
-export type ScanQuestionType = 'single' | 'multi' | 'textarea';
+// Discriminated on `type`: `single` / `multi` MUST carry `options`,
+// `textarea` MUST NOT. Previously `options` was an unconstrained
+// optional, which let a textarea question silently ship an unused
+// options array (or a select question silently ship none).
+export type ScanQuestion =
+  | {
+      id: string;
+      type: 'single' | 'multi';
+      optional?: boolean;
+      i18n: Record<Locale, { text: string; placeholder?: string }>;
+      options: readonly ScanOption[];
+    }
+  | {
+      id: string;
+      type: 'textarea';
+      optional?: boolean;
+      i18n: Record<Locale, { text: string; placeholder?: string }>;
+    };
 
-export interface ScanQuestion {
-  id: string;
-  type: ScanQuestionType;
-  optional?: boolean;
-  i18n: Record<Locale, { text: string; placeholder?: string }>;
-  options?: ScanOption[];
-}
-
-export const SCAN_QUESTIONS: ScanQuestion[] = [
+export const SCAN_QUESTIONS = [
   {
     id: 'company_size',
     type: 'single',
@@ -138,12 +153,23 @@ export const SCAN_QUESTIONS: ScanQuestion[] = [
       },
     },
   },
-];
+] as const satisfies readonly ScanQuestion[];
 
-export const SCAN_ROLES: ScanOption[] = [
+export const SCAN_ROLES = [
   { id: 'ceo', i18n: { de: { label: 'Geschäftsführer/in' }, en: { label: 'CEO / managing director' } } },
   { id: 'prod-lead', i18n: { de: { label: 'Produktionsleiter/in' }, en: { label: 'Head of production' } } },
   { id: 'finance-lead', i18n: { de: { label: 'Kaufm. Leiter/in' }, en: { label: 'Head of finance / commercial lead' } } },
   { id: 'it-lead', i18n: { de: { label: 'IT-Verantwortliche/r' }, en: { label: 'IT lead' } } },
   { id: 'other', i18n: { de: { label: 'Andere' }, en: { label: 'Other' } } },
-];
+] as const satisfies readonly ScanOption[];
+
+// Derived literal-union types — typos become compile errors.
+export type QuestionId = (typeof SCAN_QUESTIONS)[number]['id'];
+export type RoleId = (typeof SCAN_ROLES)[number]['id'];
+
+// Flat union of every option id across all questions. Deliberately not
+// per-question (option ids overlap across questions — 'email', 'other'
+// — and the wizard treats answers as a `Partial<Record<QuestionId, …>>`
+// rather than mapping each question to its own option-id subset).
+type OptionsCarrier = Extract<(typeof SCAN_QUESTIONS)[number], { options: readonly unknown[] }>;
+export type OptionId = OptionsCarrier['options'][number]['id'];
