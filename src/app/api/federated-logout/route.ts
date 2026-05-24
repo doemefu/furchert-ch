@@ -5,34 +5,76 @@
 // here.
 import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { AUTH_ENV } from '@/auth.env';
 
-const IDP_LOGOUT = 'https://auth.furchert.ch/connect/logout';
+// Always dynamic — reads cookies, calls AUTH_ENV (which throws when env is
+// missing). The `force-dynamic` opts out of Next's static-generation probe
+// during `pnpm build`, which would otherwise execute this route at build
+// time and trip the env assertion (build still succeeds — the assertion is
+// caught — but it produces noisy stack traces).
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-  const secret = process.env.AUTH_SECRET ?? '';
   const secureCookie = process.env.NODE_ENV === 'production';
   const cookieName = secureCookie
     ? '__Secure-authjs.session-token'
     : 'authjs.session-token';
 
-  const token = await getToken({
-    req,
-    secret,
-    secureCookie,
-    salt: cookieName,
-    cookieName,
-  });
+  try {
+    const token = await getToken({
+      req,
+      secret: AUTH_ENV.AUTH_SECRET,
+      secureCookie,
+      // In Auth.js v5 the JWE salt is derived from the cookie name, so both
+      // must agree. Passing them explicitly is defensive against future
+      // cookie-name changes that would otherwise silently break logout.
+      salt: cookieName,
+      cookieName,
+    });
 
-  const logoutUrl = new URL(IDP_LOGOUT);
-  if (token?.idToken) logoutUrl.searchParams.set('id_token_hint', token.idToken);
-  logoutUrl.searchParams.set('post_logout_redirect_uri', req.nextUrl.origin);
+    if (!token) {
+      // No active session (no cookie, expired, bad signature). Don't bounce
+      // the user through the IdP — that produces a confusing IdP-side prompt.
+      // Just send them home.
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+    if (!token.idToken) {
+      // The JWT exists but no id_token was persisted (would happen on a
+      // session migrated from a previous deploy). The end-session call will
+      // still work, but the IdP may show its own confirm prompt because it
+      // can't identify the session without the hint.
+      console.warn('[federated-logout] no idToken on JWT; IdP may prompt');
+    }
 
-  const res = NextResponse.redirect(logoutUrl);
-  // Clear the local session cookie before leaving for the IdP. Also expire the
-  // chunked variants (`.0`, `.1`, …) that Auth.js emits if the cookie ever
-  // exceeds ~4 KB, so logout is robust even if the JWT later grows.
-  const expired = { path: '/', expires: new Date(0) };
-  res.cookies.set(cookieName, '', expired);
-  for (let i = 0; i < 5; i++) res.cookies.set(`${cookieName}.${i}`, '', expired);
-  return res;
+    const logoutUrl = new URL(`${AUTH_ENV.OIDC_ISSUER}/connect/logout`);
+    if (token.idToken) logoutUrl.searchParams.set('id_token_hint', token.idToken);
+    logoutUrl.searchParams.set('post_logout_redirect_uri', req.nextUrl.origin);
+
+    const res = NextResponse.redirect(logoutUrl);
+    // Clear the local session cookie before leaving for the IdP. Also expire
+    // every chunked variant (`.0`, `.1`, …) Auth.js emits when the JWT
+    // exceeds ~4 KB. We iterate the request cookies rather than guessing a
+    // bound, so this stays correct if the JWT ever grows past a hardcoded
+    // limit.
+    const expired = { path: '/', expires: new Date(0) };
+    res.cookies.set(cookieName, '', expired);
+    const chunkPrefix = `${cookieName}.`;
+    let chunkCount = 0;
+    for (const c of req.cookies.getAll()) {
+      if (c.name.startsWith(chunkPrefix)) {
+        res.cookies.set(c.name, '', expired);
+        chunkCount++;
+      }
+    }
+    if (chunkCount > 1) {
+      // More than one chunk means the JWT is creeping above ~4 KB. Worth
+      // knowing because it's the warning sign before logout robustness starts
+      // depending on cookie-clearing edge cases.
+      console.warn(`[federated-logout] cleared ${chunkCount} session cookie chunks`);
+    }
+    return res;
+  } catch (err) {
+    console.error('[federated-logout] failed', err);
+    return NextResponse.json({ error: 'Logout failed' }, { status: 500 });
+  }
 }

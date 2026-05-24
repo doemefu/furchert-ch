@@ -94,9 +94,11 @@
     "privacy": "Privacy"
   },
   "dashboard": {
+    "title": "Dashboard",
     "gate": "Access restricted",
     "gatesub": "This area is reserved for the homelab operator. Sign in via furchert.ch to continue.",
     "signInOidc": "Sign in with furchert.ch",
+    "signInError": "Sign-in failed. Please try again.",
     "protectedBy": "Protected by OIDC · auth.furchert.ch",
     "authedTitle": "Signed in",
     "user": "User",

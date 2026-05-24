@@ -3,6 +3,7 @@
 // Real OIDC sign-in gate. Reuses the prototype AuthGate's CARD STYLING only
 // (dashboard.jsx) — the fake email/GitHub/Cloudflare flow is gone. A single
 // button starts the real Authorization-Code+PKCE flow against auth.furchert.ch.
+import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
@@ -12,6 +13,20 @@ const DOTS =
 
 export function SignInGate({ locale }: { locale: string }) {
   const t = useTranslations('dashboard');
+  const [error, setError] = useState(false);
+
+  // signIn() returns a Promise; if discovery / CSRF / network fails the user
+  // would otherwise click the button and see nothing happen. Surface a small
+  // inline error so the failure is visible and the user knows to retry.
+  const onSignIn = async () => {
+    setError(false);
+    try {
+      await signIn('furchert-ch', { redirectTo: `/${locale}/dashboard` });
+    } catch (err) {
+      console.error('[SignInGate] sign-in failed', err);
+      setError(true);
+    }
+  };
 
   return (
     <div
@@ -83,9 +98,28 @@ export function SignInGate({ locale }: { locale: string }) {
             {t('gatesub')}
           </p>
 
+          {error && (
+            <p
+              role="alert"
+              style={{
+                fontFamily: 'var(--mono)',
+                fontSize: '.7rem',
+                letterSpacing: '.04em',
+                color: '#b91c1c',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                padding: '.5rem .75rem',
+                marginBottom: '1rem',
+                borderRadius: '2px',
+              }}
+            >
+              {t('signInError')}
+            </p>
+          )}
+
           <button
             type="button"
-            onClick={() => signIn('furchert-ch', { redirectTo: `/${locale}/dashboard` })}
+            onClick={onSignIn}
             style={{
               width: '100%',
               padding: '.875rem',
