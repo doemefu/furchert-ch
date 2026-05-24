@@ -52,3 +52,5 @@ atlassian-ide-plugin.xml
 *.swo
 .vscode/
 Thumbs.db
+/.claude/memory/
+/.claude/worklogs/
