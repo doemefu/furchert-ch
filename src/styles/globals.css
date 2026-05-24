@@ -21,6 +21,12 @@
   --n-100: #090e18;
   --white: #ffffff;
   --header-h: 4rem;
+  /* Status / tier accents (used by project status pills and the
+     automation/scan demo report's potential cards). Kept as plain
+     tokens so the palette stays in one place. */
+  --tier-high: #22c55e;
+  --tier-mid:  #f59e0b;
+  --tier-long: #94a3b8;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
