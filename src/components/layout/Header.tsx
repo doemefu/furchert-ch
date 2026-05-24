@@ -5,17 +5,22 @@
 // current path. `authed` styling is wired in Phase 4 (OIDC); false for now.
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { useSession } from 'next-auth/react';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 
 const NAV_KEYS = ['about', 'it', 'rowing', 'projects', 'automation', 'contact'] as const;
 
-export function Header({ authed = false }: { authed?: boolean }) {
+export function Header() {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  // Real auth state via the client SessionProvider (worklog D-B) — keeps the
+  // blue "Homelab" button in sync without forcing public pages dynamic.
+  const { status } = useSession();
+  const authed = status === 'authenticated';
 
   const isActive = (key: string) =>
     pathname === `/${key}` || pathname.startsWith(`/${key}/`);

@@ -1,25 +1,34 @@
 # homelab-furchert-ch — Interfaces
 
-> Stub — filled during Phases 4 & 6 as integrations land. This frontend only
-> **consumes** interfaces; it exposes none for other services.
+> This frontend only **consumes** interfaces; it exposes none for other services.
+> §1 (OIDC client) is **implemented** as of Phase 4. §2 (backend REST proxies)
+> lands in Phase 6.
 
-## 1. OIDC client (auth.furchert.ch)
+## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
 `furchert-ch` is an OIDC **client** of `homelab-auth-service` (see
-`../auth-service/INTERFACES.md`).
+`../auth-service/INTERFACES.md`), wired with **Auth.js v5** (`next-auth`).
 
 | Parameter | Value |
 |-----------|-------|
 | Issuer / discovery | `https://auth.furchert.ch/.well-known/openid-configuration` |
-| Flow | Authorization Code + PKCE |
+| Flow | Authorization Code + PKCE (PKCE/nonce derived from discovery) |
 | Client ID | `furchert-ch` |
 | Scopes | `openid profile email` |
 | Redirect URI | `https://furchert.ch/api/auth/callback/furchert-ch` (+ `http://localhost:3000/...` for dev) |
-| Post-logout | `https://furchert.ch` |
+| End session | `https://auth.furchert.ch/connect/logout` (RP-initiated, with `id_token_hint`) |
+| Post-logout redirect | `https://furchert.ch` (+ `http://localhost:3000` for dev) |
 | Claims used | `sub`, `name`, `email`, `role` (`USER`/`ADMIN`) |
 
-The matching client must be registered in `../auth-service`
-(`src/main/resources/application.yaml`) with secret env `FURCHERT_CH_CLIENT_SECRET`.
+- Session strategy = JWT. The `role` claim is exposed to the browser session
+  (fail-closed to `USER`). **Access/ID tokens are kept server-side only** and
+  never reach the client. Phase 4 persists only the `id_token` (for logout);
+  the `access_token` is (re)introduced in Phase 6 when admin proxying needs it.
+- Sign-out is a server route (`/api/federated-logout`) that ends the IdP session
+  with `id_token_hint` and clears the local session cookie.
+- The matching client must be registered in `../auth-service` (see
+  `DEPLOYMENT.md` for the ready-to-apply diff + the JDBC `psql` seed note);
+  secret env `FURCHERT_CH_CLIENT_SECRET`.
 
 ## 2. Backend REST APIs consumed (server-side proxy)
 

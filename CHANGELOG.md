@@ -5,6 +5,17 @@ All notable changes per milestone. Newest first.
 ## [Unreleased]
 
 ### Added
+- Phase 4: Real OIDC dashboard auth (Auth.js v5, `next-auth@5.0.0-beta.31`) against
+  `auth.furchert.ch` — Authorization Code + PKCE, `role` claim exposed to the
+  session (fail-closed to `USER`), `/[locale]/dashboard` gated by a server-side
+  `auth()` check rendering a real sign-in gate (replacing the prototype's
+  fake email/Cloudflare mock). Access/ID tokens stay server-side only; sign-out
+  is a server route (`/api/federated-logout`) that ends the IdP session with
+  `id_token_hint`. Header reflects live session via a client `SessionProvider`,
+  keeping all public pages statically rendered. `.env.local.example` added;
+  cross-repo `furchert-ch` client registration documented in DEPLOYMENT.md
+  (user applies + provisions the secret via SOPS). Middleware left intl-only;
+  edge gating revisited in Phase 6.
 - Phase 3: `/automation` landing (real product, verbatim port of the
   prototype) and `/automation/scan` (clearly-labelled **visual mockup
   only**). Wizard split into a `WizardShell` state machine + 4 step

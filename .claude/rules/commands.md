@@ -22,7 +22,8 @@ kubectl apply --dry-run=client -k k8s/                     # Validate manifests
 
 ## Local OIDC against auth.furchert.ch
 - Requires the `furchert-ch` OIDC client registered in `../auth-service`
-  (`application.yaml`) and `OIDC_CLIENT_SECRET` + `NEXTAUTH_SECRET` in `.env.local`
+  (`application.yaml` + JDBC `psql` seed — see DEPLOYMENT.md) and
+  `OIDC_CLIENT_SECRET` + `AUTH_SECRET` (Auth.js v5 names) in `.env.local`
   (never committed). Callback: `http://localhost:3000/api/auth/callback/furchert-ch`.
 
 ## Useful

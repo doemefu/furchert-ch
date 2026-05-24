@@ -190,11 +190,17 @@
     "privacy": "Privacy"
   },
   "dashboard": {
-    "signin": "Sign in with Google",
-    "email": "Email address",
-    "continue": "Continue",
+    "title": "Dashboard",
     "gate": "Access restricted",
-    "gatesub": "This page is protected by Cloudflare Access.",
+    "gatesub": "This area is reserved for the homelab operator. Sign in via furchert.ch to continue.",
+    "signInOidc": "Sign in with furchert.ch",
+    "signInError": "Sign-in failed. Please try again.",
+    "protectedBy": "Protected by OIDC · auth.furchert.ch",
+    "authedTitle": "Signed in",
+    "user": "User",
+    "role": "Role",
+    "placeholder": "Authentication works. The dashboard overview (cluster nodes, app tiles) lands in Phase 5.",
+    "signOut": "Sign out",
     "back": "← Back to website"
   },
   "common": {
