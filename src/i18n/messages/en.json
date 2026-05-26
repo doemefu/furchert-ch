@@ -199,9 +199,44 @@
     "authedTitle": "Signed in",
     "user": "User",
     "role": "Role",
-    "placeholder": "Authentication works. The dashboard overview (cluster nodes, app tiles) lands in Phase 5.",
     "signOut": "Sign out",
-    "back": "← Back to website"
+    "headerKicker": "Homelab Dashboard",
+    "private": "Private",
+    "iacRepo": "IaC Repo",
+    "subnav": {
+      "devArea": "Dev Area",
+      "overview": "Overview",
+      "authService": "Auth Service",
+      "deviceService": "Device Service",
+      "soon": "soon"
+    },
+    "cluster": {
+      "title": "k3s Cluster · {count} Nodes",
+      "cpu": "CPU",
+      "mem": "MEM",
+      "controlPlane": "control-plane",
+      "worker": "worker"
+    },
+    "apps": {
+      "kicker": "Apps & Services — {online}/{total} online",
+      "filterAll": "All",
+      "status": {
+        "online": "Online",
+        "wip": "In Dev",
+        "repo": "Repo"
+      },
+      "repo": "repo",
+      "open": "Open",
+      "manage": "Manage",
+      "soon": "soon"
+    },
+    "shortcuts": {
+      "title": "Infra Shortcuts",
+      "iac": "Homelab IaC",
+      "authService": "Auth Service",
+      "n8n": "n8n Workflows",
+      "allRepos": "All Repos ↗"
+    }
   },
   "common": {
     "menu": "Menu",

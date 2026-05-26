@@ -24,7 +24,7 @@ Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
 | 2 | Public pages | done |
 | 3 | Automation section (mockup) | done |
 | 4 | Real OIDC dashboard auth | done |
-| 5 | Dashboard shell | pending |
+| 5 | Dashboard shell | done |
 | 6 | Integrated admin GUIs | pending |
 | 7 | Deployment (Flux CD + Cloudflare Tunnel) | pending |
 

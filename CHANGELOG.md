@@ -5,6 +5,21 @@ All notable changes per milestone. Newest first.
 ## [Unreleased]
 
 ### Added
+- Phase 5: Dashboard shell — port of `PageDashboard` from the design bundle.
+  New `Subnav` with Overview active and Auth/Device tabs visibly disabled
+  (`<button disabled>` with "soon" suffix) until Phase 6 wires the admin
+  GUIs. New `DashboardShell` (server) renders the header bar with a
+  locale-aware date/time strip pinned to `Europe/Zurich`, the k3s cluster
+  overview strip (4 nodes, CPU/MEM mini-bars), the apps-section header,
+  and the infra-shortcuts row. New `AppGrid` client island carries the
+  single piece of UI state (category filter) and the tile grid; the
+  "Manage" affordance on `Auth Service` / `IoT Platform` tiles renders
+  disabled until Phase 6. Additive `compact?: boolean` prop on
+  `SignOutButton` for the header-bar size; default-large variant
+  preserved. Dashboard i18n namespace expanded into nested
+  `subnav.*` / `cluster.*` / `apps.*` / `shortcuts.*` keys (DE+EN),
+  unused `placeholder` + `back` removed. No new dependencies; no
+  Phase-4 auth contract changes.
 - Phase 4: Real OIDC dashboard auth (Auth.js v5, `next-auth@5.0.0-beta.31`) against
   `auth.furchert.ch` — Authorization Code + PKCE, `role` claim exposed to the
   session (fail-closed to `USER`), `/[locale]/dashboard` gated by a server-side
