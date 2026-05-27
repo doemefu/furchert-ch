@@ -14,6 +14,7 @@ import { StatusDot } from '@/components/ui/StatusDot';
 import { CLUSTER_NODES } from '@/data/cluster-nodes';
 import { HOMELAB_APPS } from '@/data/homelab-apps';
 import { AppGrid } from './AppGrid';
+import { DateTimeStrip } from './DateTimeStrip';
 import { SignOutButton } from './SignOutButton';
 
 const monoKicker: CSSProperties = {
@@ -99,16 +100,12 @@ export async function DashboardShell({ locale }: { locale: Locale }) {
               <p style={monoKicker}>{t('headerKicker')}</p>
               <span style={privatePillStyle}>{t('private')}</span>
             </div>
-            <p
-              style={{
-                fontFamily: 'var(--mono)',
-                fontSize: '.75rem',
-                color: 'var(--n-50)',
-                letterSpacing: '.02em',
-              }}
-            >
-              {dateTime}
-            </p>
+            {/* SSR initial paint is the Zurich-pinned `dateTime` string;
+                the client island re-renders with the browser's local TZ
+                after hydration. `key={locale}` forces a remount on
+                DE↔EN switch so the strip picks up the new SSR value
+                instead of holding the previous locale's text. */}
+            <DateTimeStrip key={locale} initial={dateTime} locale={locale} />
           </div>
           <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center' }}>
             <a
@@ -181,7 +178,7 @@ export async function DashboardShell({ locale }: { locale: Locale }) {
                       color: node.role === 'control-plane' ? 'var(--blue-base)' : 'var(--n-50)',
                     }}
                   >
-                    {node.role === 'control-plane' ? t('cluster.controlPlane') : t('cluster.worker')}
+                    {node.role}
                   </span>
                 </div>
                 <div

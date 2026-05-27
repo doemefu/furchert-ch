@@ -213,9 +213,7 @@
     "cluster": {
       "title": "k3s Cluster · {count} Nodes",
       "cpu": "CPU",
-      "mem": "MEM",
-      "controlPlane": "control-plane",
-      "worker": "worker"
+      "mem": "MEM"
     },
     "apps": {
       "kicker": "Apps & Services — {online}/{total} online",
