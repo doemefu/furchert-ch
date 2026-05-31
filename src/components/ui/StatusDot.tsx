@@ -1,7 +1,12 @@
 // Ported verbatim from the prototype (shared.jsx StatusDot).
-export function StatusDot({ status }: { status: string }) {
+// Colours via --status-* design tokens (globals.css).
+export function StatusDot({ status }: { status: 'online' | 'wip' | 'repo' }) {
   const color =
-    status === 'online' ? '#22c55e' : status === 'wip' ? '#f59e0b' : '#94a3b8';
+    status === 'online'
+      ? 'var(--status-online)'
+      : status === 'wip'
+        ? 'var(--status-wip)'
+        : 'var(--status-repo)';
   return (
     <span
       style={{

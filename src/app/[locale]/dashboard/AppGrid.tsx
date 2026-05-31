@@ -29,9 +29,9 @@ const ICON_MAP: Record<string, IconName> = {
 const INTERNAL_APPS = new Set<string>(['Auth Service', 'IoT Platform']);
 
 const STATUS_COLOR: Record<AppStatus, string> = {
-  online: '#22c55e',
-  wip: '#f59e0b',
-  repo: '#94a3b8',
+  online: 'var(--status-online)',
+  wip: 'var(--status-wip)',
+  repo: 'var(--status-repo)',
 };
 
 const sectionLabel: CSSProperties = {
@@ -88,6 +88,24 @@ const actionBase: CSSProperties = {
   border: 'none',
   borderRadius: '2px',
   textDecoration: 'none',
+};
+
+// Shared style for non-clickable action affordances (internal Manage
+// placeholder + offline external tile). Uses <button disabled> so the
+// disabled attribute does the work — no click handler, no nav, AT
+// announces it as unavailable. `appearance: 'none'` resets Safari's
+// UA button rendering (otherwise the gradient leaks through).
+const disabledAction: CSSProperties = {
+  ...actionBase,
+  background: 'var(--n-20)',
+  color: 'var(--n-50)',
+  cursor: 'default',
+  // pointerEvents: 'none' on the button itself stops nested <span>/<Icon>
+  // from showing a text cursor when hovered — disabled buttons receive
+  // no mouse events anyway, so this is a UX consistency fix.
+  pointerEvents: 'none',
+  appearance: 'none',
+  WebkitAppearance: 'none',
 };
 
 export function AppGrid({ apps, kicker }: { apps: HomelabApp[]; kicker: string }) {
@@ -241,31 +259,30 @@ export function AppGrid({ apps, kicker }: { apps: HomelabApp[]; kicker: string }
 
                   {isInternal ? (
                     // TODO(phase6): replace with <Link href={`/dashboard/${app.name === 'Auth Service' ? 'auth' : 'devices'}`}>
-                    <span
-                      aria-disabled="true"
-                      style={{
-                        ...actionBase,
-                        background: 'var(--n-20)',
-                        color: 'var(--n-50)',
-                        cursor: 'default',
-                      }}
-                    >
+                    <button type="button" disabled style={disabledAction}>
                       {t('manage')} <span style={{ color: 'var(--n-40)' }}>· {t('soon')}</span>
-                    </span>
-                  ) : (
+                    </button>
+                  ) : isOnline ? (
                     <a
                       href={app.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
                         ...actionBase,
-                        background: isOnline ? 'var(--n-100)' : 'var(--n-20)',
-                        color: isOnline ? 'var(--white)' : 'var(--n-50)',
-                        cursor: isOnline ? 'pointer' : 'default',
+                        background: 'var(--n-100)',
+                        color: 'var(--white)',
+                        cursor: 'pointer',
                       }}
                     >
                       {t('open')} <Icon name="ext" size={10} />
                     </a>
+                  ) : (
+                    // Offline tile: render disabled (no nav) instead of an
+                    // anchor with cursor:default. Status badge already
+                    // signals why; AT announces the disabled state.
+                    <button type="button" disabled style={disabledAction}>
+                      {t('open')} <Icon name="ext" size={10} />
+                    </button>
                   )}
                 </div>
               </div>

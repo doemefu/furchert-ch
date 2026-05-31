@@ -5,6 +5,30 @@ All notable changes per milestone. Newest first.
 ## [Unreleased]
 
 ### Added
+- Dashboard follow-ups (closes #10 + #11) — defence-in-depth +
+  Phase-5 polish bundle. **#10:** `dashboard/page.tsx` now calls
+  `assertAuthEnv()` (from `src/auth.env.ts`) before `auth()` so a
+  missing `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` / `AUTH_SECRET`
+  surfaces as a Next.js 500 with the actionable
+  `[auth] required env var X is missing or empty.` message instead of
+  silently rendering the shell (Auth.js v5 returns a truthy-empty
+  session when `AUTH_SECRET` is absent — observed during Phase-5
+  smoke). **#11 CI3:** new `DateTimeStrip` client island re-formats
+  the dashboard header date with the browser's local time zone after
+  hydration; SSR initial paint stays Zurich-pinned for SEO / no-JS;
+  `key={locale}` on the parent forces remount on DE↔EN switch.
+  **#11 CI4:** `AppGrid` Manage tile (Auth Service / IoT Platform) and
+  offline external tiles now render as `<button type="button" disabled>`
+  with `pointerEvents: 'none'` instead of misleading `<a>`/`<span>` —
+  consistent a11y-discoverable disabled affordance. **#11 CI5:** dropped
+  the unused `dashboard.cluster.controlPlane` / `dashboard.cluster.worker`
+  translation indirections (both DE+EN resolved to identical lowercase
+  tokens); `DashboardShell` renders `{node.role}` directly. **#11 CI6:**
+  new `--status-online` / `--status-wip` / `--status-repo` design tokens
+  in `globals.css` (semantically separate from `--tier-*` despite
+  sharing today's hex values); `AppGrid` `STATUS_COLOR` and `StatusDot`
+  now reference them. No new dependencies; no Phase-4/5 contract
+  changes.
 - Phase 5: Dashboard shell — port of `PageDashboard` from the design bundle.
   New `Subnav` with Overview active and Auth/Device tabs visibly disabled
   (`<button disabled>` with "soon" suffix) until Phase 6 wires the admin

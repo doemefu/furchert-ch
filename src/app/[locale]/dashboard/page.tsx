@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
 import { auth } from '@/auth';
+import { assertAuthEnv } from '@/auth.env';
 import { SignInGate } from './SignInGate';
 import { DevSubnav } from './Subnav';
 import { DashboardShell } from './DashboardShell';
@@ -34,6 +35,14 @@ export default async function DashboardPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
+
+  // Defence-in-depth (#10): fail loud if the OIDC env is misconfigured.
+  // Without this, Auth.js v5 returns a truthy-empty session when
+  // AUTH_SECRET is missing — bypassing the gate below and silently
+  // rendering the shell. The helper throws with an actionable message
+  // ([auth] required env var X is missing or empty.), surfaced as a
+  // Next.js 500 instead of a leaked dashboard.
+  assertAuthEnv();
 
   // Authoritative gate (worklog D-A): no protected content is rendered
   // without a server-side session check. Phase-6 admin route handlers will
