@@ -78,7 +78,8 @@ function formatDateTime(locale: Locale, now: Date): string {
 export async function DashboardShell({ locale }: { locale: Locale }) {
   const t = await getTranslations('dashboard');
   const onlineCount = HOMELAB_APPS.filter((a) => a.status === 'online').length;
-  const dateTime = formatDateTime(locale, new Date());
+  const now = new Date();
+  const dateTime = formatDateTime(locale, now);
 
   return (
     <div style={{ background: 'var(--n-10)' }}>
@@ -105,7 +106,7 @@ export async function DashboardShell({ locale }: { locale: Locale }) {
                 after hydration. `key={locale}` forces a remount on
                 DE↔EN switch so the strip picks up the new SSR value
                 instead of holding the previous locale's text. */}
-            <DateTimeStrip key={locale} initial={dateTime} locale={locale} />
+            <DateTimeStrip key={locale} initial={dateTime} initialEpoch={now.getTime()} locale={locale} />
           </div>
           <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center' }}>
             <a

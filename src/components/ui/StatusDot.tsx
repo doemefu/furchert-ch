@@ -1,6 +1,6 @@
 // Ported verbatim from the prototype (shared.jsx StatusDot).
 // Colours via --status-* design tokens (globals.css).
-export function StatusDot({ status }: { status: string }) {
+export function StatusDot({ status }: { status: 'online' | 'wip' | 'repo' }) {
   const color =
     status === 'online'
       ? 'var(--status-online)'
