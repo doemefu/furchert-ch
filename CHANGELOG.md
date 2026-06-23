@@ -5,6 +5,21 @@ All notable changes per milestone. Newest first.
 ## [Unreleased]
 
 ### Added
+
+- Phase-5 dashboard review round (PR #13). **Identity:** the dashboard
+  header now shows the signed-in user's name (`session.user.name ?? email`),
+  with a visually-hidden `dashboard.signedInAs` label for assistive tech;
+  no role badge (the overview is identity-light by design). **A11y:**
+  filter chips expose `aria-pressed`, the per-tile repo link uses a
+  descriptive `aria-label` (`dashboard.apps.repoAria`), the active Dev-Area
+  subnav tab carries `aria-current="page"`, and the cluster status dot is
+  now data-driven (`node.status`) with an `aria-label`. **Refactors:**
+  `StatusDot` now owns the canonical `STATUS_COLOR` map (`AppGrid` imports
+  it, replacing its local copy — supersedes the CI6 note below); a shared
+  `formatDashboardDateTime()` (new `dashboard/datetime.ts`) is used by both
+  `DashboardShell` (Zurich-pinned SSR) and `DateTimeStrip` (browser TZ);
+  `ClusterNode.status` tightened to `'Ready' | 'NotReady'`. No new
+  dependencies; no contract changes.
 - Dashboard follow-ups (closes #10 + #11) — defence-in-depth +
   Phase-5 polish bundle. **#10:** `dashboard/page.tsx` now calls
   `assertAuthEnv()` (from `src/auth.env.ts`) before `auth()` so a
