@@ -5,6 +5,60 @@ All notable changes per milestone. Newest first.
 ## [Unreleased]
 
 ### Added
+
+- Phase-5 dashboard review round (PR #13). **Identity:** the dashboard
+  header now shows the signed-in user's name (`session.user.name ?? email`),
+  with a visually-hidden `dashboard.signedInAs` label for assistive tech;
+  no role badge (the overview is identity-light by design). **A11y:**
+  filter chips expose `aria-pressed`, the per-tile repo link uses a
+  descriptive `aria-label` (`dashboard.apps.repoAria`), the active Dev-Area
+  subnav tab carries `aria-current="page"`, and the cluster status dot is
+  now data-driven (`node.status`) with an `aria-label`. **Refactors:**
+  `StatusDot` now owns the canonical `STATUS_COLOR` map (`AppGrid` imports
+  it, replacing its local copy — supersedes the CI6 note below); a shared
+  `formatDashboardDateTime()` (new `dashboard/datetime.ts`) is used by both
+  `DashboardShell` (Zurich-pinned SSR) and `DateTimeStrip` (browser TZ);
+  `ClusterNode.status` tightened to `'Ready' | 'NotReady'`. No new
+  dependencies; no contract changes.
+- Dashboard follow-ups (closes #10 + #11) — defence-in-depth +
+  Phase-5 polish bundle. **#10:** `dashboard/page.tsx` now calls
+  `assertAuthEnv()` (from `src/auth.env.ts`) before `auth()` so a
+  missing `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` / `AUTH_SECRET`
+  surfaces as a Next.js 500 with the actionable
+  `[auth] required env var X is missing or empty.` message instead of
+  silently rendering the shell (Auth.js v5 returns a truthy-empty
+  session when `AUTH_SECRET` is absent — observed during Phase-5
+  smoke). **#11 CI3:** new `DateTimeStrip` client island re-formats
+  the dashboard header date with the browser's local time zone after
+  hydration; SSR initial paint stays Zurich-pinned for SEO / no-JS;
+  `key={locale}` on the parent forces remount on DE↔EN switch.
+  **#11 CI4:** `AppGrid` Manage tile (Auth Service / IoT Platform) and
+  offline external tiles now render as `<button type="button" disabled>`
+  with `pointerEvents: 'none'` instead of misleading `<a>`/`<span>` —
+  consistent a11y-discoverable disabled affordance. **#11 CI5:** dropped
+  the unused `dashboard.cluster.controlPlane` / `dashboard.cluster.worker`
+  translation indirections (both DE+EN resolved to identical lowercase
+  tokens); `DashboardShell` renders `{node.role}` directly. **#11 CI6:**
+  new `--status-online` / `--status-wip` / `--status-repo` design tokens
+  in `globals.css` (semantically separate from `--tier-*` despite
+  sharing today's hex values); `AppGrid` `STATUS_COLOR` and `StatusDot`
+  now reference them. No new dependencies; no Phase-4/5 contract
+  changes.
+- Phase 5: Dashboard shell — port of `PageDashboard` from the design bundle.
+  New `Subnav` with Overview active and Auth/Device tabs visibly disabled
+  (`<button disabled>` with "soon" suffix) until Phase 6 wires the admin
+  GUIs. New `DashboardShell` (server) renders the header bar with a
+  locale-aware date/time strip pinned to `Europe/Zurich`, the k3s cluster
+  overview strip (4 nodes, CPU/MEM mini-bars), the apps-section header,
+  and the infra-shortcuts row. New `AppGrid` client island carries the
+  single piece of UI state (category filter) and the tile grid; the
+  "Manage" affordance on `Auth Service` / `IoT Platform` tiles renders
+  disabled until Phase 6. Additive `compact?: boolean` prop on
+  `SignOutButton` for the header-bar size; default-large variant
+  preserved. Dashboard i18n namespace expanded into nested
+  `subnav.*` / `cluster.*` / `apps.*` / `shortcuts.*` keys (DE+EN),
+  unused `placeholder` + `back` removed. No new dependencies; no
+  Phase-4 auth contract changes.
 - Phase 4: Real OIDC dashboard auth (Auth.js v5, `next-auth@5.0.0-beta.31`) against
   `auth.furchert.ch` — Authorization Code + PKCE, `role` claim exposed to the
   session (fail-closed to `USER`), `/[locale]/dashboard` gated by a server-side

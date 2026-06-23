@@ -49,7 +49,7 @@ form; the scan is intentionally not part of that plan.
 ### Private (real, OIDC-gated via auth.furchert.ch)
 | Route | Page | Status |
 |-------|------|--------|
-| `/[locale]/dashboard` | Homelab overview (cluster nodes, app/service tiles) | **auth live (Phase 4)**; overview content = Phase 5 (placeholder for now) |
+| `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — Auth/Device subnav tabs and per-tile "Manage" buttons are visibly disabled until Phase 6 |
 | `/[locale]/dashboard/auth` | auth-service admin GUI (real REST API) | Phase 6 |
 | `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 |
 
