@@ -6,7 +6,7 @@
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
 
-export function SignOutButton({ compact = false }: { compact?: boolean } = {}) {
+export function SignOutButton({ compact = false }: { compact?: boolean }) {
   const t = useTranslations('dashboard');
 
   // `compact` matches the prototype dashboard header-bar sign-out

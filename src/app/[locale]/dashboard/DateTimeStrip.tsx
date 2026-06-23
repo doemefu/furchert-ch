@@ -15,6 +15,7 @@
 // re-render and the stale text lingers until useEffect runs.
 import { useEffect, useState, type CSSProperties } from 'react';
 import type { Locale } from '@/i18n/routing';
+import { formatDashboardDateTime } from './datetime';
 
 const style: CSSProperties = {
   fontFamily: 'var(--mono)',
@@ -35,11 +36,8 @@ export function DateTimeStrip({
   const [text, setText] = useState(initial);
 
   useEffect(() => {
-    const tag = locale === 'de' ? 'de-CH' : 'en-GB';
-    const when = new Date(initialEpoch);
-    const date = new Intl.DateTimeFormat(tag, { dateStyle: 'full' }).format(when);
-    const time = new Intl.DateTimeFormat(tag, { timeStyle: 'short' }).format(when);
-    setText(`${date} · ${time}`);
+    // No timeZone arg → formats in the browser's local zone.
+    setText(formatDashboardDateTime(locale, new Date(initialEpoch)));
   }, [locale, initialEpoch]);
 
   return <p style={style}>{text}</p>;

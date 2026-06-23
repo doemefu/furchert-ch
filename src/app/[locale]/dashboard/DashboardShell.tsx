@@ -16,6 +16,7 @@ import { HOMELAB_APPS } from '@/data/homelab-apps';
 import { AppGrid } from './AppGrid';
 import { DateTimeStrip } from './DateTimeStrip';
 import { SignOutButton } from './SignOutButton';
+import { formatDashboardDateTime } from './datetime';
 
 const monoKicker: CSSProperties = {
   fontFamily: 'var(--mono)',
@@ -60,26 +61,14 @@ const externalBtnStyle: CSSProperties = {
   padding: '.35rem .75rem',
 };
 
-function formatDateTime(locale: Locale, now: Date): string {
-  // Pinned to Europe/Zurich so the date strip matches the homelab's
-  // physical location regardless of the pod's host TZ (k3s default ≈ UTC).
-  const tag = locale === 'de' ? 'de-CH' : 'en-GB';
-  const date = new Intl.DateTimeFormat(tag, {
-    dateStyle: 'full',
-    timeZone: 'Europe/Zurich',
-  }).format(now);
-  const time = new Intl.DateTimeFormat(tag, {
-    timeStyle: 'short',
-    timeZone: 'Europe/Zurich',
-  }).format(now);
-  return `${date} · ${time}`;
-}
-
-export async function DashboardShell({ locale }: { locale: Locale }) {
+export async function DashboardShell({ locale, userName }: { locale: Locale; userName: string }) {
   const t = await getTranslations('dashboard');
   const onlineCount = HOMELAB_APPS.filter((a) => a.status === 'online').length;
   const now = new Date();
-  const dateTime = formatDateTime(locale, now);
+  // Pinned to Europe/Zurich so the SSR paint matches the homelab's physical
+  // location regardless of the pod's host TZ (k3s default ≈ UTC); the client
+  // island re-formats to the browser's local zone after hydration.
+  const dateTime = formatDashboardDateTime(locale, now, 'Europe/Zurich');
 
   return (
     <div style={{ background: 'var(--n-10)' }}>
@@ -109,6 +98,23 @@ export async function DashboardShell({ locale }: { locale: Locale }) {
             <DateTimeStrip key={locale} initial={dateTime} initialEpoch={now.getTime()} locale={locale} />
           </div>
           <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center' }}>
+            {/* Signed-in user. Name is data — no i18n key. The translated
+                label is for assistive tech only (the visible chip shows just
+                the name to match the prototype's compact header). */}
+            <span
+              style={{
+                fontFamily: 'var(--mono)',
+                fontSize: '.72rem',
+                letterSpacing: '.04em',
+                color: 'var(--n-60)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+                {t('signedInAs')}{' '}
+              </span>
+              {userName}
+            </span>
             <a
               href="https://github.com/doemefu/homelab"
               target="_blank"
@@ -154,7 +160,7 @@ export async function DashboardShell({ locale }: { locale: Locale }) {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                    <StatusDot status={node.status === 'Ready' ? 'online' : 'wip'} />
+                    <StatusDot status={node.status === 'Ready' ? 'online' : 'wip'} label={node.status} />
                     <span
                       style={{
                         fontFamily: 'var(--mono)',

@@ -202,6 +202,7 @@
     "signOut": "Sign out",
     "headerKicker": "Homelab Dashboard",
     "private": "Private",
+    "signedInAs": "Signed in as",
     "iacRepo": "IaC Repo",
     "subnav": {
       "devArea": "Dev Area",

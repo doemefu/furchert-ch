@@ -59,10 +59,12 @@ export default async function DashboardPage({
   }
   if (!session) return <SignInGate locale={locale} />;
 
+  const userName = session.user?.name ?? session.user?.email ?? '—';
+
   return (
     <>
       <DevSubnav active="overview" />
-      <DashboardShell locale={locale} />
+      <DashboardShell locale={locale} userName={userName} />
     </>
   );
 }

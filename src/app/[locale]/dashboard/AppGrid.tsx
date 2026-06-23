@@ -7,8 +7,8 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon, type IconName } from '@/components/ui/Icon';
-import { StatusDot } from '@/components/ui/StatusDot';
-import type { HomelabApp, AppStatus } from '@/data/homelab-apps';
+import { StatusDot, STATUS_COLOR } from '@/components/ui/StatusDot';
+import type { HomelabApp } from '@/data/homelab-apps';
 
 const ICON_MAP: Record<string, IconName> = {
   'IoT Platform': 'iot',
@@ -27,12 +27,6 @@ const ICON_MAP: Record<string, IconName> = {
 // Apps with in-app admin GUIs (built in Phase 6). Until then, the Manage
 // button is rendered disabled — clicking would 404.
 const INTERNAL_APPS = new Set<string>(['Auth Service', 'IoT Platform']);
-
-const STATUS_COLOR: Record<AppStatus, string> = {
-  online: 'var(--status-online)',
-  wip: 'var(--status-wip)',
-  repo: 'var(--status-repo)',
-};
 
 const sectionLabel: CSSProperties = {
   fontFamily: 'var(--mono)',

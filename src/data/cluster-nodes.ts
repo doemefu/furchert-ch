@@ -4,7 +4,7 @@ export interface ClusterNode {
   name: string;
   type: string;
   role: 'control-plane' | 'worker';
-  status: string;
+  status: 'Ready' | 'NotReady';
   cpu: string;
   mem: string;
 }
