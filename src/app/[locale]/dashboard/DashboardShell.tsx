@@ -154,7 +154,7 @@ export async function DashboardShell({ locale }: { locale: Locale }) {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                    <StatusDot status="online" />
+                    <StatusDot status={node.status === 'Ready' ? 'online' : 'wip'} />
                     <span
                       style={{
                         fontFamily: 'var(--mono)',

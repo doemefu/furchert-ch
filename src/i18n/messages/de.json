@@ -224,6 +224,7 @@
         "repo": "Repo"
       },
       "repo": "repo",
+      "repoAria": "{name}-Repository auf GitHub",
       "open": "Öffnen",
       "manage": "Verwalten",
       "soon": "bald"

@@ -69,6 +69,7 @@ export async function DevSubnav({ active }: { active: DevSubnavActive }) {
 
         <Link
           href="/dashboard"
+          aria-current={active === 'overview' ? 'page' : undefined}
           style={{ ...tabBase, ...(active === 'overview' ? tabActive : tabInactive) }}
         >
           {t('overview')}

@@ -138,6 +138,7 @@ export function AppGrid({ apps, kicker }: { apps: HomelabApp[]; kicker: string }
               <button
                 key={c}
                 type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveFilter(c)}
                 style={{
                   ...chipBase,
@@ -240,7 +241,7 @@ export function AppGrid({ apps, kicker }: { apps: HomelabApp[]; kicker: string }
                       href={app.repo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      title="GitHub"
+                      aria-label={t('repoAria', { name: app.name })}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
