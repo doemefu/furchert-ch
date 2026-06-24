@@ -15,7 +15,13 @@ const ISSUER_FALLBACK = 'https://auth.furchert.ch';
 
 function read(key: AuthEnvKey): string {
   const v = process.env[key];
-  if (key === 'OIDC_ISSUER') return v && v.length > 0 ? v : ISSUER_FALLBACK;
+  if (key === 'OIDC_ISSUER') {
+    // Normalize a trailing slash: `https://issuer/` would otherwise produce
+    // `https://issuer//connect/logout` (a 404) when concatenated in the
+    // federated-logout route. Discovery tolerates the slash, so the mistake
+    // would only surface at logout — confusing. Strip it centrally.
+    return (v && v.length > 0 ? v : ISSUER_FALLBACK).replace(/\/$/, '');
+  }
   if (!v || v.length === 0) {
     throw new Error(
       `[auth] required env var ${key} is missing or empty. ` +

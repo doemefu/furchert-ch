@@ -19,10 +19,15 @@ k8s secret `homelab-furchert-ch-secrets` (keys; values user-provisioned):
 | `AUTH_SECRET` | Auth.js v5 session encryption (`openssl rand -base64 33`) |
 | `OIDC_CLIENT_SECRET` | `furchert-ch` OIDC client secret, **plaintext** (no `{noop}` prefix; matches auth-service) |
 
-Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; optionally `AUTH_URL`
-(Auth.js infers it behind the tunnel when `trustHost` is set, so usually
-unneeded); cluster-internal upstream URLs for auth-service / device-service
-(Phase 6).
+Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
+(bare issuer base URL, **no trailing slash**; defaults to
+`https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service /
+device-service (Phase 6). **Set `AUTH_URL=https://furchert.ch` in production:**
+Auth.js infers it for callbacks behind the tunnel when `trustHost` is set, but
+the federated-logout route uses it to build `post_logout_redirect_uri`. If
+unset, it falls back to the request origin, which behind Cloudflare Tunnel →
+Traefik can resolve to an internal origin that the IdP rejects (it must match a
+registered `post-logout-redirect-uris` value, i.e. `https://furchert.ch`).
 
 > **Auth.js v5 env names** — use `AUTH_SECRET` (not the v4 `NEXTAUTH_SECRET`)
 > and `AUTH_URL` (not `NEXTAUTH_URL`). Local dev: copy `.env.local.example` →

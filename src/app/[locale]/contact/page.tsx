@@ -14,6 +14,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
   return {
     title: `${t('contact.title')} — furchert.ch`,
@@ -104,7 +105,7 @@ export default async function ContactPage({
                     <a
                       href={c.href}
                       target={c.href.startsWith('http') ? '_blank' : undefined}
-                      rel="noopener"
+                      rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                       style={{ fontSize: '.9375rem', color: 'var(--blue-base)', textDecoration: 'none' }}
                     >
                       {c.value}

@@ -33,6 +33,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
   return {
     title: `${t('pages.automation.heroLabel')} — furchert.ch`,

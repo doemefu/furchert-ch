@@ -42,9 +42,6 @@ Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
 
 ## Quick start
 
-> Application code lands in Phase 1. Until then this repo contains only the working
-> conventions. After Phase 1:
-
 ```bash
 pnpm install
 pnpm dev        # http://localhost:3000

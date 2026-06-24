@@ -54,12 +54,15 @@ export function Btn({
   if (href) {
     const external = /^(https?:|mailto:|tel:)/.test(href);
     if (external) {
+      // `rel` only applies to the new-tab (`http`) case; mailto/tel open in
+      // the same context where it has no effect.
+      const newTab = href.startsWith('http');
       return (
         <a
           href={href}
           style={base}
-          target={href.startsWith('http') ? '_blank' : undefined}
-          rel="noopener"
+          target={newTab ? '_blank' : undefined}
+          rel={newTab ? 'noopener noreferrer' : undefined}
         >
           {children}
         </a>

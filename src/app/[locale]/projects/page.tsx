@@ -16,6 +16,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
   return {
     title: `${t('pages.projects.headerTitle')} — furchert.ch`,
@@ -148,7 +149,7 @@ export default async function ProjectsPage({
           <a
             href="https://github.com/doemefu"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             style={{
               display: 'inline-flex',
               alignItems: 'center',

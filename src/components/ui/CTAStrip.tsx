@@ -52,7 +52,7 @@ export function CTAStrip({ together, togsub }: { together: string; togsub: strin
           <a
             href="https://github.com/doemefu"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             style={linkStyle}
           >
             <Icon name="github" size={14} /> github/doemefu

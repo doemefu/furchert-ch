@@ -48,7 +48,16 @@ export async function GET(req: NextRequest) {
 
     const logoutUrl = new URL(`${AUTH_ENV.OIDC_ISSUER}/connect/logout`);
     if (token.idToken) logoutUrl.searchParams.set('id_token_hint', token.idToken);
-    logoutUrl.searchParams.set('post_logout_redirect_uri', req.nextUrl.origin);
+    // The IdP validates `post_logout_redirect_uri` against the registered
+    // value (e.g. https://furchert.ch). Behind Cloudflare Tunnel → Traefik,
+    // `req.nextUrl.origin` can be an internal origin (cluster FQDN /
+    // localhost), which the IdP rejects — breaking logout in prod while it
+    // works locally. Derive it from the configured public base (AUTH_URL),
+    // falling back to the request origin only when AUTH_URL is unset (dev).
+    const postLogoutOrigin = process.env.AUTH_URL
+      ? new URL(process.env.AUTH_URL).origin
+      : req.nextUrl.origin;
+    logoutUrl.searchParams.set('post_logout_redirect_uri', postLogoutOrigin);
 
     const res = NextResponse.redirect(logoutUrl);
     // Clear the local session cookie before leaving for the IdP. Also expire

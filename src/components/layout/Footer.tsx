@@ -98,7 +98,7 @@ export async function Footer() {
               <a
                 href="https://github.com/doemefu"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: '.4rem' }}
               >
                 <Icon name="github" size={13} /> GitHub
@@ -106,7 +106,7 @@ export async function Footer() {
               <a
                 href="https://linkedin.com/in/dominic-furchert"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 style={linkStyle}
               >
                 LinkedIn ↗
@@ -129,12 +129,15 @@ export async function Footer() {
         >
           <span>{t('footer.copy')}</span>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <a href="#" style={{ ...linkStyle, color: 'var(--n-60)' }}>
+            {/* Imprint/Privacy pages are not implemented yet (follow-up). Render
+                as non-interactive placeholders rather than `href="#"` so they
+                don't masquerade as real navigation. */}
+            <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
               {t('footer.imprint')}
-            </a>
-            <a href="#" style={{ ...linkStyle, color: 'var(--n-60)' }}>
+            </span>
+            <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
               {t('footer.privacy')}
-            </a>
+            </span>
           </div>
         </div>
       </div>

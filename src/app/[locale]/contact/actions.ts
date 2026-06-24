@@ -27,10 +27,10 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
   }
 
   // Real server-side receipt until Phase 7 wires delivery. Do not log the
-  // message body (privacy) — only that a valid submission was received.
+  // message body or the submitter's identity (name/email are personal data —
+  // retention/compliance) — only non-identifying metadata that a valid
+  // submission was received.
   console.info('[contact] submission received', {
-    name,
-    email,
     messageLength: message.length,
   });
 

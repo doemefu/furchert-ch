@@ -61,8 +61,8 @@ tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.m
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site, OIDC dashboard auth, dashboard overview, admin GUIs wired to backend.
-- **Mock:** the entire `/automation` section.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview, admin GUIs wired to backend.
+- **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard, rate
   limiting/Turnstile, n8n notifications, live cluster metrics, WebSocket device
   stream. Tracked here as work progresses.
