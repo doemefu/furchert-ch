@@ -46,3 +46,4 @@ Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
 pnpm install
 pnpm dev        # http://localhost:3000
 ```
+

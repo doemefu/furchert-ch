@@ -63,6 +63,11 @@ tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.m
 
 - **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview, admin GUIs wired to backend.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
+- **Sample (labelled, not live):** the dashboard cluster strip (CPU/MEM/status)
+  and app/service status badges are static demo data, shown with a visible
+  "Sample data / Beispieldaten" badge until real telemetry lands (issue #17).
+- **Placeholder:** footer **Impressum** / **Datenschutz** render as
+  non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard, rate
   limiting/Turnstile, n8n notifications, live cluster metrics, WebSocket device
   stream. Tracked here as work progresses.
