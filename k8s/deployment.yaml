@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: furchert-ch
+  namespace: apps
+  labels:
+    app: furchert-ch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: furchert-ch
+  template:
+    metadata:
+      labels:
+        app: furchert-ch
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: furchert-ch
+          # Image tag is managed by Flux CD image automation.
+          image: ghcr.io/doemefu/furchert-ch:main-20260531T000000 # {"$imagepolicy": "flux-system:furchert-ch"}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: OIDC_ISSUER
+              value: "https://auth.furchert.ch"
+            - name: OIDC_CLIENT_ID
+              value: "furchert-ch"
+            - name: AUTH_URL
+              value: "https://furchert.ch"
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: furchert-ch-secrets
+                  key: oidc-client-secret
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: furchert-ch-secrets
+                  key: auth-secret
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            failureThreshold: 30
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            periodSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: furchert-ch
+  namespace: apps
+spec:
+  selector:
+    app: furchert-ch
+  ports:
+    - port: 3000
+      targetPort: 3000
