@@ -4,6 +4,16 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Added
+
+- **Phase 7 — containerize + deploy pipeline** (#14): multi-stage `Dockerfile`
+  (Next standalone, non-root, pinned `node:22.23.1-alpine`), `/api/health` probe
+  route, `k8s/` Deployment + Service (`apps` ns, probes, Flux image-setter marker),
+  and GitHub Actions — `ci` (lint/typecheck/build), `build` (multi-arch image →
+  `ghcr.io/doemefu/furchert-ch`), `codeql`. Cluster wiring (Flux bundle + Cloudflare
+  Tunnel apex route + `furchert-ch-secrets`) lives in the `homelab` infra repo
+  (#38). See `DEPLOYMENT.md`.
+
 ### Security
 
 - **Federated logout hardened to a CSRF-safe POST** (PR #15 review):
