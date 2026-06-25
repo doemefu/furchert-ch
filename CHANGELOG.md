@@ -4,6 +4,35 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Security
+
+- **Federated logout hardened to a CSRF-safe POST** (PR #15 review):
+  `/api/federated-logout` is now `POST`-only with a same-origin guard
+  (`Sec-Fetch-Site` / `Origin`); `SignOutButton` submits a form instead of a
+  GET navigation — prevents forced logout via `<img>` / prefetch. The
+  `post_logout_redirect_uri` derives from `AUTH_URL` (set it to the public
+  origin in prod — see `DEPLOYMENT.md`), `OIDC_ISSUER` is trailing-slash
+  normalised, and the `auth.env` Proxy guards non-string property access.
+
+### Changed
+
+- **Dashboard cluster/app status labelled "Sample data / Beispieldaten"**
+  (`dashboard.sampleData`) — static demo values are no longer presented as live
+  telemetry (PR #15 review). Live metrics tracked in #17.
+- **Footer Impressum / Datenschutz** render as non-interactive placeholders
+  (were `href="#"`); real pages tracked in #16. All external `_blank` links use
+  `rel="noopener noreferrer"`; `rel` dropped on `mailto:` / `tel:`.
+
+### Fixed / a11y
+
+- PR #15 review hardening: FAQ answer region + scan question groups gain
+  accessible names; decorative icons `aria-hidden`; burger button
+  `aria-expanded` / `aria-controls`; ticker marquee `aria-hidden`; `x-default`
+  hreflang on every public page + sitemap; contact action logs only
+  `messageLength` (no name/email PII); `request.ts` uses the `isLocale` type
+  guard; `generateMetadata` locale guards across all public pages; dead `home`
+  nav branch removed.
+
 ### Added
 
 - Phase-5 dashboard review round (PR #13). **Identity:** the dashboard
