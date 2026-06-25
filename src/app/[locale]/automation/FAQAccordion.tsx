@@ -22,10 +22,12 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
       {items.map((faq, i) => {
         const isOpen = openIndex === i;
         const panelId = `faq-panel-${i}`;
+        const buttonId = `faq-button-${i}`;
         return (
           <div key={i} style={{ borderTop: '1px solid rgba(162,167,176,.22)' }}>
             <button
               type="button"
+              id={buttonId}
               onClick={() => setOpenIndex(isOpen ? null : i)}
               aria-expanded={isOpen}
               aria-controls={panelId}
@@ -69,6 +71,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
               <div
                 id={panelId}
                 role="region"
+                aria-labelledby={buttonId}
                 style={{
                   paddingBottom: '1.25rem',
                   fontSize: '.9375rem',

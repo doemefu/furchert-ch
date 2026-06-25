@@ -42,6 +42,7 @@ export async function generateMetadata({
       languages: {
         de: HOST + getPathname({ locale: 'de', href: '/automation' }),
         en: HOST + getPathname({ locale: 'en', href: '/automation' }),
+        'x-default': HOST + getPathname({ locale: 'de', href: '/automation' }),
       },
     },
   };

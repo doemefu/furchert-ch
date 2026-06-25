@@ -33,7 +33,7 @@ export function Header() {
   const navLink = (key: string, label: string) => (
     <Link
       key={key}
-      href={key === 'home' ? '/' : `/${key}`}
+      href={`/${key}`}
       onClick={() => setMenuOpen(false)}
       style={{
         fontFamily: 'var(--mono)',
@@ -149,6 +149,8 @@ export function Header() {
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="burger"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
           style={{
             display: 'none',
             background: 'none',
@@ -169,6 +171,7 @@ export function Header() {
 
       {menuOpen && (
         <div
+          id="mobile-nav"
           style={{
             position: 'absolute',
             top: 'var(--header-h)',

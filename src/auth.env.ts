@@ -35,7 +35,12 @@ function read(key: AuthEnvKey): string {
 // not at module import. That keeps the build green even without real env,
 // while still failing loud at the first sign-in / logout attempt.
 export const AUTH_ENV = new Proxy({} as Record<AuthEnvKey, string>, {
-  get(_target, prop: string) {
+  get(_target, prop) {
+    // The trap also fires for symbol props (e.g. `util.inspect.custom`,
+    // `Symbol.toPrimitive`, a thenable check). Interpolating a symbol into the
+    // error message would throw a `TypeError` and mask the real config error,
+    // so only string keys reach `read()`.
+    if (typeof prop !== 'string') return undefined;
     return read(prop as AuthEnvKey);
   },
 });

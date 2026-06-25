@@ -192,6 +192,8 @@
   "dashboard": {
     "title": "Dashboard",
     "gate": "Access restricted",
+    "signIn": "Sign in",
+    "sampleData": "Sample data",
     "gatesub": "This area is reserved for the homelab operator. Sign in via furchert.ch to continue.",
     "signInOidc": "Sign in with furchert.ch",
     "signInError": "Sign-in failed. Please try again.",

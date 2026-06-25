@@ -1,5 +1,5 @@
 // Icon set ported verbatim from the prototype (shared.jsx Icon).
-import type { CSSProperties, ReactElement } from 'react';
+import { cloneElement, type CSSProperties, type ReactElement } from 'react';
 
 export type IconName =
   | 'arrow' | 'lock' | 'github' | 'ext' | 'server' | 'globe' | 'code' | 'chip'
@@ -30,5 +30,7 @@ export function Icon({ name, size = 16 }: { name: IconName | string; size?: numb
     check: <svg style={s} viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>,
     cpu: <svg style={s} viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" /><rect x="5.5" y="5.5" width="5" height="5" stroke="currentColor" strokeWidth="1" /><path d="M5 1v2M8 1v2M11 1v2M5 13v2M8 13v2M11 13v2M1 5h2M1 8h2M1 11h2M13 5h2M13 8h2M13 11h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" /></svg>,
   };
-  return icons[name] || icons.code;
+  // Icons are decorative — they always sit next to text or a labelled parent.
+  // Hide them from assistive tech and make them non-focusable in one place.
+  return cloneElement(icons[name] || icons.code, { 'aria-hidden': true, focusable: 'false' });
 }

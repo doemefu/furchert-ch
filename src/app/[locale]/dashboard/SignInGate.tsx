@@ -78,7 +78,7 @@ export function SignInGate({ locale }: { locale: string }) {
                 color: 'var(--n-100)',
               }}
             >
-              furchert.ch · Sign in
+              furchert.ch · {t('signIn')}
             </span>
           </div>
 

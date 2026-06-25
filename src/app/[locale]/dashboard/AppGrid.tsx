@@ -36,6 +36,22 @@ const sectionLabel: CSSProperties = {
   color: 'var(--n-50)',
 };
 
+// Honesty marker: the tile status badges are static demo data (no live
+// backend yet — see OVERVIEW "deferred"). Mirrors the automation mock banner
+// so a signed-in user never reads sample status as live telemetry.
+const sampleBadge: CSSProperties = {
+  fontFamily: 'var(--mono)',
+  fontSize: '.6rem',
+  letterSpacing: '.06em',
+  textTransform: 'uppercase',
+  padding: '.1rem .4rem',
+  border: '1px solid rgba(162,167,176,.35)',
+  borderRadius: '2px',
+  color: 'var(--n-50)',
+  marginLeft: '.5rem',
+  whiteSpace: 'nowrap',
+};
+
 const chipBase: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.68rem',
@@ -102,7 +118,15 @@ const disabledAction: CSSProperties = {
   WebkitAppearance: 'none',
 };
 
-export function AppGrid({ apps, kicker }: { apps: HomelabApp[]; kicker: string }) {
+export function AppGrid({
+  apps,
+  kicker,
+  sampleLabel,
+}: {
+  apps: HomelabApp[];
+  kicker: string;
+  sampleLabel: string;
+}) {
   const t = useTranslations('dashboard.apps');
   const [activeFilter, setActiveFilter] = useState<string>('All');
 
@@ -123,7 +147,10 @@ export function AppGrid({ apps, kicker }: { apps: HomelabApp[]; kicker: string }
           gap: '1rem',
         }}
       >
-        <p style={sectionLabel}>{kicker}</p>
+        <p style={sectionLabel}>
+          {kicker}
+          <span style={sampleBadge}>{sampleLabel}</span>
+        </p>
         <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
           {categories.map((c) => {
             const isActive = activeFilter === c;

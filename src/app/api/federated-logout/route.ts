@@ -1,8 +1,8 @@
 // Federated (RP-initiated) logout. Runs server-side so the id_token never
 // reaches the browser (worklog D-C / F6): read the JWT, build the IdP
 // end-session URL with `id_token_hint`, then return a redirect that also
-// expires the local Auth.js session cookie. The SignOutButton just navigates
-// here.
+// expires the local Auth.js session cookie. The SignOutButton submits a POST
+// form here.
 import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { AUTH_ENV } from '@/auth.env';
@@ -14,7 +14,28 @@ import { AUTH_ENV } from '@/auth.env';
 // caught — but it produces noisy stack traces).
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: NextRequest) {
+// Logout mutates session state, so it is exposed as POST only (a GET could be
+// triggered by `<img>`/prefetch — logout CSRF). The public origin is also the
+// `post_logout_redirect_uri` the IdP validates against.
+export async function POST(req: NextRequest) {
+  const expectedOrigin = process.env.AUTH_URL
+    ? new URL(process.env.AUTH_URL).origin
+    : req.nextUrl.origin;
+
+  // CSRF guard: modern browsers send `Sec-Fetch-Site` on every request — a
+  // forged cross-site POST is `cross-site`/`same-site` and is rejected. For
+  // clients without fetch metadata, fall back to matching the `Origin` header
+  // against the expected public origin.
+  const secFetchSite = req.headers.get('sec-fetch-site');
+  const origin = req.headers.get('origin');
+  const sameOrigin =
+    secFetchSite === 'same-origin' ||
+    secFetchSite === 'none' ||
+    (secFetchSite === null && (origin === null || origin === expectedOrigin));
+  if (!sameOrigin) {
+    return NextResponse.json({ error: 'Cross-origin logout rejected' }, { status: 403 });
+  }
+
   const secureCookie = process.env.NODE_ENV === 'production';
   const cookieName = secureCookie
     ? '__Secure-authjs.session-token'
@@ -52,12 +73,9 @@ export async function GET(req: NextRequest) {
     // value (e.g. https://furchert.ch). Behind Cloudflare Tunnel → Traefik,
     // `req.nextUrl.origin` can be an internal origin (cluster FQDN /
     // localhost), which the IdP rejects — breaking logout in prod while it
-    // works locally. Derive it from the configured public base (AUTH_URL),
-    // falling back to the request origin only when AUTH_URL is unset (dev).
-    const postLogoutOrigin = process.env.AUTH_URL
-      ? new URL(process.env.AUTH_URL).origin
-      : req.nextUrl.origin;
-    logoutUrl.searchParams.set('post_logout_redirect_uri', postLogoutOrigin);
+    // works locally. `expectedOrigin` derives from the configured public base
+    // (AUTH_URL), falling back to the request origin only when unset (dev).
+    logoutUrl.searchParams.set('post_logout_redirect_uri', expectedOrigin);
 
     const res = NextResponse.redirect(logoutUrl);
     // Clear the local session cookie before leaving for the IdP. Also expire

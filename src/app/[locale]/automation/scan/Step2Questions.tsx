@@ -68,6 +68,9 @@ export function Step2Questions({
   const current = answers[qid];
   const required = q.optional !== true;
   const nextDisabled = required && answerIsEmpty(current);
+  // The question heading is the accessible name for whichever input group
+  // renders below it (radiogroup / checkbox group / textarea).
+  const questionId = `scan-question-${qid}`;
 
   return (
     <div>
@@ -75,6 +78,7 @@ export function Step2Questions({
         {t('stepIndicator', { n: 2 })} · {t('questionCounter', { n: qIndex + 1, total: questions.length })}
       </p>
       <h2
+        id={questionId}
         style={{
           fontFamily: 'var(--sans)',
           fontSize: 'clamp(1.4rem,3vw,2rem)',
@@ -90,7 +94,11 @@ export function Step2Questions({
       </h2>
 
       {q.type === 'single' && q.options && (
-        <div style={{ display: 'grid', gap: '.5rem', maxWidth: '46rem' }}>
+        <div
+          role="radiogroup"
+          aria-labelledby={questionId}
+          style={{ display: 'grid', gap: '.5rem', maxWidth: '46rem' }}
+        >
           {q.options.map((opt) => {
             const checked = current === opt.id;
             return (
@@ -113,7 +121,11 @@ export function Step2Questions({
       )}
 
       {q.type === 'multi' && q.options && (
-        <div style={{ display: 'grid', gap: '.5rem', maxWidth: '46rem' }}>
+        <div
+          role="group"
+          aria-labelledby={questionId}
+          style={{ display: 'grid', gap: '.5rem', maxWidth: '46rem' }}
+        >
           {q.options.map((opt) => {
             const arr = Array.isArray(current) ? current : [];
             const checked = arr.includes(opt.id);
@@ -143,6 +155,7 @@ export function Step2Questions({
           value={typeof current === 'string' ? current : ''}
           onChange={(e) => onAnswer(qid, e.target.value)}
           rows={5}
+          aria-labelledby={questionId}
           placeholder={q.i18n[locale].placeholder ?? ''}
           style={{
             width: '100%',

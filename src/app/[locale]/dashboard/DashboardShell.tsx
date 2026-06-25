@@ -34,6 +34,22 @@ const monoLabel: CSSProperties = {
   color: 'var(--n-50)',
 };
 
+// Honesty marker for the cluster strip: CPU/MEM/status are static demo data
+// (live metrics are deferred — see OVERVIEW). Matches the automation mock so
+// the values are never mistaken for live telemetry.
+const sampleBadge: CSSProperties = {
+  fontFamily: 'var(--mono)',
+  fontSize: '.6rem',
+  letterSpacing: '.06em',
+  textTransform: 'uppercase',
+  padding: '.1rem .4rem',
+  border: '1px solid rgba(162,167,176,.35)',
+  borderRadius: '2px',
+  color: 'var(--n-50)',
+  marginLeft: '.5rem',
+  whiteSpace: 'nowrap',
+};
+
 const privatePillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.68rem',
@@ -133,6 +149,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
         <div style={{ borderBottom: '1px solid rgba(162,167,176,.22)', padding: '1.5rem 0' }}>
           <p style={{ ...monoLabel, marginBottom: '1rem' }}>
             {t('cluster.title', { count: CLUSTER_NODES.length })}
+            <span style={sampleBadge}>{t('sampleData')}</span>
           </p>
           <div
             style={{
@@ -247,6 +264,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
           <AppGrid
             apps={HOMELAB_APPS}
             kicker={t('apps.kicker', { online: onlineCount, total: HOMELAB_APPS.length })}
+            sampleLabel={t('sampleData')}
           />
         </div>
 

@@ -192,6 +192,8 @@
   "dashboard": {
     "title": "Dashboard",
     "gate": "Zugang beschränkt",
+    "signIn": "Anmelden",
+    "sampleData": "Beispieldaten",
     "gatesub": "Dieser Bereich ist dem Homelab-Betreiber vorbehalten. Melde dich über furchert.ch an, um fortzufahren.",
     "signInOidc": "Mit furchert.ch anmelden",
     "signInError": "Anmeldung fehlgeschlagen. Bitte erneut versuchen.",

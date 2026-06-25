@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       languages: {
         de: HOST + getPathname({ locale: 'de', href }),
         en: HOST + getPathname({ locale: 'en', href }),
+        'x-default': HOST + getPathname({ locale: routing.defaultLocale, href }),
       },
     },
   }));

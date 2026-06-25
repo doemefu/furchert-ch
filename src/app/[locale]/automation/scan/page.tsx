@@ -28,6 +28,7 @@ export async function generateMetadata({
       languages: {
         de: HOST + getPathname({ locale: 'de', href: '/automation/scan' }),
         en: HOST + getPathname({ locale: 'en', href: '/automation/scan' }),
+        'x-default': HOST + getPathname({ locale: 'de', href: '/automation/scan' }),
       },
     },
   };

@@ -38,6 +38,7 @@ export async function generateMetadata({
       languages: {
         de: HOST + getPathname({ locale: 'de', href: '/' }),
         en: HOST + getPathname({ locale: 'en', href: '/' }),
+        'x-default': HOST + getPathname({ locale: 'de', href: '/' }),
       },
     },
     openGraph: {

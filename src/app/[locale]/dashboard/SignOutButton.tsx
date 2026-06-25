@@ -1,8 +1,10 @@
 'use client';
 
-// Navigates to the server-side federated-logout route, which reads the
-// id_token server-side, ends the IdP session (id_token_hint) and clears the
-// local session cookie (worklog F6). No token is touched on the client.
+// Submits a POST form to the server-side federated-logout route, which reads
+// the id_token server-side, ends the IdP session (id_token_hint) and clears
+// the local session cookie (worklog F6). No token is touched on the client.
+// POST (not a GET navigation) so logout can't be triggered cross-origin by an
+// <img>/prefetch — the route also enforces a same-origin CSRF check.
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
 
@@ -29,24 +31,23 @@ export function SignOutButton({ compact = false }: { compact?: boolean }) {
       };
 
   return (
-    <button
-      type="button"
-      onClick={() => {
-        window.location.href = '/api/federated-logout';
-      }}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '.45rem',
-        fontFamily: 'var(--mono)',
-        textTransform: 'uppercase',
-        background: 'transparent',
-        borderRadius: '2px',
-        cursor: 'pointer',
-        ...sizing,
-      }}
-    >
-      {t('signOut')} <Icon name="arrow" size={compact ? 10 : 12} />
-    </button>
+    <form action="/api/federated-logout" method="post" style={{ display: 'inline-flex' }}>
+      <button
+        type="submit"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '.45rem',
+          fontFamily: 'var(--mono)',
+          textTransform: 'uppercase',
+          background: 'transparent',
+          borderRadius: '2px',
+          cursor: 'pointer',
+          ...sizing,
+        }}
+      >
+        {t('signOut')} <Icon name="arrow" size={compact ? 10 : 12} />
+      </button>
+    </form>
   );
 }
