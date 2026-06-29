@@ -19,7 +19,7 @@ spec:
       containers:
         - name: furchert-ch
           # Image tag is managed by Flux CD image automation.
-          image: ghcr.io/doemefu/furchert-ch:main-20260626T095044 # {"$imagepolicy": "flux-system:furchert-ch"}
+          image: ghcr.io/doemefu/furchert-ch:main-20260629T142959 # {"$imagepolicy": "flux-system:furchert-ch"}
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
