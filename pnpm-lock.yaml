@@ -25,8 +25,8 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@types/node':
-        specifier: 22.10.10
-        version: 22.10.10
+        specifier: 26.0.1
+        version: 26.0.1
       '@types/react':
         specifier: 18.3.18
         version: 18.3.18
@@ -525,8 +525,8 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/node@22.10.10':
-    resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
+  '@types/node@26.0.1':
+    resolution: {integrity: sha512-fc3KiUoBt6kie0N9bIW3E47vZsuaMf0PM2AaUpLCLT0s/LvX1nxAim6Fc049cNxODPpGm6qRAuUOB86SkRuPQw==}
 
   '@types/prop-types@15.7.15':
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
@@ -1864,8 +1864,8 @@ packages:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
 
-  undici-types@6.20.0:
-    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+  undici-types@8.3.0:
+    resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
   unrs-resolver@1.12.1:
     resolution: {integrity: sha512-LmOTmcBbFqxu1rzubnqHT6EZeqDYpenlGYwyFhHj7oc1HdyZE+0cLQ+s9SDSK+KKQQKuoJhUbzHQ89Ubwg2Oxg==}
@@ -2295,9 +2295,9 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/node@22.10.10':
+  '@types/node@26.0.1':
     dependencies:
-      undici-types: 6.20.0
+      undici-types: 8.3.0
 
   '@types/prop-types@15.7.15': {}
 
@@ -3897,7 +3897,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@6.20.0: {}
+  undici-types@8.3.0: {}
 
   unrs-resolver@1.12.1:
     dependencies:
