@@ -4,6 +4,11 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Changed
+
+- Document the Build-and-Push hang recovery and the code-review-bot situation
+  (DEPLOYMENT.md, CONTRIBUTING.md).
+
 ### Security
 
 - **Refresh transitive dependencies for 9 Dependabot alerts** (refs #31,

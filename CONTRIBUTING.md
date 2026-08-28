@@ -39,3 +39,9 @@ kubectl -n apps port-forward svc/device-service 8081:8081
 - Recreate the design pixel-faithfully from the prototype source. `/automation`
   stays a mockup.
 - No secrets in git. Pin dependency versions. Never auto-commit — the user commits.
+- **Code review tooling:** CodeRabbit is not installed on this repository
+  (confirmed 2026-08-28: no response to a manual `@coderabbitai review`
+  trigger). Copilot review is auto-requested but its account quota can be
+  exhausted. If no bot review is available, substitute the parent-workspace
+  `reviewer` subagent + `/code-review` and disclose the substitution in a PR
+  comment before merging.
