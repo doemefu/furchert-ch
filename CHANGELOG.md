@@ -4,6 +4,18 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Security
+
+- **Refresh transitive dependencies for 9 Dependabot alerts** (refs #31,
+  `doemefu/homelab`#47): `postcss` 8.4.31 → 8.5.23 (alerts #89/#71/#69/#40 —
+  pinned via a `pnpm.overrides` entry since `next` 15.x hard-pins `postcss` at
+  `8.4.31`; remove the override once `next` moves its own pin to ≥ 8.5.23),
+  `sharp` 0.34.5 → 0.35.4 (alert #54 — via `next` 15.5.21 → 15.5.24, which
+  widens the `sharp` optional-dependency range), `js-yaml` 4.1.1 → 4.3.2
+  (alerts #91/#68/#52), `brace-expansion` 1.1.14 → 1.1.18 / 5.0.9 (alert
+  #70). `eslint-config-next` bumped to `15.5.24` in lockstep with `next`.
+  `pnpm audit` clears from 13 advisories to 0.
+
 ### Added
 
 - **Phase 7 — containerize + deploy pipeline** (#14): multi-stage `Dockerfile`
