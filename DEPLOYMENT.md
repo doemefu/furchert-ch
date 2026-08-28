@@ -129,3 +129,11 @@ returns to the apex.
   CI tag doesn't match `^main-[0-9]{8}T[0-9]{6}$`; check `flux get image policy furchert-ch`.
 - **`www` not redirecting** — the tunnel routes the apex only; `www` needs the
   Cloudflare Redirect Rule (step 5).
+- **"Build and Push" run hangs in `build-and-push`** — observed twice
+  (2026-08-28: run 33155146183 hung ~4 h; run 33213817751 hung 28 min). With
+  `concurrency: cancel-in-progress: false` a hung run blocks every later
+  `main` build. If a merge has not rolled out within ~20 min:
+  `gh run list --workflow "Build and Push" --limit 3`, then
+  `gh run cancel <id>` for the stuck `in_progress` run — the next `main` push
+  (or a manual re-run) rebuilds cleanly (Flux image automation picks up the
+  new `main-<ts>` tag).
