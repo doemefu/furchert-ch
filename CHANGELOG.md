@@ -38,6 +38,8 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- Upgrade TypeScript 5.7.3 → 6.0.3; add ambient `*.css` module declaration
+  required by TS 6 (supersedes #25).
 - **Dashboard cluster/app status labelled "Sample data / Beispieldaten"**
   (`dashboard.sampleData`) — static demo values are no longer presented as live
   telemetry (PR #15 review). Live metrics tracked in #17.
