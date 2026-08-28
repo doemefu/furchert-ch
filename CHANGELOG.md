@@ -38,6 +38,9 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- Upgrade React 18.3.1 → 19.2.7 (react, react-dom, @types/react 19.2.17,
+  @types/react-dom 19.2.4); type-only fix in Icon.tsx for React 19 element
+  typing (supersedes #26).
 - Upgrade TypeScript 5.7.3 → 6.0.3; add ambient `*.css` module declaration
   required by TS 6 (supersedes #25).
 - **Dashboard cluster/app status labelled "Sample data / Beispieldaten"**
