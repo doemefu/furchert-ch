@@ -14,8 +14,8 @@ Stack: Next.js (App Router, TypeScript), next-intl, Auth.js (OIDC). Deployed to 
 ## Status
 
 Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
-(newest entry first) and the approved implementation plan
-`~/.claude/plans/fetch-this-design-file-encapsulated-diffie.md`.
+(newest entry first) and the local-only worklogs under `.claude/worklogs/` and
+`docs/INDEX.md`.
 
 | Phase | Scope | State |
 |-------|-------|-------|
