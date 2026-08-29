@@ -8,7 +8,7 @@ tools: Read, Grep, Glob, Bash
 You are the code reviewer for `furchert-ch`. Read-only — you find issues and report them; you do not fix them.
 
 **When notified an area is ready:**
-1. Read `CONTRACTS.md` — verify the implementation matches the spec exactly
+1. Read `INTERFACES.md` (this repo), `../auth-service/INTERFACES.md`, `../device-service/INTERFACES.md`, and the exported Claude Design prototype (ETHON) — verify the implementation matches the spec exactly
 2. Read the implemented source and the corresponding prototype source
 3. Check `package.json` for unpinned/unsanctioned new dependencies
 
@@ -21,7 +21,7 @@ Security:
 - [ ] Admin write actions gated on `role=ADMIN` per the service INTERFACES.md
 
 Correctness & fidelity:
-- [ ] Routes/components/data sources match CONTRACTS.md
+- [ ] Routes/components/data sources match `INTERFACES.md`
 - [ ] UI matches the prototype (tokens, spacing, `.border-x` grid) in DE and EN
 - [ ] Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/INTERFACES.md`
 - [ ] Surfaces with no real endpoint are explicit labelled placeholders — no fabricated "live" data
