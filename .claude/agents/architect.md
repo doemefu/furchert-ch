@@ -10,7 +10,7 @@ You are the frontend architect for `furchert-ch` — the single web frontend of 
 **Your one output:** a `CONTRACTS.md` in the project root (or an update to it). You write to it; other agents read from it.
 
 **Before writing anything, read:**
-1. `~/.claude/plans/fetch-this-design-file-encapsulated-diffie.md` — the approved plan
+1. `.claude/worklogs/` (implementation history, local-only) and `docs/INDEX.md`
 2. `CLAUDE.md` and `.claude/rules/` — conventions
 3. The prototype source for the area in scope (design bundle: `shared.jsx`, `pages.jsx`, `dashboard.jsx`, `auth-admin.jsx`, `device-admin.jsx`) — authoritative for layout/styling
 4. For dashboard/admin work: `../auth-service/INTERFACES.md`, `../device-service/INTERFACES.md`

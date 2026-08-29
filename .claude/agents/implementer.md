@@ -17,7 +17,7 @@ You are the implementer for `furchert-ch`. You turn the architecture contract an
 - ETHON tokens from `src/styles/globals.css` via CSS variables — no UI kit, no second styling system.
 - User-facing copy via next-intl (`src/i18n/de.json`/`en.json`); static content typed in `src/data/`.
 - Backend calls only from server route handlers (`src/app/api/...`) using cluster-internal FQDNs; never expose the OIDC access token to the browser.
-- No hardcoded secrets — environment variables only; never commit `.env*` with values.
+- No hardcoded secrets — environment variables only; `.env*` files with real values stay out of git.
 - `/automation` and `/automation/scan` stay non-functional mockups (marked in UI + comments).
 - Pin any new dependency to an exact version and only after user approval (flag it, don't add silently).
 
