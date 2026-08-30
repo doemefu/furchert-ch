@@ -1,6 +1,6 @@
 # homelab-furchert-ch — Deployment
 
-> Stub — filled in Phase 7. Mirrors the `auth-service` deployment model.
+> Mirrors the `auth-service` deployment model.
 
 ## Model
 
@@ -142,6 +142,13 @@ returns to the apex.
   CI tag doesn't match `^main-[0-9]{8}T[0-9]{6}$`; check `flux get image policy furchert-ch`.
 - **`www` not redirecting** — the tunnel routes the apex only; `www` needs the
   Cloudflare Redirect Rule (step 5).
+- **Dashboard cluster strip shows "—" / "status unavailable"** — the Prometheus
+  fetch failed or was skipped; this degrades by design and never surfaces as a
+  500. Check `PROMETHEUS_URL` on the deployment, confirm
+  `kubectl -n monitoring get svc kube-prometheus-stack-prometheus` resolves,
+  and check pod logs for `[metrics] Prometheus unavailable: <reason>` /
+  `[metrics] Prometheus queries failed: <cpu|mem|ready|workloads>` (terse
+  message-only lines by design, no stack traces).
 - **"Build and Push" run hangs in `build-and-push`** — observed twice
   (2026-08-28: run 33155146183 hung ~4 h; run 33213817751 hung 28 min). With
   `concurrency: cancel-in-progress: false` a hung run blocks every later

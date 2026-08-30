@@ -1,11 +1,8 @@
 # Contributing — homelab-furchert-ch
 
-> Stub — expanded as tooling lands (Phase 1+).
-
 ## Prerequisites
 
-- Node.js (version pinned via `.nvmrc`/`package.json` engines once Phase 1 lands)
-- `pnpm`
+- Node.js ≥ 22 (`package.json` engines) and pnpm 9.15.4 (`packageManager` field)
 - For dashboard/admin work: `kubectl` access to the cluster, and the `furchert-ch`
   OIDC client registered in `../auth-service`
 
@@ -31,6 +28,14 @@ Reach backends locally:
 kubectl -n apps port-forward svc/auth-service 8080:8080
 kubectl -n apps port-forward svc/device-service 8081:8081
 ```
+
+Optional — live dashboard metrics locally (Prometheus, issue #17):
+```bash
+kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:9090
+```
+Set `PROMETHEUS_URL=http://localhost:19090` in `.env.local` (see
+`.env.local.example`). Left unset, the dashboard skips the fetch immediately
+and renders the honest "unavailable" fallback — fine for non-dashboard work.
 
 ## Process
 

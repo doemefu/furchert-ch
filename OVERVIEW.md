@@ -1,7 +1,5 @@
 # homelab-furchert-ch — Overview
 
-> Stub — filled in parallel with each milestone (see `.claude/rules/documentation-files.md`).
-
 ## What this is
 
 `furchert-ch` is the homelab's single Next.js frontend: a public personal website
@@ -61,7 +59,7 @@ tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.m
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview, admin GUIs wired to backend.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics (see the "Live" bullet below). Admin GUIs for auth-service / device-service are Phase 6, upcoming — not wired yet.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus
