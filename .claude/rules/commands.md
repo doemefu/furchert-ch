@@ -24,7 +24,7 @@ kubectl apply --dry-run=client -k k8s/                     # Validate manifests
 - Requires the `furchert-ch` OIDC client registered in `../auth-service`
   (`application.yaml` + JDBC `psql` seed — see DEPLOYMENT.md) and
   `OIDC_CLIENT_SECRET` + `AUTH_SECRET` (Auth.js v5 names) in `.env.local`
-  (never committed). Callback: `http://localhost:3000/api/auth/callback/furchert-ch`.
+  (kept out of git). Callback: `http://localhost:3000/api/auth/callback/furchert-ch`.
 
 ## Useful
 ```bash
