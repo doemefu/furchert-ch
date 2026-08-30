@@ -32,6 +32,8 @@ spec:
               value: "furchert-ch"
             - name: AUTH_URL
               value: "https://furchert.ch"
+            - name: PROMETHEUS_URL
+              value: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

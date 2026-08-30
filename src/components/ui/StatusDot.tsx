@@ -1,6 +1,6 @@
 // Ported verbatim from the prototype (shared.jsx StatusDot).
 // Colours via --status-* design tokens (globals.css).
-export type DotStatus = 'online' | 'wip' | 'repo';
+export type DotStatus = 'online' | 'wip' | 'repo' | 'offline' | 'unknown';
 
 // Single source for status→colour, also consumed by AppGrid's status text
 // so the dot and its label can never drift apart.
@@ -8,6 +8,8 @@ export const STATUS_COLOR: Record<DotStatus, string> = {
   online: 'var(--status-online)',
   wip: 'var(--status-wip)',
   repo: 'var(--status-repo)',
+  offline: 'var(--status-offline)',
+  unknown: 'var(--status-unknown)',
 };
 
 // `label` makes the dot non-decorative for screen readers (role="img").

@@ -27,13 +27,15 @@
   --tier-high: #22c55e;
   --tier-mid:  #f59e0b;
   --tier-long: #94a3b8;
-  /* Dashboard status palette (online/wip/repo). Visually parallel to
-     --tier-* today, kept semantically separate so a future tier
+  /* Dashboard status palette (online/wip/repo/offline/unknown). Visually
+     parallel to --tier-* today, kept semantically separate so a future tier
      palette refresh doesn't silently change dashboard status colours
      (and vice versa). */
-  --status-online: #22c55e;
-  --status-wip:    #f59e0b;
-  --status-repo:   #94a3b8;
+  --status-online:  #22c55e;
+  --status-wip:     #f59e0b;
+  --status-repo:    #94a3b8;
+  --status-offline: #ef4444;
+  --status-unknown: #64748b;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

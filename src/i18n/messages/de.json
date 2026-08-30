@@ -193,7 +193,6 @@
     "title": "Dashboard",
     "gate": "Zugang beschränkt",
     "signIn": "Anmelden",
-    "sampleData": "Beispieldaten",
     "gatesub": "Dieser Bereich ist dem Homelab-Betreiber vorbehalten. Melde dich über furchert.ch an, um fortzufahren.",
     "signInOidc": "Mit furchert.ch anmelden",
     "signInError": "Anmeldung fehlgeschlagen. Bitte erneut versuchen.",
@@ -216,7 +215,8 @@
     "cluster": {
       "title": "k3s Cluster · {count} Nodes",
       "cpu": "CPU",
-      "mem": "MEM"
+      "mem": "MEM",
+      "unavailable": "Live-Daten derzeit nicht verfügbar"
     },
     "apps": {
       "kicker": "Apps & Services — {online}/{total} online",
@@ -224,7 +224,9 @@
       "status": {
         "online": "Online",
         "wip": "In Arbeit",
-        "repo": "Repo"
+        "repo": "Repo",
+        "offline": "Offline",
+        "unknown": "Unbekannt"
       },
       "repo": "repo",
       "repoAria": "{name}-Repository auf GitHub",

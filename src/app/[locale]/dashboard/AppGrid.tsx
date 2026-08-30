@@ -13,11 +13,9 @@ import type { HomelabApp } from '@/data/homelab-apps';
 const ICON_MAP: Record<string, IconName> = {
   'IoT Platform': 'iot',
   n8n: 'flow',
-  Aemtlifyer: 'users',
   'Personal Agent': 'ai',
   Grafana: 'chart',
-  ArgoCD: 'git',
-  Longhorn: 'db',
+  'Flux CD': 'git',
   'Auth Service': 'lock',
   Karaokee: 'mic',
   'Club Assist': 'boat',
@@ -34,22 +32,6 @@ const sectionLabel: CSSProperties = {
   letterSpacing: '.06em',
   textTransform: 'uppercase',
   color: 'var(--n-50)',
-};
-
-// Honesty marker: the tile status badges are static demo data (no live
-// backend yet — see OVERVIEW "deferred"). Mirrors the automation mock banner
-// so a signed-in user never reads sample status as live telemetry.
-const sampleBadge: CSSProperties = {
-  fontFamily: 'var(--mono)',
-  fontSize: '.6rem',
-  letterSpacing: '.06em',
-  textTransform: 'uppercase',
-  padding: '.1rem .4rem',
-  border: '1px solid rgba(162,167,176,.35)',
-  borderRadius: '2px',
-  color: 'var(--n-50)',
-  marginLeft: '.5rem',
-  whiteSpace: 'nowrap',
 };
 
 const chipBase: CSSProperties = {
@@ -121,11 +103,9 @@ const disabledAction: CSSProperties = {
 export function AppGrid({
   apps,
   kicker,
-  sampleLabel,
 }: {
   apps: HomelabApp[];
   kicker: string;
-  sampleLabel: string;
 }) {
   const t = useTranslations('dashboard.apps');
   const [activeFilter, setActiveFilter] = useState<string>('All');
@@ -147,10 +127,7 @@ export function AppGrid({
           gap: '1rem',
         }}
       >
-        <p style={sectionLabel}>
-          {kicker}
-          <span style={sampleBadge}>{sampleLabel}</span>
-        </p>
+        <p style={sectionLabel}>{kicker}</p>
         <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
           {categories.map((c) => {
             const isActive = activeFilter === c;

@@ -11,12 +11,23 @@ import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
 import { Icon } from '@/components/ui/Icon';
 import { StatusDot } from '@/components/ui/StatusDot';
-import { CLUSTER_NODES } from '@/data/cluster-nodes';
-import { HOMELAB_APPS } from '@/data/homelab-apps';
+import { NODE_HARDWARE } from '@/data/cluster-nodes';
+import { HOMELAB_APPS, type HomelabApp } from '@/data/homelab-apps';
+import { getLiveCluster, type LiveNode } from '@/lib/metrics/cluster';
 import { AppGrid } from './AppGrid';
 import { DateTimeStrip } from './DateTimeStrip';
 import { SignOutButton } from './SignOutButton';
 import { formatDashboardDateTime } from './datetime';
+
+// Rendered when Prometheus is unavailable (or returned nothing): the known
+// node hardware with unknown status and no metrics, in the same
+// control-plane-first order `getLiveCluster()` would produce.
+const FALLBACK_NODES: LiveNode[] = Object.entries(NODE_HARDWARE).map(([name, hardware]) => ({
+  name,
+  type: hardware.type,
+  role: hardware.role,
+  status: 'unknown',
+}));
 
 const monoKicker: CSSProperties = {
   fontFamily: 'var(--mono)',
@@ -32,22 +43,6 @@ const monoLabel: CSSProperties = {
   letterSpacing: '.06em',
   textTransform: 'uppercase',
   color: 'var(--n-50)',
-};
-
-// Honesty marker for the cluster strip: CPU/MEM/status are static demo data
-// (live metrics are deferred — see OVERVIEW). Matches the automation mock so
-// the values are never mistaken for live telemetry.
-const sampleBadge: CSSProperties = {
-  fontFamily: 'var(--mono)',
-  fontSize: '.6rem',
-  letterSpacing: '.06em',
-  textTransform: 'uppercase',
-  padding: '.1rem .4rem',
-  border: '1px solid rgba(162,167,176,.35)',
-  borderRadius: '2px',
-  color: 'var(--n-50)',
-  marginLeft: '.5rem',
-  whiteSpace: 'nowrap',
 };
 
 const privatePillStyle: CSSProperties = {
@@ -79,7 +74,27 @@ const externalBtnStyle: CSSProperties = {
 
 export async function DashboardShell({ locale, userName }: { locale: Locale; userName: string }) {
   const t = await getTranslations('dashboard');
-  const onlineCount = HOMELAB_APPS.filter((a) => a.status === 'online').length;
+
+  // Live Prometheus data, fetched at request time (issue #17). `null` means
+  // Prometheus was unreachable/unusable — the fallback below then renders
+  // the known node hardware with honest "—" placeholders and merges every
+  // workload-backed app tile to 'unknown' instead of showing stale/fabricated
+  // status. A single failed query does not fail the whole result (see
+  // `getLiveCluster`), so this stays resilient to a partial outage.
+  const live = await getLiveCluster();
+  const nodes: LiveNode[] = live?.nodes ?? FALLBACK_NODES;
+  const clusterUnavailable = live === null;
+
+  const apps: HomelabApp[] = HOMELAB_APPS.map((app) => {
+    if (!app.workload) return app;
+    if (live === null) return { ...app, status: 'unknown' };
+    const key = `${app.workload.kind}/${app.workload.namespace}/${app.workload.name}`;
+    const available = live.workloads[key];
+    const status: HomelabApp['status'] = available === undefined ? 'unknown' : available > 0 ? 'online' : 'offline';
+    return { ...app, status };
+  });
+  const onlineCount = apps.filter((a) => a.status === 'online').length;
+
   const now = new Date();
   // Pinned to Europe/Zurich so the SSR paint matches the homelab's physical
   // location regardless of the pod's host TZ (k3s default ≈ UTC); the client
@@ -147,10 +162,20 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
       <div className="container border-x">
         {/* Section B — k3s cluster status strip */}
         <div style={{ borderBottom: '1px solid rgba(162,167,176,.22)', padding: '1.5rem 0' }}>
-          <p style={{ ...monoLabel, marginBottom: '1rem' }}>
-            {t('cluster.title', { count: CLUSTER_NODES.length })}
-            <span style={sampleBadge}>{t('sampleData')}</span>
-          </p>
+          <p style={{ ...monoLabel, marginBottom: '1rem' }}>{t('cluster.title', { count: nodes.length })}</p>
+          {clusterUnavailable && (
+            <p
+              style={{
+                fontFamily: 'var(--mono)',
+                fontSize: '.68rem',
+                letterSpacing: '.03em',
+                color: 'var(--n-50)',
+                marginBottom: '.75rem',
+              }}
+            >
+              {t('cluster.unavailable')}
+            </p>
+          )}
           <div
             style={{
               display: 'grid',
@@ -158,7 +183,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
               gap: '.75rem',
             }}
           >
-            {CLUSTER_NODES.map((node) => (
+            {nodes.map((node) => (
               <div
                 key={node.name}
                 style={{
@@ -177,7 +202,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                    <StatusDot status={node.status === 'Ready' ? 'online' : 'wip'} label={node.status} />
+                    <StatusDot status={node.status} label={t(`apps.status.${node.status}`)} />
                     <span
                       style={{
                         fontFamily: 'var(--mono)',
@@ -218,38 +243,46 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem' }}>
                   {([
-                    { label: t('cluster.cpu'), val: node.cpu },
-                    { label: t('cluster.mem'), val: node.mem },
-                  ] as const).map((m) => (
-                    <div key={m.label}>
-                      <div
-                        style={{
-                          fontFamily: 'var(--mono)',
-                          fontSize: '.6rem',
-                          letterSpacing: '.06em',
-                          textTransform: 'uppercase',
-                          color: 'var(--n-40)',
-                          marginBottom: '.2rem',
-                        }}
-                      >
-                        {m.label}
-                      </div>
-                      <div style={{ height: 4, background: 'var(--n-20)', borderRadius: '2px', overflow: 'hidden' }}>
+                    { label: t('cluster.cpu'), val: node.cpuPct },
+                    { label: t('cluster.mem'), val: node.memPct },
+                  ] as const).map((m) => {
+                    // A missing sample must never render as a 100% bar: an
+                    // invalid CSS width (e.g. `undefined`) falls back to the
+                    // element's natural width, i.e. full. Explicit '0%'
+                    // instead; the label shows '—' so it isn't read as 0%.
+                    const displayLabel = m.val === undefined ? '—' : `${Math.round(m.val)}%`;
+                    const fillWidth = m.val === undefined ? '0%' : `${m.val}%`;
+                    return (
+                      <div key={m.label}>
                         <div
                           style={{
-                            height: '100%',
-                            width: m.val,
-                            background: 'var(--blue-base)',
-                            borderRadius: '2px',
-                            transition: 'width 1s ease',
+                            fontFamily: 'var(--mono)',
+                            fontSize: '.6rem',
+                            letterSpacing: '.06em',
+                            textTransform: 'uppercase',
+                            color: 'var(--n-40)',
+                            marginBottom: '.2rem',
                           }}
-                        />
+                        >
+                          {m.label}
+                        </div>
+                        <div style={{ height: 4, background: 'var(--n-20)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              height: '100%',
+                              width: fillWidth,
+                              background: 'var(--blue-base)',
+                              borderRadius: '2px',
+                              transition: 'width 1s ease',
+                            }}
+                          />
+                        </div>
+                        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
+                          {displayLabel}
+                        </div>
                       </div>
-                      <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
-                        {m.val}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -262,9 +295,8 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
             bundle. */}
         <div style={{ padding: '2rem 0' }}>
           <AppGrid
-            apps={HOMELAB_APPS}
+            apps={apps}
             kicker={t('apps.kicker', { online: onlineCount, total: HOMELAB_APPS.length })}
-            sampleLabel={t('sampleData')}
           />
         </div>
 
