@@ -4,6 +4,26 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Added
+
+- **Live dashboard cluster/app metrics from Prometheus** (#17): `/dashboard`
+  now fetches per-node CPU/MEM/ready-status and workload-availability from
+  `kube-prometheus-stack-prometheus` server-side at request time
+  (`src/lib/metrics/{prometheus,cluster}.ts`, new optional `metrics.env.ts`,
+  `PROMETHEUS_URL`) — no new dependency, no new public API surface, the
+  Prometheus URL never reaches the browser. Four instant queries run via
+  `Promise.allSettled` with a 2.5 s timeout each; a single failed query
+  degrades gracefully, an unreachable Prometheus or an empty result renders
+  the known node hardware with honest "—" placeholders, `unknown` status
+  dots, and a visible unavailable note instead of fabricating data. The
+  `dashboard.sampleData` badge is gone (superseded by real telemetry). Fixed
+  along the way against the live cluster: dropped two app tiles with no
+  backing deployment (Aemtlifyer, Longhorn — neither is exposed), replaced
+  the non-existent "ArgoCD" tile with the real Flux CD GitOps controller,
+  demoted "Personal Agent" to a static repo link (no deployment), and fixed
+  the dead IoT Platform URL (`iot.furchert.ch` → `device.furchert.ch`). New
+  `--status-offline` / `--status-unknown` design tokens.
+
 ### Changed
 
 - Document the Build-and-Push hang recovery and the code-review-bot situation
