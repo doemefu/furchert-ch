@@ -15,19 +15,32 @@ All notable changes per milestone. Newest first.
   `Promise.allSettled` with a 2.5 s timeout each; a single failed query
   degrades gracefully, an unreachable Prometheus or an empty result renders
   the known node hardware with honest "—" placeholders, `unknown` status
-  dots, and a visible unavailable note instead of fabricating data. The
-  `dashboard.sampleData` badge is gone (superseded by real telemetry). Fixed
-  along the way against the live cluster: dropped two app tiles with no
-  backing deployment (Aemtlifyer, Longhorn — neither is exposed), replaced
-  the non-existent "ArgoCD" tile with the real Flux CD GitOps controller,
-  demoted "Personal Agent" to a static repo link (no deployment), and fixed
-  the dead IoT Platform URL (`iot.furchert.ch` → `device.furchert.ch`). New
-  `--status-offline` / `--status-unknown` design tokens.
+  dots, and a visible unavailable note instead of fabricating data. When any
+  app tile's status is genuinely unknown (Prometheus down or the workloads
+  query specifically failed), the apps kicker switches from the precise
+  "x/9 online" count to an honest "status unavailable" line instead of
+  claiming a fabricated count. New `--status-offline` / `--status-unknown`
+  design tokens.
 
 ### Changed
 
+- **Club Assist tile is now workload-backed** (#17): was static `wip`, now
+  reflects the live `open-webui` deployment status (it has been live at
+  club.furchert.ch for a while).
+- Fixed the dead IoT Platform tile URL (`iot.furchert.ch` →
+  `device.furchert.ch`) and replaced the non-existent "ArgoCD" tile with the
+  real Flux CD GitOps controller (#17).
+- Demoted "Personal Agent" to a static repo link — no backing deployment
+  (#17).
+- The `dashboard.sampleData` badge is gone, superseded by the real telemetry
+  above (#17).
 - Document the Build-and-Push hang recovery and the code-review-bot situation
   (DEPLOYMENT.md, CONTRIBUTING.md).
+
+### Removed
+
+- Dropped two app tiles with no backing deployment: Aemtlifyer (repo
+  archived) and Longhorn (UI not routed anywhere) (#17).
 
 ### Security
 

@@ -220,6 +220,7 @@
     },
     "apps": {
       "kicker": "Apps & Services — {online}/{total} online",
+      "kickerUnknown": "Apps & Services — {total} Services · Status nicht verfügbar",
       "filterAll": "Alle",
       "status": {
         "online": "Online",

@@ -24,11 +24,18 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
 `https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service /
-device-service (Phase 6).
-
-| Env var | Purpose |
-|---------|---------|
-| `PROMETHEUS_URL` | Base URL of `kube-prometheus-stack-prometheus` (issue #17), read server-side only for the `/dashboard` live cluster/app metrics. Defaults to `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090` if unset — set explicitly in `k8s/deployment.yaml` anyway (explicit over implicit). Optional by design: an unreachable/unset Prometheus degrades the dashboard to an honest fallback instead of failing the build or the request. For local dev, port-forward it first: `kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:9090`, then set `PROMETHEUS_URL=http://localhost:19090` in `.env.local`. Left unset in dev, the dashboard skips the fetch immediately (no 2.5 s stall on an unreachable cluster-internal FQDN). |
+device-service (Phase 6); `PROMETHEUS_URL` — base URL of
+`kube-prometheus-stack-prometheus` (issue #17), read server-side only for the
+`/dashboard` live cluster/app metrics. Defaults to
+`http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
+if unset — set explicitly in `k8s/deployment.yaml` anyway (explicit over
+implicit). Optional by design: an unreachable/unset Prometheus degrades the
+dashboard to an honest fallback instead of failing the build or the request.
+For local dev, port-forward it first:
+`kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:9090`,
+then set `PROMETHEUS_URL=http://localhost:19090` in `.env.local`. Left unset
+in dev, the dashboard skips the fetch immediately (no 2.5 s stall on an
+unreachable cluster-internal FQDN).
 
 **Set `AUTH_URL=https://furchert.ch` in production:**
 Auth.js infers it for callbacks behind the tunnel when `trustHost` is set, but

@@ -8,9 +8,12 @@ export interface NodeHardware {
   role: 'control-plane' | 'worker';
 }
 
+// Declaration order matches the live sort (control-plane first, then
+// alphabetical) so `DashboardShell`'s `Object.entries(NODE_HARDWARE)`
+// fallback list needs no extra sort step.
 export const NODE_HARDWARE: Record<string, NodeHardware> = {
   raspi5: { type: 'Raspberry Pi 5', role: 'control-plane' },
-  raspi4: { type: 'Raspberry Pi 4', role: 'worker' },
   mba1: { type: 'MacBook Air 2020', role: 'worker' },
   mba2: { type: 'MacBook Air 2019', role: 'worker' },
+  raspi4: { type: 'Raspberry Pi 4', role: 'worker' },
 };

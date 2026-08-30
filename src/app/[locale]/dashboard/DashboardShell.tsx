@@ -94,6 +94,11 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
     return { ...app, status };
   });
   const onlineCount = apps.filter((a) => a.status === 'online').length;
+  // Covers both `live === null` and a fulfilled-but-workloads-rejected
+  // partial outage: either way, some tile statuses are genuinely unknown, so
+  // the kicker must not claim a precise "x/9 online" count (that would read
+  // as fabricated telemetry — see plan-reviewer finding M1).
+  const unknownCount = apps.filter((a) => a.status === 'unknown').length;
 
   const now = new Date();
   // Pinned to Europe/Zurich so the SSR paint matches the homelab's physical
@@ -246,12 +251,14 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                     { label: t('cluster.cpu'), val: node.cpuPct },
                     { label: t('cluster.mem'), val: node.memPct },
                   ] as const).map((m) => {
-                    // A missing sample must never render as a 100% bar: an
-                    // invalid CSS width (e.g. `undefined`) falls back to the
-                    // element's natural width, i.e. full. Explicit '0%'
-                    // instead; the label shows '—' so it isn't read as 0%.
-                    const displayLabel = m.val === undefined ? '—' : `${Math.round(m.val)}%`;
-                    const fillWidth = m.val === undefined ? '0%' : `${m.val}%`;
+                    // A missing/non-numeric sample must never render as a
+                    // 100% bar: an invalid CSS width (e.g. `undefined`)
+                    // falls back to the element's natural width, i.e. full.
+                    // Explicit '0%' instead; the label shows '—' so it isn't
+                    // read as 0%.
+                    const hasVal = typeof m.val === 'number' && Number.isFinite(m.val);
+                    const displayLabel = hasVal ? `${Math.round(m.val)}%` : '—';
+                    const fillWidth = hasVal ? `${m.val}%` : '0%';
                     return (
                       <div key={m.label}>
                         <div
@@ -296,7 +303,11 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
         <div style={{ padding: '2rem 0' }}>
           <AppGrid
             apps={apps}
-            kicker={t('apps.kicker', { online: onlineCount, total: HOMELAB_APPS.length })}
+            kicker={
+              unknownCount > 0
+                ? t('apps.kickerUnknown', { total: HOMELAB_APPS.length })
+                : t('apps.kicker', { online: onlineCount, total: HOMELAB_APPS.length })
+            }
           />
         </div>
 

@@ -162,7 +162,10 @@ export function AppGrid({
         {filtered.map((app) => {
           const iconName = ICON_MAP[app.name] ?? 'code';
           const isInternal = INTERNAL_APPS.has(app.name);
-          const isOnline = app.status === 'online';
+          // 'unknown' (Prometheus unavailable) must not kill a link that may
+          // well still be working — only genuinely known-bad/non-live
+          // statuses disable the Open action.
+          const canOpen = app.status !== 'offline' && app.status !== 'wip' && app.status !== 'repo';
 
           return (
             <div
@@ -261,7 +264,7 @@ export function AppGrid({
                     <button type="button" disabled style={disabledAction}>
                       {t('manage')} <span style={{ color: 'var(--n-40)' }}>· {t('soon')}</span>
                     </button>
-                  ) : isOnline ? (
+                  ) : canOpen ? (
                     <a
                       href={app.url}
                       target="_blank"
@@ -276,9 +279,9 @@ export function AppGrid({
                       {t('open')} <Icon name="ext" size={10} />
                     </a>
                   ) : (
-                    // Offline tile: render disabled (no nav) instead of an
-                    // anchor with cursor:default. Status badge already
-                    // signals why; AT announces the disabled state.
+                    // offline / wip / repo tile: render disabled (no nav)
+                    // instead of an anchor with cursor:default. Status badge
+                    // already signals why; AT announces the disabled state.
                     <button type="button" disabled style={disabledAction}>
                       {t('open')} <Icon name="ext" size={10} />
                     </button>

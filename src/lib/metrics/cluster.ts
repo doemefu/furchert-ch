@@ -21,7 +21,11 @@ export interface LiveNode {
 export interface LiveCluster {
   nodes: LiveNode[];
   /** Keyed `${kind}/${namespace}/${name}` → available replica count. */
-  workloads: Record<string, number>;
+  workloads: Record<string, number | undefined>;
+  /** True only when the workloads query itself fulfilled — lets callers
+   *  distinguish "no workload rows" from "the query failed", so a
+   *  workload-backed tile isn't reported as fabricated 'offline'/'online'. */
+  workloadsAvailable: boolean;
 }
 
 // nodename carries the human-readable node name (node_uname_info joined in
@@ -63,6 +67,23 @@ export async function getLiveCluster(): Promise<LiveCluster | null> {
     return unavailable('all queries failed');
   }
 
+  // Partial failure: at least one query came through, so the fallback UI is
+  // not triggered — but log which ones didn't, once, tersely (message text
+  // only, no stack, no URL).
+  const rejectedQueries = (
+    [
+      [cpuRes, 'cpu'],
+      [memRes, 'mem'],
+      [readyRes, 'ready'],
+      [workloadsRes, 'workloads'],
+    ] as const
+  )
+    .filter(([res]) => res.status === 'rejected')
+    .map(([, label]) => label);
+  if (rejectedQueries.length > 0) {
+    console.warn(`[metrics] Prometheus queries failed: ${rejectedQueries.join(', ')}`);
+  }
+
   const cpuByNode = new Map<string, number>();
   if (cpuRes.status === 'fulfilled') {
     for (const s of cpuRes.value) {
@@ -98,7 +119,7 @@ export async function getLiveCluster(): Promise<LiveCluster | null> {
     const aControlPlane = NODE_HARDWARE[a]?.role === 'control-plane';
     const bControlPlane = NODE_HARDWARE[b]?.role === 'control-plane';
     if (aControlPlane !== bControlPlane) return aControlPlane ? -1 : 1;
-    return a.localeCompare(b);
+    return a < b ? -1 : a > b ? 1 : 0;
   });
 
   const nodes: LiveNode[] = sortedNames.map((name) => {
@@ -115,7 +136,7 @@ export async function getLiveCluster(): Promise<LiveCluster | null> {
     };
   });
 
-  const workloads: Record<string, number> = {};
+  const workloads: Record<string, number | undefined> = {};
   if (workloadsRes.status === 'fulfilled') {
     for (const s of workloadsRes.value) {
       const { namespace, deployment } = s.metric;
@@ -125,5 +146,5 @@ export async function getLiveCluster(): Promise<LiveCluster | null> {
     }
   }
 
-  return { nodes, workloads };
+  return { nodes, workloads, workloadsAvailable: workloadsRes.status === 'fulfilled' };
 }
