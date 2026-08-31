@@ -1,6 +1,6 @@
 # homelab-furchert-ch — Deployment
 
-> Stub — filled in Phase 7. Mirrors the `auth-service` deployment model.
+> Mirrors the `auth-service` deployment model.
 
 ## Model
 
@@ -24,7 +24,20 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
 `https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service /
-device-service (Phase 6). **Set `AUTH_URL=https://furchert.ch` in production:**
+device-service (Phase 6); `PROMETHEUS_URL` — base URL of
+`kube-prometheus-stack-prometheus` (issue #17), read server-side only for the
+`/dashboard` live cluster/app metrics. Defaults to
+`http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
+if unset — set explicitly in `k8s/deployment.yaml` anyway (explicit over
+implicit). Optional by design: an unreachable/unset Prometheus degrades the
+dashboard to an honest fallback instead of failing the build or the request.
+For local dev, port-forward it first:
+`kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:9090`,
+then set `PROMETHEUS_URL=http://localhost:19090` in `.env.local`. Left unset
+in dev, the dashboard skips the fetch immediately (no 2.5 s stall on an
+unreachable cluster-internal FQDN).
+
+**Set `AUTH_URL=https://furchert.ch` in production:**
 Auth.js infers it for callbacks behind the tunnel when `trustHost` is set, but
 the federated-logout route uses it to build `post_logout_redirect_uri`. If
 unset, it falls back to the request origin, which behind Cloudflare Tunnel →
@@ -129,6 +142,13 @@ returns to the apex.
   CI tag doesn't match `^main-[0-9]{8}T[0-9]{6}$`; check `flux get image policy furchert-ch`.
 - **`www` not redirecting** — the tunnel routes the apex only; `www` needs the
   Cloudflare Redirect Rule (step 5).
+- **Dashboard cluster strip shows "—" / "status unavailable"** — the Prometheus
+  fetch failed or was skipped; this degrades by design and never surfaces as a
+  500. Check `PROMETHEUS_URL` on the deployment, confirm
+  `kubectl -n monitoring get svc kube-prometheus-stack-prometheus` resolves,
+  and check pod logs for `[metrics] Prometheus unavailable: <reason>` /
+  `[metrics] Prometheus queries failed: <cpu|mem|ready|workloads>` (terse
+  message-only lines by design, no stack traces).
 - **"Build and Push" run hangs in `build-and-push`** — observed twice
   (2026-08-28: run 33155146183 hung ~4 h; run 33213817751 hung 28 min). With
   `concurrency: cancel-in-progress: false` a hung run blocks every later

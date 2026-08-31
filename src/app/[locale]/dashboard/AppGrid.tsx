@@ -13,11 +13,9 @@ import type { HomelabApp } from '@/data/homelab-apps';
 const ICON_MAP: Record<string, IconName> = {
   'IoT Platform': 'iot',
   n8n: 'flow',
-  Aemtlifyer: 'users',
   'Personal Agent': 'ai',
   Grafana: 'chart',
-  ArgoCD: 'git',
-  Longhorn: 'db',
+  'Flux CD': 'git',
   'Auth Service': 'lock',
   Karaokee: 'mic',
   'Club Assist': 'boat',
@@ -34,22 +32,6 @@ const sectionLabel: CSSProperties = {
   letterSpacing: '.06em',
   textTransform: 'uppercase',
   color: 'var(--n-50)',
-};
-
-// Honesty marker: the tile status badges are static demo data (no live
-// backend yet — see OVERVIEW "deferred"). Mirrors the automation mock banner
-// so a signed-in user never reads sample status as live telemetry.
-const sampleBadge: CSSProperties = {
-  fontFamily: 'var(--mono)',
-  fontSize: '.6rem',
-  letterSpacing: '.06em',
-  textTransform: 'uppercase',
-  padding: '.1rem .4rem',
-  border: '1px solid rgba(162,167,176,.35)',
-  borderRadius: '2px',
-  color: 'var(--n-50)',
-  marginLeft: '.5rem',
-  whiteSpace: 'nowrap',
 };
 
 const chipBase: CSSProperties = {
@@ -121,11 +103,9 @@ const disabledAction: CSSProperties = {
 export function AppGrid({
   apps,
   kicker,
-  sampleLabel,
 }: {
   apps: HomelabApp[];
   kicker: string;
-  sampleLabel: string;
 }) {
   const t = useTranslations('dashboard.apps');
   const [activeFilter, setActiveFilter] = useState<string>('All');
@@ -147,10 +127,7 @@ export function AppGrid({
           gap: '1rem',
         }}
       >
-        <p style={sectionLabel}>
-          {kicker}
-          <span style={sampleBadge}>{sampleLabel}</span>
-        </p>
+        <p style={sectionLabel}>{kicker}</p>
         <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
           {categories.map((c) => {
             const isActive = activeFilter === c;
@@ -185,7 +162,10 @@ export function AppGrid({
         {filtered.map((app) => {
           const iconName = ICON_MAP[app.name] ?? 'code';
           const isInternal = INTERNAL_APPS.has(app.name);
-          const isOnline = app.status === 'online';
+          // 'unknown' (Prometheus unavailable) must not kill a link that may
+          // well still be working — only genuinely known-bad/non-live
+          // statuses disable the Open action.
+          const canOpen = app.status !== 'offline' && app.status !== 'wip' && app.status !== 'repo';
 
           return (
             <div
@@ -284,7 +264,7 @@ export function AppGrid({
                     <button type="button" disabled style={disabledAction}>
                       {t('manage')} <span style={{ color: 'var(--n-40)' }}>· {t('soon')}</span>
                     </button>
-                  ) : isOnline ? (
+                  ) : canOpen ? (
                     <a
                       href={app.url}
                       target="_blank"
@@ -299,9 +279,9 @@ export function AppGrid({
                       {t('open')} <Icon name="ext" size={10} />
                     </a>
                   ) : (
-                    // Offline tile: render disabled (no nav) instead of an
-                    // anchor with cursor:default. Status badge already
-                    // signals why; AT announces the disabled state.
+                    // offline / wip / repo tile: render disabled (no nav)
+                    // instead of an anchor with cursor:default. Status badge
+                    // already signals why; AT announces the disabled state.
                     <button type="button" disabled style={disabledAction}>
                       {t('open')} <Icon name="ext" size={10} />
                     </button>

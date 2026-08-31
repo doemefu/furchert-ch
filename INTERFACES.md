@@ -1,8 +1,9 @@
 # homelab-furchert-ch — Interfaces
 
 > This frontend only **consumes** interfaces; it exposes none for other services.
-> §1 (OIDC client) is **implemented** as of Phase 4. §2 (backend REST proxies)
-> lands in Phase 6.
+> §1 (OIDC client) is **implemented** as of Phase 4. §2's Prometheus metrics
+> source is **implemented** as of issue #17; the auth-service/device-service
+> REST proxies land in Phase 6.
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -47,3 +48,21 @@ Surfaces in the admin GUIs without a backing endpoint are rendered as clearly
 labelled placeholders — never fabricated data.
 
 (Exact endpoint/shape table added in Phase 6.)
+
+### Prometheus — `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090` (issue #17)
+
+Read-only, unauthenticated (plain HTTP, no NetworkPolicy restricting `apps` →
+`monitoring`), consumed only from `DashboardShell` (a Server Component) via
+`src/lib/metrics/cluster.ts` — never through a route handler and never
+reachable from the browser. Four instant queries (`POST /api/v1/query`,
+2.5 s timeout each, run in parallel) power the `/dashboard` cluster strip and
+the workload-backed app tiles:
+
+- Per-node CPU %: `(100 * (1 - avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])))) * on(instance) group_left(nodename) node_uname_info`
+- Per-node MEM %: `(100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * on(instance) group_left(nodename) node_uname_info`
+- Node ready state: `kube_node_status_condition{condition="Ready",status="true"}`
+- Deployment availability: `kube_deployment_status_replicas_available{namespace=~"apps|monitoring|flux-system"}`
+
+Any failure (unreachable, timeout, malformed response, empty result) degrades
+the dashboard to an honest "unavailable" fallback instead of fabricating
+data — see `OVERVIEW.md`.

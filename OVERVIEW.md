@@ -1,7 +1,5 @@
 # homelab-furchert-ch — Overview
 
-> Stub — filled in parallel with each milestone (see `.claude/rules/documentation-files.md`).
-
 ## What this is
 
 `furchert-ch` is the homelab's single Next.js frontend: a public personal website
@@ -61,15 +59,18 @@ tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.m
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview, admin GUIs wired to backend.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics (see the "Live" bullet below). Admin GUIs for auth-service / device-service are Phase 6, upcoming — not wired yet.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
-- **Sample (labelled, not live):** the dashboard cluster strip (CPU/MEM/status)
-  and app/service status badges are static demo data, shown with a visible
-  "Sample data / Beispieldaten" badge until real telemetry lands (issue #17).
+- **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
+  and workload-backed app/service status badges are fetched from Prometheus
+  server-side at request time (see `INTERFACES.md` §2). When Prometheus is
+  unreachable or returns nothing, the dashboard shows the known node hardware
+  with honest "—" placeholders, `unknown` status dots, and a visible
+  "unavailable" note — never fabricated numbers.
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard, rate
-  limiting/Turnstile, n8n notifications, live cluster metrics, WebSocket device
-  stream. Tracked here as work progresses.
+  limiting/Turnstile, n8n notifications, WebSocket device stream. Tracked
+  here as work progresses.
 
 (Detailed feature/route descriptions added per milestone.)

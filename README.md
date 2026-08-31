@@ -4,8 +4,9 @@ The single web frontend for the doemefu homelab — Dominic Furchert's personal 
 **and** the authenticated control surface for the cluster.
 
 - **Public site:** Home · About · IT · Rowing · Projects · Automation · Contact (DE/EN)
-- **Private `/dashboard`** (OIDC-gated via `auth.furchert.ch`): homelab overview +
-  integrated admin GUIs for `homelab-auth-service` and `homelab-device-service`.
+- **Private `/dashboard`** (OIDC-gated via `auth.furchert.ch`): homelab overview
+  with live cluster/app metrics from Prometheus (server-side); integrated admin
+  GUIs for `homelab-auth-service` and `homelab-device-service` are Phase 6, upcoming.
 - **`/automation` (incl. `/automation/scan`) is a visual mockup only** — no backend.
 
 Stack: Next.js (App Router, TypeScript), next-intl, Auth.js (OIDC). Deployed to k3s
@@ -13,9 +14,10 @@ Stack: Next.js (App Router, TypeScript), next-intl, Auth.js (OIDC). Deployed to 
 
 ## Status
 
-Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
-(newest entry first) and the local-only worklogs under `.claude/worklogs/` and
-`docs/INDEX.md`.
+Live at https://furchert.ch, deployed via Flux image automation from
+`ghcr.io/doemefu/furchert-ch`. Build order and current state: see
+`.claude/memory/MEMORY.md` (newest entry first) and the local-only worklogs
+under `.claude/worklogs/` and `docs/INDEX.md`.
 
 | Phase | Scope | State |
 |-------|-------|-------|
@@ -26,7 +28,8 @@ Bootstrapping. Build order and current state: see `.claude/memory/MEMORY.md`
 | 4 | Real OIDC dashboard auth | done |
 | 5 | Dashboard shell | done |
 | 6 | Integrated admin GUIs | pending |
-| 7 | Deployment (Flux CD + Cloudflare Tunnel) | pending |
+| 7 | Deployment (Flux CD + Cloudflare Tunnel) | done |
+| — | Live dashboard metrics from Prometheus (#17) | done |
 
 ## Documentation
 
