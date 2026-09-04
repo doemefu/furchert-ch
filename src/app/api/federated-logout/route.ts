@@ -16,11 +16,27 @@ export const dynamic = 'force-dynamic';
 
 // Expires the local session cookie plus every chunked variant (`.0`, `.1`, …)
 // Auth.js emits when the JWT exceeds ~4 KB. Shared by both logout paths below
-// (IdP round-trip and the no-id_token fallback) so cookie-clearing can't drift
-// between them (#30). Returns the number of chunk cookies cleared, purely for
-// the size-creep warning at the call site.
-function clearSessionCookies(res: NextResponse, req: NextRequest, cookieName: string): number {
-  const expired = { path: '/', expires: new Date(0) };
+// (IdP round-trip and the no-id_token fallback) so cookie-clearing — and the
+// size-creep warning below — can't drift between them (#30).
+//
+// `secure` MUST match how Auth.js originally set the cookie (see `secureCookie`
+// at the call site) and be `true` whenever `cookieName` carries the `__Secure-`
+// prefix: the cookie-prefix rule (RFC 6265bis §4.1.3) makes browsers reject
+// *any* Set-Cookie for a `__Secure-`-named cookie — including this deletion —
+// if it lacks the `Secure` attribute. Without it, in production the browser
+// silently drops the clearing attempt and the original session cookie stays
+// valid, so the user is still signed in after what looks like a logout (found
+// in review — pre-existing bug, now fixed here since both logout paths route
+// through this helper). `httpOnly`/`sameSite` are set to match Auth.js's own
+// cookie options too, though only `secure` is required by the prefix rule.
+function clearSessionCookies(res: NextResponse, req: NextRequest, cookieName: string, secure: boolean): void {
+  const expired = {
+    path: '/',
+    expires: new Date(0),
+    httpOnly: true,
+    sameSite: 'lax' as const,
+    secure,
+  };
   res.cookies.set(cookieName, '', expired);
   const chunkPrefix = `${cookieName}.`;
   let chunkCount = 0;
@@ -30,7 +46,13 @@ function clearSessionCookies(res: NextResponse, req: NextRequest, cookieName: st
       chunkCount++;
     }
   }
-  return chunkCount;
+  if (chunkCount > 1) {
+    // More than one chunk means the JWT is creeping above ~4 KB. Worth
+    // knowing because it's the warning sign before logout robustness starts
+    // depending on cookie-clearing edge cases. Logged from here (not the call
+    // sites) so both logout paths get it, not just the IdP round-trip one.
+    console.warn(`[federated-logout] cleared ${chunkCount} session cookie chunks`);
+  }
 }
 
 // Logout mutates session state, so it is exposed as POST only (a GET could be
@@ -88,7 +110,7 @@ export async function POST(req: NextRequest) {
       // furchert.ch (#30). End the local session only and go home.
       console.warn('[federated-logout] no idToken on JWT; ending local session only (no IdP redirect)');
       const res = NextResponse.redirect(new URL('/', req.url));
-      clearSessionCookies(res, req, cookieName);
+      clearSessionCookies(res, req, cookieName, secureCookie);
       return res;
     }
 
@@ -103,13 +125,7 @@ export async function POST(req: NextRequest) {
     logoutUrl.searchParams.set('post_logout_redirect_uri', expectedOrigin);
 
     const res = NextResponse.redirect(logoutUrl);
-    const chunkCount = clearSessionCookies(res, req, cookieName);
-    if (chunkCount > 1) {
-      // More than one chunk means the JWT is creeping above ~4 KB. Worth
-      // knowing because it's the warning sign before logout robustness starts
-      // depending on cookie-clearing edge cases.
-      console.warn(`[federated-logout] cleared ${chunkCount} session cookie chunks`);
-    }
+    clearSessionCookies(res, req, cookieName, secureCookie);
     return res;
   } catch (err) {
     console.error('[federated-logout] failed', err);

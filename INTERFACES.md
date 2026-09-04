@@ -25,9 +25,12 @@
   (fail-closed to `USER`). **Access/ID tokens are kept server-side only** and
   never reach the client. Phase 4 persists only the `id_token` (for logout);
   the `access_token` is (re)introduced in Phase 6 when admin proxying needs it.
-- Session `maxAge` is **7 days** (#30), matching auth-service's refresh-token
-  TTL / `oauth2_authorization` purge window (`../auth-service/INTERFACES.md`
-  §1 "RP-Initiated Logout" and "Important Notes" #2). `updateAge` is left at
+- Session `maxAge` is **7 days** (#30), matching auth-service's
+  `app.jwt.refresh-token-expiry: 604800000` (ms; `auth-service/src/main/
+  resources/application.yaml`) — the refresh-token TTL / `oauth2_authorization`
+  purge window (`../auth-service/INTERFACES.md` §1 "RP-Initiated Logout" and
+  "Important Notes" #2). **Keep these two values in sync** — changing one
+  without the other reintroduces the #30 mismatch. `updateAge` is left at
   the Auth.js default — a continuously-active session still slides its `exp`
   forward, which is a documented limitation, not fixed here: the resulting
   stale-but-present `id_token_hint` is still sent to the IdP at logout and is
