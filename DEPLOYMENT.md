@@ -48,6 +48,13 @@ registered `post-logout-redirect-uris` value, i.e. `https://furchert.ch`).
 > and `AUTH_URL` (not `NEXTAUTH_URL`). Local dev: copy `.env.local.example` →
 > `.env.local` (gitignored).
 
+**Session `maxAge` must stay in sync with auth-service (#30):**
+`src/auth.config.ts`'s `session.maxAge` (7 days, hardcoded) is hand-synced
+with auth-service's `app.jwt.refresh-token-expiry`
+(`auth-service/src/main/resources/application.yaml`, `604800000` ms). If you
+change one when deploying a release, change the other in the same release —
+see `INTERFACES.md` §1.
+
 ### Cross-repo prerequisite — register the `furchert-ch` client in `../auth-service`
 
 Apply in the **auth-service** repo (its own workflow; you commit it there) and
@@ -128,8 +135,12 @@ curl -fsS https://furchert.ch/api/health      # {"status":"ok"}
 curl -I https://www.furchert.ch               # 301 → https://furchert.ch
 ```
 
-Then smoke `/dashboard`: OIDC login at auth.furchert.ch round-trips and logout
-returns to the apex.
+Then smoke `/dashboard`: OIDC login at auth.furchert.ch round-trips; logout
+redirects to the apex, and reloading `/dashboard` immediately afterward
+prompts for sign-in again — confirming the session cookie was actually
+cleared, not just that the redirect fired (a redirect-only check would have
+passed the pre-#30 `__Secure-` cookie bug below while leaving the user
+signed in).
 
 ### Troubleshooting
 
@@ -142,6 +153,16 @@ returns to the apex.
   CI tag doesn't match `^main-[0-9]{8}T[0-9]{6}$`; check `flux get image policy furchert-ch`.
 - **`www` not redirecting** — the tunnel routes the apex only; `www` needs the
   Cloudflare Redirect Rule (step 5).
+- **Logout redirects to `/` but the user is still signed in (production
+  only)** — historical bug, fixed in #30: the session-cookie deletion in
+  `/api/federated-logout` was missing the `secure` attribute on the
+  `__Secure-`-prefixed cookie name. Per the cookie-prefix rule (RFC 6265bis
+  §4.1.3), browsers silently reject a `Set-Cookie` deletion without it, so
+  the original cookie stayed valid. Fixed via the shared
+  `clearSessionCookies()` helper (`src/app/api/federated-logout/route.ts`),
+  which derives `secure` from `secureCookie`/`NODE_ENV`. If this regresses,
+  check that both call sites still pass the correct `secure` value to that
+  helper.
 - **Dashboard cluster strip shows "—" / "status unavailable"** — the Prometheus
   fetch failed or was skipped; this degrades by design and never surfaces as a
   500. Check `PROMETHEUS_URL` on the deployment, confirm

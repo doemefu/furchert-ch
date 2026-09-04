@@ -107,9 +107,16 @@ export async function POST(req: NextRequest) {
       // the generic 400 invalid_token error page and leaves the IdP session
       // untouched (../auth-service/INTERFACES.md §1), so redirecting there
       // would just strand the user on that page instead of back on
-      // furchert.ch (#30). End the local session only and go home.
+      // furchert.ch (#30). End the local session only and go home. Note this
+      // cannot end auth-service's own browser session either way — same
+      // outcome as before (a missing hint got a 400 there too) — see
+      // INTERFACES.md.
       console.warn('[federated-logout] no idToken on JWT; ending local session only (no IdP redirect)');
-      const res = NextResponse.redirect(new URL('/', req.url));
+      // Build from `expectedOrigin`, not `req.url` — behind Cloudflare Tunnel
+      // → Traefik the request's own origin can resolve to an internal
+      // cluster/localhost address (see the `post_logout_redirect_uri` comment
+      // below), which the browser can't reach.
+      const res = NextResponse.redirect(new URL('/', expectedOrigin));
       clearSessionCookies(res, req, cookieName, secureCookie);
       return res;
     }

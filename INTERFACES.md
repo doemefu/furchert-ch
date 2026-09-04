@@ -43,6 +43,10 @@
   by auth-service), the route skips the IdP round-trip entirely — it only
   clears the local cookie and redirects to `/`, instead of sending a request
   that would only get a generic `400 invalid_token` page from the IdP (#30).
+  In that case auth-service's own browser session cannot be ended from this
+  RP either way (same outcome as before this change, since a missing hint
+  got a `400` there too, not a session end) — a later sign-in may SSO
+  silently against the IdP until that session times out on its own.
 - The matching client must be registered in `../auth-service` (see
   `DEPLOYMENT.md` for the ready-to-apply diff + the JDBC `psql` seed note);
   secret env `FURCHERT_CH_CLIENT_SECRET`.

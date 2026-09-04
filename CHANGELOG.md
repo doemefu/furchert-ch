@@ -46,16 +46,27 @@ All notable changes per milestone. Newest first.
 
 - **Dashboard session lifetime aligned with the IdP's authorization retention**
   (#30): Auth.js session `maxAge` set to 7 days (was unset — the Auth.js
-  default of 30 days), matching auth-service's refresh-token TTL / the window
-  after which its `TokenCleanupScheduler` purges the `oauth2_authorization`
-  row an `id_token_hint` needs to resolve. `updateAge` stays at the Auth.js
-  default (sliding still applies for an active session — documented
-  limitation, not fixed here). `/api/federated-logout` now skips the IdP
-  round-trip entirely when the session JWT carries no `id_token` at all (it
-  clears the local cookie and redirects to `/` instead of sending a request
-  that `id_token_hint`-required `/connect/logout` would only answer with a
-  generic `400 invalid_token` page); the chunk-aware cookie-clearing logic is
-  now a shared helper used by both logout paths.
+  default of 30 days), matching auth-service's `app.jwt.refresh-token-expiry`
+  (604800000 ms) / the window after which its `TokenCleanupScheduler` purges
+  the `oauth2_authorization` row an `id_token_hint` needs to resolve — the two
+  values must be changed together. `updateAge` stays at the Auth.js default
+  (sliding still applies for an active session — documented limitation, not
+  fixed here). `/api/federated-logout` now skips the IdP round-trip entirely
+  when the session JWT carries no `id_token` at all (it clears the local
+  cookie and redirects to `/` instead of sending a request that
+  `id_token_hint`-required `/connect/logout` would only answer with a generic
+  `400 invalid_token` page); in that case auth-service's own browser session
+  cannot be ended from this RP either way — same outcome as before this
+  change, since a missing hint got a `400` there too, not a session end — so
+  a later sign-in may SSO silently against the IdP until that session times
+  out on its own. The chunk-aware cookie-clearing logic is now a shared
+  `clearSessionCookies()` helper used by both logout paths — **this also
+  fixes a pre-existing production bug**: the session-cookie deletion was
+  missing the `secure` attribute on the `__Secure-`-prefixed cookie name;
+  browsers require `Secure` on any `Set-Cookie` for a `__Secure-`-named
+  cookie (RFC 6265bis §4.1.3 cookie-prefix rule), so without it the deletion
+  was silently rejected and the user remained signed in after an apparently
+  successful logout in production.
 - **Refresh transitive dependencies for 9 Dependabot alerts** (refs #31,
   `doemefu/homelab`#47): `postcss` 8.4.31 → 8.5.23 (alerts #89/#71/#69/#40 —
   pinned via a `pnpm.overrides` entry since `next` 15.x hard-pins `postcss` at
