@@ -14,6 +14,25 @@ import { AUTH_ENV } from '@/auth.env';
 // caught — but it produces noisy stack traces).
 export const dynamic = 'force-dynamic';
 
+// Expires the local session cookie plus every chunked variant (`.0`, `.1`, …)
+// Auth.js emits when the JWT exceeds ~4 KB. Shared by both logout paths below
+// (IdP round-trip and the no-id_token fallback) so cookie-clearing can't drift
+// between them (#30). Returns the number of chunk cookies cleared, purely for
+// the size-creep warning at the call site.
+function clearSessionCookies(res: NextResponse, req: NextRequest, cookieName: string): number {
+  const expired = { path: '/', expires: new Date(0) };
+  res.cookies.set(cookieName, '', expired);
+  const chunkPrefix = `${cookieName}.`;
+  let chunkCount = 0;
+  for (const c of req.cookies.getAll()) {
+    if (c.name.startsWith(chunkPrefix)) {
+      res.cookies.set(c.name, '', expired);
+      chunkCount++;
+    }
+  }
+  return chunkCount;
+}
+
 // Logout mutates session state, so it is exposed as POST only (a GET could be
 // triggered by `<img>`/prefetch — logout CSRF). The public origin is also the
 // `post_logout_redirect_uri` the IdP validates against.
@@ -60,15 +79,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.redirect(new URL('/', req.url));
     }
     if (!token.idToken) {
-      // The JWT exists but no id_token was persisted (would happen on a
-      // session migrated from a previous deploy). The end-session call will
-      // still work, but the IdP may show its own confirm prompt because it
-      // can't identify the session without the hint.
-      console.warn('[federated-logout] no idToken on JWT; IdP may prompt');
+      // The JWT exists but no id_token was persisted (a session migrated from
+      // a previous deploy). auth-service requires `id_token_hint`
+      // unconditionally at /connect/logout — a request without it always gets
+      // the generic 400 invalid_token error page and leaves the IdP session
+      // untouched (../auth-service/INTERFACES.md §1), so redirecting there
+      // would just strand the user on that page instead of back on
+      // furchert.ch (#30). End the local session only and go home.
+      console.warn('[federated-logout] no idToken on JWT; ending local session only (no IdP redirect)');
+      const res = NextResponse.redirect(new URL('/', req.url));
+      clearSessionCookies(res, req, cookieName);
+      return res;
     }
 
     const logoutUrl = new URL(`${AUTH_ENV.OIDC_ISSUER}/connect/logout`);
-    if (token.idToken) logoutUrl.searchParams.set('id_token_hint', token.idToken);
+    logoutUrl.searchParams.set('id_token_hint', token.idToken);
     // The IdP validates `post_logout_redirect_uri` against the registered
     // value (e.g. https://furchert.ch). Behind Cloudflare Tunnel → Traefik,
     // `req.nextUrl.origin` can be an internal origin (cluster FQDN /
@@ -78,21 +103,7 @@ export async function POST(req: NextRequest) {
     logoutUrl.searchParams.set('post_logout_redirect_uri', expectedOrigin);
 
     const res = NextResponse.redirect(logoutUrl);
-    // Clear the local session cookie before leaving for the IdP. Also expire
-    // every chunked variant (`.0`, `.1`, …) Auth.js emits when the JWT
-    // exceeds ~4 KB. We iterate the request cookies rather than guessing a
-    // bound, so this stays correct if the JWT ever grows past a hardcoded
-    // limit.
-    const expired = { path: '/', expires: new Date(0) };
-    res.cookies.set(cookieName, '', expired);
-    const chunkPrefix = `${cookieName}.`;
-    let chunkCount = 0;
-    for (const c of req.cookies.getAll()) {
-      if (c.name.startsWith(chunkPrefix)) {
-        res.cookies.set(c.name, '', expired);
-        chunkCount++;
-      }
-    }
+    const chunkCount = clearSessionCookies(res, req, cookieName);
     if (chunkCount > 1) {
       // More than one chunk means the JWT is creeping above ~4 KB. Worth
       // knowing because it's the warning sign before logout robustness starts

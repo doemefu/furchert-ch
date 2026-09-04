@@ -25,8 +25,21 @@
   (fail-closed to `USER`). **Access/ID tokens are kept server-side only** and
   never reach the client. Phase 4 persists only the `id_token` (for logout);
   the `access_token` is (re)introduced in Phase 6 when admin proxying needs it.
+- Session `maxAge` is **7 days** (#30), matching auth-service's refresh-token
+  TTL / `oauth2_authorization` purge window (`../auth-service/INTERFACES.md`
+  §1 "RP-Initiated Logout" and "Important Notes" #2). `updateAge` is left at
+  the Auth.js default — a continuously-active session still slides its `exp`
+  forward, which is a documented limitation, not fixed here: the resulting
+  stale-but-present `id_token_hint` is still sent to the IdP at logout and is
+  handled by auth-service's own graceful degradation (ends the IdP session,
+  redirects to `/login?logout` instead of erroring — see that doc's "Important
+  Notes" #7).
 - Sign-out is a server route (`/api/federated-logout`) that ends the IdP session
-  with `id_token_hint` and clears the local session cookie.
+  with `id_token_hint` and clears the local session cookie. If the session's
+  JWT carries no `id_token` at all (`id_token_hint` is unconditionally required
+  by auth-service), the route skips the IdP round-trip entirely — it only
+  clears the local cookie and redirects to `/`, instead of sending a request
+  that would only get a generic `400 invalid_token` page from the IdP (#30).
 - The matching client must be registered in `../auth-service` (see
   `DEPLOYMENT.md` for the ready-to-apply diff + the JDBC `psql` seed note);
   secret env `FURCHERT_CH_CLIENT_SECRET`.
