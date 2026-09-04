@@ -34,8 +34,7 @@ All notable changes per milestone. Newest first.
   (#17).
 - The `dashboard.sampleData` badge is gone, superseded by the real telemetry
   above (#17).
-- Document the Build-and-Push hang recovery and the code-review-bot situation
-  (DEPLOYMENT.md, CONTRIBUTING.md).
+- Document the code-review-bot situation (CONTRIBUTING.md).
 
 ### Fixed
 

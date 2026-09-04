@@ -167,7 +167,7 @@ returns to the apex.
   **Fix (this issue):** `timeout-minutes` guards now bound the job's own
   execution time (45 min) and the multi-arch build step (40 min) — well
   above the observed normal execution time (successful `build-and-push` job:
-  ~9–13 min; `verify` job: <1.2 min) but far below the hangs, so a
+  ~9–13 min; `verify` job: ~1.1 min observed max) but far below the hangs, so a
   recurrence now self-cancels within 45 minutes of the job actually
   *starting* instead of blocking for hours. This bounds job runtime only,
   not GitHub's runner-queue wait before a job starts — that queue time is
