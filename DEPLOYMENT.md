@@ -164,17 +164,25 @@ returns to the apex.
   signature reported elsewhere); a shorter cancellation (run 33213817751,
   28 min) shows the same fault signature caught earlier by a quicker manual
   `gh run cancel`.
-  **Fix (this issue):** `timeout-minutes` guards now bound the job (45 min)
-  and the multi-arch build step (40 min) — well above the observed normal
-  range (successful `build-and-push` job: ~9–13 min; `verify` job: <1.2 min;
-  full workflow run incl. runner queueing: 2–31 min) but far below the
-  hangs, so a recurrence now self-cancels within 45 minutes instead of
-  blocking for hours. `concurrency: cancel-in-progress: false` is unchanged
-  (deliberately — considered and rejected flipping it to `true`, and a
-  per-commit concurrency group, in #41's investigation) since the timeout
-  guard already bounds the worst case regardless of concurrency strategy.
-  Manual recovery is now rarely needed but still works the same way if a
-  merge hasn't rolled out within the timeout window:
+  **Fix (this issue):** `timeout-minutes` guards now bound the job's own
+  execution time (45 min) and the multi-arch build step (40 min) — well
+  above the observed normal execution time (successful `build-and-push` job:
+  ~9–13 min; `verify` job: <1.2 min) but far below the hangs, so a
+  recurrence now self-cancels within 45 minutes of the job actually
+  *starting* instead of blocking for hours. This bounds job runtime only,
+  not GitHub's runner-queue wait before a job starts — that queue time is
+  unbounded and outside `timeout-minutes`' reach entirely: run 33482971910
+  (2026-09-01, successful) took ~60 min of total wall-clock because its
+  `verify` job spent ~46 min queued for a shared runner before running for
+  ~1 min; that is normal GitHub Actions queueing, not a hang, and this fix
+  neither bounds nor needs to bound it. `concurrency: cancel-in-progress:
+  false` is unchanged (deliberately — considered and rejected flipping it to
+  `true`, and a per-commit concurrency group, in #41's investigation) since
+  the timeout guard already bounds the worst case regardless of concurrency
+  strategy. Manual recovery is now rarely needed but still works the same
+  way: if a run is still `in_progress` more than ~45 min after it actually
+  started running (not merely queued), the job timeout has failed to fire
+  as expected — cancel it manually:
   `gh run list --workflow "Build and Push" --limit 3`, then
   `gh run cancel <id>` for the stuck `in_progress` run — the next `main` push
   (or a manual re-run) rebuilds cleanly (Flux image automation picks up the

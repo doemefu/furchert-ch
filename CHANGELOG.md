@@ -46,15 +46,18 @@ All notable changes per milestone. Newest first.
   (`qemu: uncaught target signal 4 (Illegal instruction) - core dumped`)
   during `linux/arm64` emulation of `pnpm install`/`pnpm build` in the
   "Build and push multi-arch image" step. Added `timeout-minutes` to
-  `.github/workflows/build.yml`: `verify` job 15 min, `build-and-push` job
-  45 min, "Build and push multi-arch image" step 40 min — sized ~3.5x the
-  observed historical maximum so normal builds are unaffected, while a
-  recurrence now self-cancels within 45 min instead of blocking every later
-  `main` build behind `concurrency: cancel-in-progress: false` (left
-  unchanged; flipping it was considered and rejected). `DEPLOYMENT.md`'s
+  `.github/workflows/build.yml` and `ci.yml`'s `verify` job: `verify` job
+  15 min (generous headroom over its ~1.1 min observed max — not a ratio to
+  reuse for retuning it down), `build-and-push` job 45 min and "Build and
+  push multi-arch image" step 40 min (~3.5x/~3.2x their ~9–13 min observed
+  historical maximum) so normal builds are unaffected, while a recurrence
+  now self-cancels within 45 min of the job starting instead of blocking
+  every later `main` build behind `concurrency: cancel-in-progress: false`
+  (left unchanged; flipping it was considered and rejected). `DEPLOYMENT.md`'s
   troubleshooting entry rewritten with the root-cause evidence and
-  calibrated duration numbers. Removing QEMU entirely (native ARM64 runner
-  matrix + manifest merge) tracked as a follow-up in #48.
+  calibrated duration numbers, and now distinguishes bounded job runtime
+  from unbounded GitHub runner-queue wait. Removing QEMU entirely (native
+  ARM64 runner matrix + manifest merge) tracked as a follow-up in #48.
 
 ### Removed
 

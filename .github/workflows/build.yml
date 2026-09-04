@@ -36,6 +36,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     needs: verify
+    # Job timeout must stay a few minutes above the build step's own timeout
+    # below (checkout/QEMU/buildx/login/metadata add ~15-20s; keep >= 5 min
+    # headroom if either value changes).
     timeout-minutes: 45
     permissions:
       contents: read
