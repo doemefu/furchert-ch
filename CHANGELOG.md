@@ -44,6 +44,25 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **Hardening headers on every response** (#42, headers-only — the "first
+  automated tests" half of the issue is unaddressed here and stays open):
+  `next.config.mjs` now sets `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`,
+  `Permissions-Policy: camera=(), microphone=(), geolocation=()`, and
+  `Strict-Transport-Security` (starting at `max-age=86400` — a conservative
+  1-day rollout since this domain never sent HSTS before; raise it once
+  burn-in confirms reliable HTTPS access) via `headers()`, applied to every
+  route including `/api/*` (`src/middleware.ts`'s matcher excludes `/api/*`,
+  so headers had to live in `next.config.js`, not middleware). Also adds
+  `Content-Security-Policy-Report-Only` (**deliberately not enforcing** — no
+  local runtime or live browser to validate it against the OIDC redirect
+  flow / dashboard SSR first) with a baseline matching what the app actually
+  needs (`'unsafe-inline'` for both `script-src` — Next.js's own hydration
+  runtime — and `style-src` — this codebase's extensive React inline
+  `style={{...}}` usage; `img-src self+data:`; `connect-src self` for
+  Auth.js's own same-origin session/sign-in fetches). Graduating to an
+  enforcing CSP and raising the HSTS `max-age` are both explicit, disclosed
+  follow-ups, not silently deferred.
 - **Refresh transitive dependencies for 9 Dependabot alerts** (refs #31,
   `doemefu/homelab`#47): `postcss` 8.4.31 → 8.5.23 (alerts #89/#71/#69/#40 —
   pinned via a `pnpm.overrides` entry since `next` 15.x hard-pins `postcss` at
