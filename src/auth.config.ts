@@ -24,7 +24,23 @@ const ISSUER = process.env.OIDC_ISSUER ?? 'https://auth.furchert.ch';
 
 export const authConfig = {
   trustHost: true,
-  session: { strategy: 'jwt' },
+  session: {
+    strategy: 'jwt',
+    // 7 days — MUST stay hand-synced with auth-service's
+    // `app.jwt.refresh-token-expiry: 604800000` (ms) in
+    // `auth-service/src/main/resources/application.yaml`: change both
+    // together. That value is the window after which `TokenCleanupScheduler`
+    // purges the `oauth2_authorization` row an `id_token_hint` needs to
+    // resolve at RP-initiated logout (see ../auth-service/INTERFACES.md §1
+    // "RP-Initiated Logout" and "Important Notes" #2). Previously unset here
+    // (Auth.js default: 30 days), which let this session outlive the
+    // IdP-side authorization by 23 days (#30). `updateAge` is left at the
+    // Auth.js default: a continuously-active session still slides its `exp`
+    // forward indefinitely — a documented limitation, not fixed here (see
+    // federated-logout/route.ts for how a stale-but-present `id_token` is
+    // handled at logout time).
+    maxAge: 7 * 24 * 60 * 60,
+  },
   providers: [
     {
       id: 'furchert-ch',
