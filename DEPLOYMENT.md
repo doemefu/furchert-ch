@@ -10,6 +10,28 @@
 - GitOps: Flux CD via `../infrastructure/cluster/apps/furchert-ch/` (source, imagerepo, imagepolicy, imageupdate, sync, kustomization — copied from the auth-service set). Image tag is a Flux-managed setter.
 - Ingress: Cloudflare Tunnel → `furchert.ch` → `furchert-ch.apps.svc.cluster.local` (see `../infrastructure/APPS.md` ingress pattern).
 
+## Security headers (#42)
+
+`next.config.mjs`'s `headers()` applies these to every route (`source: '/:path*'`, including `/api/*` and `/_next/static/*` — see the inline comment there for why `next.config.js`, not `src/middleware.ts`):
+
+| Header | Value |
+|--------|-------|
+| `X-Content-Type-Options` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `X-Frame-Options` | `DENY` |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
+| `Strict-Transport-Security` | `max-age=86400` (1 day — see "HSTS rollout" below) |
+| `Content-Security-Policy-Report-Only` | `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'` |
+
+**HSTS rollout.** This domain never sent `Strict-Transport-Security` before this change (neither app nor Cloudflare edge). Started conservative at `max-age=86400` (1 day) instead of the standard 1-year value, since a browser that receives HSTS enforces HTTPS-only for the full window with no way to revoke it early. **Follow-up action:** after a burn-in period with no HTTPS-access problems, raise `max-age` to a standard long-lived value (e.g. `31536000`) in `next.config.mjs`. `includeSubDomains`/`preload` are deliberately omitted — several sibling homelab services share this apex (`auth`/`device`/`club`/`n8n`/`grafana.furchert.ch`, see the parent `CLAUDE.md`) and are separate repos this app has no mandate to declare HSTS-safe for.
+
+**CSP graduation gate.** `Content-Security-Policy-Report-Only` is deliberately not enforcing yet — there is no `report-uri`/`report-to` collector, so violations only surface in a visiting browser's own DevTools console. Before dropping `-Report-Only` (making it a blocking `Content-Security-Policy`):
+1. Open each main public route and a signed-in `/dashboard` load in a real browser.
+2. Check the DevTools console for `Content-Security-Policy-Report-Only` violation messages.
+3. If clean, rename the header key from `Content-Security-Policy-Report-Only` to `Content-Security-Policy` in `next.config.mjs`.
+
+Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -s https://furchert.ch/de | grep -i cloudflareinsights` found nothing — Cloudflare Web Analytics/Rocket Loader is not injecting a beacon on this zone today, so `script-src`/`connect-src` need no `*.cloudflareinsights.com` addition. Re-check this if that Cloudflare zone feature is ever turned on, since it would otherwise report (or, once enforcing, break) on every page load.
+
 ## Required secrets / env (provisioned by the user via SOPS — never in git)
 
 k8s secret `furchert-ch-secrets` in the `apps` namespace (values user-provisioned
@@ -131,6 +153,16 @@ curl -I https://www.furchert.ch               # 301 → https://furchert.ch
 Then smoke `/dashboard`: OIDC login at auth.furchert.ch round-trips and logout
 returns to the apex.
 
+**Security headers (#42) — verify after this milestone's first deploy:**
+
+```bash
+curl -sI https://furchert.ch                  # bare `/` — middleware locale redirect; should carry the headers too
+curl -sI https://furchert.ch/de               # rendered page — all 6 headers from "Security headers" above
+curl -sI https://furchert.ch/api/health       # API route — all 6 headers (the case that justified next.config.js over middleware.ts)
+```
+
+If any of the three is missing headers, see Troubleshooting below.
+
 ### Troubleshooting
 
 - **Pod CrashLoopBackOff on boot, `[auth] required env var … missing`** — a
@@ -149,6 +181,15 @@ returns to the apex.
   and check pod logs for `[metrics] Prometheus unavailable: <reason>` /
   `[metrics] Prometheus queries failed: <cpu|mem|ready|workloads>` (terse
   message-only lines by design, no stack traces).
+- **A security header (#42) is missing from a live response** — `next.config.mjs`'s
+  `headers()` matches `source: '/:path*'`, which covers pages, `/api/*`, and
+  `/_next/static/*` alike, and (per Next.js's documented execution order —
+  `headers` runs before Proxy/middleware) even a middleware-issued redirect
+  like the bare `/` → `/de` locale redirect. If a response is missing them
+  anyway, check whether a Route Handler under `src/app/api/` is constructing
+  its own `Response` with an explicit header set that happens to omit them,
+  and confirm the deployed image actually includes this milestone's
+  `next.config.mjs` (`flux get image repository furchert-ch`).
 - **"Build and Push" run hangs in `build-and-push`** — observed twice
   (2026-08-28: run 33155146183 hung ~4 h; run 33213817751 hung 28 min). With
   `concurrency: cancel-in-progress: false` a hung run blocks every later

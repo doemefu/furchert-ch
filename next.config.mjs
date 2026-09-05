@@ -7,47 +7,16 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 // (`'/((?!api|_next|_vercel|.*\\..*).*)'`) deliberately excludes `/api/*` —
 // exactly the routes that need this too (the OIDC callback, federated
 // logout, health check). `next.config.js` headers apply at the framework
-// level to every matched route, API routes included.
+// level to every matched route (`source: '/:path*'`, including `/api/*`
+// and `/_next/static/*`) and, per Next.js's documented execution order
+// (`headers` runs in step 1, before Proxy/middleware in step 3), even to
+// middleware-issued redirects such as the bare `/` → `/de` locale redirect.
 //
-// `'unsafe-inline'` appears in both `script-src` (Next.js's own App Router
-// hydration/streaming runtime injects inline `<script>` tags; there is no
-// nonce wiring here) and `style-src` (this codebase uses React inline
-// `style={{...}}` attributes extensively — grep-verified across 30+ files,
-// not a guess) — omitting either would make the report-only policy
-// permanently noisy for the app's own normal, by-design behavior instead of
-// surfacing real anomalies.
-//
-// `Content-Security-Policy-Report-Only` (not enforcing `Content-Security-
-// Policy`): there is no local Next.js runtime or live browser available to
-// validate an enforcing policy against the real OIDC redirect flow and
-// dashboard SSR before shipping, so start in observe-only mode. Graduation
-// gate (see CHANGELOG.md / DEPLOYMENT.md): a one-time manual DevTools check
-// across the public routes and a signed-in `/dashboard` load, confirming no
-// unexpected violations, before dropping `-Report-Only`.
-//
-// `frame-ancestors 'none'` here is currently redundant with the real,
-// enforced `X-Frame-Options: DENY` below — kept so it's already correct once
-// the CSP eventually becomes enforcing and `X-Frame-Options` (which modern
-// browsers are moving away from in favor of `frame-ancestors`) is retired.
-//
-// `Strict-Transport-Security` starts at a short `max-age` (1 day) rather
-// than the standard long-lived value: this domain has never sent HSTS
-// before (confirmed via `curl -sI https://furchert.ch` — neither this app
-// nor Cloudflare's edge sets it today), and HSTS is a one-way, browser-
-// cached commitment for every returning visitor for the full window. Raise
-// it (e.g. to `max-age=31536000`) in a follow-up once a burn-in period
-// confirms reliable HTTPS access. `includeSubDomains`/`preload` are
-// deliberately omitted: several sibling homelab services share this apex
-// (auth/device/club/n8n/grafana.furchert.ch, see the parent CLAUDE.md) and
-// are separate repos this task has no mandate to verify are HSTS-safe —
-// `includeSubDomains` would extend browser-enforced HTTPS-only to all of
-// them from a single furchert-ch response header.
-//
-// `source: '/:path*'` intentionally also matches `/_next/static/*` immutable
-// asset responses (unlike the intl middleware's matcher, which excludes them
-// for an unrelated reason — locale detection doesn't apply to assets).
-// Harmless here, and one single source of truth beats an exclusion with no
-// security rationale of its own.
+// Full rationale for each directive — why `'unsafe-inline'` appears twice,
+// why the CSP ships Report-Only, the HSTS rollout plan, and the CSP
+// graduation gate — lives in `CHANGELOG.md` and `DEPLOYMENT.md` § Security
+// headers, not duplicated here, so there is one place to update when any
+// of it changes (e.g. raising `max-age` or dropping `-Report-Only`).
 async function headers() {
   return [
     {
