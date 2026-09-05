@@ -57,6 +57,18 @@ Phase 6, in every admin route handler with `role === 'ADMIN'`). OIDC access/ID
 tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.md`
 §1 and `DEPLOYMENT.md` for the client contract and required secrets.
 
+## Security posture
+
+Every route (public pages, `/dashboard`, and `/api/*`) carries hardening
+response headers (`X-Content-Type-Options`, `Referrer-Policy`,
+`X-Frame-Options`, `Permissions-Policy`, `Strict-Transport-Security`) plus a
+`Content-Security-Policy-Report-Only` baseline — headers-only slice of issue
+#42, shipped via `next.config.mjs` `headers()`. See `DEPLOYMENT.md` §
+"Security headers" for the exact values, the HSTS rollout plan, and the CSP
+graduation gate (dropping `-Report-Only` once a manual DevTools pass shows no
+unexpected violations). The "first automated tests" half of #42 remains open
+— this repo has no test-framework dependency yet.
+
 ## Real vs. mock vs. deferred
 
 - **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics (see the "Live" bullet below). Admin GUIs for auth-service / device-service are Phase 6, upcoming — not wired yet.
