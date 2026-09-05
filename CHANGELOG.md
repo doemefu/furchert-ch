@@ -34,8 +34,29 @@ All notable changes per milestone. Newest first.
   (#17).
 - The `dashboard.sampleData` badge is gone, superseded by the real telemetry
   above (#17).
-- Document the Build-and-Push hang recovery and the code-review-bot situation
-  (DEPLOYMENT.md, CONTRIBUTING.md).
+- Document the code-review-bot situation (CONTRIBUTING.md).
+
+### Fixed
+
+- **Bound "Build and Push" CI runtime with `timeout-minutes` guards** (#41):
+  root-caused the two known multi-hour hangs (2026-08-28 run 33155146183,
+  ~4h06m; 2026-08-30 run 33333359400, ~6h00m — the latter ended only by
+  GitHub's own 360-minute default job timeout) to an identical QEMU crash
+  (`qemu: uncaught target signal 4 (Illegal instruction) - core dumped`)
+  during `linux/arm64` emulation of `pnpm install`/`pnpm build` in the
+  "Build and push multi-arch image" step. Added `timeout-minutes` to
+  `.github/workflows/build.yml` and `ci.yml`'s `verify` job: `verify` job
+  15 min (generous headroom over its ~1.1 min observed max — not a ratio to
+  reuse for retuning it down), `build-and-push` job 45 min and "Build and
+  push multi-arch image" step 40 min (~3.5x/~3.2x their ~9–13 min observed
+  historical maximum) so normal builds are unaffected, while a recurrence
+  now self-cancels within 45 min of the job starting instead of blocking
+  every later `main` build behind `concurrency: cancel-in-progress: false`
+  (left unchanged; flipping it was considered and rejected). `DEPLOYMENT.md`'s
+  troubleshooting entry rewritten with the root-cause evidence and
+  calibrated duration numbers, and now distinguishes bounded job runtime
+  from unbounded GitHub runner-queue wait. Removing QEMU entirely (native
+  ARM64 runner matrix + manifest merge) tracked as a follow-up in #48.
 
 ### Removed
 

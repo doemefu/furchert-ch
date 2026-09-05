@@ -15,6 +15,13 @@ pnpm lint
 pnpm build
 ```
 
+CI (`ci.yml`) runs this same lint/typecheck/build `verify` job on every PR,
+capped at a 15-minute `timeout-minutes` guard (normal runtime ~1–2 min). If
+your PR's `verify` job is cancelled at 15 minutes, treat that as a genuine
+hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §
+"Build and Push run hangs" for the equivalent guard on the deploy pipeline
+(#41).
+
 Local OIDC (Auth.js v5): copy `.env.local.example` → `.env.local` (never
 committed) and set `AUTH_SECRET` (`openssl rand -base64 33`) and the plaintext
 `OIDC_CLIENT_SECRET`. The callback

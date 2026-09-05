@@ -181,6 +181,40 @@ If any of the three is missing headers, see Troubleshooting below.
   and check pod logs for `[metrics] Prometheus unavailable: <reason>` /
   `[metrics] Prometheus queries failed: <cpu|mem|ready|workloads>` (terse
   message-only lines by design, no stack traces).
+- **"Build and Push" run hangs in `build-and-push`** — root-caused 2026-09-04
+  (issue #41). Both confirmed multi-hour hangs (run 33155146183, 2026-08-28,
+  ~4 h 06 m; run 33333359400, 2026-08-30, ~6 h 00 m — the latter ended by
+  GitHub's own default 360-minute job timeout, not a manual cancel) stall in
+  the "Build and push multi-arch image" step, immediately after an identical
+  `qemu: uncaught target signal 4 (Illegal instruction) - core dumped` crash
+  while QEMU emulates the `linux/arm64` build stage running `pnpm install`/
+  `pnpm build`. BuildKit's retries after that crash make no progress, and
+  nothing previously bounded the job's runtime. This is a known, intermittent,
+  hardware/timing-dependent class of QEMU user-mode-emulation bug (no reliable
+  version pin is documented anywhere to fix it outright — see
+  https://github.com/orgs/community/discussions/182217 for the same fault
+  signature reported elsewhere); a shorter cancellation (run 33213817751,
+  28 min) shows the same fault signature caught earlier by a quicker manual
+  `gh run cancel`.
+  **Fix (this issue):** `timeout-minutes` guards now bound the job's own
+  execution time (45 min) and the multi-arch build step (40 min) — well
+  above the observed normal execution time (successful `build-and-push` job:
+  ~9–13 min; `verify` job: ~1.1 min observed max) but far below the hangs, so a
+  recurrence now self-cancels within 45 minutes of the job actually
+  *starting* instead of blocking for hours. This bounds job runtime only,
+  not GitHub's runner-queue wait before a job starts — that queue time is
+  unbounded and outside `timeout-minutes`' reach entirely: run 33482971910
+  (2026-09-01, successful) took ~60 min of total wall-clock because its
+  `verify` job spent ~46 min queued for a shared runner before running for
+  ~1 min; that is normal GitHub Actions queueing, not a hang, and this fix
+  neither bounds nor needs to bound it. `concurrency: cancel-in-progress:
+  false` is unchanged (deliberately — considered and rejected flipping it to
+  `true`, and a per-commit concurrency group, in #41's investigation) since
+  the timeout guard already bounds the worst case regardless of concurrency
+  strategy. Manual recovery is now rarely needed but still works the same
+  way: if a run is still `in_progress` more than ~45 min after it actually
+  started running (not merely queued), the job timeout has failed to fire
+  as expected — cancel it manually:
 - **A security header (#42) is missing from a live response** — `next.config.mjs`'s
   `headers()` matches `source: '/:path*'`, which covers pages, `/api/*`, and
   `/_next/static/*` alike, and (per Next.js's documented execution order —
@@ -197,4 +231,7 @@ If any of the three is missing headers, see Troubleshooting below.
   `gh run list --workflow "Build and Push" --limit 3`, then
   `gh run cancel <id>` for the stuck `in_progress` run — the next `main` push
   (or a manual re-run) rebuilds cleanly (Flux image automation picks up the
-  new `main-<ts>` tag).
+  new `main-<ts>` tag). A follow-up (native ARM64 GitHub-hosted runner via a
+  build-per-arch matrix + manifest merge, removing QEMU emulation from this
+  pipeline entirely — this repo is public, so `ubuntu-24.04-arm` runners are
+  free) is tracked as #48 rather than bundled into this fix.
