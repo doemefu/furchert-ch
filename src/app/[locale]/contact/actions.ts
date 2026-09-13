@@ -73,7 +73,7 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
   }
 
   if (!isContactMailConfigured()) {
-    console.error('[contact] delivery not configured (SMTP_HOST/SMTP_USER/SMTP_PASSWORD missing)');
+    console.error('[contact] delivery not configured (SMTP_HOST/SMTP_USER/SMTP_PASSWORD missing or SMTP_PORT invalid)');
     return { ok: false, error: 'server' };
   }
 
