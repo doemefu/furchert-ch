@@ -98,9 +98,9 @@ outbound mail path in the homelab (issue #46).
 | Auth identity | `SMTP_USER` — the mailer also sets the `From` address to this same value, since Infomaniak rejects a mismatch between the authenticated identity and `From` |
 | Env vars | `SMTP_HOST`, `SMTP_PORT` (default `587`), `SMTP_USER`, `SMTP_PASSWORD` (secret), `CONTACT_TO` (defaults to `SMTP_USER`) |
 | Timeouts | `dnsTimeout` 5 s, `connectionTimeout` 5 s, `greetingTimeout` 5 s, `socketTimeout` 7 s — worst case before a visible error ≈ 22 s |
-| Message shape | Plain text only (no HTML part, by design); `from` = `SMTP_USER`; `to` = `CONTACT_TO`; `replyTo` = the submitter's name/email; subject `Contact form: <name>` (control characters stripped, max 80 chars) |
-| What is logged | Success: `{messageLength}` only. Failure: `{code, responseCode, command}` destructured from the nodemailer error only — never the raw error, its `message`, `response`, or `rejected`/`rejectedErrors` fields, and never the submitter's name, email, or message body |
-| Rate limits | In-process (per pod) sliding window: 3 submissions / 10 min per client key (`cf-connecting-ip` → `x-forwarded-for` → `'unknown'`), 20 / hour globally; resets on pod restart (`replicas: 1`) |
+| Message shape | Plain text only (no HTML part, by design); `from` = `SMTP_USER`; `to` = `CONTACT_TO`; `replyTo` = the submitter's name/email; subject `Contact form: <name>` — the 80-char cap (control characters stripped) applies to the sanitised `name` inside the subject, so the full subject is ≈ up to 95 chars |
+| What is logged | Success: `{messageLength}` only. Failure: `{code, responseCode, command}` destructured from the nodemailer error only — never the raw error, its `message`, `response`, or `rejected`/`rejectedErrors` fields, and never the submitter's name, email, or message body. The honeypot check and rate-limit denials log nothing |
+| Rate limits | In-process (per pod) sliding window: 3 submissions / 10 min per client key (`cf-connecting-ip` → `x-forwarded-for` → `'unknown'`), 20 / hour globally; resets on pod restart (`replicas: 1`); a failed or unconfigured delivery gives the slot back (`undoContactRateLimit`) |
 
 A missing/invalid SMTP configuration makes the action return
 `{ok:false, error:'server'}` and log exactly one line

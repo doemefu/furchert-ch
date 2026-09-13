@@ -42,7 +42,7 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 |-----------|---------|---------|
 | `auth-secret` | `AUTH_SECRET` | Auth.js v5 session encryption (`openssl rand -base64 33`; SOPS var `furchert_ch_auth_secret`) |
 | `oidc-client-secret` | `OIDC_CLIENT_SECRET` | `furchert-ch` OIDC client secret, **plaintext** (no `{noop}` prefix). The playbook sets it from the same SOPS var (`auth_service_furchert_ch_client_secret`) that auth-service stores `{noop}`-prefixed, so the two match by construction. |
-| `smtp-password` | `SMTP_PASSWORD` | Infomaniak application password for `info@furchert.ch` (contact-form SMTP; SOPS var `furchert_ch_smtp_password`; created by an Infomaniak Manager → Mail Service → address → "Devices" application password, not the mailbox login password) |
+| `smtp-password` | `SMTP_PASSWORD` | Infomaniak application password for `info@furchert.ch` (contact-form SMTP; SOPS var `furchert_ch_smtp_password`; created by an Infomaniak Manager → Mail Service → address → "Devices" application password, not the mailbox login password — fall back to the mailbox password only if the plan tier offers no application passwords) |
 
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
@@ -121,6 +121,9 @@ The infrastructure PR that adds `smtp-password` to `furchert-ch-secrets` (via
 repo's `k8s/deployment.yaml` change (which references that secret key) is
 applied. Applying this repo's manifest first makes the pod enter
 `CreateContainerConfigError`, referencing the missing `smtp-password` key.
+
+**Do not merge this PR before homelab PR #103 is merged and
+`59_app_services.yml` has been run; verify with the byte-count check first.**
 
 **Pre-merge check** (operator, after running the playbook):
 ```bash
@@ -253,6 +256,11 @@ If any of the three is missing headers, see Troubleshooting below.
   rolling 24 h window; check
   `kubectl -n apps logs deploy/furchert-ch --since=1h | grep '\[contact\]'`
   for the actual failure reason before assuming the limiter is misconfigured.
+  Rate-limit denials are silent by design — no per-denial log line, to avoid
+  log floods under abuse — so a denial never shows up in that grep; the only
+  way to recognise one is the visitor seeing the "too many requests" text
+  (limits: 3 submissions / 10 min per client IP, 20 / hour global) and the
+  fact that the state resets on the next pod restart.
 - **Dashboard cluster strip shows "—" / "status unavailable"** — the Prometheus
   fetch failed or was skipped; this degrades by design and never surfaces as a
   500. Check `PROMETHEUS_URL` on the deployment, confirm
