@@ -3,7 +3,8 @@
 > This frontend only **consumes** interfaces; it exposes none for other services.
 > §1 (OIDC client) is **implemented** as of Phase 4. §2's Prometheus metrics
 > source is **implemented** as of issue #17; the auth-service/device-service
-> REST proxies land in Phase 6.
+> REST proxies land in Phase 6. §3 (outbound SMTP for the contact form) is
+> implemented as of issue #46.
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
