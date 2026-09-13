@@ -88,3 +88,21 @@ function evictOldestIfAtCapacity(): void {
     perKeyTimestamps.delete(oldestKey);
   }
 }
+
+/**
+ * Call after `checkContactRateLimit` returned true when the submission did
+ * not reach delivery (SMTP not configured or send failed), so upstream
+ * failures do not consume the visitor's budget.
+ *
+ * Removes the most recent timestamp for `clientKey` (if any) and the most
+ * recent global timestamp (if any).
+ */
+export function undoContactRateLimit(clientKey: string): void {
+  const existing = perKeyTimestamps.get(clientKey);
+  if (existing && existing.length > 0) {
+    existing.pop();
+  }
+  if (globalTimestamps.length > 0) {
+    globalTimestamps.pop();
+  }
+}

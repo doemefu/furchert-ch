@@ -21,13 +21,13 @@
 import { headers } from 'next/headers';
 import { isContactMailConfigured } from '@/contact.env';
 import { sendContactMail } from '@/lib/contact/mailer';
-import { checkContactRateLimit } from '@/lib/contact/rateLimit';
+import { checkContactRateLimit, undoContactRateLimit } from '@/lib/contact/rateLimit';
 
 export interface ContactInput {
   name: string;
   email: string;
   message: string;
-  company: string;
+  form_check: string;
 }
 
 export type ContactResult = { ok: true } | { ok: false; error: 'invalid' | 'server' | 'rate_limited' };
@@ -45,9 +45,9 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
   const message = input.message?.trim() ?? '';
 
   // Honeypot: a real visitor never fills this hidden field. Reject silently
-  // before any other logging, and never log identifying data about it.
-  if (input.company?.trim()) {
-    console.info('[contact] honeypot triggered');
+  // and without logging — a per-trip log line has no operator value and is
+  // unbounded under a bot flood.
+  if (input.form_check?.trim()) {
     return { ok: false, error: 'invalid' };
   }
 
@@ -74,6 +74,7 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
 
   if (!isContactMailConfigured()) {
     console.error('[contact] delivery not configured (SMTP_HOST/SMTP_USER/SMTP_PASSWORD missing or SMTP_PORT invalid)');
+    undoContactRateLimit(clientKey);
     return { ok: false, error: 'server' };
   }
 
@@ -84,6 +85,7 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
   } catch (err) {
     const { code, responseCode, command } = err as { code?: string; responseCode?: number; command?: string };
     console.error('[contact] delivery failed', { code, responseCode, command });
+    undoContactRateLimit(clientKey);
     return { ok: false, error: 'server' };
   }
 }

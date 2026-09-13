@@ -34,7 +34,7 @@ export function ContactForm() {
   const [sent, setSent] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', email: '', message: '', company: '' });
+  const [form, setForm] = useState({ name: '', email: '', message: '', form_check: '' });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -82,9 +82,9 @@ export function ContactForm() {
           value silently marks the submission invalid in the server action. */}
       <input
         type="text"
-        name="company"
-        value={form.company}
-        onChange={(e) => setForm({ ...form, company: e.target.value })}
+        name="form_check"
+        value={form.form_check}
+        onChange={(e) => setForm({ ...form, form_check: e.target.value })}
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"

@@ -17,6 +17,9 @@ function getTransporter(): import('nodemailer').Transporter {
       secure: CONTACT_ENV.SMTP_PORT === 465,
       requireTLS: true,
       auth: { user: CONTACT_ENV.SMTP_USER, pass: CONTACT_ENV.SMTP_PASSWORD },
+      // Defense in depth: no attachments or URL-sourced content are ever intended.
+      disableFileAccess: true,
+      disableUrlAccess: true,
       connectionTimeout: 5000,
       greetingTimeout: 5000,
       socketTimeout: 7000,
