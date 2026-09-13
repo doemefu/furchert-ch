@@ -46,7 +46,8 @@
     "sent": "Message sent!",
     "sentSub": "I usually reply within 24 hours.",
     "errorInvalid": "Please fill in all fields with a valid email address.",
-    "errorServer": "Sending failed. Please try again later or email dominic@furchert.ch directly."
+    "errorServer": "Sending failed. Please try again later or email dominic@furchert.ch directly.",
+    "errorRateLimited": "Too many requests in a short time. Please try again in a few minutes."
   },
   "pages": {
     "home": {

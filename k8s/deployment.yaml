@@ -44,6 +44,22 @@ spec:
                 secretKeyRef:
                   name: furchert-ch-secrets
                   key: auth-secret
+            # SMTP delivery for the contact form (#46). SMTP_PASSWORD requires
+            # `furchert-ch-secrets` to carry key `smtp-password` — apply the
+            # infrastructure playbook (59_app_services.yml) before this manifest.
+            - name: SMTP_HOST
+              value: "mail.infomaniak.com"
+            - name: SMTP_PORT
+              value: "587"
+            - name: SMTP_USER
+              value: "info@furchert.ch"
+            - name: CONTACT_TO
+              value: "info@furchert.ch"
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: furchert-ch-secrets
+                  key: smtp-password
           startupProbe:
             httpGet:
               path: /api/health

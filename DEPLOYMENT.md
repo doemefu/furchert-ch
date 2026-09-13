@@ -42,6 +42,7 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 |-----------|---------|---------|
 | `auth-secret` | `AUTH_SECRET` | Auth.js v5 session encryption (`openssl rand -base64 33`; SOPS var `furchert_ch_auth_secret`) |
 | `oidc-client-secret` | `OIDC_CLIENT_SECRET` | `furchert-ch` OIDC client secret, **plaintext** (no `{noop}` prefix). The playbook sets it from the same SOPS var (`auth_service_furchert_ch_client_secret`) that auth-service stores `{noop}`-prefixed, so the two match by construction. |
+| `smtp-password` | `SMTP_PASSWORD` | Infomaniak application password for `info@furchert.ch` (contact-form SMTP; SOPS var `furchert_ch_smtp_password`; created by an Infomaniak Manager → Mail Service → address → "Devices" application password, not the mailbox login password — fall back to the mailbox password only if the plan tier offers no application passwords) |
 
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
@@ -57,7 +58,10 @@ For local dev, port-forward it first:
 `kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:9090`,
 then set `PROMETHEUS_URL=http://localhost:19090` in `.env.local`. Left unset
 in dev, the dashboard skips the fetch immediately (no 2.5 s stall on an
-unreachable cluster-internal FQDN).
+unreachable cluster-internal FQDN). `SMTP_HOST` (`mail.infomaniak.com`),
+`SMTP_PORT` (`587`), `SMTP_USER` (`info@furchert.ch`), `CONTACT_TO` (defaults
+to `SMTP_USER`, set explicitly to `info@furchert.ch`) — the contact form's
+outbound SMTP delivery (#46), see `INTERFACES.md` §3.
 
 **Set `AUTH_URL=https://furchert.ch` in production:**
 Auth.js infers it for callbacks behind the tunnel when `trustHost` is set, but
@@ -109,6 +113,44 @@ provision the secret via SOPS. furchert-ch never edits secret/age/`.sops.*` file
    YAML alone will NOT seed `furchert-ch`. Insert it via `psql` (or re-seed a fresh
    DB) per `../auth-service/INTERFACES.md §6`. The plaintext `OIDC_CLIENT_SECRET`
    used by this app must match the `{noop}`-prefixed value stored for the client.
+
+### Contact-form SMTP secret — rollout order (#46)
+
+The infrastructure PR that adds `smtp-password` to `furchert-ch-secrets` (via
+`59_app_services.yml`) must be **merged and the playbook run before** this
+repo's `k8s/deployment.yaml` change (which references that secret key) is
+applied. Applying this repo's manifest first makes the pod enter
+`CreateContainerConfigError`, referencing the missing `smtp-password` key.
+
+**Do not merge this PR before homelab PR #103 is merged and
+`59_app_services.yml` has been run; verify with the byte-count check first.**
+
+**Pre-merge check** (operator, after running the playbook):
+```bash
+kubectl -n apps get secret furchert-ch-secrets -o jsonpath='{.data.smtp-password}' | wc -c
+```
+Expect a byte count `> 0`. This only proves the key exists — it never prints
+the value.
+
+**Post-merge check:**
+```bash
+kubectl -n apps rollout status deploy/furchert-ch
+```
+Expect it to complete. Flux's `Kustomization` (`prune: true`, no `wait`/
+`healthChecks` configured) reports `Ready` as soon as it successfully
+*applies* the manifest — even if the resulting pod is stuck in
+`CreateContainerConfigError`. So `flux get kustomizations` showing `Ready` is
+**not** sufficient evidence of a healthy rollout; always also check
+`kubectl -n apps get pods -l app=furchert-ch` and the rollout-status command
+above.
+
+**Harmless intermediate state:** Flux may apply the new env-var manifest
+before the new application code (with the SMTP delivery logic) has rolled
+out via image automation. The old running image simply ignores the new env
+vars until its own new image arrives — a brief window where the env is
+present but the send logic isn't yet is expected and not an error. Since
+`replicas: 1` with the default `RollingUpdate` strategy (`maxUnavailable: 0`),
+the old pod keeps serving traffic throughout.
 
 ## Validation
 
@@ -195,6 +237,30 @@ If any of the three is missing headers, see Troubleshooting below.
   which derives `secure` from `secureCookie`/`NODE_ENV`. If this regresses,
   check that both call sites still pass the correct `secure` value to that
   helper.
+- **`EAUTH` / `535` in the `[contact] delivery failed` log line** — the SMTP
+  password is wrong or has been revoked in Infomaniak's Manager; regenerate
+  the application password and update the SOPS var + secret.
+- **"sender mismatch" style rejection** — `SMTP_USER` is not the full
+  authenticated mailbox address (e.g. an alias or a display-name form); the
+  mailer always sets `From` to `SMTP_USER` by construction (`INTERFACES.md`
+  §3), so set `SMTP_USER` to the real mailbox address Infomaniak
+  authenticated.
+- **`ETIMEDOUT` / `ECONNECTION`** — outbound TCP 587 from the cluster is
+  blocked (confirmed open as of 2026-09-13's egress probe, but re-verify if
+  the ISP or ingress changes); try `SMTP_PORT=465` (the mailer sets
+  `secure: true` automatically at that port) before assuming a code
+  regression.
+- **Contact form rejects everything with `errorRateLimited`** — either
+  genuine abuse tripped the 20/hour global cap (`INTERFACES.md` §3), or
+  (less likely) Infomaniak's own sending quota was hit upstream within its
+  rolling 24 h window; check
+  `kubectl -n apps logs deploy/furchert-ch --since=1h | grep '\[contact\]'`
+  for the actual failure reason before assuming the limiter is misconfigured.
+  Rate-limit denials are silent by design — no per-denial log line, to avoid
+  log floods under abuse — so a denial never shows up in that grep; the only
+  way to recognise one is the visitor seeing the "too many requests" text
+  (limits: 3 submissions / 10 min per client IP, 20 / hour global) and the
+  fact that the state resets on the next pod restart.
 - **Dashboard cluster strip shows "—" / "status unavailable"** — the Prometheus
   fetch failed or was skipped; this degrades by design and never surfaces as a
   500. Check `PROMETHEUS_URL` on the deployment, confirm
