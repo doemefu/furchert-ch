@@ -86,3 +86,26 @@ the workload-backed app tiles:
 Any failure (unreachable, timeout, malformed response, empty result) degrades
 the dashboard to an honest "unavailable" fallback instead of fabricating
 data — see `OVERVIEW.md`.
+
+## 3. Outbound: Infomaniak SMTP (contact form)
+
+`furchert-ch` is an SMTP **client** of Infomaniak's mail service — the only
+outbound mail path in the homelab (issue #46).
+
+| Parameter | Value |
+|-----------|-------|
+| Endpoint | `mail.infomaniak.com:587` (STARTTLS, `requireTLS: true`) |
+| Auth identity | `SMTP_USER` — the mailer also sets the `From` address to this same value, since Infomaniak rejects a mismatch between the authenticated identity and `From` |
+| Env vars | `SMTP_HOST`, `SMTP_PORT` (default `587`), `SMTP_USER`, `SMTP_PASSWORD` (secret), `CONTACT_TO` (defaults to `SMTP_USER`) |
+| Timeouts | `dnsTimeout` 5 s, `connectionTimeout` 5 s, `greetingTimeout` 5 s, `socketTimeout` 7 s — worst case before a visible error ≈ 22 s |
+| Message shape | Plain text only (no HTML part, by design); `from` = `SMTP_USER`; `to` = `CONTACT_TO`; `replyTo` = the submitter's name/email; subject `Contact form: <name>` (control characters stripped, max 80 chars) |
+| What is logged | Success: `{messageLength}` only. Failure: `{code, responseCode, command}` destructured from the nodemailer error only — never the raw error, its `message`, `response`, or `rejected`/`rejectedErrors` fields, and never the submitter's name, email, or message body |
+| Rate limits | In-process (per pod) sliding window: 3 submissions / 10 min per client key (`cf-connecting-ip` → `x-forwarded-for` → `'unknown'`), 20 / hour globally; resets on pod restart (`replicas: 1`) |
+
+A missing/invalid SMTP configuration makes the action return
+`{ok:false, error:'server'}` and log exactly one line
+(`[contact] delivery not configured (SMTP_HOST/SMTP_USER/SMTP_PASSWORD
+missing or SMTP_PORT invalid)`) — never a silent success. The client only
+renders "sent" when the action returns `{ok:true}`, which happens only after
+`sendMail()` resolves with at least one accepted recipient and none
+rejected.

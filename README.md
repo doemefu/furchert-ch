@@ -30,6 +30,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 6 | Integrated admin GUIs | pending |
 | 7 | Deployment (Flux CD + Cloudflare Tunnel) | done |
 | — | Live dashboard metrics from Prometheus (#17) | done |
+| — | Contact-form SMTP delivery (Infomaniak, #46) | done |
 
 ## Documentation
 

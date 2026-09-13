@@ -6,6 +6,15 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Contact form now delivers real mail** (#46): `submitContact()` sends the
+  validated submission by authenticated SMTP to `info@furchert.ch` via
+  Infomaniak (`mail.infomaniak.com:587`, `nodemailer` 10.0.9, plain text
+  only), with the submitter as Reply-To. Adds a honeypot field, per-field
+  size caps, and an in-process rate limiter (3/10min per client, 20/hour
+  global) since the action is a public unauthenticated endpoint spending a
+  real, quota-limited SMTP send per call. New `error: 'rate_limited'`
+  result and matching UI copy. Only `{code, responseCode, command}` are
+  logged on failure — never the submitter's name, email, or message body.
 - **Live dashboard cluster/app metrics from Prometheus** (#17): `/dashboard`
   now fetches per-node CPU/MEM/ready-status and workload-availability from
   `kube-prometheus-stack-prometheus` server-side at request time

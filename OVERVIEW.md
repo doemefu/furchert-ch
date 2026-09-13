@@ -24,10 +24,13 @@ emits locale-aware `<title>` / `<meta description>` and hreflang alternates;
 (sitemap covers every public route × locale; robots disallows `/dashboard`
 including the locale-prefixed variants).
 
-The contact form posts to a typed `'use server'` action that validates and
-server-logs the submission (Phase 7 wires real delivery — Formspree or a
-dedicated API route). The success state renders only on a real
-`{ok:true}` response; thrown / invalid responses surface a visible error.
+The contact form posts to a typed `'use server'` action that validates the
+input, applies a honeypot and an in-process rate limiter, then delivers the
+message by authenticated SMTP (Infomaniak, `mail.infomaniak.com:587`) to
+`info@furchert.ch` with the submitter set as Reply-To. The success state
+still renders only on a real `{ok:true}` response (returned only once the
+mail server accepts the message), and invalid input / rate limiting / a
+delivery failure each surface a distinct visible error.
 
 ### Automation
 
@@ -41,8 +44,9 @@ visual preview** — every step carries a persistent "Demo / Mockup" banner
 and Step 4 is marked as a "Beispiel-Report / Sample report". The wizard
 performs no network calls, runs no Claude API, has no `/api/scan/*` route,
 and stores nothing. Step-3 contact fields are not transmitted; copy says
-so explicitly. Master-plan Phase 7 wires real delivery for the contact
-form; the scan is intentionally not part of that plan.
+so explicitly. The contact form now delivers real mail (see above); the scan
+wizard remains intentionally out of that scope and must never import the
+mailer.
 
 ### Private (real, OIDC-gated via auth.furchert.ch)
 | Route | Page | Status |
@@ -71,7 +75,7 @@ unexpected violations). The "first automated tests" half of #42 remains open
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics (see the "Live" bullet below). Admin GUIs for auth-service / device-service are Phase 6, upcoming — not wired yet.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics (see the "Live" bullet below); the contact form delivers real mail by SMTP (Infomaniak). Admin GUIs for auth-service / device-service are Phase 6, upcoming — not wired yet.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus
@@ -81,8 +85,8 @@ unexpected violations). The "first automated tests" half of #42 remains open
   "unavailable" note — never fabricated numbers.
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
-- **Deferred (out of scope for now):** AI scan backend, lead dashboard, rate
-  limiting/Turnstile, n8n notifications, WebSocket device stream. Tracked
-  here as work progresses.
+- **Deferred (out of scope for now):** AI scan backend, lead dashboard,
+  Turnstile / a shared (multi-replica-safe) rate limiter, n8n notifications,
+  WebSocket device stream. Tracked here as work progresses.
 
 (Detailed feature/route descriptions added per milestone.)

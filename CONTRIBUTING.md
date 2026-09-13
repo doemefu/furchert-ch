@@ -44,6 +44,12 @@ Set `PROMETHEUS_URL=http://localhost:19090` in `.env.local` (see
 `.env.local.example`). Left unset, the dashboard skips the fetch immediately
 and renders the honest "unavailable" fallback — fine for non-dashboard work.
 
+Local contact-form testing requires the commented `SMTP_*`/`CONTACT_TO` block
+in `.env.local.example` filled in with a real Infomaniak application
+password to actually deliver mail. Left unset, submitting the form locally
+shows the visible server error by design (no fake success) — this is fine
+for UI-only work on the contact page.
+
 ## Process
 
 - Follow the 6-phase workflow in `CLAUDE.md` / `.claude/rules/workflow.md`. One
