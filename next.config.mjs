@@ -52,6 +52,11 @@ const nextConfig = {
   // Standalone output for the container image (Phase 7 / Dockerfile).
   output: 'standalone',
   reactStrictMode: true,
+  // nodemailer is the first real runtime dependency; it is not in Next's
+  // built-in server-external-packages allowlist, so without this it would
+  // be bundled into the server build instead of traced into
+  // .next/standalone/node_modules (#46).
+  serverExternalPackages: ['nodemailer'],
   headers,
 };
 
