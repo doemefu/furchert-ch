@@ -34,7 +34,7 @@ export function ContactForm() {
   const [sent, setSent] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', message: '', company: '' });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +44,10 @@ export function ContactForm() {
       const res = await submitContact(form);
       if (res.ok) {
         setSent(true);
+      } else if (res.error === 'server') {
+        setError(t('errorServer'));
+      } else if (res.error === 'rate_limited') {
+        setError(t('errorRateLimited'));
       } else {
         setError(t('errorInvalid'));
       }
@@ -73,6 +77,19 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* Honeypot: hidden from sighted users (off-canvas, not display:none so
+          bots still see it), not tab-reachable, no visible label. A filled
+          value silently marks the submission invalid in the server action. */}
+      <input
+        type="text"
+        name="company"
+        value={form.company}
+        onChange={(e) => setForm({ ...form, company: e.target.value })}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+      />
       {(['name', 'email'] as const).map((id) => (
         <div key={id} style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
           <label htmlFor={`contact-${id}`} style={labelStyle}>
@@ -84,6 +101,7 @@ export function ContactForm() {
             value={form[id]}
             onChange={(e) => setForm({ ...form, [id]: e.target.value })}
             required
+            maxLength={id === 'email' ? 254 : 200}
             style={inputStyle}
           />
         </div>
@@ -98,6 +116,7 @@ export function ContactForm() {
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           required
           rows={5}
+          maxLength={5000}
           style={{ ...inputStyle, resize: 'vertical' }}
         />
       </div>
