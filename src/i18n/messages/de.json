@@ -209,6 +209,7 @@
     "subnav": {
       "devArea": "Dev-Bereich",
       "overview": "Übersicht",
+      "network": "Netzwerk",
       "authService": "Auth Service",
       "deviceService": "Device Service",
       "soon": "bald"
@@ -242,6 +243,102 @@
       "authService": "Auth Service",
       "n8n": "n8n Workflows",
       "allRepos": "Alle Repos ↗"
+    },
+    "network": {
+      "title": "Netzwerk",
+      "kicker": "Netzwerk-Monitoring",
+      "adminOnly": "Nur Admin",
+      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs und Firewall-Ereignisse. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
+      "window": {
+        "label": "Zeitraum",
+        "24h": "24 h",
+        "7d": "7 T",
+        "30d": "30 T"
+      },
+      "unavailable": "data-service nicht erreichbar — keine Daten angezeigt.",
+      "disabled": "data-service in dieser Umgebung nicht konfiguriert (DATA_SERVICE_URL nicht gesetzt).",
+      "problem": "Fehler vom data-service (HTTP {status}, {code}) — keine Daten angezeigt.",
+      "malformed": "Unerwartete Antwort vom data-service — keine Daten angezeigt.",
+      "notYetAvailable": "Noch nicht verfügbar — kommt mit {subproject}.",
+      "sampled": "Stichprobe",
+      "lowerBound": "Untergrenze",
+      "empty": "Keine Daten in diesem Zeitraum.",
+      "status": {
+        "title": "Collectors",
+        "ok": "Aktuell",
+        "stale": "Veraltet",
+        "failing": "Fehlerhaft",
+        "disabled": "Deaktiviert",
+        "none": "Keine Collectors gemeldet.",
+        "lastSuccess": "Letzter Erfolg {time}",
+        "neverSucceeded": "Noch kein erfolgreicher Lauf",
+        "failures": "{count, plural, one {# Fehlschlag in Folge} other {# Fehlschläge in Folge}}",
+        "error": "Fehler {code}"
+      },
+      "inbound": {
+        "title": "Eingehend (Cloudflare)",
+        "requests": "Anfragen",
+        "uniqueIps": "Eindeutige Client-IPs",
+        "timeline": "Anfragen im Zeitverlauf",
+        "topIps": "Top-Client-IPs",
+        "countries": "Länder",
+        "asns": "Netze (ASN)",
+        "hosts": "Hosts",
+        "paths": "Pfade",
+        "statuses": "Statuscodes",
+        "ip": "IP",
+        "country": "Land",
+        "asn": "Netz",
+        "reputation": "Reputation",
+        "blocklisted": "Blockliste",
+        "abuseScoreValue": "Abuse {score}",
+        "firewallEvents": "FW-Ereignisse",
+        "firewall": {
+          "title": "Firewall-Ereignisse",
+          "time": "Zeit",
+          "ip": "Client-IP",
+          "action": "Aktion",
+          "source": "Quelle",
+          "rule": "Regel",
+          "request": "Anfrage",
+          "older": "Ältere Ereignisse",
+          "newest": "Neueste Ereignisse"
+        }
+      },
+      "ip": {
+        "title": "IP-Detail",
+        "close": "Schliessen",
+        "window": "Zeitraum: {window}",
+        "firstSeen": "Zuerst gesehen",
+        "lastSeen": "Zuletzt gesehen",
+        "seenIn": "Gesehen in",
+        "blocklists": "Blocklisten",
+        "noBlocklists": "Auf keiner Blockliste.",
+        "abuseScore": "AbuseIPDB",
+        "abuseReports": "{count, plural, one {# Meldung} other {# Meldungen}}",
+        "notChecked": "Nicht geprüft",
+        "notFound": "Diese IP wurde im Zeitraum nicht gesehen.",
+        "invalid": "Ungültige IP-Adresse.",
+        "logins": "Logins",
+        "loginsValue": "{success} ok · {failure} fehlgeschlagen · {locked} gesperrt",
+        "lan": "LAN",
+        "lanValue": "{ufwBlocks} UFW-Blocks · {sshFailed} fehlgeschlagene SSH"
+      },
+      "lan": {
+        "title": "LAN"
+      },
+      "egress": {
+        "title": "Ausgehend"
+      },
+      "logins": {
+        "title": "Logins"
+      }
+    },
+    "noAccess": {
+      "kicker": "Nur Admin",
+      "title": "Kein Zugriff",
+      "body": "Du bist angemeldet, aber diese Seite ist Konten mit der Rolle ADMIN vorbehalten.",
+      "back": "Zurück zur Übersicht"
     }
   },
   "common": {

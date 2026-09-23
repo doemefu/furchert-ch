@@ -7,7 +7,7 @@ import type { Locale } from '@/i18n/routing';
 // differ by time zone — never by language tag or format options.
 // Exhaustive per-locale BCP-47 tag — adding a locale becomes a compile error
 // here rather than silently falling back to English.
-const LOCALE_TAG: Record<Locale, string> = { de: 'de-CH', en: 'en-GB' };
+export const LOCALE_TAG: Record<Locale, string> = { de: 'de-CH', en: 'en-GB' };
 
 export function formatDashboardDateTime(locale: Locale, when: Date, timeZone?: string): string {
   const tag = LOCALE_TAG[locale];

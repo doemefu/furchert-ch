@@ -11,7 +11,9 @@ import { Icon } from '@/components/ui/Icon';
 const DOTS =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.2'/%3E%3C/svg%3E\")";
 
-export function SignInGate({ locale }: { locale: string }) {
+// `returnPath` is the locale-less dashboard path to land on after sign-in
+// (a constant chosen by the rendering page, never user input).
+export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: string; returnPath?: string }) {
   const t = useTranslations('dashboard');
   const [error, setError] = useState(false);
 
@@ -21,7 +23,7 @@ export function SignInGate({ locale }: { locale: string }) {
   const onSignIn = async () => {
     setError(false);
     try {
-      await signIn('furchert-ch', { redirectTo: `/${locale}/dashboard` });
+      await signIn('furchert-ch', { redirectTo: `/${locale}${returnPath}` });
     } catch (err) {
       console.error('[SignInGate] sign-in failed', err);
       setError(true);

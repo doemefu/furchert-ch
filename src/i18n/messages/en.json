@@ -209,6 +209,7 @@
     "subnav": {
       "devArea": "Dev Area",
       "overview": "Overview",
+      "network": "Network",
       "authService": "Auth Service",
       "deviceService": "Device Service",
       "soon": "soon"
@@ -242,6 +243,102 @@
       "authService": "Auth Service",
       "n8n": "n8n Workflows",
       "allRepos": "All Repos ↗"
+    },
+    "network": {
+      "title": "Network",
+      "kicker": "Network monitoring",
+      "adminOnly": "Admin only",
+      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation and firewall events. Data from data-service, loaded fresh on every page view.",
+      "window": {
+        "label": "Window",
+        "24h": "24 h",
+        "7d": "7 d",
+        "30d": "30 d"
+      },
+      "unavailable": "data-service unavailable — no data shown.",
+      "disabled": "data-service not configured in this environment (DATA_SERVICE_URL unset).",
+      "problem": "data-service error (HTTP {status}, {code}) — no data shown.",
+      "malformed": "Unexpected response from data-service — no data shown.",
+      "notYetAvailable": "Not yet available — arrives with {subproject}.",
+      "sampled": "Sampled",
+      "lowerBound": "Lower bound",
+      "empty": "No data in this window.",
+      "status": {
+        "title": "Collectors",
+        "ok": "Fresh",
+        "stale": "Stale",
+        "failing": "Failing",
+        "disabled": "Disabled",
+        "none": "No collectors reported.",
+        "lastSuccess": "Last success {time}",
+        "neverSucceeded": "No successful run yet",
+        "failures": "{count, plural, one {# consecutive failure} other {# consecutive failures}}",
+        "error": "error {code}"
+      },
+      "inbound": {
+        "title": "Inbound (Cloudflare)",
+        "requests": "Requests",
+        "uniqueIps": "Unique client IPs",
+        "timeline": "Requests over time",
+        "topIps": "Top client IPs",
+        "countries": "Countries",
+        "asns": "Networks (ASN)",
+        "hosts": "Hosts",
+        "paths": "Paths",
+        "statuses": "Status codes",
+        "ip": "IP",
+        "country": "Country",
+        "asn": "Network",
+        "reputation": "Reputation",
+        "blocklisted": "Blocklisted",
+        "abuseScoreValue": "Abuse {score}",
+        "firewallEvents": "FW events",
+        "firewall": {
+          "title": "Firewall events",
+          "time": "Time",
+          "ip": "Client IP",
+          "action": "Action",
+          "source": "Source",
+          "rule": "Rule",
+          "request": "Request",
+          "older": "Older events",
+          "newest": "Newest events"
+        }
+      },
+      "ip": {
+        "title": "IP detail",
+        "close": "Close",
+        "window": "Window: {window}",
+        "firstSeen": "First seen",
+        "lastSeen": "Last seen",
+        "seenIn": "Seen in",
+        "blocklists": "Blocklists",
+        "noBlocklists": "Not on any blocklist.",
+        "abuseScore": "AbuseIPDB",
+        "abuseReports": "{count, plural, one {# report} other {# reports}}",
+        "notChecked": "Not checked",
+        "notFound": "This IP was not seen in the window.",
+        "invalid": "Invalid IP address.",
+        "logins": "Logins",
+        "loginsValue": "{success} ok · {failure} failed · {locked} locked",
+        "lan": "LAN",
+        "lanValue": "{ufwBlocks} UFW blocks · {sshFailed} failed SSH"
+      },
+      "lan": {
+        "title": "LAN"
+      },
+      "egress": {
+        "title": "Egress"
+      },
+      "logins": {
+        "title": "Logins"
+      }
+    },
+    "noAccess": {
+      "kicker": "Admin only",
+      "title": "No access",
+      "body": "You are signed in, but this page is reserved for accounts with the ADMIN role.",
+      "back": "Back to overview"
     }
   },
   "common": {
