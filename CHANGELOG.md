@@ -33,6 +33,15 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **ESLint 8.57.1 → 9.39.5, eslint-config-next 15.5.25 → 16.3.5** (#59):
+  `.eslintrc.json` (`root: true`, `ignorePatterns`) is removed and replaced
+  by a flat `eslint.config.mjs` (core-web-vitals + typescript presets;
+  ignores `.next/`, `.claude/`, `out/`, `build/`, `next-env.d.ts`);
+  `pnpm lint` is plain `eslint .`. Now enforced: the 14 React-Compiler rules
+  of `eslint-plugin-react-hooks` 7,
+  `@next/next/no-location-assign-relative-destination` and
+  `@typescript-eslint/recommended`. The single intentional post-hydration
+  effect in `DateTimeStrip.tsx` is exempted inline (follow-up #66).
 - **Build and Push builds `linux/arm64` natively instead of under QEMU**
   (#48): `build.yml` now runs `verify` → a per-platform `build` matrix
   (`linux/amd64` on `ubuntu-24.04`, `linux/arm64` on `ubuntu-24.04-arm`)
@@ -55,8 +64,8 @@ All notable changes per milestone. Newest first.
   (`jsx: react-jsx`, `.next/dev/types`). Production builds use Turbopack
   (Next 16 default). Ships alongside the #57 group bump already live:
   react/react-dom 19.3.0, next-intl 4.14.5, nodemailer 10.0.10.
-  `eslint-config-next` stays at 15.5.25 (ESLint 8, legacy `.eslintrc.json`);
-  moving to 16.x needs ESLint 9 + flat config and is tracked in #59.
+  `eslint-config-next` was held at 15.5.25 until the ESLint 9 flat-config
+  migration (#59) landed in the same release.
 - **Club Assist tile is now workload-backed** (#17): was static `wip`, now
   reflects the live `open-webui` deployment status (it has been live at
   club.furchert.ch for a while).
