@@ -52,7 +52,7 @@
 | Fonts | DM Sans + DM Mono (`next/font`) | — |
 | Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `node:22.23.1-alpine` |
 
-Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.1 while the runtime is Node 22 — a known, harmless mismatch. `pnpm.overrides.postcss` pins postcss to 8.5.23 (tracked for removal in #34).
+Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.1 while the runtime is Node 22 — a known, harmless mismatch.
 
 ## Agent Team
 
