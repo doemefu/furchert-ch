@@ -37,6 +37,8 @@ export function DateTimeStrip({
 
   useEffect(() => {
     // No timeZone arg → formats in the browser's local zone.
+    // Intentional one-shot post-hydration re-format (see header); see #66.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setText(formatDashboardDateTime(locale, new Date(initialEpoch)));
   }, [locale, initialEpoch]);
 
