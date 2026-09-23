@@ -6,8 +6,8 @@
 // DashboardShell idioms and ETHON tokens (no prototype exists for this page).
 //
 // Every section renders its own honest failure state; nothing is fabricated.
-// Window (`?window=`), IP detail (`?ip=`) and firewall paging (`?fwCursor=`)
-// are search params, so every interaction is a server-rendered link.
+// Window (`?window=`), IP detail (`?ip=`) and firewall paging (`?fwCursor=`
+// plus the pinned `?fwFrom=`/`?fwTo=` window) are search params, so every interaction is a server-rendered link.
 import type { CSSProperties, ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
@@ -90,13 +90,20 @@ interface LinkState {
   range: NetworkRange;
   ip?: string;
   fwCursor?: string;
+  fwWindow?: TimeWindow;
 }
 
-function pageHref({ range, ip, fwCursor }: LinkState) {
+function pageHref({ range, ip, fwCursor, fwWindow }: LinkState) {
   const query: Record<string, string> = {};
   if (range !== '24h') query.window = range;
   if (ip) query.ip = ip;
-  if (fwCursor) query.fwCursor = fwCursor;
+  if (fwCursor) {
+    query.fwCursor = fwCursor;
+    if (fwWindow) {
+      query.fwFrom = fwWindow.from;
+      query.fwTo = fwWindow.to;
+    }
+  }
   return { pathname: '/dashboard/network', query };
 }
 
@@ -591,12 +598,15 @@ export async function NetworkShell({
   ip,
   invalidIp,
   fwCursor,
+  fwWindow,
 }: {
   locale: Locale;
   range: NetworkRange;
   ip?: string;
   invalidIp: boolean;
   fwCursor?: string;
+  /** Window pinned by a paging link; used only together with `fwCursor`. */
+  fwWindow?: TimeWindow;
 }) {
   const t = await getTranslations('dashboard.network');
   const fmt = makeFormatters(locale);
@@ -606,14 +616,25 @@ export async function NetworkShell({
   // an IP's history, so the detail panel never looks back less than 7 d.
   const detailRange: NetworkRange = range === '24h' ? '7d' : range;
 
-  // Fetchers never throw (they return NetmonResult), so Promise.all is safe
-  // and every section gets its own honest failure state.
-  const [status, summary, firewall, ipDetail] = await Promise.all([
+  // Older firewall pages keep the window of the page that issued the cursor,
+  // so paging is deterministic instead of drifting with "now".
+  const firewallWindow = fwCursor && fwWindow ? fwWindow : pageWindow;
+
+  // Fetchers are designed never to throw (they return NetmonResult);
+  // allSettled enforces that, so an unexpected rejection still becomes an
+  // honest per-section "unavailable" state (§8).
+  const settled = await Promise.allSettled([
     getStatus(),
     getInboundSummary(pageWindow),
-    getFirewallEvents(pageWindow, fwCursor),
+    getFirewallEvents(firewallWindow, fwCursor),
     ip ? getIpDetail(ip, toWindow(detailRange, now)) : Promise.resolve(null),
-  ]);
+  ] as const);
+  const unreachable: NetmonFailure = { ok: false, kind: 'unreachable' };
+  const status = settled[0].status === 'fulfilled' ? settled[0].value : unreachable;
+  const summary = settled[1].status === 'fulfilled' ? settled[1].value : unreachable;
+  const firewall = settled[2].status === 'fulfilled' ? settled[2].value : unreachable;
+  const ipDetail = settled[3].status === 'fulfilled' ? settled[3].value : unreachable;
+  if (settled.some((r) => r.status === 'rejected')) console.warn('[netmon] a section fetch rejected unexpectedly');
 
   return (
     <div style={{ background: 'var(--n-10)' }}>
@@ -758,7 +779,10 @@ export async function NetworkShell({
                     </Link>
                   )}
                   {firewall.data.nextCursor && (
-                    <Link href={pageHref({ range, ip, fwCursor: firewall.data.nextCursor })} style={chipBase}>
+                    <Link
+                      href={pageHref({ range, ip, fwCursor: firewall.data.nextCursor, fwWindow: firewallWindow })}
+                      style={chipBase}
+                    >
                       {t('inbound.firewall.older')}
                     </Link>
                   )}

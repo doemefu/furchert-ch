@@ -160,7 +160,9 @@ async function getJson<T>(
     res = await authorizedGet(url);
     if (res.status === 401) {
       // Cached token rejected (e.g. signing-key rotation): retry once with a
-      // fresh one before reporting the failure.
+      // fresh one before reporting the failure. Release the first response's
+      // body so its connection is not held until GC.
+      await res.body?.cancel();
       invalidateNetmonToken();
       res = await authorizedGet(url);
     }
@@ -220,7 +222,15 @@ function isIpDetail(v: unknown): v is IpDetail {
     typeof v.ip === 'string' &&
     Array.isArray(v.blocklists) &&
     Array.isArray(v.firewallEvents) &&
-    Array.isArray(v.seenIn)
+    Array.isArray(v.seenIn) &&
+    // `inbound` is rendered as three bar lists: accept it only as null or
+    // with all three arrays present, so a malformed body renders "malformed"
+    // instead of throwing during render.
+    (v.inbound === null ||
+      (isObject(v.inbound) &&
+        Array.isArray(v.inbound.topHosts) &&
+        Array.isArray(v.inbound.topPaths) &&
+        Array.isArray(v.inbound.statuses)))
   );
 }
 

@@ -52,7 +52,7 @@ kubectl -n apps port-forward svc/auth-service 18080:8080
 ```
 Set `DATA_SERVICE_URL=http://localhost:18082` and
 `DATA_SERVICE_TOKEN_URL=http://localhost:18080/oauth2/token` in `.env.local`.
-Left unset, the page skips every call and shows a "not configured" state.
+If either is unset, the page skips every call and shows a "not configured" state.
 
 Local contact-form testing requires the commented `SMTP_*`/`CONTACT_TO` block
 in `.env.local.example` filled in with a real Infomaniak application

@@ -109,7 +109,11 @@ this section lists only what this app uses.
 | Logging | `[netmon] <endpoint> …` with the HTTP status or a short reason only — never tokens, URLs with query strings, or IP addresses |
 | Gating | The page renders `NetworkShell` (and therefore makes any call) only after `auth()` + `asRole(session.user?.role) === 'ADMIN'`; USER sessions get `NoAccess` |
 
-Local dev: unset `DATA_SERVICE_URL` skips every call (`shouldAttemptNetmon()`),
+Firewall paging: the "older" link carries the cursor plus the window that
+produced it (`?fwCursor=&fwFrom=&fwTo=`), so later pages query the same window.
+
+Local dev: unless both `DATA_SERVICE_URL` and `DATA_SERVICE_TOKEN_URL` are set,
+every call is skipped (`shouldAttemptNetmon()`),
 see `.env.local.example` for the port-forward alternative.
 
 ## 3. Outbound: Infomaniak SMTP (contact form)

@@ -27,10 +27,11 @@ export const NETMON_ENV = {
 };
 
 // Local dev has no in-cluster DNS: outside production, skip every netmon
-// fetch when no `DATA_SERVICE_URL` override is configured, instead of
-// stalling the render for the full timeout (same rule as
-// `shouldAttemptMetrics()`).
+// fetch unless BOTH overrides are configured, instead of stalling the render
+// for the full timeout on the in-cluster default (same idea as
+// `shouldAttemptMetrics()`; the token URL default is just as unreachable).
 export function shouldAttemptNetmon(): boolean {
   if (process.env.NODE_ENV === 'production') return true;
-  return Boolean(process.env.DATA_SERVICE_URL && process.env.DATA_SERVICE_URL.length > 0);
+  const isSet = (v: string | undefined) => Boolean(v && v.length > 0);
+  return isSet(process.env.DATA_SERVICE_URL) && isSet(process.env.DATA_SERVICE_TOKEN_URL);
 }

@@ -16,6 +16,7 @@ import { assertAuthEnv } from '@/auth.env';
 import { SignInGate } from '../SignInGate';
 import { DevSubnav } from '../Subnav';
 import { NoAccess } from '../NoAccess';
+import type { TimeWindow } from '@/lib/netmon/client';
 import { NetworkShell, NETWORK_RANGES, type NetworkRange } from './NetworkShell';
 
 // Reads the session (cookies) and live data → must be dynamic.
@@ -40,7 +41,23 @@ function parseRange(v: string | undefined): NetworkRange {
 function parseIp(v: string | undefined): { ip?: string; invalid: boolean } {
   if (v === undefined || v === '') return { invalid: false };
   const trimmed = v.trim();
+  // `%` would allow IPv6 zone IDs (`fe80::1%eth0`), which are meaningless
+  // for public client IPs and awkward in a URL path segment.
+  if (trimmed.includes('%')) return { invalid: true };
   return isIP(trimmed) === 0 ? { invalid: true } : { ip: trimmed, invalid: false };
+}
+
+// The firewall window pinned by a paging link (`fwFrom`/`fwTo`), so older
+// pages use the same window as the cursor that produced them. Accepted only
+// as second-precision UTC instants with 0 < to − from ≤ 30 d (§7.1).
+const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+const MAX_WINDOW_MS = 30 * 24 * 3600 * 1000;
+
+function parsePinnedWindow(from: string | undefined, to: string | undefined): TimeWindow | undefined {
+  if (!from || !to || !INSTANT.test(from) || !INSTANT.test(to)) return undefined;
+  const span = Date.parse(to) - Date.parse(from);
+  if (!Number.isFinite(span) || span <= 0 || span > MAX_WINDOW_MS) return undefined;
+  return { from, to };
 }
 
 function parseCursor(v: string | undefined): string | undefined {
@@ -99,11 +116,13 @@ export default async function NetworkPage({
   const range = parseRange(first(sp.window));
   const { ip, invalid: invalidIp } = parseIp(first(sp.ip));
   const fwCursor = parseCursor(first(sp.fwCursor));
+  // A pinned window only makes sense together with a cursor.
+  const fwWindow = fwCursor ? parsePinnedWindow(first(sp.fwFrom), first(sp.fwTo)) : undefined;
 
   return (
     <>
       <DevSubnav active="network" />
-      <NetworkShell locale={locale} range={range} ip={ip} invalidIp={invalidIp} fwCursor={fwCursor} />
+      <NetworkShell locale={locale} range={range} ip={ip} invalidIp={invalidIp} fwCursor={fwCursor} fwWindow={fwWindow} />
     </>
   );
 }
