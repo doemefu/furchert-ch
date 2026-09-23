@@ -298,13 +298,20 @@ If any of the three is missing headers, see Troubleshooting below.
   cleanly and Flux image automation picks up the new `main-<ts>` tag.
 - **A platform build (`build (linux/arm64)` or `build (linux/amd64)`) is
   queued for long or fails** — no tag is published (`merge` needs both legs),
-  so Flux keeps running the previous `main-<ts>` image; the failed leg only
-  leaves an untagged digest in GHCR (harmless). Check
-  `gh run view <id> --json jobs`; `ubuntu-24.04-arm` capacity for public repos
-  can add queue time, which is not counted against `timeout-minutes`. Re-run
-  with `gh run rerun <id> --failed` within 24 h (the digest artifacts of the
+  so Flux keeps running the previous `main-<ts>` image. Any leg that pushed
+  leaves only an untagged digest in GHCR (harmless); a failed leg usually
+  leaves none. Check `gh run view <id> --json jobs`; `ubuntu-24.04-arm`
+  capacity for public repos can add queue time, which is not counted against
+  `timeout-minutes`. Only re-run a run whose commit is still the newest on
+  `main`; otherwise push a new commit (or revert) instead. Re-run with
+  `gh run rerun <id> --failed` within 24 h (the digest artifacts of the
   successful leg are kept for 1 day); after that, re-run all jobs
-  (`gh run rerun <id>`).
+  (`gh run rerun <id>`). A full re-run re-runs `verify`, which mints a fresh
+  `main-<now>` tag for that run's commit: if a newer `main` build has
+  published since, that tag sorts newest and Flux rolls production back to
+  the older code — re-running an older run is not a no-op. The per-platform
+  build cache from before #48 (default scope) is no longer written and
+  expires on its own.
 - **A security header (#42) is missing from a live response** — `next.config.mjs`'s
   `headers()` matches `source: '/:path*'`, which covers pages, `/api/*`, and
   `/_next/static/*` alike, and (per Next.js's documented execution order —
