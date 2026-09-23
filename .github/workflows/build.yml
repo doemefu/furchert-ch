@@ -2,7 +2,7 @@ name: Build and Push
 
 on:
   push:
-    branches: [main, ci/48-native-arm64-runners]
+    branches: [main]
     paths-ignore: ['k8s/**']
 
 env:
