@@ -33,6 +33,17 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Build and Push builds `linux/arm64` natively instead of under QEMU**
+  (#48): `build.yml` now runs `verify` → a per-platform `build` matrix
+  (`linux/amd64` on `ubuntu-24.04`, `linux/arm64` on `ubuntu-24.04-arm`)
+  pushing by digest → a `merge` job that publishes the unchanged tag set
+  (`main-<UTC ts>` + short sha) only after both legs succeed and asserts the
+  manifest list contains both platforms. Removes the QEMU crash class behind
+  the #41 hangs; a full run takes ~3.5 min instead of 8–14 min. Timeout
+  guards recalibrated to 25/20 min (build job/step) and 10 min (merge);
+  build cache scoped per platform. Both workflows pin `runs-on` to
+  `ubuntu-24.04` (ahead of `ubuntu-latest` moving to Ubuntu 26) and use
+  `pnpm/action-setup@v5` (Node 24 runtime; v4 ran on the deprecated Node 20).
 - **Next.js 15.5.24 → 16.3.5** (#53, #58): completes the Dependabot bump that
   left `main` unbuildable. `pnpm lint` now runs the ESLint 8 CLI
   (`eslint . --ext .ts,.tsx,.js,.jsx,.mjs`) because Next 16 removed
