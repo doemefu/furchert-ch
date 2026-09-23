@@ -99,19 +99,27 @@ see `INTERFACES.md` §1.
 Apply in the **auth-service** repo (its own workflow; you commit it there) and
 provision the secret via SOPS. furchert-ch never edits secret/age/`.sops.*` files.
 
-1. `src/main/resources/application.yaml` → add to `app.oidc.clients` (mirrors `grafana`;
-   do **not** copy device-service's `client_credentials`/`clients:admin`):
+1. `src/main/resources/application.yaml` → the `furchert-ch` entry in `app.oidc.clients`
+   (current state since auth-service V6, PR #95, 2026-09-23):
    ```yaml
          - client-id: furchert-ch
            client-secret: "${FURCHERT_CH_CLIENT_SECRET}"
+           grant-types: [ authorization_code, refresh_token, client_credentials ]
            redirect-uris:
              - https://furchert.ch/api/auth/callback/furchert-ch
              - http://localhost:3000/api/auth/callback/furchert-ch
            post-logout-redirect-uris:
              - https://furchert.ch
              - http://localhost:3000
-           scopes: [ openid, profile, email ]
+           scopes: [ openid, profile, email, "netmon:read" ]
    ```
+   The browser login still requests only `openid profile email` (Authorization
+   Code + PKCE). `client_credentials` with `netmon:read` is used **server-side
+   only**, for the data-service read API behind `/dashboard/network`
+   (`infrastructure/docs/060-network-monitoring.md` §7.5; `INTERFACES.md` §2).
+   Do **not** add device-service's `clients:admin` scope. On an existing
+   database the YAML is bootstrap-only — auth-service's Flyway migration V6
+   applied the grant and scope in production (see step 3).
 2. `k8s/deployment.yaml` → env from `secretKeyRef`:
    ```yaml
          - name: FURCHERT_CH_CLIENT_SECRET
