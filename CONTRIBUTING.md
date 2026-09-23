@@ -56,7 +56,7 @@ for UI-only work on the contact page.
   worklog per milestone; update `.claude/memory/MEMORY.md` (newest on top) when done.
 - Recreate the design pixel-faithfully from the prototype source. `/automation`
   stays a mockup.
-- No secrets in git. Pin dependency versions. Never auto-commit — the user commits.
+- No secrets in git. Pin dependency versions. Commit, push and open PRs on feature branches without asking (standing permission, 2026-08-28); merging, force-pushes and cluster mutations need an explicit go.
 - **Code review tooling:** CodeRabbit is not installed on this repository
   (confirmed 2026-08-28: no response to a manual `@coderabbitai review`
   trigger). Copilot review is auto-requested but its account quota can be
