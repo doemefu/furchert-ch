@@ -4,7 +4,8 @@
 > §1 (OIDC client) is **implemented** as of Phase 4. §2's Prometheus metrics
 > source is **implemented** as of issue #17; the auth-service/device-service
 > REST proxies land in Phase 6. §3 (outbound SMTP for the contact form) is
-> implemented as of issue #46.
+> implemented as of issue #46. §2's data-service netmon read API (NM-1) is
+> implemented as of issue #61.
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -21,6 +22,7 @@
 | End session | `https://auth.furchert.ch/connect/logout` (RP-initiated, with `id_token_hint`) |
 | Post-logout redirect | `https://furchert.ch` (+ `http://localhost:3000` for dev) |
 | Claims used | `sub`, `name`, `email`, `role` (`USER`/`ADMIN`) |
+| Server-side grant (#61) | The same client also runs `client_credentials` with scope `netmon:read` (auth-service V6) for the data-service read API — see §2 "data-service" |
 
 - Session strategy = JWT. The `role` claim is exposed to the browser session
   (fail-closed to `USER`). **Access/ID tokens are kept server-side only** and
@@ -87,6 +89,28 @@ the workload-backed app tiles:
 Any failure (unreachable, timeout, malformed response, empty result) degrades
 the dashboard to an honest "unavailable" fallback instead of fabricating
 data — see `OVERVIEW.md`.
+
+### data-service — `http://data-service.apps.svc.cluster.local:8082` (NM-1, #61)
+
+Network-monitoring read API, consumed only by `/[locale]/dashboard/network`
+(`NetworkShell`, a Server Component) through `src/lib/netmon/client.ts` —
+never from a route handler, never from the browser. The contract is
+`infrastructure/docs/060-network-monitoring.md` (§7 read API, §8 UI contract);
+this section lists only what this app uses.
+
+| Item | Value |
+|------|-------|
+| Env | `DATA_SERVICE_URL` (default `http://data-service.apps.svc.cluster.local:8082`), `DATA_SERVICE_TOKEN_URL` (default `http://auth-service.apps.svc.cluster.local:8080/oauth2/token`); `src/netmon.env.ts` |
+| Auth | `Authorization: Bearer <token>` from a client-credentials grant: `POST DATA_SERVICE_TOKEN_URL` with HTTP Basic `OIDC_CLIENT_ID:OIDC_CLIENT_SECRET` (form-urlencoded per RFC 6749 §2.3.1), body `grant_type=client_credentials&scope=netmon:read`. Cached in process until `exp − 60 s` (`src/lib/netmon/token.ts`); one retry with a fresh token after a 401. No new secret |
+| Endpoints | `GET /api/netmon/status`; `GET /api/netmon/inbound/summary?from&to&limit=10`; `GET /api/netmon/inbound/firewall-events?from&to&limit=50&cursor`; `GET /api/netmon/ips/{ip}?from&to` (only for a server-side `node:net isIP`-validated `?ip=`) |
+| Window | `?window=24h\|7d\|30d` (default `24h`) mapped server-side to `from`/`to`; the IP detail never looks back less than 7 d |
+| Timeouts | `cache: 'no-store'`, `AbortSignal.timeout(5000)` per call (token and data); the four data calls run in parallel |
+| Errors | RFC 9457 `problem+json`: the `code` field is shown (`invalid_window`, `not_found`, …); 404 on the IP detail renders "not seen". Unreachable, token failure, or an unexpected shape renders "data-service unavailable" / "unexpected response" per section — never fabricated data |
+| Logging | `[netmon] <endpoint> …` with the HTTP status or a short reason only — never tokens, URLs with query strings, or IP addresses |
+| Gating | The page renders `NetworkShell` (and therefore makes any call) only after `auth()` + `asRole(session.user?.role) === 'ADMIN'`; USER sessions get `NoAccess` |
+
+Local dev: unset `DATA_SERVICE_URL` skips every call (`shouldAttemptNetmon()`),
+see `.env.local.example` for the port-forward alternative.
 
 ## 3. Outbound: Infomaniak SMTP (contact form)
 

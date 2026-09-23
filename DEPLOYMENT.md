@@ -61,7 +61,20 @@ in dev, the dashboard skips the fetch immediately (no 2.5 s stall on an
 unreachable cluster-internal FQDN). `SMTP_HOST` (`mail.infomaniak.com`),
 `SMTP_PORT` (`587`), `SMTP_USER` (`info@furchert.ch`), `CONTACT_TO` (defaults
 to `SMTP_USER`, set explicitly to `info@furchert.ch`) — the contact form's
-outbound SMTP delivery (#46), see `INTERFACES.md` §3.
+outbound SMTP delivery (#46), see `INTERFACES.md` §3. `DATA_SERVICE_URL`
+(`http://data-service.apps.svc.cluster.local:8082`) and `DATA_SERVICE_TOKEN_URL`
+(`http://auth-service.apps.svc.cluster.local:8080/oauth2/token`) — the
+`/dashboard/network` read API and the token endpoint for its client-credentials
+grant (NM-1, #61; `INTERFACES.md` §2 "data-service"). Both default to these
+values if unset and are set explicitly in `k8s/deployment.yaml`. The grant
+reuses `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET` — **no new secret**. Left unset in
+dev, the page skips every call and shows a "not configured" state.
+
+**`/dashboard/network` rollout order (NM-1):** homelab#116 (data-service
+secret keys via `59_app_services.yml`) → homelab-data-service#14 (collectors +
+inbound read API) → this repo's #61. Merging this repo earlier is safe but
+shows only the collector status strip and "unavailable"/HTTP-error states for
+the inbound sections until data-service#14 is live.
 
 **Set `AUTH_URL=https://furchert.ch` in production:**
 Auth.js infers it for callbacks behind the tunnel when `trustHost` is set, but

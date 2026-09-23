@@ -44,6 +44,16 @@ Set `PROMETHEUS_URL=http://localhost:19090` in `.env.local` (see
 `.env.local.example`). Left unset, the dashboard skips the fetch immediately
 and renders the honest "unavailable" fallback — fine for non-dashboard work.
 
+Optional — `/dashboard/network` locally (data-service, NM-1 #61; needs an
+ADMIN account):
+```bash
+kubectl -n apps port-forward svc/data-service 18082:8082
+kubectl -n apps port-forward svc/auth-service 18080:8080
+```
+Set `DATA_SERVICE_URL=http://localhost:18082` and
+`DATA_SERVICE_TOKEN_URL=http://localhost:18080/oauth2/token` in `.env.local`.
+Left unset, the page skips every call and shows a "not configured" state.
+
 Local contact-form testing requires the commented `SMTP_*`/`CONTACT_TO` block
 in `.env.local.example` filled in with a real Infomaniak application
 password to actually deliver mail. Left unset, submitting the form locally
