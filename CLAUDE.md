@@ -46,6 +46,7 @@
 | Framework | Next.js (App Router, TypeScript) | next 16.3.5, typescript 6.0.3 |
 | UI runtime | React (Server + Client Components) | react / react-dom 19.3.0 |
 | Package manager | pnpm | pnpm@9.15.4 (`packageManager` field) |
+| Lint | ESLint flat config (`eslint.config.mjs`: eslint-config-next core-web-vitals + typescript) | eslint 9.39.5, eslint-config-next 16.3.5 |
 | i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.14.5 |
 | Auth | Auth.js (next-auth) generic OIDC → auth.furchert.ch | 5.0.0-beta.32 |
 | Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
