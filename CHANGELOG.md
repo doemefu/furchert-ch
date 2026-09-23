@@ -81,6 +81,7 @@ All notable changes per milestone. Newest first.
 - Mark `.eslintrc.json` as `root: true` so `pnpm lint` resolves the repo's own
   config instead of searching parent directories (needed for nested
   git-worktree checkouts; no behaviour change for normal checkouts).
+  Superseded by the flat `eslint.config.mjs` in #59.
 
 ### Fixed
 
