@@ -36,9 +36,10 @@ All notable changes per milestone. Newest first.
 - **Next.js 15.5.24 → 16.3.5** (#53, #58): completes the Dependabot bump that
   left `main` unbuildable. `pnpm lint` now runs the ESLint 8 CLI
   (`eslint . --ext .ts,.tsx,.js,.jsx,.mjs`) because Next 16 removed
-  `next lint`; `.eslintrc.json` gains `ignorePatterns` for `.next/` and
-  `.claude/`. `src/middleware.ts` is renamed to `src/proxy.ts` (Next 16 file
-  convention; same next-intl `createMiddleware(routing)` and matcher).
+  `next lint`; `.eslintrc.json` gains `ignorePatterns` for `.next/`,
+  `.claude/` and the generated `next-env.d.ts`. `src/middleware.ts` is
+  renamed to `src/proxy.ts` (Next 16 file convention; same next-intl
+  `createMiddleware(routing)` and matcher).
   `tsconfig.json` carries the changes `next build` now enforces
   (`jsx: react-jsx`, `.next/dev/types`). Production builds use Turbopack
   (Next 16 default). Ships alongside the #57 group bump already live:
