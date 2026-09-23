@@ -54,10 +54,11 @@ All notable changes per milestone. Newest first.
   `ubuntu-24.04` (ahead of `ubuntu-latest` moving to Ubuntu 26) and use
   `pnpm/action-setup@v5` (Node 24 runtime; v4 ran on the deprecated Node 20).
 - **Next.js 15.5.24 → 16.3.5** (#53, #58): completes the Dependabot bump that
-  left `main` unbuildable. `pnpm lint` now runs the ESLint 8 CLI
-  (`eslint . --ext .ts,.tsx,.js,.jsx,.mjs`) because Next 16 removed
-  `next lint`; `.eslintrc.json` gains `ignorePatterns` for `.next/`,
-  `.claude/` and the generated `next-env.d.ts`. `src/middleware.ts` is
+  left `main` unbuildable. Because Next 16 removed `next lint`, `pnpm lint`
+  ran the ESLint 8 CLI directly (`eslint . --ext .ts,.tsx,.js,.jsx,.mjs`)
+  and `.eslintrc.json` gained `ignorePatterns` for `.next/`, `.claude/` and
+  the generated `next-env.d.ts` — both superseded by the ESLint 9 flat
+  config in #59 above. `src/middleware.ts` is
   renamed to `src/proxy.ts` (Next 16 file convention; same next-intl
   `createMiddleware(routing)` and matcher).
   `tsconfig.json` carries the changes `next build` now enforces
