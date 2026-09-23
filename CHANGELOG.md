@@ -85,6 +85,9 @@ All notable changes per milestone. Newest first.
 
 ### Removed
 
+- The `pnpm.overrides.postcss` pin (#34): `next` 16.3.5 now pins `postcss`
+  8.5.23 itself, so the override is redundant; the resolved version is
+  unchanged.
 - Dropped two app tiles with no backing deployment: Aemtlifyer (repo
   archived) and Longhorn (UI not routed anywhere) (#17).
 
@@ -135,7 +138,8 @@ All notable changes per milestone. Newest first.
 - **Refresh transitive dependencies for 9 Dependabot alerts** (refs #31,
   `doemefu/homelab`#47): `postcss` 8.4.31 → 8.5.23 (alerts #89/#71/#69/#40 —
   pinned via a `pnpm.overrides` entry since `next` 15.x hard-pins `postcss` at
-  `8.4.31`; remove the override once `next` moves its own pin to ≥ 8.5.23),
+  `8.4.31`; the override was dropped again in #34 once `next` 16.3.5 pinned
+  `postcss` 8.5.23 itself),
   `sharp` 0.34.5 → 0.35.4 (alert #54 — via `next` 15.5.21 → 15.5.24, which
   widens the `sharp` optional-dependency range), `js-yaml` 4.1.1 → 4.3.2
   (alerts #91/#68/#52), `brace-expansion` 1.1.14 → 1.1.18 / 5.0.9 (alert
