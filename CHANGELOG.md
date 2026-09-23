@@ -43,6 +43,8 @@ All notable changes per milestone. Newest first.
   (`jsx: react-jsx`, `.next/dev/types`). Production builds use Turbopack
   (Next 16 default). Ships alongside the #57 group bump already live:
   react/react-dom 19.3.0, next-intl 4.14.5, nodemailer 10.0.10.
+  `eslint-config-next` stays at 15.5.25 (ESLint 8, legacy `.eslintrc.json`);
+  moving to 16.x needs ESLint 9 + flat config and is tracked in #59.
 - **Club Assist tile is now workload-backed** (#17): was static `wip`, now
   reflects the live `open-webui` deployment status (it has been live at
   club.furchert.ch for a while).

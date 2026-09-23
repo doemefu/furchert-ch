@@ -6,7 +6,7 @@ pnpm install                      # Install pinned dependencies
 pnpm dev                          # Run dev server (http://localhost:3000)
 pnpm build                        # Production build (Next standalone)
 pnpm start                        # Serve the production build
-pnpm lint                         # ESLint
+pnpm lint                         # ESLint 8 CLI (eslint . --ext .ts,.tsx,.js,.jsx,.mjs; next lint was removed in Next 16)
 pnpm typecheck                    # tsc --noEmit (if not folded into lint/build)
 docker build -t furchert-ch .     # Build container image
 ```

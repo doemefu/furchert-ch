@@ -76,6 +76,7 @@ src/app/api/             # auth/[...nextauth], federated-logout, health (server-
 src/components/{ui,layout}/, Providers.tsx
 src/data/                # typed static data (projects, cluster nodes, apps, home stats, ...)
 src/i18n/                # messages/{de,en}.json + next-intl config (navigation.ts, request.ts, routing.ts)
+src/proxy.ts             # next-intl locale routing (Next 16 proxy convention, formerly middleware.ts)
 src/styles/globals.css   # ETHON tokens
 src/types/css.d.ts       # TS 6 CSS-module typing fix (TS2882)
 k8s/                     # deployment.yaml, kustomization.yaml (no separate service.yaml)
