@@ -33,6 +33,19 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Next.js 15.5.24 → 16.3.5** (#53, #58): completes the Dependabot bump that
+  left `main` unbuildable. `pnpm lint` now runs the ESLint 8 CLI
+  (`eslint . --ext .ts,.tsx,.js,.jsx,.mjs`) because Next 16 removed
+  `next lint`; `.eslintrc.json` gains `ignorePatterns` for `.next/`,
+  `.claude/` and the generated `next-env.d.ts`. `src/middleware.ts` is
+  renamed to `src/proxy.ts` (Next 16 file convention; same next-intl
+  `createMiddleware(routing)` and matcher).
+  `tsconfig.json` carries the changes `next build` now enforces
+  (`jsx: react-jsx`, `.next/dev/types`). Production builds use Turbopack
+  (Next 16 default). Ships alongside the #57 group bump already live:
+  react/react-dom 19.3.0, next-intl 4.14.5, nodemailer 10.0.10.
+  `eslint-config-next` stays at 15.5.25 (ESLint 8, legacy `.eslintrc.json`);
+  moving to 16.x needs ESLint 9 + flat config and is tracked in #59.
 - **Club Assist tile is now workload-backed** (#17): was static `wip`, now
   reflects the live `open-webui` deployment status (it has been live at
   club.furchert.ch for a while).

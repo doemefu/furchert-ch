@@ -12,7 +12,7 @@
 
 ## Security headers (#42)
 
-`next.config.mjs`'s `headers()` applies these to every route (`source: '/:path*'`, including `/api/*` and `/_next/static/*` — see the inline comment there for why `next.config.js`, not `src/middleware.ts`):
+`next.config.mjs`'s `headers()` applies these to every route (`source: '/:path*'`, including `/api/*` and `/_next/static/*` — see the inline comment there for why `next.config.js`, not `src/proxy.ts`):
 
 | Header | Value |
 |--------|-------|
@@ -209,9 +209,9 @@ signed in).
 **Security headers (#42) — verify after this milestone's first deploy:**
 
 ```bash
-curl -sI https://furchert.ch                  # bare `/` — middleware locale redirect; should carry the headers too
+curl -sI https://furchert.ch                  # bare `/` — proxy locale redirect; should carry the headers too
 curl -sI https://furchert.ch/de               # rendered page — all 6 headers from "Security headers" above
-curl -sI https://furchert.ch/api/health       # API route — all 6 headers (the case that justified next.config.js over middleware.ts)
+curl -sI https://furchert.ch/api/health       # API route — all 6 headers (the case that justified next.config.js over proxy.ts)
 ```
 
 If any of the three is missing headers, see Troubleshooting below.
@@ -305,7 +305,7 @@ If any of the three is missing headers, see Troubleshooting below.
 - **A security header (#42) is missing from a live response** — `next.config.mjs`'s
   `headers()` matches `source: '/:path*'`, which covers pages, `/api/*`, and
   `/_next/static/*` alike, and (per Next.js's documented execution order —
-  `headers` runs before Proxy/middleware) even a middleware-issued redirect
+  `headers` runs before Proxy) even a proxy-issued redirect
   like the bare `/` → `/de` locale redirect. If a response is missing them
   anyway, check whether a Route Handler under `src/app/api/` is constructing
   its own `Response` with an explicit header set that happens to omit them,

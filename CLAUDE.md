@@ -43,16 +43,16 @@
 
 | Component | Choice | Version |
 |-----------|--------|---------|
-| Framework | Next.js (App Router, TypeScript) | next 15.5.24, typescript 6.0.3 |
-| UI runtime | React (Server + Client Components) | react / react-dom 19.2.7 |
+| Framework | Next.js (App Router, TypeScript) | next 16.3.5, typescript 6.0.3 |
+| UI runtime | React (Server + Client Components) | react / react-dom 19.3.0 |
 | Package manager | pnpm | pnpm@9.15.4 (`packageManager` field) |
-| i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.13.0 |
+| i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.14.5 |
 | Auth | Auth.js (next-auth) generic OIDC → auth.furchert.ch | 5.0.0-beta.32 |
 | Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
 | Fonts | DM Sans + DM Mono (`next/font`) | — |
 | Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `node:22.23.1-alpine` |
 
-Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.0.1 while the runtime is Node 22 — a known, harmless mismatch. `pnpm.overrides.postcss` pins postcss to 8.5.23 (tracked for removal in #34).
+Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.1 while the runtime is Node 22 — a known, harmless mismatch. `pnpm.overrides.postcss` pins postcss to 8.5.23 (tracked for removal in #34).
 
 ## Agent Team
 
@@ -76,6 +76,7 @@ src/app/api/             # auth/[...nextauth], federated-logout, health (server-
 src/components/{ui,layout}/, Providers.tsx
 src/data/                # typed static data (projects, cluster nodes, apps, home stats, ...)
 src/i18n/                # messages/{de,en}.json + next-intl config (navigation.ts, request.ts, routing.ts)
+src/proxy.ts             # next-intl locale routing (Next 16 proxy convention, formerly middleware.ts)
 src/styles/globals.css   # ETHON tokens
 src/types/css.d.ts       # TS 6 CSS-module typing fix (TS2882)
 k8s/                     # deployment.yaml, kustomization.yaml (no separate service.yaml)
