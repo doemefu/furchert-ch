@@ -286,7 +286,8 @@ If any of the three is missing headers, see Troubleshooting below.
   The guards stay as defense-in-depth: each `build (<platform>)` job 25 min
   with its build step 20 min, `merge` 10 min, `verify` 15 min. Normal
   runtime is ~2–2.5 min per native build job and ~20 s for `merge` (branch
-  validation run 35859109129: ~3.5 min end to end, vs. 8–14 min under QEMU).
+  validation run 35859109129 and first `main` run 35911226982: ~3.5 min end
+  to end, vs. 8–14 min under QEMU).
   `timeout-minutes` bounds job runtime only, not GitHub's runner-queue wait
   before a job starts (run 33482971910 once queued `verify` ~46 min — normal
   queueing, not a hang). `concurrency: cancel-in-progress: false` is
