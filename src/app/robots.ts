@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-// The i18n middleware matcher excludes dotted paths, so /robots.txt is served
+// The i18n proxy matcher excludes dotted paths, so /robots.txt is served
 // un-prefixed. The real dashboard lives at /[locale]/dashboard, so the bare
 // /dashboard rule does not cover it — disallow the locale-prefixed paths too
 // (worklog F6).

@@ -3,14 +3,14 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 // Security response headers (#42). Applied via `next.config.js` `headers()`,
-// not `src/middleware.ts`, because the intl middleware's matcher
+// not `src/proxy.ts`, because the intl proxy's matcher
 // (`'/((?!api|_next|_vercel|.*\\..*).*)'`) deliberately excludes `/api/*` —
 // exactly the routes that need this too (the OIDC callback, federated
 // logout, health check). `next.config.js` headers apply at the framework
 // level to every matched route (`source: '/:path*'`, including `/api/*`
 // and `/_next/static/*`) and, per Next.js's documented execution order
-// (`headers` runs in step 1, before Proxy/middleware in step 3), even to
-// middleware-issued redirects such as the bare `/` → `/de` locale redirect.
+// (`headers` runs in step 1, before Proxy in step 3), even to
+// proxy-issued redirects such as the bare `/` → `/de` locale redirect.
 //
 // Full rationale for each directive — why `'unsafe-inline'` appears twice,
 // why the CSP ships Report-Only, the HSTS rollout plan, and the CSP
