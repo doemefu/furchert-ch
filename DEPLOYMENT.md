@@ -74,7 +74,10 @@ dev, the page skips every call and shows a "not configured" state.
 secret keys via `59_app_services.yml`) → homelab-data-service#14 (collectors +
 inbound read API) → this repo's #61. Merging this repo earlier is safe but
 shows only the collector status strip and "unavailable"/HTTP-error states for
-the inbound sections until data-service#14 is live.
+the inbound sections until data-service#14 is live. The logins section (NM-4,
+#64) needs data-service's NM-4 read API (homelab-data-service#17) plus
+auth-service's login-event outbox; until then it shows "not yet available" or
+"no login data yet".
 
 **Set `AUTH_URL=https://furchert.ch` in production:**
 Auth.js infers it for callbacks behind the tunnel when `trustHost` is set, but
