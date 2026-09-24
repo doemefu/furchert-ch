@@ -654,6 +654,21 @@ function SubBlock({ id, title, aside, children }: { id: string; title: string; a
 
 const isNotDeployed = (r: NetmonResult<unknown>) => !r.ok && r.kind === 'problem' && r.status === 404;
 
+// True while a snapshot collector provably has no source data yet: it is not
+// reported, it is enabled but has never succeeded, or its last run succeeded
+// with an `upstream` warning (data-service records "no nodes" / "no series"
+// as a success with lastErrorCode 'upstream' and 0 consecutive failures).
+// Real outages (consecutiveFailures > 0) and disabled collectors do not
+// count: the status strip shows those, and the blocks fall back to their
+// plain empty notes.
+function hasNoSourceData(status: NetmonResult<{ collectors: CollectorStatus[] }>, name: string): boolean {
+  if (!status.ok) return false;
+  const c = status.data.collectors.find((x) => x.name === name);
+  if (!c) return true;
+  if (!c.enabled) return false;
+  return !c.lastSuccessAt || (c.lastErrorCode === 'upstream' && c.consecutiveFailures === 0);
+}
+
 function LanConnectionsBlock({
   result,
   range,
@@ -898,8 +913,8 @@ function LanSection({
     body = <p style={noteStyle}>{t('notYetAvailable', { subproject: 'NM-3' })}</p>;
   } else {
     // "No data yet" only when it is provable: every LAN call succeeded with
-    // nothing in it AND the `lan` collector has never succeeded (or is not
-    // reported) — i.e. the node role has not been rolled out yet. Otherwise
+    // nothing in it AND the `lan` collector has no source data yet
+    // (`hasNoSourceData`) — i.e. the node role has not been rolled out. Otherwise
     // each block shows its own empty/failure state.
     const allEmpty =
       connections.ok &&
@@ -909,10 +924,7 @@ function LanSection({
       ufw.data.totals.blocks === 0 &&
       ssh.ok &&
       ssh.data.items.length === 0;
-    const lanCollector = status.ok ? status.data.collectors.find((c) => c.name === 'lan') : undefined;
-    // A disabled collector is shown as such in the status strip; the blocks
-    // then fall back to their plain "no data in this window" notes.
-    const neverCollected = status.ok && (!lanCollector || (lanCollector.enabled && !lanCollector.lastSuccessAt));
+    const neverCollected = hasNoSourceData(status, 'lan');
     body =
       allEmpty && neverCollected ? (
         <p role="status" style={noteStyle}>
@@ -1061,13 +1073,10 @@ function EgressSection({
   } else if (!result.ok) {
     body = <Failure result={result} t={t} />;
   } else if (result.data.items.length === 0) {
-    // An empty success does not prove the node agent is missing: the
-    // collector also succeeds with zero rows when Prometheus has no coroot
-    // series. "No data yet" is claimed only while the `egress` collector
-    // has never succeeded (or is not reported); a disabled collector shows
-    // in the status strip and falls back to the plain empty note.
-    const collector = status.ok ? status.data.collectors.find((c) => c.name === 'egress') : undefined;
-    const neverCollected = status.ok && (!collector || (collector.enabled && !collector.lastSuccessAt));
+    // A plain empty success does not prove the node agent is missing, so
+    // "no data yet" is claimed only per `hasNoSourceData` (never succeeded,
+    // or succeeded with the `upstream` "no series" warning).
+    const neverCollected = hasNoSourceData(status, 'egress');
     body = neverCollected ? (
       <p role="status" style={noteStyle}>
         {t('egress.noDataYet')}
