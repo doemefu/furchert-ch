@@ -140,6 +140,32 @@ export interface SshAuthResponse {
   items: SshAuthRow[];
 }
 
+// NM-2 egress (§7.2). One row per (namespace, workload, container,
+// destinationIp, destinationPort); namespace/workload/container are `null`
+// for host processes (§3.3), `fqdn` is `null` without an `ip_to_fqdn` match.
+export interface EgressFlow {
+  namespace: string | null;
+  workload: string | null;
+  container: string | null;
+  /** Most frequent node for the row. */
+  node: string | null;
+  destinationIp: string;
+  destinationPort: number;
+  fqdn: string | null;
+  scope: string;
+  bytesSent: number;
+  bytesReceived: number;
+  connects: number;
+  failedConnects: number;
+  firstSeenInWindow: string | null;
+  /** Not seen for this workload + destination in the previous 30 d. */
+  isNew: boolean;
+}
+
+export interface EgressTopResponse {
+  items: EgressFlow[];
+}
+
 // ── Result type ─────────────────────────────────────────────────────────────
 
 export type NetmonFailure =
@@ -291,6 +317,24 @@ function isSshAuthResponse(v: unknown): v is SshAuthResponse {
   return isObject(v) && Array.isArray(v.items);
 }
 
+// Items are grouped, keyed and linked by these fields at render, so a row
+// that does not match §7.2 makes the whole response "malformed" instead of
+// throwing during render. Numeric counters are formatted NaN-safely.
+const isStringOrNull = (v: unknown) => v === null || typeof v === 'string';
+
+function isEgressFlow(v: unknown): boolean {
+  return (
+    isObject(v) &&
+    typeof v.destinationIp === 'string' &&
+    typeof v.destinationPort === 'number' &&
+    ['fqdn', 'node', 'namespace', 'workload', 'container'].every((k) => isStringOrNull(v[k]))
+  );
+}
+
+function isEgressTopResponse(v: unknown): v is EgressTopResponse {
+  return isObject(v) && Array.isArray(v.items) && v.items.every(isEgressFlow);
+}
+
 // ── Fetchers (§7.2) ─────────────────────────────────────────────────────────
 
 export interface TimeWindow {
@@ -336,4 +380,10 @@ export function getUfwBlocks(window: TimeWindow): Promise<NetmonResult<UfwBlocks
 
 export function getSshAuth(window: TimeWindow): Promise<NetmonResult<SshAuthResponse>> {
   return getJson('lan/ssh-auth', '/lan/ssh-auth', { ...window }, isSshAuthResponse);
+}
+
+// NM-2 egress (§7.2): external destinations only (the default scope), top-N
+// list (§7.1: max 50), ordered by bytes by data-service.
+export function getEgressTop(window: TimeWindow): Promise<NetmonResult<EgressTopResponse>> {
+  return getJson('egress/top', '/egress/top', { ...window, scope: 'external', limit: 50 }, isEgressTopResponse);
 }

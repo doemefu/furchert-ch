@@ -248,7 +248,7 @@
       "title": "Network",
       "kicker": "Network monitoring",
       "adminOnly": "Admin only",
-      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events and LAN access to the cluster nodes. Data from data-service, loaded fresh on every page view.",
+      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events, LAN access to the cluster nodes and egress from cluster workloads. Data from data-service, loaded fresh on every page view.",
       "window": {
         "label": "Window",
         "24h": "24 h",
@@ -356,7 +356,28 @@
         "noDataYet": "No LAN data yet: the node collector has not reported. Data appears about 30 minutes after the netmon_node role is rolled out to the nodes."
       },
       "egress": {
-        "title": "Egress"
+        "title": "Egress",
+        "subtitle": "Outbound TCP connections from cluster workloads to external destinations, from the coroot node agent's per-container counters. Hourly aggregates; FQDNs come from DNS answers the agent observed.",
+        "destination": "Destination",
+        "container": "Container",
+        "node": "Node",
+        "bytesSent": "Sent",
+        "bytesReceived": "Received",
+        "connects": "Connects",
+        "failedConnects": "Failed",
+        "firstSeen": "First seen",
+        "new": "New",
+        "newHint": "Not seen for this workload and destination in the previous 30 days.",
+        "hostProcess": "host process",
+        "flows": "Listed flows",
+        "newFlows": "New flows",
+        "topWorkloads": "Top workloads by traffic",
+        "fromListedRows": "{count, plural, one {Totals derived from the # listed flow (top flows by traffic).} other {Totals derived from the # listed flows (top flows by traffic).}}",
+        "note": "A destination's first hour can be undercounted: the counters only start when the agent first sees the connection.",
+        "noDataYet": "No egress data yet: the egress collector has not succeeded. Data appears about an hour after the coroot node agent runs on the nodes.",
+        "emptyHint": "If this stays empty, check that the coroot node agent runs on the nodes.",
+        "disabledHint": "The egress collector is disabled in data-service.",
+        "bytesExact": "{bytes} bytes"
       },
       "logins": {
         "title": "Logins"

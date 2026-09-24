@@ -6,6 +6,19 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **`/dashboard/network` — egress section** (NM-2, #63; contract
+  `infrastructure/docs/060-network-monitoring.md` §7.2/§8): replaces the
+  egress placeholder with data from data-service's `/api/netmon/egress/top`
+  (external destinations, top 50 flows) for the page window. Flows are grouped
+  per workload (host processes labelled as such), ordered by traffic, with
+  FQDN or IP:port, node, bytes sent/received (SI units), connects, failed
+  connects, first seen and a "new" badge (not seen in the previous 30 days).
+  Tiles (listed flows, new flows, bytes) and a top-workloads bar list summarise the listed flows; groups are keyed by namespace and workload. Public IPs
+  (v4 and v6) link to the `?ip=` panel; private, CGNAT and ULA addresses do
+  not. Honest states: "not yet available" when data-service has no egress
+  API yet, "no egress data yet" while the `egress` collector has never
+  succeeded, "no data in this window" plus an agent hint after a success,
+  and a section "unavailable" / HTTP-error note otherwise.
 - **`/dashboard/network` — LAN section** (NM-3, #62; contract
   `infrastructure/docs/060-network-monitoring.md` §7.2/§8): replaces the LAN
   placeholder with data from data-service's `/api/netmon/lan/connections`,
