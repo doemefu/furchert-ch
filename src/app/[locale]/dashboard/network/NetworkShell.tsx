@@ -8,7 +8,8 @@
 // Every section renders its own honest failure state; nothing is fabricated.
 // Window (`?window=`), IP detail (`?ip=`) and firewall paging (`?fwCursor=`
 // plus the pinned `?fwFrom=`/`?fwTo=` window) are search params, so every interaction is a server-rendered link.
-// The LAN section (NM-3, #62) uses the same page window.
+// The LAN section (NM-3, #62) and the egress section (NM-2, #63) use the same
+// page window.
 import { isIP } from 'node:net';
 import type { CSSProperties, ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
@@ -17,6 +18,7 @@ import { Link } from '@/i18n/navigation';
 import { StatusDot, type DotStatus } from '@/components/ui/StatusDot';
 import { Tag } from '@/components/ui/Tag';
 import {
+  getEgressTop,
   getFirewallEvents,
   getInboundSummary,
   getIpDetail,
@@ -25,6 +27,8 @@ import {
   getStatus,
   getUfwBlocks,
   type CollectorStatus,
+  type EgressFlow,
+  type EgressTopResponse,
   type FirewallEvent,
   type IpDetail,
   type LanConnectionsResponse,
@@ -55,6 +59,8 @@ function toWindow(range: NetworkRange, now: Date): TimeWindow {
 
 interface Formatters {
   num: (n: number) => string;
+  /** Byte counts in SI units (kB, MB, GB). */
+  bytes: (n: number) => string;
   time: (iso: string | null | undefined) => string;
   country: (code: string | null | undefined) => string;
 }
@@ -64,6 +70,10 @@ function makeFormatters(locale: Locale): Formatters {
   const numFmt = new Intl.NumberFormat(tag);
   // Pinned to Europe/Zurich like the dashboard header (pod TZ ≈ UTC).
   const timeFmt = new Intl.DateTimeFormat(tag, { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Zurich' });
+  const byteUnits = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte'] as const;
+  const byteFmts = byteUnits.map(
+    (unit) => new Intl.NumberFormat(tag, { style: 'unit', unit, unitDisplay: 'short', maximumFractionDigits: 1 }),
+  );
   let regions: Intl.DisplayNames | null = null;
   try {
     regions = new Intl.DisplayNames([tag], { type: 'region' });
@@ -72,6 +82,12 @@ function makeFormatters(locale: Locale): Formatters {
   }
   return {
     num: (n) => (Number.isFinite(n) ? numFmt.format(n) : '—'),
+    bytes: (n) => {
+      if (!Number.isFinite(n)) return '—';
+      let i = 0;
+      while (i < byteUnits.length - 1 && Math.abs(n) >= 1000 ** (i + 1)) i++;
+      return byteFmts[i].format(n / 1000 ** i);
+    },
     time: (iso) => {
       if (!iso) return '—';
       const d = new Date(iso);
@@ -918,6 +934,201 @@ function LanSection({
   );
 }
 
+// ── Egress (NM-2) ───────────────────────────────────────────────────────────
+
+function isPublicIpv4(ip: string): boolean {
+  const [a, b] = ip.split('.').map(Number);
+  if (a === 0 || a === 10 || a === 127 || a >= 224) return false; // this-net, RFC 1918, loopback, multicast/reserved
+  if (a === 100 && b >= 64 && b <= 127) return false; // CGNAT
+  if (a === 169 && b === 254) return false; // link-local
+  if (a === 172 && b >= 16 && b <= 31) return false; // RFC 1918
+  if (a === 192 && b === 168) return false; // RFC 1918
+  return true;
+}
+
+// Only public addresses are linked to the IP panel: `scope=external` is
+// decided by data-service's configured CIDRs (§3.3), so a CGNAT or ULA
+// destination could still appear and would only open an empty panel.
+function isPublicIp(ip: string): boolean {
+  const version = isIP(ip);
+  if (version === 4) return isPublicIpv4(ip);
+  if (version !== 6) return false;
+  const lower = ip.toLowerCase();
+  const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(lower);
+  if (mapped) return isPublicIpv4(mapped[1]);
+  const first = parseInt(lower.split(':')[0] || '0', 16);
+  if (first === 0) return false; // ::, ::1, IPv4-compatible
+  // fc00::/7 unique-local, fe80::/10 link-local, ff00::/8 multicast
+  return (first & 0xfe00) !== 0xfc00 && (first & 0xffc0) !== 0xfe80 && (first & 0xff00) !== 0xff00;
+}
+
+const flowBytes = (f: EgressFlow) =>
+  (Number.isFinite(f.bytesSent) ? f.bytesSent : 0) + (Number.isFinite(f.bytesReceived) ? f.bytesReceived : 0);
+
+// Host processes have no namespace/workload (§3.3).
+function workloadLabel(f: EgressFlow, t: Translate): string {
+  if (f.namespace && f.workload) return `${f.namespace}/${f.workload}`;
+  return f.workload ?? f.container ?? t('egress.hostProcess');
+}
+
+function EgressDestination({ flow, range }: { flow: EgressFlow; range: NetworkRange }) {
+  const ip = flow.destinationIp;
+  const ipNode = isPublicIp(ip) ? <IpLink ip={ip} range={range} /> : <>{ip}</>;
+  const address = ip.includes(':') ? (
+    <>
+      [{ipNode}]:{flow.destinationPort}
+    </>
+  ) : (
+    <>
+      {ipNode}:{flow.destinationPort}
+    </>
+  );
+  if (!flow.fqdn) return address;
+  return (
+    <>
+      <span style={{ color: 'var(--n-100)', overflowWrap: 'anywhere' }}>{flow.fqdn}</span>
+      <br />
+      <span style={noteStyle}>{address}</span>
+    </>
+  );
+}
+
+function EgressTable({ rows, range, fmt, t }: { rows: EgressFlow[]; range: NetworkRange; fmt: Formatters; t: Translate }) {
+  const bytesCell = (n: number) => (
+    <td style={{ ...tdStyle, textAlign: 'right', whiteSpace: 'nowrap' }} title={Number.isFinite(n) ? `${fmt.num(n)} B` : undefined}>
+      {fmt.bytes(n)}
+    </td>
+  );
+  return (
+    <TableWrap>
+      <thead>
+        <tr>
+          <th style={thStyle}>{t('egress.destination')}</th>
+          <th style={thStyle}>{t('egress.container')}</th>
+          <th style={thStyle}>{t('egress.node')}</th>
+          <th style={{ ...thStyle, textAlign: 'right' }}>{t('egress.bytesSent')}</th>
+          <th style={{ ...thStyle, textAlign: 'right' }}>{t('egress.bytesReceived')}</th>
+          <th style={{ ...thStyle, textAlign: 'right' }}>{t('egress.connects')}</th>
+          <th style={{ ...thStyle, textAlign: 'right' }}>{t('egress.failedConnects')}</th>
+          <th style={thStyle}>{t('egress.firstSeen')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((f) => (
+          <tr key={`${f.container ?? ''}-${f.destinationIp}-${f.destinationPort}`}>
+            <td style={{ ...tdStyle, minWidth: '14rem' }}>
+              <EgressDestination flow={f} range={range} />
+              {f.isNew && (
+                <>
+                  {' '}
+                  <span title={t('egress.newHint')}>
+                    <Tag blue>{t('egress.new')}</Tag>
+                  </span>
+                </>
+              )}
+            </td>
+            <td style={tdStyle}>{f.container ?? '—'}</td>
+            <td style={tdStyle}>{f.node ?? '—'}</td>
+            {bytesCell(f.bytesSent)}
+            {bytesCell(f.bytesReceived)}
+            <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(f.connects)}</td>
+            <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(f.failedConnects)}</td>
+            <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{fmt.time(f.firstSeenInWindow)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </TableWrap>
+  );
+}
+
+function EgressSection({
+  result,
+  status,
+  range,
+  fmt,
+  t,
+}: {
+  result: NetmonResult<EgressTopResponse>;
+  status: NetmonResult<{ collectors: CollectorStatus[] }>;
+  range: NetworkRange;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  let body: ReactNode;
+  if (isNotDeployed(result)) {
+    // data-service without the NM-2 read API (homelab-data-service#16).
+    body = <p style={noteStyle}>{t('notYetAvailable', { subproject: 'NM-2' })}</p>;
+  } else if (!result.ok) {
+    body = <Failure result={result} t={t} />;
+  } else if (result.data.items.length === 0) {
+    // An empty success does not prove the node agent is missing: the
+    // collector also succeeds with zero rows when Prometheus has no coroot
+    // series. "No data yet" is claimed only while the `egress` collector
+    // has never succeeded (or is not reported); a disabled collector shows
+    // in the status strip and falls back to the plain empty note.
+    const collector = status.ok ? status.data.collectors.find((c) => c.name === 'egress') : undefined;
+    const neverCollected = status.ok && (!collector || (collector.enabled && !collector.lastSuccessAt));
+    body = neverCollected ? (
+      <p role="status" style={noteStyle}>
+        {t('egress.noDataYet')}
+      </p>
+    ) : (
+      <>
+        <p style={noteStyle}>{t('empty')}</p>
+        <p style={noteStyle}>{t('egress.emptyHint')}</p>
+      </>
+    );
+  } else {
+    const items = result.data.items;
+    // Group per workload, largest total first; rows keep bytes order.
+    const groups = new Map<string, { label: string; total: number; rows: EgressFlow[] }>();
+    for (const f of items) {
+      const label = workloadLabel(f, t);
+      const g = groups.get(label) ?? { label, total: 0, rows: [] };
+      g.total += flowBytes(f);
+      g.rows.push(f);
+      groups.set(label, g);
+    }
+    const sorted = [...groups.values()].sort((a, b) => b.total - a.total);
+    for (const g of sorted) g.rows.sort((a, b) => flowBytes(b) - flowBytes(a));
+    const sum = (k: 'bytesSent' | 'bytesReceived') => items.reduce((acc, f) => acc + (Number.isFinite(f[k]) ? f[k] : 0), 0);
+    body = (
+      <div style={{ display: 'grid', gap: '.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.75rem' }}>
+          <StatTile label={t('egress.flows')} value={fmt.num(items.length)} />
+          <StatTile label={t('egress.newFlows')} value={fmt.num(items.filter((f) => f.isNew).length)} />
+          <StatTile label={t('egress.bytesSent')} value={fmt.bytes(sum('bytesSent'))} />
+          <StatTile label={t('egress.bytesReceived')} value={fmt.bytes(sum('bytesReceived'))} />
+        </div>
+        <p style={noteStyle}>{t('egress.fromListedRows', { count: items.length })}</p>
+        <BarList
+          title={t('egress.topWorkloads')}
+          rows={sorted.slice(0, 10).map((g) => ({ key: g.label, label: g.label, value: g.total }))}
+          fmt={{ ...fmt, num: fmt.bytes }}
+          emptyText={t('empty')}
+        />
+        <p style={noteStyle}>{t('egress.note')}</p>
+        {sorted.map((g, i) => (
+          <SubBlock
+            key={g.label}
+            id={`netmon-egress-${i}`}
+            title={g.label}
+            aside={<span style={noteStyle}>{fmt.bytes(g.total)}</span>}
+          >
+            <EgressTable rows={g.rows} range={range} fmt={fmt} t={t} />
+          </SubBlock>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <Section id="netmon-egress" title={t('egress.title')}>
+      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('egress.subtitle')}</p>
+      {body}
+    </Section>
+  );
+}
+
 // ── Shell ───────────────────────────────────────────────────────────────────
 
 export async function NetworkShell({
@@ -959,6 +1170,7 @@ export async function NetworkShell({
     getLanConnections(pageWindow),
     getUfwBlocks(pageWindow),
     getSshAuth(pageWindow),
+    getEgressTop(pageWindow),
   ] as const);
   const unreachable: NetmonFailure = { ok: false, kind: 'unreachable' };
   const status = settled[0].status === 'fulfilled' ? settled[0].value : unreachable;
@@ -968,6 +1180,7 @@ export async function NetworkShell({
   const lanConnections = settled[4].status === 'fulfilled' ? settled[4].value : unreachable;
   const ufwBlocks = settled[5].status === 'fulfilled' ? settled[5].value : unreachable;
   const sshAuth = settled[6].status === 'fulfilled' ? settled[6].value : unreachable;
+  const egressTop = settled[7].status === 'fulfilled' ? settled[7].value : unreachable;
   if (settled.some((r) => r.status === 'rejected')) console.warn('[netmon] a section fetch rejected unexpectedly');
 
   return (
@@ -1129,14 +1342,12 @@ export async function NetworkShell({
         {/* LAN (NM-3) */}
         <LanSection connections={lanConnections} ufw={ufwBlocks} ssh={sshAuth} status={status} range={range} fmt={fmt} t={t} />
 
+        {/* Egress (NM-2) */}
+        <EgressSection result={egressTop} status={status} range={range} fmt={fmt} t={t} />
+
         {/* Later sub-projects (§8): labelled placeholders, no data. */}
         <div style={{ padding: '1.5rem 0 2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '.75rem' }}>
-          {(
-            [
-              ['egress', 'NM-2'],
-              ['logins', 'NM-4'],
-            ] as const
-          ).map(([key, subproject]) => (
+          {([['logins', 'NM-4']] as const).map(([key, subproject]) => (
             <div key={key} style={{ ...cardStyle, borderStyle: 'dashed', background: 'transparent' }}>
               <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.35rem' }}>{t(`${key}.title`)}</p>
               <p style={noteStyle}>{t('notYetAvailable', { subproject })}</p>

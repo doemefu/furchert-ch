@@ -248,7 +248,7 @@
       "title": "Netzwerk",
       "kicker": "Netzwerk-Monitoring",
       "adminOnly": "Nur Admin",
-      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs, Firewall-Ereignisse und LAN-Zugriffe auf die Cluster-Nodes. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
+      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs, Firewall-Ereignisse, LAN-Zugriffe auf die Cluster-Nodes und ausgehender Verkehr der Cluster-Workloads. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
       "window": {
         "label": "Zeitraum",
         "24h": "24 h",
@@ -356,7 +356,26 @@
         "noDataYet": "Noch keine LAN-Daten: Der Node-Collector hat noch nichts gemeldet. Daten erscheinen etwa 30 Minuten nach dem Rollout der Rolle netmon_node auf die Nodes."
       },
       "egress": {
-        "title": "Ausgehend"
+        "title": "Ausgehend",
+        "subtitle": "Ausgehende TCP-Verbindungen der Cluster-Workloads zu externen Zielen, aus den Zählern des coroot-Node-Agents pro Container. Stündliche Aggregate; FQDNs stammen aus DNS-Antworten, die der Agent gesehen hat.",
+        "destination": "Ziel",
+        "container": "Container",
+        "node": "Node",
+        "bytesSent": "Gesendet",
+        "bytesReceived": "Empfangen",
+        "connects": "Verbindungen",
+        "failedConnects": "Fehlgeschlagen",
+        "firstSeen": "Zuerst gesehen",
+        "new": "Neu",
+        "newHint": "Für diesen Workload und dieses Ziel in den vorherigen 30 Tagen nicht gesehen.",
+        "hostProcess": "Host-Prozess",
+        "flows": "Aufgeführte Flows",
+        "newFlows": "Neue Ziele",
+        "topWorkloads": "Top-Workloads nach Verkehr",
+        "fromListedRows": "{count, plural, one {Summen aus dem # aufgeführten Flow (Top-Flows nach Verkehr).} other {Summen aus den # aufgeführten Flows (Top-Flows nach Verkehr).}}",
+        "note": "Die erste Stunde eines Ziels kann zu tief ausfallen: Die Zähler beginnen erst, wenn der Agent die Verbindung zum ersten Mal sieht.",
+        "noDataYet": "Noch keine ausgehenden Daten: Der Egress-Collector war noch nie erfolgreich. Daten erscheinen etwa eine Stunde, nachdem der coroot-Node-Agent auf den Nodes läuft.",
+        "emptyHint": "Bleibt dies leer, prüfen, ob der coroot-Node-Agent auf den Nodes läuft."
       },
       "logins": {
         "title": "Logins"
