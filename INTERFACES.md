@@ -112,6 +112,9 @@ this section lists only what this app uses.
 
 Firewall paging: the "older" link carries the cursor plus the window that
 produced it (`?fwCursor=&fwFrom=&fwTo=`), so later pages query the same window.
+Login-events paging works the same way with `?lgCursor=&lgFrom=&lgTo=`;
+`?lgOutcome=` persists across window chips and IP links; outcome chips and the
+"newest" link drop the cursor.
 
 Local dev: unless both `DATA_SERVICE_URL` and `DATA_SERVICE_TOKEN_URL` are set,
 every call is skipped (`shouldAttemptNetmon()`),

@@ -96,8 +96,8 @@ unexpected violations). The "first automated tests" half of #42 remains open
   serves `/egress/top`, and "no egress data yet" while the `egress` collector
   has never succeeded (coroot node agent not rolled out). The logins section
   (NM-4, #64) shows "not yet available" until data-service serves `/logins/*`,
-  and "no login data yet" while auth-service's login-event outbox is not
-  enabled; attempted usernames are never shown, only an 8-character hash tag.
+  and "no login data yet" while the `login-events` collector has no source
+  data (e.g. auth-service's outbox not enabled); attempted usernames are never shown, only an 8-character hash tag.
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard,

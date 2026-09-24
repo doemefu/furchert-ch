@@ -44,7 +44,7 @@ Set `PROMETHEUS_URL=http://localhost:19090` in `.env.local` (see
 `.env.local.example`). Left unset, the dashboard skips the fetch immediately
 and renders the honest "unavailable" fallback — fine for non-dashboard work.
 
-Optional — `/dashboard/network` locally (data-service, NM-1 #61; needs an
+Optional — `/dashboard/network` locally (data-service, NM-1…NM-4, #61–#64; needs an
 ADMIN account):
 ```bash
 kubectl -n apps port-forward svc/data-service 18082:8082
