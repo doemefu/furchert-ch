@@ -8,10 +8,17 @@
 // Every section renders its own honest failure state; nothing is fabricated.
 // Window (`?window=`), IP detail (`?ip=`) and firewall paging (`?fwCursor=`
 // plus the pinned `?fwFrom=`/`?fwTo=` window) are search params, so every interaction is a server-rendered link.
-// The LAN section (NM-3, #62) and the egress section (NM-2, #63) use the same
-// page window.
+// The LAN section (NM-3, #62), the egress section (NM-2, #63) and the logins
+// section (NM-4, #64) use the same page window; login events page and filter
+// with `?lgCursor=` (pinned `?lgFrom=`/`?lgTo=`) and `?lgOutcome=`.
+//
+// Link-state rules (`pageHref`): window chips keep `ip` + `lgOutcome` and drop
+// both cursors; IP links and the IP-panel close keep `lgOutcome`; each
+// section's paging keeps the other section's cursor (independent paging) and
+// `lgOutcome`; outcome chips and the logins "newest" link drop `lgCursor`.
+// Logins links jump back to `#netmon-logins`.
 import { isIP } from 'node:net';
-import type { CSSProperties, ReactNode } from 'react';
+import { cache, type CSSProperties, type ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
@@ -23,6 +30,8 @@ import {
   getInboundSummary,
   getIpDetail,
   getLanConnections,
+  getLoginEvents,
+  getLoginSummary,
   getSshAuth,
   getStatus,
   getUfwBlocks,
@@ -32,6 +41,12 @@ import {
   type FirewallEvent,
   type IpDetail,
   type LanConnectionsResponse,
+  type LoginEvent,
+  type LoginEventsPage,
+  type LoginOutcome,
+  type LoginSummary,
+  type LoginTimelineBucket,
+  LOGIN_OUTCOMES,
   type SshAuthResponse,
   type UfwBlocksResponse,
   type NetmonFailure,
@@ -62,6 +77,8 @@ interface Formatters {
   /** Byte counts in SI units (kB, MB, GB). */
   bytes: (n: number) => string;
   time: (iso: string | null | undefined) => string;
+  /** Date only, in UTC (for 1-day buckets that start at UTC midnight). */
+  utcDate: (iso: string) => string;
   country: (code: string | null | undefined) => string;
 }
 
@@ -70,6 +87,7 @@ function makeFormatters(locale: Locale): Formatters {
   const numFmt = new Intl.NumberFormat(tag);
   // Pinned to Europe/Zurich like the dashboard header (pod TZ ≈ UTC).
   const timeFmt = new Intl.DateTimeFormat(tag, { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Zurich' });
+  const utcDateFmt = new Intl.DateTimeFormat(tag, { dateStyle: 'short', timeZone: 'UTC' });
   const byteUnits = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte'] as const;
   const byteFmts = byteUnits.map(
     (unit) => new Intl.NumberFormat(tag, { style: 'unit', unit, unitDisplay: 'short', maximumFractionDigits: 1 }),
@@ -95,6 +113,10 @@ function makeFormatters(locale: Locale): Formatters {
       const d = new Date(iso);
       return Number.isNaN(d.getTime()) ? '—' : timeFmt.format(d);
     },
+    utcDate: (iso) => {
+      const d = new Date(iso);
+      return Number.isNaN(d.getTime()) ? '—' : utcDateFmt.format(d);
+    },
     country: (code) => {
       if (!code) return '—';
       try {
@@ -117,9 +139,13 @@ interface LinkState {
   ip?: string;
   fwCursor?: string;
   fwWindow?: TimeWindow;
+  lgOutcome?: LoginOutcome;
+  lgCursor?: string;
+  lgWindow?: TimeWindow;
+  hash?: string;
 }
 
-function pageHref({ range, ip, fwCursor, fwWindow }: LinkState) {
+function pageHref({ range, ip, fwCursor, fwWindow, lgOutcome, lgCursor, lgWindow, hash }: LinkState) {
   const query: Record<string, string> = {};
   if (range !== '24h') query.window = range;
   if (ip) query.ip = ip;
@@ -130,8 +156,22 @@ function pageHref({ range, ip, fwCursor, fwWindow }: LinkState) {
       query.fwTo = fwWindow.to;
     }
   }
-  return { pathname: '/dashboard/network', query };
+  if (lgOutcome) query.lgOutcome = lgOutcome;
+  if (lgCursor) {
+    query.lgCursor = lgCursor;
+    if (lgWindow) {
+      query.lgFrom = lgWindow.from;
+      query.lgTo = lgWindow.to;
+    }
+  }
+  return hash ? { pathname: '/dashboard/network', query, hash } : { pathname: '/dashboard/network', query };
 }
+
+// Request-scoped (React `cache`) link state for the IP links, which are
+// rendered deep inside every section: set once by NetworkShell before its
+// children render, so an IP link keeps the login outcome filter without
+// threading it through every section's props.
+const requestLinkState = cache((): { lgOutcome?: LoginOutcome } => ({}));
 
 // ── Styles (DashboardShell idioms) ──────────────────────────────────────────
 
@@ -380,7 +420,7 @@ function TableWrap({ children }: { children: ReactNode }) {
 
 function IpLink({ ip, range }: { ip: string; range: NetworkRange }) {
   return (
-    <Link href={pageHref({ range, ip })} style={ipLinkStyle}>
+    <Link href={pageHref({ range, ip, lgOutcome: requestLinkState().lgOutcome })} style={ipLinkStyle}>
       {ip}
     </Link>
   );
@@ -448,6 +488,21 @@ function collectorDot(c: CollectorStatus): { status: DotStatus; key: 'disabled' 
   return { status: 'online', key: 'ok' };
 }
 
+// Warning codes on a successful run (§7.2 + homelab#134 amendment): the run
+// counted as a success, so the dot stays on freshness and a badge names the
+// warning. Unknown codes get the generic badge.
+const KNOWN_WARNINGS = new Set(['upstream', 'truncated', 'partial']);
+
+function CollectorWarning({ code, t }: { code: string; t: Translate }) {
+  const known = KNOWN_WARNINGS.has(code);
+  return (
+    <p style={{ ...noteStyle, display: 'flex', alignItems: 'center', gap: '.4rem', flexWrap: 'wrap', marginTop: '.3rem' }}>
+      <Tag>{known ? t(`status.warning.${code}`) : t('status.warning.generic')}</Tag>
+      <span>{known ? t(`status.warningHint.${code}`) : t('status.warningHint.generic', { code })}</span>
+    </p>
+  );
+}
+
 function StatusStrip({ result, fmt, t }: { result: NetmonResult<{ collectors: CollectorStatus[] }>; fmt: Formatters; t: Translate }) {
   return (
     <Section id="netmon-status" title={t('status.title')}>
@@ -475,6 +530,8 @@ function StatusStrip({ result, fmt, t }: { result: NetmonResult<{ collectors: Co
                     {c.lastErrorCode ? ` · ${t('status.error', { code: c.lastErrorCode })}` : ''}
                   </p>
                 )}
+                {c.consecutiveFailures === 0 && c.lastErrorCode && <CollectorWarning code={c.lastErrorCode} t={t} />}
+                {isLoginCredentialsFailure(c) && <p style={{ ...noteStyle, marginTop: '.3rem' }}>{t('logins.credentialsHint')}</p>}
               </div>
             );
           })}
@@ -502,7 +559,7 @@ function IpPanel({
   t: Translate;
 }) {
   const close = (
-    <Link href={pageHref({ range })} style={{ ...chipBase, padding: '.2rem .6rem', marginLeft: 'auto' }}>
+    <Link href={pageHref({ range, lgOutcome: requestLinkState().lgOutcome })} style={{ ...chipBase, padding: '.2rem .6rem', marginLeft: 'auto' }}>
       {t('ip.close')}
     </Link>
   );
@@ -1171,6 +1228,467 @@ function EgressSection({
   );
 }
 
+// ── Logins (NM-4) ───────────────────────────────────────────────────────────
+
+const LOGIN_COLORS: Record<LoginOutcome, string> = {
+  success: 'var(--blue-base)',
+  failure: 'var(--status-offline)',
+  locked: 'var(--status-wip)',
+};
+
+const count = (n: number) => (Number.isFinite(n) ? n : 0);
+
+// data-service's login-events collector cannot authenticate at auth-service
+// (AUTH_CLIENT_SECRET blank or rejected, data-service INTERFACES.md).
+function isLoginCredentialsFailure(c: CollectorStatus): boolean {
+  return c.name === 'login-events' && c.consecutiveFailures > 0 && c.lastErrorCode === 'credentials';
+}
+
+function loginCollector(status: NetmonResult<{ collectors: CollectorStatus[] }>): CollectorStatus | undefined {
+  return status.ok ? status.data.collectors.find((c) => c.name === 'login-events') : undefined;
+}
+
+const HOUR_MS = 3600 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+
+// The API returns buckets with data only (1 h iff to − from ≤ 7 d, else 1 d,
+// UTC). Logins are sparse, so — unlike the inbound Timeline, which plots the
+// returned buckets as they are — the missing slots are deliberately filled
+// with zeros (absence means no events) to keep the x axis proportional to
+// time. If a bucket does not sit on a slot boundary the raw buckets are shown.
+function fillLoginTimeline(points: LoginTimelineBucket[], window: TimeWindow): { points: LoginTimelineBucket[]; daily: boolean } {
+  const from = Date.parse(window.from);
+  const to = Date.parse(window.to);
+  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return { points, daily: false };
+  const step = to - from <= 7 * DAY_MS ? HOUR_MS : DAY_MS;
+  const daily = step === DAY_MS;
+  const byStart = new Map<number, LoginTimelineBucket>();
+  for (const p of points) {
+    const ms = Date.parse(p.bucketStart);
+    if (!Number.isFinite(ms) || ms % step !== 0) return { points, daily };
+    byStart.set(ms, p);
+  }
+  const filled: LoginTimelineBucket[] = [];
+  for (let ms = Math.floor(from / step) * step; ms < to; ms += step) {
+    filled.push(byStart.get(ms) ?? { bucketStart: new Date(ms).toISOString(), success: 0, failure: 0, locked: 0 });
+    byStart.delete(ms);
+  }
+  // A bucket outside the page window (clock skew) would silently vanish.
+  return { points: byStart.size > 0 ? points : filled, daily };
+}
+
+// Stacked inline-SVG columns (success, failure, locked from the bottom), the
+// inbound Timeline idiom with one <title> tooltip per bucket.
+function LoginTimeline({ points, daily, fmt, t }: { points: LoginTimelineBucket[]; daily: boolean; fmt: Formatters; t: Translate }) {
+  // 1-day buckets start at UTC midnight (02:00 in Zurich): label the date only.
+  const at = (iso: string) => (daily ? fmt.utcDate(iso) : fmt.time(iso));
+  const total = (p: LoginTimelineBucket) => count(p.success) + count(p.failure) + count(p.locked);
+  const max = points.reduce((m, p) => Math.max(m, total(p)), 0);
+  const barW = 10;
+  const height = 64;
+  const label = t('logins.timeline');
+  return (
+    <div style={cardStyle}>
+      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{label}</p>
+      <svg
+        role="img"
+        aria-label={label}
+        viewBox={`0 0 ${Math.max(points.length, 1) * barW} ${height}`}
+        preserveAspectRatio="none"
+        style={{ display: 'block', width: '100%', height, background: 'var(--n-10)' }}
+      >
+        {points.map((p, i) => {
+          let y = height;
+          return (
+            <g key={p.bucketStart}>
+              <title>
+                {`${at(p.bucketStart)} · ${t('logins.success')} ${fmt.num(count(p.success))} · ${t('logins.failure')} ${fmt.num(count(p.failure))} · ${t('logins.locked')} ${fmt.num(count(p.locked))}`}
+              </title>
+              {LOGIN_OUTCOMES.map((o) => {
+                const v = count(p[o]);
+                if (v === 0 || max === 0) return null;
+                const h = Math.max((v / max) * height, 1);
+                y -= h;
+                return <rect key={o} x={i * barW + 1} y={y} width={barW - 2} height={h} fill={LOGIN_COLORS[o]} />;
+              })}
+            </g>
+          );
+        })}
+      </svg>
+      {points.length > 0 && (
+        <div style={{ ...noteStyle, display: 'flex', justifyContent: 'space-between', marginTop: '.35rem' }}>
+          <span>{at(points[0].bucketStart)}</span>
+          <span>{at(points[points.length - 1].bucketStart)}</span>
+        </div>
+      )}
+      <div style={{ ...noteStyle, display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '.35rem' }}>
+        {LOGIN_OUTCOMES.map((o) => (
+          <span key={o} style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem' }}>
+            <span aria-hidden style={{ width: 8, height: 8, background: LOGIN_COLORS[o], display: 'inline-block' }} />
+            {t(`logins.${o}`)}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LoginOutcomeBadge({ outcome, t }: { outcome: string; t: Translate }) {
+  if (outcome === 'success') return <Tag blue>{t('logins.success')}</Tag>;
+  if (outcome === 'failure') return <span style={flagStyle}>{t('logins.failure')}</span>;
+  if (outcome === 'locked') return <span style={{ ...flagStyle, borderColor: 'var(--status-wip)', color: 'var(--status-wip)' }}>{t('logins.locked')}</span>;
+  return <Tag>{outcome}</Tag>;
+}
+
+// Private or missing client IPs are never enriched, so `/ips/{ip}` 404s for
+// them: they stay plain text.
+function LoginIp({ ip, range }: { ip: string | null; range: NetworkRange }) {
+  if (!ip) return <>—</>;
+  return isPublicIp(ip) ? <IpLink ip={ip} range={range} /> : <>{ip}</>;
+}
+
+function Reputation({ blocklisted, abuseScore, t }: { blocklisted: boolean; abuseScore: number | null; t: Translate }) {
+  if (!blocklisted && typeof abuseScore !== 'number') return <>—</>;
+  return (
+    <>
+      {blocklisted && <span style={flagStyle}>{t('inbound.blocklisted')}</span>}{' '}
+      {typeof abuseScore === 'number' && t('inbound.abuseScoreValue', { score: abuseScore })}
+    </>
+  );
+}
+
+function LoginSummaryBlock({
+  summary,
+  pageWindow,
+  range,
+  fmt,
+  t,
+}: {
+  summary: LoginSummary;
+  pageWindow: TimeWindow;
+  range: NetworkRange;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  const { totals, byIp, bySubject } = summary;
+  // The summary is asked for the top 50 (§7.1 max): a full list may be cut off.
+  const full = (n: number) => (n >= 50 ? t('logins.atLeast', { count: fmt.num(n) }) : fmt.num(n));
+  const right: CSSProperties = { ...tdStyle, textAlign: 'right' };
+  return (
+    <div style={{ display: 'grid', gap: '.75rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '.75rem' }}>
+        <StatTile label={t('logins.success')} value={fmt.num(totals.success)} />
+        <StatTile label={t('logins.failure')} value={fmt.num(totals.failure)} />
+        <StatTile label={t('logins.locked')} value={fmt.num(totals.locked)} />
+        <StatTile label={t('logins.sourceIps')} value={full(byIp.length)} />
+        <StatTile label={t('logins.accounts')} value={full(bySubject.length)} />
+      </div>
+      <p style={noteStyle}>{t('logins.listedNote')}</p>
+      <LoginTimeline {...fillLoginTimeline(summary.timeline, pageWindow)} fmt={fmt} t={t} />
+
+      <SubBlock id="netmon-logins-ips" title={t('logins.byIp')}>
+        {byIp.length === 0 ? (
+          <p style={noteStyle}>{t('empty')}</p>
+        ) : (
+          <TableWrap>
+            <thead>
+              <tr>
+                <th style={thStyle}>{t('inbound.ip')}</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>{t('logins.failure')}</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>{t('logins.locked')}</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>{t('logins.success')}</th>
+                <th style={thStyle}>{t('inbound.country')}</th>
+                <th style={thStyle}>{t('inbound.reputation')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {byIp.map((r) => (
+                <tr key={r.ip}>
+                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                    <LoginIp ip={r.ip} range={range} />
+                  </td>
+                  <td style={right}>{fmt.num(r.failure)}</td>
+                  <td style={right}>{fmt.num(r.locked)}</td>
+                  <td style={right}>{fmt.num(r.success)}</td>
+                  <td style={tdStyle} title={fmt.country(r.country)}>
+                    {r.country ?? '—'}
+                  </td>
+                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                    <Reputation blocklisted={r.blocklisted === true} abuseScore={r.abuseScore} t={t} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </TableWrap>
+        )}
+      </SubBlock>
+
+      <SubBlock id="netmon-logins-accounts" title={t('logins.bySubject')}>
+        {bySubject.length === 0 ? (
+          <p style={noteStyle}>{t('empty')}</p>
+        ) : (
+          <>
+            <TableWrap>
+              <thead>
+                <tr>
+                  <th style={thStyle}>{t('logins.account')}</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>{t('logins.success')}</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>{t('logins.failureSameHmac')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bySubject.map((r) => (
+                  <tr key={r.subject}>
+                    <td style={tdStyle}>{r.subject}</td>
+                    <td style={right}>{fmt.num(r.success)}</td>
+                    <td style={right}>{fmt.num(r.failureSameHmac)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableWrap>
+            <p style={noteStyle}>{t('logins.bySubjectNote')}</p>
+          </>
+        )}
+      </SubBlock>
+    </div>
+  );
+}
+
+function LoginEventsBlock({
+  result,
+  range,
+  ip,
+  lgOutcome,
+  lgCursor,
+  eventsWindow,
+  fw,
+  fmt,
+  t,
+}: {
+  result: NetmonResult<LoginEventsPage>;
+  range: NetworkRange;
+  ip?: string;
+  lgOutcome?: LoginOutcome;
+  lgCursor?: string;
+  eventsWindow: TimeWindow;
+  /** The firewall section's paging state, kept by every logins link. */
+  fw: Pick<LinkState, 'fwCursor' | 'fwWindow'>;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  const hash = 'netmon-logins';
+  const newest = (
+    <Link href={pageHref({ range, ip, ...fw, lgOutcome, hash })} style={chipBase}>
+      {t('inbound.firewall.newest')}
+    </Link>
+  );
+  const filters = (
+    <nav aria-label={t('logins.filter')} style={{ display: 'flex', gap: '.35rem', flexWrap: 'wrap' }}>
+      {([undefined, ...LOGIN_OUTCOMES] as const).map((o) => (
+        <Link
+          key={o ?? 'all'}
+          href={pageHref({ range, ip, ...fw, lgOutcome: o, hash })}
+          aria-current={o === lgOutcome ? 'page' : undefined}
+          style={{ ...chipBase, padding: '.2rem .6rem', ...(o === lgOutcome ? chipActive : {}) }}
+        >
+          {o ? t(`logins.${o}`) : t('logins.all')}
+        </Link>
+      ))}
+    </nav>
+  );
+  let body: ReactNode;
+  if (!result.ok && lgCursor && result.kind === 'problem' && result.status === 400) {
+    // A stale or foreign cursor: offer the way back instead of a bare error.
+    body = (
+      <>
+        <p role="status" style={noteStyle}>
+          {t('logins.invalidPage')}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>{newest}</div>
+      </>
+    );
+  } else if (!result.ok) {
+    body = <Failure result={result} t={t} />;
+  } else {
+    const items: LoginEvent[] = result.data.items;
+    body = (
+      <>
+        {items.length === 0 ? (
+          <p style={noteStyle}>{t('empty')}</p>
+        ) : (
+          <TableWrap>
+            <thead>
+              <tr>
+                <th style={thStyle}>{t('inbound.firewall.time')}</th>
+                <th style={thStyle}>{t('logins.outcome')}</th>
+                <th style={thStyle}>{t('inbound.ip')}</th>
+                <th style={thStyle}>{t('logins.ipSource')}</th>
+                <th style={thStyle}>{t('inbound.country')}</th>
+                <th style={thStyle}>{t('logins.account')}</th>
+                <th style={thStyle} title={t('logins.usernameTagHint')}>
+                  {t('logins.usernameTag')}
+                </th>
+                <th style={thStyle}>{t('logins.userAgent')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((e, i) => (
+                <tr key={`${e.occurredAt}-${i}`}>
+                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{fmt.time(e.occurredAt)}</td>
+                  <td style={tdStyle}>
+                    <LoginOutcomeBadge outcome={e.outcome} t={t} />
+                  </td>
+                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                    <LoginIp ip={e.clientIp} range={range} />{' '}
+                    {e.blocklisted === true && <span style={flagStyle}>{t('inbound.blocklisted')}</span>}
+                  </td>
+                  <td style={tdStyle}>{e.ipSource ?? '—'}</td>
+                  <td style={tdStyle} title={fmt.country(e.country)}>
+                    {e.country ?? '—'}
+                  </td>
+                  <td style={tdStyle}>{e.subject ?? '—'}</td>
+                  <td style={tdStyle}>{e.usernameHmacPrefix?.slice(0, 8) || '—'}</td>
+                  <td
+                    style={{ ...tdStyle, maxWidth: '18rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    title={e.userAgent ?? undefined}
+                  >
+                    {e.userAgent ?? '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </TableWrap>
+        )}
+        <p style={noteStyle}>{t('logins.eventsNote')}</p>
+        {(lgCursor || result.data.nextCursor) && (
+          <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
+            {lgCursor && newest}
+            {result.data.nextCursor && (
+              <Link
+                href={pageHref({ range, ip, ...fw, lgOutcome, lgCursor: result.data.nextCursor, lgWindow: eventsWindow, hash })}
+                style={chipBase}
+              >
+                {t('inbound.firewall.older')}
+              </Link>
+            )}
+          </div>
+        )}
+      </>
+    );
+  }
+  return (
+    <SubBlock id="netmon-logins-events" title={t('logins.events')} aside={filters}>
+      {body}
+    </SubBlock>
+  );
+}
+
+function LoginsSection({
+  summary,
+  events,
+  status,
+  pageWindow,
+  eventsWindow,
+  range,
+  ip,
+  lgOutcome,
+  lgCursor,
+  fw,
+  fmt,
+  t,
+}: {
+  summary: NetmonResult<LoginSummary>;
+  events: NetmonResult<LoginEventsPage>;
+  status: NetmonResult<{ collectors: CollectorStatus[] }>;
+  pageWindow: TimeWindow;
+  eventsWindow: TimeWindow;
+  range: NetworkRange;
+  ip?: string;
+  lgOutcome?: LoginOutcome;
+  lgCursor?: string;
+  fw: Pick<LinkState, 'fwCursor' | 'fwWindow'>;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  const collector = loginCollector(status);
+  // `partial` (homelab#134 amendment): the run stored what it could and
+  // skipped malformed outbox rows. A warning, not "no data yet".
+  const partial = collector?.consecutiveFailures === 0 && collector.lastErrorCode === 'partial';
+  const credentials = collector ? isLoginCredentialsFailure(collector) : false;
+
+  let body: ReactNode;
+  if (isNotDeployed(summary) && isNotDeployed(events)) {
+    // data-service without the NM-4 read API (homelab-data-service#17).
+    body = <p style={noteStyle}>{t('notYetAvailable', { subproject: 'NM-4' })}</p>;
+  } else {
+    // "No data yet" only when provable: nothing recorded in the window, no
+    // filter/paging in play, and the collector has no source data
+    // (`upstream` with 0 failures = auth-service's outbox is disabled).
+    const nothing =
+      summary.ok &&
+      count(summary.data.totals.success) + count(summary.data.totals.failure) + count(summary.data.totals.locked) === 0 &&
+      events.ok &&
+      events.data.items.length === 0 &&
+      !lgOutcome &&
+      !lgCursor;
+    const disabled = collector !== undefined && !collector.enabled;
+    // A failing collector (e.g. `credentials` before its first success) is an
+    // outage shown in the status strip, not "no data yet".
+    const failing = collector !== undefined && collector.consecutiveFailures > 0;
+    if (nothing && !failing && hasNoSourceData(status, 'login-events')) {
+      body = (
+        <p role="status" style={noteStyle}>
+          {t('logins.noDataYet')}
+        </p>
+      );
+    } else if (nothing && failing) {
+      // The collector cannot back up "no logins": say so instead. The
+      // credentials case already shows its configuration hint above.
+      body = credentials ? null : (
+        <p role="status" style={noteStyle}>
+          {t('logins.failingHint')}
+        </p>
+      );
+    } else if (nothing) {
+      body = (
+        <>
+          <p style={noteStyle}>{t('logins.empty')}</p>
+          {disabled && <p style={noteStyle}>{t('logins.disabledHint')}</p>}
+        </>
+      );
+    } else {
+      body = (
+        <>
+          {!summary.ok ? (
+            <Failure result={summary} t={t} />
+          ) : (
+            <LoginSummaryBlock summary={summary.data} pageWindow={pageWindow} range={range} fmt={fmt} t={t} />
+          )}
+          <LoginEventsBlock
+            result={events}
+            range={range}
+            ip={ip}
+            lgOutcome={lgOutcome}
+            lgCursor={lgCursor}
+            eventsWindow={eventsWindow}
+            fw={fw}
+            fmt={fmt}
+            t={t}
+          />
+        </>
+      );
+    }
+  }
+  return (
+    <Section id="netmon-logins" title={t('logins.title')} aside={partial ? <Tag>{t('status.warning.partial')}</Tag> : undefined}>
+      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('logins.subtitle')}</p>
+      {partial && <p style={noteStyle}>{t('status.warningHint.partial')}</p>}
+      {credentials && <p style={noteStyle}>{t('logins.credentialsHint')}</p>}
+      {body}
+    </Section>
+  );
+}
+
 // ── Shell ───────────────────────────────────────────────────────────────────
 
 export async function NetworkShell({
@@ -1180,6 +1698,9 @@ export async function NetworkShell({
   invalidIp,
   fwCursor,
   fwWindow,
+  lgOutcome,
+  lgCursor,
+  lgWindow,
 }: {
   locale: Locale;
   range: NetworkRange;
@@ -1188,9 +1709,14 @@ export async function NetworkShell({
   fwCursor?: string;
   /** Window pinned by a paging link; used only together with `fwCursor`. */
   fwWindow?: TimeWindow;
+  lgOutcome?: LoginOutcome;
+  lgCursor?: string;
+  /** Window pinned by a login-events paging link; used only together with `lgCursor`. */
+  lgWindow?: TimeWindow;
 }) {
   const t = await getTranslations('dashboard.network');
   const fmt = makeFormatters(locale);
+  requestLinkState().lgOutcome = lgOutcome;
   const now = new Date();
   const pageWindow = toWindow(range, now);
   // The IP API defaults to 7 d (§7.2); a 24 h page window would hide most of
@@ -1200,6 +1726,7 @@ export async function NetworkShell({
   // Older firewall pages keep the window of the page that issued the cursor,
   // so paging is deterministic instead of drifting with "now".
   const firewallWindow = fwCursor && fwWindow ? fwWindow : pageWindow;
+  const loginEventsWindow = lgCursor && lgWindow ? lgWindow : pageWindow;
 
   // Fetchers are designed never to throw (they return NetmonResult);
   // allSettled enforces that, so an unexpected rejection still becomes an
@@ -1213,6 +1740,8 @@ export async function NetworkShell({
     getUfwBlocks(pageWindow),
     getSshAuth(pageWindow),
     getEgressTop(pageWindow),
+    getLoginSummary(pageWindow),
+    getLoginEvents(loginEventsWindow, lgOutcome, lgCursor),
   ] as const);
   const unreachable: NetmonFailure = { ok: false, kind: 'unreachable' };
   const status = settled[0].status === 'fulfilled' ? settled[0].value : unreachable;
@@ -1223,6 +1752,8 @@ export async function NetworkShell({
   const ufwBlocks = settled[5].status === 'fulfilled' ? settled[5].value : unreachable;
   const sshAuth = settled[6].status === 'fulfilled' ? settled[6].value : unreachable;
   const egressTop = settled[7].status === 'fulfilled' ? settled[7].value : unreachable;
+  const loginSummary = settled[8].status === 'fulfilled' ? settled[8].value : unreachable;
+  const loginEvents = settled[9].status === 'fulfilled' ? settled[9].value : unreachable;
   if (settled.some((r) => r.status === 'rejected')) console.warn('[netmon] a section fetch rejected unexpectedly');
 
   return (
@@ -1245,7 +1776,7 @@ export async function NetworkShell({
             {NETWORK_RANGES.map((r) => (
               <Link
                 key={r}
-                href={pageHref({ range: r, ip })}
+                href={pageHref({ range: r, ip, lgOutcome })}
                 aria-current={r === range ? 'page' : undefined}
                 style={{ ...chipBase, ...(r === range ? chipActive : {}) }}
               >
@@ -1363,13 +1894,21 @@ export async function NetworkShell({
               {(fwCursor || firewall.data.nextCursor) && (
                 <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
                   {fwCursor && (
-                    <Link href={pageHref({ range, ip })} style={chipBase}>
+                    <Link href={pageHref({ range, ip, lgOutcome, lgCursor, lgWindow })} style={chipBase}>
                       {t('inbound.firewall.newest')}
                     </Link>
                   )}
                   {firewall.data.nextCursor && (
                     <Link
-                      href={pageHref({ range, ip, fwCursor: firewall.data.nextCursor, fwWindow: firewallWindow })}
+                      href={pageHref({
+                        range,
+                        ip,
+                        fwCursor: firewall.data.nextCursor,
+                        fwWindow: firewallWindow,
+                        lgOutcome,
+                        lgCursor,
+                        lgWindow,
+                      })}
                       style={chipBase}
                     >
                       {t('inbound.firewall.older')}
@@ -1387,15 +1926,21 @@ export async function NetworkShell({
         {/* Egress (NM-2) */}
         <EgressSection result={egressTop} status={status} range={range} fmt={fmt} t={t} />
 
-        {/* Later sub-projects (§8): labelled placeholders, no data. */}
-        <div style={{ padding: '1.5rem 0 2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '.75rem' }}>
-          {([['logins', 'NM-4']] as const).map(([key, subproject]) => (
-            <div key={key} style={{ ...cardStyle, borderStyle: 'dashed', background: 'transparent' }}>
-              <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.35rem' }}>{t(`${key}.title`)}</p>
-              <p style={noteStyle}>{t('notYetAvailable', { subproject })}</p>
-            </div>
-          ))}
-        </div>
+        {/* Logins (NM-4) */}
+        <LoginsSection
+          summary={loginSummary}
+          events={loginEvents}
+          status={status}
+          pageWindow={pageWindow}
+          eventsWindow={loginEventsWindow}
+          range={range}
+          ip={ip}
+          lgOutcome={lgOutcome}
+          lgCursor={lgCursor}
+          fw={{ fwCursor, fwWindow: fwCursor ? firewallWindow : undefined }}
+          fmt={fmt}
+          t={t}
+        />
       </div>
     </div>
   );

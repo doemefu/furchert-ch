@@ -6,6 +6,23 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **`/dashboard/network` — logins section** (NM-4, #64; contract
+  `infrastructure/docs/060-network-monitoring.md` §7.2/§8 plus the
+  doemefu/homelab#134 amendment): replaces the logins placeholder with data
+  from data-service's `/api/netmon/logins/summary` and `/logins/events` for the
+  page window: outcome tiles (successful, failed, locked, listed IPs and
+  accounts), a stacked hourly/daily timeline (empty slots zero-filled), top
+  source IPs by failed + locked attempts with country and reputation, accounts
+  with failures on the same username hash, and a login-events table (outcome
+  badge, IP and its source, country, account, username tag, user agent)
+  filterable by outcome (`?lgOutcome=`) with pinned-window paging
+  (`?lgCursor=`). Private or missing IPs are plain text, not `?ip=` links.
+  Honest states: "not yet available" without the NM-4 API, "no login data
+  yet" while the `login-events` collector has no source data, a configuration
+  hint on a `credentials` failure, and per-block "unavailable" otherwise.
+- **Collector status warnings**: a run that succeeded with a warning code
+  (`upstream`, `truncated`, `partial` or an unknown code) now shows a warning
+  badge in the status strip instead of looking plainly fresh.
 - **`/dashboard/network` — egress section** (NM-2, #63; contract
   `infrastructure/docs/060-network-monitoring.md` §7.2/§8): replaces the
   egress placeholder with data from data-service's `/api/netmon/egress/top`

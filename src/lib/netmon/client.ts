@@ -12,7 +12,9 @@ import { getNetmonToken, invalidateNetmonToken } from './token';
 
 // ── §7.2 response shapes ────────────────────────────────────────────────────
 
-export type CollectorErrorCode = 'credentials' | 'rate_limited' | 'upstream' | 'truncated' | 'internal';
+// `upstream`, `truncated` and `partial` are warnings on a successful run
+// (consecutiveFailures 0); unknown codes are shown as a generic warning.
+export type CollectorErrorCode = 'credentials' | 'rate_limited' | 'upstream' | 'truncated' | 'partial' | 'internal';
 
 export interface CollectorStatus {
   name: string;
@@ -90,7 +92,8 @@ export interface IpDetail {
     statuses: Array<{ status: number; requests: number }>;
   } | null;
   firewallEvents: FirewallEvent[];
-  // Populated by NM-4 / NM-3; `null` until those ship (§7.2).
+  // NM-4: always an object (zeros when the IP never logged in); NM-3: `null`
+  // before that sub-project shipped (§7.2).
   logins: { success: number; failure: number; locked: number } | null;
   lan: { ufwBlocks: number; sshFailed: number } | null;
 }
@@ -164,6 +167,63 @@ export interface EgressFlow {
 
 export interface EgressTopResponse {
   items: EgressFlow[];
+}
+
+// NM-4 logins (§7.2 + the homelab#134 amendment). `byIp`/`bySubject` are
+// top-N lists; private IPs have country null / blocklisted false /
+// abuseScore null because they are never enriched.
+export interface LoginTotals {
+  success: number;
+  failure: number;
+  locked: number;
+}
+
+export interface LoginIpRow extends LoginTotals {
+  ip: string;
+  country: string | null;
+  blocklisted: boolean;
+  abuseScore: number | null;
+}
+
+export interface LoginSubjectRow {
+  subject: string;
+  success: number;
+  /** Failures whose username HMAC matches one of this subject's successes (not `locked`). */
+  failureSameHmac: number;
+}
+
+export interface LoginTimelineBucket extends LoginTotals {
+  bucketStart: string;
+}
+
+export interface LoginSummary {
+  totals: LoginTotals;
+  byIp: LoginIpRow[];
+  bySubject: LoginSubjectRow[];
+  /** Buckets with data only, UTC: 1 h when to − from ≤ 7 d, otherwise 1 d. */
+  timeline: LoginTimelineBucket[];
+}
+
+export const LOGIN_OUTCOMES = ['success', 'failure', 'locked'] as const;
+export type LoginOutcome = (typeof LOGIN_OUTCOMES)[number];
+
+export interface LoginEvent {
+  occurredAt: string;
+  outcome: LoginOutcome | string;
+  clientIp: string | null;
+  ipSource: string | null;
+  /** Set only for `success`. */
+  subject: string | null;
+  /** First 8 hex characters of the username HMAC; the full value is never served. */
+  usernameHmacPrefix: string | null;
+  userAgent: string | null;
+  country: string | null;
+  blocklisted: boolean;
+}
+
+export interface LoginEventsPage {
+  items: LoginEvent[];
+  nextCursor: string | null;
 }
 
 // ── Result type ─────────────────────────────────────────────────────────────
@@ -335,6 +395,35 @@ function isEgressTopResponse(v: unknown): v is EgressTopResponse {
   return isObject(v) && Array.isArray(v.items) && v.items.every(isEgressFlow);
 }
 
+const isCount = (v: unknown) => typeof v === 'number';
+
+function isLoginSummary(v: unknown): v is LoginSummary {
+  return (
+    isObject(v) &&
+    isObject(v.totals) &&
+    ['success', 'failure', 'locked'].every((k) => isCount((v.totals as Record<string, unknown>)[k])) &&
+    Array.isArray(v.byIp) &&
+    v.byIp.every((r) => isObject(r) && typeof r.ip === 'string' && isStringOrNull(r.country)) &&
+    Array.isArray(v.bySubject) &&
+    v.bySubject.every((r) => isObject(r) && typeof r.subject === 'string') &&
+    Array.isArray(v.timeline) &&
+    v.timeline.every((b) => isObject(b) && typeof b.bucketStart === 'string')
+  );
+}
+
+function isLoginEvent(v: unknown): boolean {
+  return (
+    isObject(v) &&
+    typeof v.occurredAt === 'string' &&
+    typeof v.outcome === 'string' &&
+    ['clientIp', 'ipSource', 'subject', 'usernameHmacPrefix', 'userAgent', 'country'].every((k) => isStringOrNull(v[k]))
+  );
+}
+
+function isLoginEventsPage(v: unknown): v is LoginEventsPage {
+  return isObject(v) && Array.isArray(v.items) && v.items.every(isLoginEvent) && isStringOrNull(v.nextCursor);
+}
+
 // ── Fetchers (§7.2) ─────────────────────────────────────────────────────────
 
 export interface TimeWindow {
@@ -386,4 +475,19 @@ export function getSshAuth(window: TimeWindow): Promise<NetmonResult<SshAuthResp
 // list (§7.1: max 50), ordered by bytes by data-service.
 export function getEgressTop(window: TimeWindow): Promise<NetmonResult<EgressTopResponse>> {
   return getJson('egress/top', '/egress/top', { ...window, scope: 'external', limit: 50 }, isEgressTopResponse);
+}
+
+// NM-4 logins (§7.2). The summary asks for the maximum top-N (50) so the
+// top-IP and account lists are as complete as the API allows.
+export function getLoginSummary(window: TimeWindow): Promise<NetmonResult<LoginSummary>> {
+  return getJson('logins/summary', '/logins/summary', { ...window, limit: 50 }, isLoginSummary);
+}
+
+// `outcome` MUST already be one of LOGIN_OUTCOMES (validated in page.tsx).
+export function getLoginEvents(
+  window: TimeWindow,
+  outcome: LoginOutcome | undefined,
+  cursor: string | undefined,
+): Promise<NetmonResult<LoginEventsPage>> {
+  return getJson('logins/events', '/logins/events', { ...window, outcome, limit: 50, cursor }, isLoginEventsPage);
 }

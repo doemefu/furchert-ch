@@ -16,7 +16,7 @@ import { assertAuthEnv } from '@/auth.env';
 import { SignInGate } from '../SignInGate';
 import { DevSubnav } from '../Subnav';
 import { NoAccess } from '../NoAccess';
-import type { TimeWindow } from '@/lib/netmon/client';
+import { LOGIN_OUTCOMES, type LoginOutcome, type TimeWindow } from '@/lib/netmon/client';
 import { NetworkShell, NETWORK_RANGES, type NetworkRange } from './NetworkShell';
 
 // Reads the session (cookies) and live data → must be dynamic.
@@ -63,6 +63,11 @@ function parsePinnedWindow(from: string | undefined, to: string | undefined): Ti
 function parseCursor(v: string | undefined): string | undefined {
   if (!v || v.length > MAX_CURSOR_LENGTH) return undefined;
   return v;
+}
+
+// Login-events outcome filter (NM-4): only the three API values pass.
+function parseOutcome(v: string | undefined): LoginOutcome | undefined {
+  return LOGIN_OUTCOMES.includes(v as LoginOutcome) ? (v as LoginOutcome) : undefined;
 }
 
 export async function generateMetadata({
@@ -118,11 +123,25 @@ export default async function NetworkPage({
   const fwCursor = parseCursor(first(sp.fwCursor));
   // A pinned window only makes sense together with a cursor.
   const fwWindow = fwCursor ? parsePinnedWindow(first(sp.fwFrom), first(sp.fwTo)) : undefined;
+  // Login events (NM-4): outcome filter and paging, same rules as the firewall.
+  const lgOutcome = parseOutcome(first(sp.lgOutcome));
+  const lgCursor = parseCursor(first(sp.lgCursor));
+  const lgWindow = lgCursor ? parsePinnedWindow(first(sp.lgFrom), first(sp.lgTo)) : undefined;
 
   return (
     <>
       <DevSubnav active="network" />
-      <NetworkShell locale={locale} range={range} ip={ip} invalidIp={invalidIp} fwCursor={fwCursor} fwWindow={fwWindow} />
+      <NetworkShell
+        locale={locale}
+        range={range}
+        ip={ip}
+        invalidIp={invalidIp}
+        fwCursor={fwCursor}
+        fwWindow={fwWindow}
+        lgOutcome={lgOutcome}
+        lgCursor={lgCursor}
+        lgWindow={lgWindow}
+      />
     </>
   );
 }
