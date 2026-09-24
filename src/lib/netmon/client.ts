@@ -95,6 +95,51 @@ export interface IpDetail {
   lan: { ufwBlocks: number; sshFailed: number } | null;
 }
 
+// NM-3 LAN (§7.2). `srcIp` is a LAN IP, a public IP (UFW/sshd only), the
+// literal pod CIDR `10.42.0.0/16`, or `other` (overflow bucket, §5.2).
+export interface LanConnection {
+  node: string;
+  dport: number;
+  srcIp: string;
+  state: string;
+  peakConnections: number;
+  windows: number;
+  firstSeen: string | null;
+  lastSeen: string | null;
+}
+
+export interface LanConnectionsResponse {
+  items: LanConnection[];
+}
+
+export interface UfwBlockRow {
+  srcIp: string;
+  dport: number;
+  proto: string;
+  blocks: number;
+  nodes: string[];
+}
+
+export interface UfwBlocksResponse {
+  /** Always true: UFW logging is rate-limited (§5.4). */
+  lowerBound: boolean;
+  totals: { blocks: number };
+  items: UfwBlockRow[];
+}
+
+export interface SshAuthRow {
+  node: string;
+  srcIp: string;
+  accepted: number;
+  /** Failed auth for an existing user — a lower bound (§5.4). */
+  failed: number;
+  invalidUser: number;
+}
+
+export interface SshAuthResponse {
+  items: SshAuthRow[];
+}
+
 // ── Result type ─────────────────────────────────────────────────────────────
 
 export type NetmonFailure =
@@ -234,6 +279,18 @@ function isIpDetail(v: unknown): v is IpDetail {
   );
 }
 
+function isLanConnectionsResponse(v: unknown): v is LanConnectionsResponse {
+  return isObject(v) && Array.isArray(v.items);
+}
+
+function isUfwBlocksResponse(v: unknown): v is UfwBlocksResponse {
+  return isObject(v) && Array.isArray(v.items) && isObject(v.totals) && typeof v.totals.blocks === 'number';
+}
+
+function isSshAuthResponse(v: unknown): v is SshAuthResponse {
+  return isObject(v) && Array.isArray(v.items);
+}
+
 // ── Fetchers (§7.2) ─────────────────────────────────────────────────────────
 
 export interface TimeWindow {
@@ -265,4 +322,18 @@ export function getFirewallEvents(
 // percent-encoded here because IPv6 literals contain ':'.
 export function getIpDetail(ip: string, window: TimeWindow): Promise<NetmonResult<IpDetail>> {
   return getJson('ips', `/ips/${encodeURIComponent(ip)}`, { ...window }, isIpDetail);
+}
+
+// NM-3 LAN endpoints (§7.2). Connections and sshd outcomes take no `limit`;
+// UFW blocks is a top-N list (§7.1: max 50).
+export function getLanConnections(window: TimeWindow): Promise<NetmonResult<LanConnectionsResponse>> {
+  return getJson('lan/connections', '/lan/connections', { ...window }, isLanConnectionsResponse);
+}
+
+export function getUfwBlocks(window: TimeWindow): Promise<NetmonResult<UfwBlocksResponse>> {
+  return getJson('lan/ufw-blocks', '/lan/ufw-blocks', { ...window, limit: 50 }, isUfwBlocksResponse);
+}
+
+export function getSshAuth(window: TimeWindow): Promise<NetmonResult<SshAuthResponse>> {
+  return getJson('lan/ssh-auth', '/lan/ssh-auth', { ...window }, isSshAuthResponse);
 }

@@ -5,7 +5,7 @@
 > source is **implemented** as of issue #17; the auth-service/device-service
 > REST proxies land in Phase 6. §3 (outbound SMTP for the contact form) is
 > implemented as of issue #46. §2's data-service netmon read API (NM-1) is
-> implemented as of issue #61.
+> implemented as of issue #61; its LAN endpoints (NM-3) as of issue #62.
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -90,7 +90,7 @@ Any failure (unreachable, timeout, malformed response, empty result) degrades
 the dashboard to an honest "unavailable" fallback instead of fabricating
 data — see `OVERVIEW.md`.
 
-### data-service — `http://data-service.apps.svc.cluster.local:8082` (NM-1, #61)
+### data-service — `http://data-service.apps.svc.cluster.local:8082` (NM-1, #61; NM-3, #62)
 
 Network-monitoring read API, consumed only by `/[locale]/dashboard/network`
 (`NetworkShell`, a Server Component) through `src/lib/netmon/client.ts` —
@@ -102,10 +102,10 @@ this section lists only what this app uses.
 |------|-------|
 | Env | `DATA_SERVICE_URL` (default `http://data-service.apps.svc.cluster.local:8082`), `DATA_SERVICE_TOKEN_URL` (default `http://auth-service.apps.svc.cluster.local:8080/oauth2/token`); `src/netmon.env.ts` |
 | Auth | `Authorization: Bearer <token>` from a client-credentials grant: `POST DATA_SERVICE_TOKEN_URL` with HTTP Basic `OIDC_CLIENT_ID:OIDC_CLIENT_SECRET` (form-urlencoded per RFC 6749 §2.3.1), body `grant_type=client_credentials&scope=netmon:read`. Cached in process until `exp − 60 s` (`src/lib/netmon/token.ts`); one retry with a fresh token after a 401. No new secret |
-| Endpoints | `GET /api/netmon/status`; `GET /api/netmon/inbound/summary?from&to&limit=10`; `GET /api/netmon/inbound/firewall-events?from&to&limit=50&cursor`; `GET /api/netmon/ips/{ip}?from&to` (only for a server-side `node:net isIP`-validated `?ip=`) |
+| Endpoints | `GET /api/netmon/status`; `GET /api/netmon/inbound/summary?from&to&limit=10`; `GET /api/netmon/inbound/firewall-events?from&to&limit=50&cursor`; `GET /api/netmon/ips/{ip}?from&to` (only for a server-side `node:net isIP`-validated `?ip=`); LAN (NM-3): `GET /api/netmon/lan/connections?from&to`, `GET /api/netmon/lan/ufw-blocks?from&to&limit=50`, `GET /api/netmon/lan/ssh-auth?from&to` (page window; no `node`/`dport` filter used) |
 | Window | `?window=24h\|7d\|30d` (default `24h`) mapped server-side to `from`/`to`; the IP detail never looks back less than 7 d |
-| Timeouts | `cache: 'no-store'`, `AbortSignal.timeout(5000)` per call (token and data); the four data calls run in parallel |
-| Errors | RFC 9457 `problem+json`: the `code` field is shown (`invalid_window`, `not_found`, …); 404 on the IP detail renders "not seen". Unreachable, token failure, or an unexpected shape renders "data-service unavailable" / "unexpected response" per section — never fabricated data |
+| Timeouts | `cache: 'no-store'`, `AbortSignal.timeout(5000)` per call (token and data); all data calls (four NM-1 + three LAN) run in parallel |
+| Errors | RFC 9457 `problem+json`: the `code` field is shown (`invalid_window`, `not_found`, …); 404 on the IP detail renders "not seen"; 404 on all three LAN endpoints (data-service without NM-3) renders "not yet available", and empty LAN results while the `lan` collector in `/status` has never succeeded render "no LAN data yet" (node role not rolled out). Unreachable, token failure, or an unexpected shape renders "data-service unavailable" / "unexpected response" per section — never fabricated data |
 | Logging | `[netmon] <endpoint> …` with the HTTP status or a short reason only — never tokens, URLs with query strings, or IP addresses |
 | Gating | The page renders `NetworkShell` (and therefore makes any call) only after `auth()` + `asRole(session.user?.role) === 'ADMIN'`; USER sessions get `NoAccess` |
 

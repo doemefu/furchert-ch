@@ -52,7 +52,7 @@ mailer.
 | Route | Page | Status |
 |-------|------|--------|
 | `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — Auth/Device subnav tabs and per-tile "Manage" buttons are visibly disabled until Phase 6 |
-| `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`; window `?window=24h\|7d\|30d`. LAN/Egress/Logins sections are labelled "not yet available" placeholders | **live (NM-1, #61)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
+| `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`, LAN section (connections per port by source, UFW blocks as a lower bound, SSH auth outcomes); window `?window=24h\|7d\|30d`. Egress/Logins sections are labelled "not yet available" placeholders | **live (NM-1, #61; LAN NM-3, #62)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
 | `/[locale]/dashboard/auth` | auth-service admin GUI (real REST API) | Phase 6 |
 | `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 |
 
@@ -89,7 +89,9 @@ unexpected violations). The "first automated tests" half of #42 remains open
 - **Live (NM-1, #61):** `/dashboard/network` reads data-service's netmon API
   server-side with a client-credentials token (see `INTERFACES.md` §2). Each
   section degrades independently to an honest "unavailable" / HTTP-error note;
-  IP addresses are shown to ADMIN sessions only and are never logged.
+  IP addresses are shown to ADMIN sessions only and are never logged. The LAN
+  section (NM-3, #62) shows "not yet available" until data-service serves
+  `/lan/*`, and "no LAN data yet" until the node collector role is rolled out.
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard,

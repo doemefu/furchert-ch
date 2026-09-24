@@ -248,7 +248,7 @@
       "title": "Network",
       "kicker": "Network monitoring",
       "adminOnly": "Admin only",
-      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation and firewall events. Data from data-service, loaded fresh on every page view.",
+      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events and LAN access to the cluster nodes. Data from data-service, loaded fresh on every page view.",
       "window": {
         "label": "Window",
         "24h": "24 h",
@@ -325,7 +325,35 @@
         "lanValue": "{ufwBlocks} UFW blocks · {sshFailed} failed SSH"
       },
       "lan": {
-        "title": "LAN"
+        "title": "LAN (cluster nodes)",
+        "subtitle": "Connections, firewall blocks and SSH logins at the four cluster nodes, from each node's conntrack table and journal.",
+        "connections": "Connections by port",
+        "connectionsNote": "Peak concurrent TCP connections per 15-minute window, by source and conntrack state.",
+        "source": "Source",
+        "node": "Node",
+        "state": "State",
+        "peak": "Peak",
+        "windows": "15-min windows",
+        "lastSeen": "Last seen",
+        "podNetwork": "pod network",
+        "other": "other (overflow)",
+        "ufwBlocks": "UFW blocks",
+        "ufwTotal": "Logged blocks",
+        "ufwNote": "UFW rate-limits its log, so these counts are a lower bound.",
+        "topSources": "Top sources",
+        "topPorts": "Top ports",
+        "fromListedRows": "{count, plural, one {Derived from the # listed row.} other {Derived from the # listed rows.}}",
+        "port": "Port",
+        "proto": "Protocol",
+        "blocks": "Blocks",
+        "nodes": "Nodes",
+        "sshAuth": "SSH authentication",
+        "failedLowerBound": "Failed = lower bound",
+        "accepted": "Accepted",
+        "failed": "Failed",
+        "invalidUser": "Invalid user",
+        "sshNote": "Failed counts failed authentication for existing users and is a lower bound: sshd logs rejected keys only when a connection gives up. Unknown usernames count as invalid user. SSH through the Cloudflare tunnel shows up as a pod or node address, not the real client.",
+        "noDataYet": "No LAN data yet: the node collector has not reported. Data appears about 30 minutes after the netmon_node role is rolled out to the nodes."
       },
       "egress": {
         "title": "Egress"
