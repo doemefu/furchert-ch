@@ -11,8 +11,14 @@
 // The LAN section (NM-3, #62), the egress section (NM-2, #63) and the logins
 // section (NM-4, #64) use the same page window; login events page and filter
 // with `?lgCursor=` (pinned `?lgFrom=`/`?lgTo=`) and `?lgOutcome=`.
+//
+// Link-state rules (`pageHref`): window chips keep `ip` + `lgOutcome` and drop
+// both cursors; IP links and the IP-panel close keep `lgOutcome`; each
+// section's paging keeps the other section's cursor (independent paging) and
+// `lgOutcome`; outcome chips and the logins "newest" link drop `lgCursor`.
+// Logins links jump back to `#netmon-logins`.
 import { isIP } from 'node:net';
-import type { CSSProperties, ReactNode } from 'react';
+import { cache, type CSSProperties, type ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
@@ -71,6 +77,8 @@ interface Formatters {
   /** Byte counts in SI units (kB, MB, GB). */
   bytes: (n: number) => string;
   time: (iso: string | null | undefined) => string;
+  /** Date only, in UTC (for 1-day buckets that start at UTC midnight). */
+  utcDate: (iso: string) => string;
   country: (code: string | null | undefined) => string;
 }
 
@@ -79,6 +87,7 @@ function makeFormatters(locale: Locale): Formatters {
   const numFmt = new Intl.NumberFormat(tag);
   // Pinned to Europe/Zurich like the dashboard header (pod TZ ≈ UTC).
   const timeFmt = new Intl.DateTimeFormat(tag, { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Zurich' });
+  const utcDateFmt = new Intl.DateTimeFormat(tag, { dateStyle: 'short', timeZone: 'UTC' });
   const byteUnits = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte'] as const;
   const byteFmts = byteUnits.map(
     (unit) => new Intl.NumberFormat(tag, { style: 'unit', unit, unitDisplay: 'short', maximumFractionDigits: 1 }),
@@ -103,6 +112,10 @@ function makeFormatters(locale: Locale): Formatters {
       if (!iso) return '—';
       const d = new Date(iso);
       return Number.isNaN(d.getTime()) ? '—' : timeFmt.format(d);
+    },
+    utcDate: (iso) => {
+      const d = new Date(iso);
+      return Number.isNaN(d.getTime()) ? '—' : utcDateFmt.format(d);
     },
     country: (code) => {
       if (!code) return '—';
@@ -129,9 +142,10 @@ interface LinkState {
   lgOutcome?: LoginOutcome;
   lgCursor?: string;
   lgWindow?: TimeWindow;
+  hash?: string;
 }
 
-function pageHref({ range, ip, fwCursor, fwWindow, lgOutcome, lgCursor, lgWindow }: LinkState) {
+function pageHref({ range, ip, fwCursor, fwWindow, lgOutcome, lgCursor, lgWindow, hash }: LinkState) {
   const query: Record<string, string> = {};
   if (range !== '24h') query.window = range;
   if (ip) query.ip = ip;
@@ -150,8 +164,14 @@ function pageHref({ range, ip, fwCursor, fwWindow, lgOutcome, lgCursor, lgWindow
       query.lgTo = lgWindow.to;
     }
   }
-  return { pathname: '/dashboard/network', query };
+  return hash ? { pathname: '/dashboard/network', query, hash } : { pathname: '/dashboard/network', query };
 }
+
+// Request-scoped (React `cache`) link state for the IP links, which are
+// rendered deep inside every section: set once by NetworkShell before its
+// children render, so an IP link keeps the login outcome filter without
+// threading it through every section's props.
+const requestLinkState = cache((): { lgOutcome?: LoginOutcome } => ({}));
 
 // ── Styles (DashboardShell idioms) ──────────────────────────────────────────
 
@@ -400,7 +420,7 @@ function TableWrap({ children }: { children: ReactNode }) {
 
 function IpLink({ ip, range }: { ip: string; range: NetworkRange }) {
   return (
-    <Link href={pageHref({ range, ip })} style={ipLinkStyle}>
+    <Link href={pageHref({ range, ip, lgOutcome: requestLinkState().lgOutcome })} style={ipLinkStyle}>
       {ip}
     </Link>
   );
@@ -539,7 +559,7 @@ function IpPanel({
   t: Translate;
 }) {
   const close = (
-    <Link href={pageHref({ range })} style={{ ...chipBase, padding: '.2rem .6rem', marginLeft: 'auto' }}>
+    <Link href={pageHref({ range, lgOutcome: requestLinkState().lgOutcome })} style={{ ...chipBase, padding: '.2rem .6rem', marginLeft: 'auto' }}>
       {t('ip.close')}
     </Link>
   );
@@ -1231,19 +1251,21 @@ function loginCollector(status: NetmonResult<{ collectors: CollectorStatus[] }>)
 const HOUR_MS = 3600 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
-// The API returns buckets with data only (1 h up to a 7-day window, else
-// 1 d, UTC). Logins are sparse, so the missing slots are filled with zeros
-// (absence means no events) to keep the x axis proportional to time. If a
-// bucket does not sit on a slot boundary the raw buckets are shown instead.
-function fillLoginTimeline(points: LoginTimelineBucket[], window: TimeWindow): LoginTimelineBucket[] {
+// The API returns buckets with data only (1 h iff to − from ≤ 7 d, else 1 d,
+// UTC). Logins are sparse, so — unlike the inbound Timeline, which plots the
+// returned buckets as they are — the missing slots are deliberately filled
+// with zeros (absence means no events) to keep the x axis proportional to
+// time. If a bucket does not sit on a slot boundary the raw buckets are shown.
+function fillLoginTimeline(points: LoginTimelineBucket[], window: TimeWindow): { points: LoginTimelineBucket[]; daily: boolean } {
   const from = Date.parse(window.from);
   const to = Date.parse(window.to);
-  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return points;
+  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return { points, daily: false };
   const step = to - from <= 7 * DAY_MS ? HOUR_MS : DAY_MS;
+  const daily = step === DAY_MS;
   const byStart = new Map<number, LoginTimelineBucket>();
   for (const p of points) {
     const ms = Date.parse(p.bucketStart);
-    if (!Number.isFinite(ms) || ms % step !== 0) return points;
+    if (!Number.isFinite(ms) || ms % step !== 0) return { points, daily };
     byStart.set(ms, p);
   }
   const filled: LoginTimelineBucket[] = [];
@@ -1252,12 +1274,14 @@ function fillLoginTimeline(points: LoginTimelineBucket[], window: TimeWindow): L
     byStart.delete(ms);
   }
   // A bucket outside the page window (clock skew) would silently vanish.
-  return byStart.size > 0 ? points : filled;
+  return { points: byStart.size > 0 ? points : filled, daily };
 }
 
 // Stacked inline-SVG columns (success, failure, locked from the bottom), the
 // inbound Timeline idiom with one <title> tooltip per bucket.
-function LoginTimeline({ points, fmt, t }: { points: LoginTimelineBucket[]; fmt: Formatters; t: Translate }) {
+function LoginTimeline({ points, daily, fmt, t }: { points: LoginTimelineBucket[]; daily: boolean; fmt: Formatters; t: Translate }) {
+  // 1-day buckets start at UTC midnight (02:00 in Zurich): label the date only.
+  const at = (iso: string) => (daily ? fmt.utcDate(iso) : fmt.time(iso));
   const total = (p: LoginTimelineBucket) => count(p.success) + count(p.failure) + count(p.locked);
   const max = points.reduce((m, p) => Math.max(m, total(p)), 0);
   const barW = 10;
@@ -1278,7 +1302,7 @@ function LoginTimeline({ points, fmt, t }: { points: LoginTimelineBucket[]; fmt:
           return (
             <g key={p.bucketStart}>
               <title>
-                {`${fmt.time(p.bucketStart)} · ${t('logins.success')} ${fmt.num(count(p.success))} · ${t('logins.failure')} ${fmt.num(count(p.failure))} · ${t('logins.locked')} ${fmt.num(count(p.locked))}`}
+                {`${at(p.bucketStart)} · ${t('logins.success')} ${fmt.num(count(p.success))} · ${t('logins.failure')} ${fmt.num(count(p.failure))} · ${t('logins.locked')} ${fmt.num(count(p.locked))}`}
               </title>
               {LOGIN_OUTCOMES.map((o) => {
                 const v = count(p[o]);
@@ -1293,8 +1317,8 @@ function LoginTimeline({ points, fmt, t }: { points: LoginTimelineBucket[]; fmt:
       </svg>
       {points.length > 0 && (
         <div style={{ ...noteStyle, display: 'flex', justifyContent: 'space-between', marginTop: '.35rem' }}>
-          <span>{fmt.time(points[0].bucketStart)}</span>
-          <span>{fmt.time(points[points.length - 1].bucketStart)}</span>
+          <span>{at(points[0].bucketStart)}</span>
+          <span>{at(points[points.length - 1].bucketStart)}</span>
         </div>
       )}
       <div style={{ ...noteStyle, display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '.35rem' }}>
@@ -1347,6 +1371,7 @@ function LoginSummaryBlock({
   t: Translate;
 }) {
   const { totals, byIp, bySubject } = summary;
+  // The summary is asked for the top 50 (§7.1 max): a full list may be cut off.
   const full = (n: number) => (n >= 50 ? t('logins.atLeast', { count: fmt.num(n) }) : fmt.num(n));
   const right: CSSProperties = { ...tdStyle, textAlign: 'right' };
   return (
@@ -1359,7 +1384,7 @@ function LoginSummaryBlock({
         <StatTile label={t('logins.accounts')} value={full(bySubject.length)} />
       </div>
       <p style={noteStyle}>{t('logins.listedNote')}</p>
-      <LoginTimeline points={fillLoginTimeline(summary.timeline, pageWindow)} fmt={fmt} t={t} />
+      <LoginTimeline {...fillLoginTimeline(summary.timeline, pageWindow)} fmt={fmt} t={t} />
 
       <SubBlock id="netmon-logins-ips" title={t('logins.byIp')}>
         {byIp.length === 0 ? (
@@ -1436,6 +1461,7 @@ function LoginEventsBlock({
   lgOutcome,
   lgCursor,
   eventsWindow,
+  fw,
   fmt,
   t,
 }: {
@@ -1445,15 +1471,23 @@ function LoginEventsBlock({
   lgOutcome?: LoginOutcome;
   lgCursor?: string;
   eventsWindow: TimeWindow;
+  /** The firewall section's paging state, kept by every logins link. */
+  fw: Pick<LinkState, 'fwCursor' | 'fwWindow'>;
   fmt: Formatters;
   t: Translate;
 }) {
+  const hash = 'netmon-logins';
+  const newest = (
+    <Link href={pageHref({ range, ip, ...fw, lgOutcome, hash })} style={chipBase}>
+      {t('inbound.firewall.newest')}
+    </Link>
+  );
   const filters = (
     <nav aria-label={t('logins.filter')} style={{ display: 'flex', gap: '.35rem', flexWrap: 'wrap' }}>
       {([undefined, ...LOGIN_OUTCOMES] as const).map((o) => (
         <Link
           key={o ?? 'all'}
-          href={pageHref({ range, ip, lgOutcome: o })}
+          href={pageHref({ range, ip, ...fw, lgOutcome: o, hash })}
           aria-current={o === lgOutcome ? 'page' : undefined}
           style={{ ...chipBase, padding: '.2rem .6rem', ...(o === lgOutcome ? chipActive : {}) }}
         >
@@ -1463,7 +1497,17 @@ function LoginEventsBlock({
     </nav>
   );
   let body: ReactNode;
-  if (!result.ok) {
+  if (!result.ok && lgCursor && result.kind === 'problem' && result.status === 400) {
+    // A stale or foreign cursor: offer the way back instead of a bare error.
+    body = (
+      <>
+        <p role="status" style={noteStyle}>
+          {t('logins.invalidPage')}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>{newest}</div>
+      </>
+    );
+  } else if (!result.ok) {
     body = <Failure result={result} t={t} />;
   } else {
     const items: LoginEvent[] = result.data.items;
@@ -1503,7 +1547,7 @@ function LoginEventsBlock({
                     {e.country ?? '—'}
                   </td>
                   <td style={tdStyle}>{e.subject ?? '—'}</td>
-                  <td style={tdStyle}>{e.usernameHmacPrefix ?? '—'}</td>
+                  <td style={tdStyle}>{e.usernameHmacPrefix?.slice(0, 8) || '—'}</td>
                   <td
                     style={{ ...tdStyle, maxWidth: '18rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     title={e.userAgent ?? undefined}
@@ -1518,14 +1562,10 @@ function LoginEventsBlock({
         <p style={noteStyle}>{t('logins.eventsNote')}</p>
         {(lgCursor || result.data.nextCursor) && (
           <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
-            {lgCursor && (
-              <Link href={pageHref({ range, ip, lgOutcome })} style={chipBase}>
-                {t('inbound.firewall.newest')}
-              </Link>
-            )}
+            {lgCursor && newest}
             {result.data.nextCursor && (
               <Link
-                href={pageHref({ range, ip, lgOutcome, lgCursor: result.data.nextCursor, lgWindow: eventsWindow })}
+                href={pageHref({ range, ip, ...fw, lgOutcome, lgCursor: result.data.nextCursor, lgWindow: eventsWindow, hash })}
                 style={chipBase}
               >
                 {t('inbound.firewall.older')}
@@ -1553,6 +1593,7 @@ function LoginsSection({
   ip,
   lgOutcome,
   lgCursor,
+  fw,
   fmt,
   t,
 }: {
@@ -1565,6 +1606,7 @@ function LoginsSection({
   ip?: string;
   lgOutcome?: LoginOutcome;
   lgCursor?: string;
+  fw: Pick<LinkState, 'fwCursor' | 'fwWindow'>;
   fmt: Formatters;
   t: Translate;
 }) {
@@ -1599,6 +1641,14 @@ function LoginsSection({
           {t('logins.noDataYet')}
         </p>
       );
+    } else if (nothing && failing) {
+      // The collector cannot back up "no logins": say so instead. The
+      // credentials case already shows its configuration hint above.
+      body = credentials ? null : (
+        <p role="status" style={noteStyle}>
+          {t('logins.failingHint')}
+        </p>
+      );
     } else if (nothing) {
       body = (
         <>
@@ -1621,6 +1671,7 @@ function LoginsSection({
             lgOutcome={lgOutcome}
             lgCursor={lgCursor}
             eventsWindow={eventsWindow}
+            fw={fw}
             fmt={fmt}
             t={t}
           />
@@ -1665,6 +1716,7 @@ export async function NetworkShell({
 }) {
   const t = await getTranslations('dashboard.network');
   const fmt = makeFormatters(locale);
+  requestLinkState().lgOutcome = lgOutcome;
   const now = new Date();
   const pageWindow = toWindow(range, now);
   // The IP API defaults to 7 d (§7.2); a 24 h page window would hide most of
@@ -1842,13 +1894,21 @@ export async function NetworkShell({
               {(fwCursor || firewall.data.nextCursor) && (
                 <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
                   {fwCursor && (
-                    <Link href={pageHref({ range, ip })} style={chipBase}>
+                    <Link href={pageHref({ range, ip, lgOutcome, lgCursor, lgWindow })} style={chipBase}>
                       {t('inbound.firewall.newest')}
                     </Link>
                   )}
                   {firewall.data.nextCursor && (
                     <Link
-                      href={pageHref({ range, ip, fwCursor: firewall.data.nextCursor, fwWindow: firewallWindow })}
+                      href={pageHref({
+                        range,
+                        ip,
+                        fwCursor: firewall.data.nextCursor,
+                        fwWindow: firewallWindow,
+                        lgOutcome,
+                        lgCursor,
+                        lgWindow,
+                      })}
                       style={chipBase}
                     >
                       {t('inbound.firewall.older')}
@@ -1877,6 +1937,7 @@ export async function NetworkShell({
           ip={ip}
           lgOutcome={lgOutcome}
           lgCursor={lgCursor}
+          fw={{ fwCursor, fwWindow: fwCursor ? firewallWindow : undefined }}
           fmt={fmt}
           t={t}
         />

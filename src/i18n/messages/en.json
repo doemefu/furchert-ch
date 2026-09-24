@@ -248,7 +248,7 @@
       "title": "Network",
       "kicker": "Network monitoring",
       "adminOnly": "Admin only",
-      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events, LAN access to the cluster nodes egress from cluster workloads and form logins at auth-service. Data from data-service, loaded fresh on every page view.",
+      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events, LAN access to the cluster nodes, egress from cluster workloads and form logins at auth-service. Data from data-service, loaded fresh on every page view.",
       "window": {
         "label": "Window",
         "24h": "24 h",
@@ -400,7 +400,7 @@
         "all": "All",
         "sourceIps": "Listed source IPs",
         "accounts": "Listed accounts",
-        "atLeast": "≥ {count}",
+        "atLeast": "{count}+",
         "listedNote": "IP and account counts come from the listed rows (top 50 each); the outcome totals cover the whole window.",
         "timeline": "Logins over time",
         "byIp": "Top source IPs by failed and locked attempts",
@@ -418,6 +418,8 @@
         "eventsNote": "Newest first. The IP source says whether the address came from Cloudflare's CF-Connecting-IP header or the TCP peer; both can be spoofed inside the cluster.",
         "noDataYet": "No login data yet: the login-events collector has no source data (auth-service's login-event outbox is not enabled yet, or the collector has not run).",
         "empty": "No logins in this window.",
+        "failingHint": "The login-events collector is failing, so logins in this window may be missing; see the collector status above.",
+        "invalidPage": "This page of login events is no longer valid.",
         "disabledHint": "The login-events collector is disabled in data-service.",
         "credentialsHint": "The login-events collector cannot authenticate at auth-service: set AUTH_CLIENT_SECRET for data-service (Secret data-service-secrets, key auth-client-secret) to the secret of auth-service's data-service client, then restart the data-service pod."
       }

@@ -248,7 +248,7 @@
       "title": "Netzwerk",
       "kicker": "Netzwerk-Monitoring",
       "adminOnly": "Nur Admin",
-      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs, Firewall-Ereignisse, LAN-Zugriffe auf die Cluster-Nodes ausgehender Verkehr der Cluster-Workloads und Formular-Logins beim auth-service. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
+      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs, Firewall-Ereignisse, LAN-Zugriffe auf die Cluster-Nodes, ausgehender Verkehr der Cluster-Workloads und Formular-Logins beim auth-service. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
       "window": {
         "label": "Zeitraum",
         "24h": "24 h",
@@ -400,7 +400,7 @@
         "all": "Alle",
         "sourceIps": "Aufgeführte Quell-IPs",
         "accounts": "Aufgeführte Konten",
-        "atLeast": "≥ {count}",
+        "atLeast": "{count}+",
         "listedNote": "IP- und Kontenzahlen stammen aus den aufgeführten Zeilen (je Top 50); die Summen nach Ergebnis decken den ganzen Zeitraum ab.",
         "timeline": "Logins im Zeitverlauf",
         "byIp": "Top-Quell-IPs nach fehlgeschlagenen und gesperrten Versuchen",
@@ -418,6 +418,8 @@
         "eventsNote": "Neueste zuerst. Die IP-Quelle zeigt, ob die Adresse aus dem Cloudflare-Header CF-Connecting-IP oder vom TCP-Gegenüber stammt; beides lässt sich innerhalb des Clusters fälschen.",
         "noDataYet": "Noch keine Login-Daten: Der login-events-Collector hat keine Quelldaten (die Login-Event-Outbox des auth-service ist noch nicht aktiviert oder der Collector ist noch nicht gelaufen).",
         "empty": "Keine Logins in diesem Zeitraum.",
+        "failingHint": "Der login-events-Collector schlägt fehl, daher können Logins in diesem Zeitraum fehlen; siehe Collector-Status oben.",
+        "invalidPage": "Diese Seite der Login-Ereignisse ist nicht mehr gültig.",
         "disabledHint": "Der login-events-Collector ist im data-service deaktiviert.",
         "credentialsHint": "Der login-events-Collector kann sich nicht beim auth-service anmelden: AUTH_CLIENT_SECRET des data-service (Secret data-service-secrets, Schlüssel auth-client-secret) auf das Secret des data-service-Clients im auth-service setzen und den data-service-Pod neu starten."
       }
