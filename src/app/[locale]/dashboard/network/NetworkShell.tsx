@@ -894,7 +894,9 @@ function LanSection({
       ssh.ok &&
       ssh.data.items.length === 0;
     const lanCollector = status.ok ? status.data.collectors.find((c) => c.name === 'lan') : undefined;
-    const neverCollected = status.ok && (!lanCollector || !lanCollector.lastSuccessAt);
+    // A disabled collector is shown as such in the status strip; the blocks
+    // then fall back to their plain "no data in this window" notes.
+    const neverCollected = status.ok && (!lanCollector || (lanCollector.enabled && !lanCollector.lastSuccessAt));
     body =
       allEmpty && neverCollected ? (
         <p role="status" style={noteStyle}>
