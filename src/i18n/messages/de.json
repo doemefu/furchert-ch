@@ -248,7 +248,7 @@
       "title": "Netzwerk",
       "kicker": "Netzwerk-Monitoring",
       "adminOnly": "Nur Admin",
-      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs und Firewall-Ereignisse. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
+      "subtitle": "Eingehender Verkehr über Cloudflare, Reputation der Quell-IPs, Firewall-Ereignisse und LAN-Zugriffe auf die Cluster-Nodes. Daten vom data-service, bei jedem Seitenaufruf frisch geladen.",
       "window": {
         "label": "Zeitraum",
         "24h": "24 h",
@@ -325,7 +325,35 @@
         "lanValue": "{ufwBlocks} UFW-Blocks · {sshFailed} fehlgeschlagene SSH"
       },
       "lan": {
-        "title": "LAN"
+        "title": "LAN (Cluster-Nodes)",
+        "subtitle": "Verbindungen, Firewall-Blocks und SSH-Logins an den vier Cluster-Nodes, aus der conntrack-Tabelle und dem Journal jedes Nodes.",
+        "connections": "Verbindungen nach Port",
+        "connectionsNote": "Höchste Zahl gleichzeitiger TCP-Verbindungen pro 15-Minuten-Fenster, nach Quelle und conntrack-Zustand.",
+        "source": "Quelle",
+        "node": "Node",
+        "state": "Zustand",
+        "peak": "Spitze",
+        "windows": "15-Min-Fenster",
+        "lastSeen": "Zuletzt gesehen",
+        "podNetwork": "Pod-Netz",
+        "other": "andere (Überlauf)",
+        "ufwBlocks": "UFW-Blocks",
+        "ufwTotal": "Protokollierte Blocks",
+        "ufwNote": "UFW begrenzt sein Log, diese Zahlen sind deshalb eine Untergrenze.",
+        "topSources": "Top-Quellen",
+        "topPorts": "Top-Ports",
+        "fromListedRows": "{count, plural, one {Abgeleitet aus der # aufgeführten Zeile.} other {Abgeleitet aus den # aufgeführten Zeilen.}}",
+        "port": "Port",
+        "proto": "Protokoll",
+        "blocks": "Blocks",
+        "nodes": "Nodes",
+        "sshAuth": "SSH-Anmeldungen",
+        "failedLowerBound": "Fehlgeschlagen = Untergrenze",
+        "accepted": "Akzeptiert",
+        "failed": "Fehlgeschlagen",
+        "invalidUser": "Unbekannter Benutzer",
+        "sshNote": "Fehlgeschlagen zählt fehlgeschlagene Anmeldungen bestehender Benutzer und ist eine Untergrenze: sshd protokolliert abgelehnte Schlüssel erst, wenn eine Verbindung aufgibt. Unbekannte Benutzernamen zählen als unbekannter Benutzer. SSH über den Cloudflare-Tunnel erscheint als Pod- oder Node-Adresse, nicht als echter Client.",
+        "noDataYet": "Noch keine LAN-Daten: Der Node-Collector hat noch nichts gemeldet. Daten erscheinen etwa 30 Minuten nach dem Rollout der Rolle netmon_node auf die Nodes."
       },
       "egress": {
         "title": "Ausgehend"

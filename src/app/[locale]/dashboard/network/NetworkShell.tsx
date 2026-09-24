@@ -8,6 +8,8 @@
 // Every section renders its own honest failure state; nothing is fabricated.
 // Window (`?window=`), IP detail (`?ip=`) and firewall paging (`?fwCursor=`
 // plus the pinned `?fwFrom=`/`?fwTo=` window) are search params, so every interaction is a server-rendered link.
+// The LAN section (NM-3, #62) uses the same page window.
+import { isIP } from 'node:net';
 import type { CSSProperties, ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
@@ -18,10 +20,16 @@ import {
   getFirewallEvents,
   getInboundSummary,
   getIpDetail,
+  getLanConnections,
+  getSshAuth,
   getStatus,
+  getUfwBlocks,
   type CollectorStatus,
   type FirewallEvent,
   type IpDetail,
+  type LanConnectionsResponse,
+  type SshAuthResponse,
+  type UfwBlocksResponse,
   type NetmonFailure,
   type NetmonResult,
   type TimeWindow,
@@ -590,6 +598,324 @@ function IpPanel({
   );
 }
 
+// ── LAN (NM-3) ──────────────────────────────────────────────────────────────
+
+// Watched ports of the node collector (§5.1 `netmon_node_ports`). Service
+// names are proper nouns and stay untranslated.
+const LAN_PORT_NAMES: Record<number, string> = {
+  22: 'SSH',
+  1883: 'MQTT',
+  6443: 'Kubernetes API',
+  8123: 'Home Assistant',
+  10250: 'kubelet',
+};
+
+const POD_CIDR_LABEL = '10.42.0.0/16';
+
+const subheadStyle: CSSProperties = { ...monoLabel, fontSize: '.62rem', fontWeight: 400 };
+
+// `srcIp` is not always an address (§5.2): the pod CIDR and the overflow
+// bucket `other` are rendered as labels; only real IPs link to the IP panel.
+function LanSource({ srcIp, range, t }: { srcIp: string; range: NetworkRange; t: Translate }) {
+  if (srcIp === POD_CIDR_LABEL) return <>{`${srcIp} · ${t('lan.podNetwork')}`}</>;
+  if (srcIp === 'other') return <>{t('lan.other')}</>;
+  return isIP(srcIp) !== 0 ? <IpLink ip={srcIp} range={range} /> : <>{srcIp}</>;
+}
+
+function SubBlock({ id, title, aside, children }: { id: string; title: string; aside?: ReactNode; children: ReactNode }) {
+  return (
+    <div role="group" aria-labelledby={id} style={{ display: 'grid', gap: '.75rem', marginTop: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap' }}>
+        <h3 id={id} style={subheadStyle}>
+          {title}
+        </h3>
+        {aside}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+const isNotDeployed = (r: NetmonResult<unknown>) => !r.ok && r.kind === 'problem' && r.status === 404;
+
+function LanConnectionsBlock({
+  result,
+  range,
+  fmt,
+  t,
+}: {
+  result: NetmonResult<LanConnectionsResponse>;
+  range: NetworkRange;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  let body: ReactNode;
+  if (!result.ok) {
+    body = <Failure result={result} t={t} />;
+  } else if (result.data.items.length === 0) {
+    body = <p style={noteStyle}>{t('empty')}</p>;
+  } else {
+    const items = result.data.items;
+    const ports = [...new Set(items.map((c) => c.dport))].sort((a, b) => a - b);
+    body = (
+      <>
+        <p style={noteStyle}>{t('lan.connectionsNote')}</p>
+        {ports.map((port) => {
+          const rows = items.filter((c) => c.dport === port).sort((a, b) => b.peakConnections - a.peakConnections);
+          const name = LAN_PORT_NAMES[port];
+          return (
+            <div key={port} style={{ display: 'grid', gap: '.35rem' }}>
+              <p style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', fontWeight: 500, color: 'var(--n-100)' }}>
+                {name ? `${port} · ${name}` : String(port)}
+              </p>
+              <TableWrap>
+                <thead>
+                  <tr>
+                    <th style={thStyle}>{t('lan.source')}</th>
+                    <th style={thStyle}>{t('lan.node')}</th>
+                    <th style={thStyle}>{t('lan.state')}</th>
+                    <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.peak')}</th>
+                    <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.windows')}</th>
+                    <th style={thStyle}>{t('lan.lastSeen')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((c) => (
+                    <tr key={`${c.node}-${c.srcIp}-${c.state}`}>
+                      <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                        <LanSource srcIp={c.srcIp} range={range} t={t} />
+                      </td>
+                      <td style={tdStyle}>{c.node}</td>
+                      <td style={tdStyle}>{c.state}</td>
+                      <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(c.peakConnections)}</td>
+                      <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(c.windows)}</td>
+                      <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{fmt.time(c.lastSeen)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </TableWrap>
+            </div>
+          );
+        })}
+      </>
+    );
+  }
+  return (
+    <SubBlock id="netmon-lan-connections" title={t('lan.connections')}>
+      {body}
+    </SubBlock>
+  );
+}
+
+// Sums `value` per key and returns the top `n` rows, largest first.
+function topBy<T>(items: T[], key: (x: T) => string, value: (x: T) => number, n: number): Array<{ key: string; value: number }> {
+  const sums = new Map<string, number>();
+  for (const x of items) sums.set(key(x), (sums.get(key(x)) ?? 0) + value(x));
+  return [...sums.entries()]
+    .map(([k, v]) => ({ key: k, value: v }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, n);
+}
+
+function UfwBlocksBlock({
+  result,
+  range,
+  fmt,
+  t,
+}: {
+  result: NetmonResult<UfwBlocksResponse>;
+  range: NetworkRange;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  let body: ReactNode;
+  if (!result.ok) {
+    body = <Failure result={result} t={t} />;
+  } else if (result.data.items.length === 0 && result.data.totals.blocks === 0) {
+    body = <p style={noteStyle}>{t('empty')}</p>;
+  } else {
+    const items = [...result.data.items].sort((a, b) => b.blocks - a.blocks);
+    const sources = topBy(items, (r) => r.srcIp, (r) => r.blocks, 10);
+    const ports = topBy(items, (r) => `${r.dport}/${r.proto}`, (r) => r.blocks, 10);
+    body = (
+      <>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.75rem' }}>
+          <StatTile label={t('lan.ufwTotal')} value={fmt.num(result.data.totals.blocks)} />
+        </div>
+        <p style={noteStyle}>{t('lan.ufwNote')}</p>
+        {items.length > 0 && (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '.75rem' }}>
+              <BarList
+                title={t('lan.topSources')}
+                rows={sources.map((s) => ({ key: s.key, label: <LanSource srcIp={s.key} range={range} t={t} />, value: s.value }))}
+                fmt={fmt}
+                emptyText={t('empty')}
+              />
+              <BarList
+                title={t('lan.topPorts')}
+                rows={ports.map((p) => ({ key: p.key, label: p.key, value: p.value }))}
+                fmt={fmt}
+                emptyText={t('empty')}
+              />
+            </div>
+            <p style={noteStyle}>{t('lan.fromListedRows', { count: items.length })}</p>
+            <TableWrap>
+              <thead>
+                <tr>
+                  <th style={thStyle}>{t('lan.source')}</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.port')}</th>
+                  <th style={thStyle}>{t('lan.proto')}</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.blocks')}</th>
+                  <th style={thStyle}>{t('lan.nodes')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((r) => (
+                  <tr key={`${r.srcIp}-${r.dport}-${r.proto}`}>
+                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                      <LanSource srcIp={r.srcIp} range={range} t={t} />
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: 'right' }}>{r.dport}</td>
+                    <td style={tdStyle}>{r.proto}</td>
+                    <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(r.blocks)}</td>
+                    <td style={tdStyle}>{Array.isArray(r.nodes) && r.nodes.length > 0 ? r.nodes.join(', ') : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableWrap>
+          </>
+        )}
+      </>
+    );
+  }
+  return (
+    <SubBlock id="netmon-lan-ufw" title={t('lan.ufwBlocks')} aside={<Tag>{t('lowerBound')}</Tag>}>
+      {body}
+    </SubBlock>
+  );
+}
+
+function SshAuthBlock({
+  result,
+  range,
+  fmt,
+  t,
+}: {
+  result: NetmonResult<SshAuthResponse>;
+  range: NetworkRange;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  let body: ReactNode;
+  if (!result.ok) {
+    body = <Failure result={result} t={t} />;
+  } else if (result.data.items.length === 0) {
+    body = <p style={noteStyle}>{t('empty')}</p>;
+  } else {
+    const rows = [...result.data.items].sort(
+      (a, b) => b.failed + b.invalidUser - (a.failed + a.invalidUser) || b.accepted - a.accepted,
+    );
+    const sum = (f: (r: (typeof rows)[number]) => number) => rows.reduce((acc, r) => acc + (Number.isFinite(f(r)) ? f(r) : 0), 0);
+    body = (
+      <>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.75rem' }}>
+          <StatTile label={t('lan.accepted')} value={fmt.num(sum((r) => r.accepted))} />
+          <StatTile label={t('lan.failed')} value={fmt.num(sum((r) => r.failed))} />
+          <StatTile label={t('lan.invalidUser')} value={fmt.num(sum((r) => r.invalidUser))} />
+        </div>
+        <p style={noteStyle}>{t('lan.sshNote')}</p>
+        <TableWrap>
+          <thead>
+            <tr>
+              <th style={thStyle}>{t('lan.source')}</th>
+              <th style={thStyle}>{t('lan.node')}</th>
+              <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.accepted')}</th>
+              <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.failed')}</th>
+              <th style={{ ...thStyle, textAlign: 'right' }}>{t('lan.invalidUser')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={`${r.node}-${r.srcIp}`}>
+                <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                  <LanSource srcIp={r.srcIp} range={range} t={t} />
+                </td>
+                <td style={tdStyle}>{r.node}</td>
+                <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(r.accepted)}</td>
+                <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(r.failed)}</td>
+                <td style={{ ...tdStyle, textAlign: 'right' }}>{fmt.num(r.invalidUser)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </TableWrap>
+      </>
+    );
+  }
+  return (
+    <SubBlock id="netmon-lan-ssh" title={t('lan.sshAuth')} aside={<Tag>{t('lan.failedLowerBound')}</Tag>}>
+      {body}
+    </SubBlock>
+  );
+}
+
+function LanSection({
+  connections,
+  ufw,
+  ssh,
+  status,
+  range,
+  fmt,
+  t,
+}: {
+  connections: NetmonResult<LanConnectionsResponse>;
+  ufw: NetmonResult<UfwBlocksResponse>;
+  ssh: NetmonResult<SshAuthResponse>;
+  status: NetmonResult<{ collectors: CollectorStatus[] }>;
+  range: NetworkRange;
+  fmt: Formatters;
+  t: Translate;
+}) {
+  let body: ReactNode;
+  if (isNotDeployed(connections) && isNotDeployed(ufw) && isNotDeployed(ssh)) {
+    // data-service without the NM-3 read API (homelab-data-service#15).
+    body = <p style={noteStyle}>{t('notYetAvailable', { subproject: 'NM-3' })}</p>;
+  } else {
+    // "No data yet" only when it is provable: every LAN call succeeded with
+    // nothing in it AND the `lan` collector has never succeeded (or is not
+    // reported) — i.e. the node role has not been rolled out yet. Otherwise
+    // each block shows its own empty/failure state.
+    const allEmpty =
+      connections.ok &&
+      connections.data.items.length === 0 &&
+      ufw.ok &&
+      ufw.data.items.length === 0 &&
+      ufw.data.totals.blocks === 0 &&
+      ssh.ok &&
+      ssh.data.items.length === 0;
+    const lanCollector = status.ok ? status.data.collectors.find((c) => c.name === 'lan') : undefined;
+    const neverCollected = status.ok && (!lanCollector || !lanCollector.lastSuccessAt);
+    body =
+      allEmpty && neverCollected ? (
+        <p role="status" style={noteStyle}>
+          {t('lan.noDataYet')}
+        </p>
+      ) : (
+        <>
+          <LanConnectionsBlock result={connections} range={range} fmt={fmt} t={t} />
+          <UfwBlocksBlock result={ufw} range={range} fmt={fmt} t={t} />
+          <SshAuthBlock result={ssh} range={range} fmt={fmt} t={t} />
+        </>
+      );
+  }
+  return (
+    <Section id="netmon-lan" title={t('lan.title')}>
+      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('lan.subtitle')}</p>
+      {body}
+    </Section>
+  );
+}
+
 // ── Shell ───────────────────────────────────────────────────────────────────
 
 export async function NetworkShell({
@@ -628,12 +954,18 @@ export async function NetworkShell({
     getInboundSummary(pageWindow),
     getFirewallEvents(firewallWindow, fwCursor),
     ip ? getIpDetail(ip, toWindow(detailRange, now)) : Promise.resolve(null),
+    getLanConnections(pageWindow),
+    getUfwBlocks(pageWindow),
+    getSshAuth(pageWindow),
   ] as const);
   const unreachable: NetmonFailure = { ok: false, kind: 'unreachable' };
   const status = settled[0].status === 'fulfilled' ? settled[0].value : unreachable;
   const summary = settled[1].status === 'fulfilled' ? settled[1].value : unreachable;
   const firewall = settled[2].status === 'fulfilled' ? settled[2].value : unreachable;
   const ipDetail = settled[3].status === 'fulfilled' ? settled[3].value : unreachable;
+  const lanConnections = settled[4].status === 'fulfilled' ? settled[4].value : unreachable;
+  const ufwBlocks = settled[5].status === 'fulfilled' ? settled[5].value : unreachable;
+  const sshAuth = settled[6].status === 'fulfilled' ? settled[6].value : unreachable;
   if (settled.some((r) => r.status === 'rejected')) console.warn('[netmon] a section fetch rejected unexpectedly');
 
   return (
@@ -792,11 +1124,13 @@ export async function NetworkShell({
           )}
         </Section>
 
+        {/* LAN (NM-3) */}
+        <LanSection connections={lanConnections} ufw={ufwBlocks} ssh={sshAuth} status={status} range={range} fmt={fmt} t={t} />
+
         {/* Later sub-projects (§8): labelled placeholders, no data. */}
         <div style={{ padding: '1.5rem 0 2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '.75rem' }}>
           {(
             [
-              ['lan', 'NM-3'],
               ['egress', 'NM-2'],
               ['logins', 'NM-4'],
             ] as const
