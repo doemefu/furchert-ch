@@ -248,7 +248,7 @@
       "title": "Network",
       "kicker": "Network monitoring",
       "adminOnly": "Admin only",
-      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events, LAN access to the cluster nodes and egress from cluster workloads. Data from data-service, loaded fresh on every page view.",
+      "subtitle": "Inbound traffic through Cloudflare, source-IP reputation, firewall events, LAN access to the cluster nodes egress from cluster workloads and form logins at auth-service. Data from data-service, loaded fresh on every page view.",
       "window": {
         "label": "Window",
         "24h": "24 h",
@@ -273,7 +273,19 @@
         "lastSuccess": "Last success {time}",
         "neverSucceeded": "No successful run yet",
         "failures": "{count, plural, one {# consecutive failure} other {# consecutive failures}}",
-        "error": "error {code}"
+        "error": "error {code}",
+        "warning": {
+          "upstream": "No data yet",
+          "truncated": "Truncated",
+          "partial": "Partial",
+          "generic": "Warning"
+        },
+        "warningHint": {
+          "upstream": "The last run succeeded but its source has no data yet.",
+          "truncated": "The last run succeeded but hit a size limit; some rows were dropped.",
+          "partial": "The last run succeeded but skipped malformed source rows; the rest was stored.",
+          "generic": "The last run succeeded with warning {code}."
+        }
       },
       "inbound": {
         "title": "Inbound (Cloudflare)",
@@ -380,7 +392,34 @@
         "bytesExact": "{bytes} bytes"
       },
       "logins": {
-        "title": "Logins"
+        "title": "Logins",
+        "subtitle": "Form-login attempts at auth.furchert.ch, pulled from auth-service's login-event outbox. Attempted usernames are never stored; failed attempts are linked to known accounts only through a keyed hash.",
+        "success": "Successful",
+        "failure": "Failed",
+        "locked": "Locked",
+        "all": "All",
+        "sourceIps": "Listed source IPs",
+        "accounts": "Listed accounts",
+        "atLeast": "≥ {count}",
+        "listedNote": "IP and account counts come from the listed rows (top 50 each); the outcome totals cover the whole window.",
+        "timeline": "Logins over time",
+        "byIp": "Top source IPs by failed and locked attempts",
+        "bySubject": "Accounts",
+        "account": "Account",
+        "failureSameHmac": "Failed (same username)",
+        "bySubjectNote": "Failed counts only failures whose username hash matches one of the account's successful logins; locked attempts are not included. Rotating auth-service's login-event hash key breaks this link for older events.",
+        "events": "Login events",
+        "filter": "Filter by outcome",
+        "outcome": "Outcome",
+        "ipSource": "IP source",
+        "usernameTag": "Username tag",
+        "usernameTagHint": "First 8 characters of the keyed username hash: equal tags mean the same attempted username. The username itself is never shown.",
+        "userAgent": "User agent",
+        "eventsNote": "Newest first. The IP source says whether the address came from Cloudflare's CF-Connecting-IP header or the TCP peer; both can be spoofed inside the cluster.",
+        "noDataYet": "No login data yet: the login-events collector has no source data (auth-service's login-event outbox is not enabled yet, or the collector has not run).",
+        "empty": "No logins in this window.",
+        "disabledHint": "The login-events collector is disabled in data-service.",
+        "credentialsHint": "The login-events collector cannot authenticate at auth-service: set AUTH_CLIENT_SECRET for data-service (Secret data-service-secrets, key auth-client-secret) to the secret of auth-service's data-service client, then restart the data-service pod."
       }
     },
     "noAccess": {
