@@ -6,6 +6,19 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **`/dashboard/network` — LAN section** (NM-3, #62; contract
+  `infrastructure/docs/060-network-monitoring.md` §7.2/§8): replaces the LAN
+  placeholder with data from data-service's `/api/netmon/lan/connections`,
+  `/lan/ufw-blocks` and `/lan/ssh-auth` for the page window. Connections are
+  grouped per watched port (MQTT, SSH, Home Assistant, Kubernetes API,
+  kubelet) by source, node and conntrack state; UFW blocks show the total,
+  top sources/ports and a table, labelled as a lower bound; SSH shows
+  accepted/failed/invalid-user totals and per-source rows with the
+  "failed is a lower bound" caveat. Public and LAN IPs link to the `?ip=`
+  panel; the pod CIDR and the `other` overflow bucket render as labels.
+  Honest states: "not yet available" when data-service has no LAN API yet,
+  "no LAN data yet" while the `lan` collector has never succeeded, and a
+  per-block "unavailable" / HTTP-error note otherwise.
 - **`/dashboard/network` — network monitoring, inbound section** (NM-1, #61;
   contract `infrastructure/docs/060-network-monitoring.md` §7/§8): a new
   ADMIN-only dashboard page with a "Network" subnav tab. Server-rendered from
