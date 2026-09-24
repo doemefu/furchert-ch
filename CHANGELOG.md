@@ -13,7 +13,7 @@ All notable changes per milestone. Newest first.
   per workload (host processes labelled as such), ordered by traffic, with
   FQDN or IP:port, node, bytes sent/received (SI units), connects, failed
   connects, first seen and a "new" badge (not seen in the previous 30 days).
-  Tiles and a top-workloads bar list summarise the listed flows. Public IPs
+  Tiles (listed flows, new flows, bytes) and a top-workloads bar list summarise the listed flows; groups are keyed by namespace and workload. Public IPs
   (v4 and v6) link to the `?ip=` panel; private, CGNAT and ULA addresses do
   not. Honest states: "not yet available" when data-service has no egress
   API yet, "no egress data yet" while the `egress` collector has never

@@ -86,6 +86,8 @@ function makeFormatters(locale: Locale): Formatters {
       if (!Number.isFinite(n)) return '—';
       let i = 0;
       while (i < byteUnits.length - 1 && Math.abs(n) >= 1000 ** (i + 1)) i++;
+      // 999 950 B would round to "1,000 kB": step up when rounding reaches 1000.
+      if (i < byteUnits.length - 1 && Math.abs(Math.round((n / 1000 ** i) * 10) / 10) >= 1000) i++;
       return byteFmts[i].format(n / 1000 ** i);
     },
     time: (iso) => {
@@ -949,13 +951,32 @@ function LanSection({
 // ── Egress (NM-2) ───────────────────────────────────────────────────────────
 
 function isPublicIpv4(ip: string): boolean {
-  const [a, b] = ip.split('.').map(Number);
+  const [a, b, c] = ip.split('.').map(Number);
   if (a === 0 || a === 10 || a === 127 || a >= 224) return false; // this-net, RFC 1918, loopback, multicast/reserved
   if (a === 100 && b >= 64 && b <= 127) return false; // CGNAT
   if (a === 169 && b === 254) return false; // link-local
   if (a === 172 && b >= 16 && b <= 31) return false; // RFC 1918
   if (a === 192 && b === 168) return false; // RFC 1918
+  if (a === 192 && b === 0 && (c === 0 || c === 2)) return false; // IETF protocol assignments, TEST-NET-1
+  if (a === 198 && (b === 18 || b === 19)) return false; // benchmarking
+  if ((a === 198 && b === 51 && c === 100) || (a === 203 && b === 0 && c === 113)) return false; // TEST-NET-2/3
   return true;
+}
+
+// Expands an `isIP`-validated IPv6 literal (incl. `::` and an embedded IPv4
+// tail) to its eight 16-bit groups.
+function ipv6Groups(ip: string): number[] {
+  let s = ip.toLowerCase().split('%')[0];
+  const v4 = /(\d+)\.(\d+)\.(\d+)\.(\d+)$/.exec(s);
+  if (v4) {
+    const [a, b, c, d] = v4.slice(1).map(Number);
+    s = `${s.slice(0, v4.index)}${((a << 8) | b).toString(16)}:${((c << 8) | d).toString(16)}`;
+  }
+  const [head, tail] = s.split('::');
+  const h = head ? head.split(':') : [];
+  const t = tail ? tail.split(':') : [];
+  const fill = s.includes('::') ? 8 - h.length - t.length : 0;
+  return [...h, ...Array<string>(fill).fill('0'), ...t].map((x) => parseInt(x, 16));
 }
 
 // Only public addresses are linked to the IP panel: `scope=external` is
@@ -965,23 +986,32 @@ function isPublicIp(ip: string): boolean {
   const version = isIP(ip);
   if (version === 4) return isPublicIpv4(ip);
   if (version !== 6) return false;
-  const lower = ip.toLowerCase();
-  const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(lower);
-  if (mapped) return isPublicIpv4(mapped[1]);
-  const first = parseInt(lower.split(':')[0] || '0', 16);
-  if (first === 0) return false; // ::, ::1, IPv4-compatible
+  const g = ipv6Groups(ip);
+  // ::ffff:a.b.c.d (IPv4-mapped) → the IPv4 rule
+  if (g.slice(0, 5).every((x) => x === 0) && g[5] === 0xffff) return isPublicIpv4(`${g[6] >> 8}.${g[6] & 255}.${g[7] >> 8}.${g[7] & 255}`);
+  if (g[0] === 0) return false; // ::, ::1, IPv4-compatible
+  if (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every((x) => x === 0)) return false; // NAT64 64:ff9b::/96
+  if (g[0] === 0x2001 && g[1] === 0x0db8) return false; // documentation 2001:db8::/32
   // fc00::/7 unique-local, fe80::/10 link-local, ff00::/8 multicast
-  return (first & 0xfe00) !== 0xfc00 && (first & 0xffc0) !== 0xfe80 && (first & 0xff00) !== 0xff00;
+  return (g[0] & 0xfe00) !== 0xfc00 && (g[0] & 0xffc0) !== 0xfe80 && (g[0] & 0xff00) !== 0xff00;
 }
 
 const flowBytes = (f: EgressFlow) =>
   (Number.isFinite(f.bytesSent) ? f.bytesSent : 0) + (Number.isFinite(f.bytesReceived) ? f.bytesReceived : 0);
 
-// Host processes have no namespace/workload (§3.3).
+// Host processes have no namespace/workload (§3.3). A pod whose workload
+// could not be derived falls back to its container, still namespaced.
 function workloadLabel(f: EgressFlow, t: Translate): string {
-  if (f.namespace && f.workload) return `${f.namespace}/${f.workload}`;
-  return f.workload ?? f.container ?? t('egress.hostProcess');
+  const name = f.workload ?? f.container;
+  if (!name) return f.namespace ? `${f.namespace}/${t('egress.hostProcess')}` : t('egress.hostProcess');
+  return f.namespace ? `${f.namespace}/${name}` : name;
 }
+
+// Group identity is the (namespace, workload) pair — or (namespace,
+// container) without a workload — never the display label, so groups from
+// different namespaces cannot merge.
+const workloadKey = (f: EgressFlow) => JSON.stringify([f.namespace, f.workload, f.workload === null ? f.container : null]);
+const flowKey = (f: EgressFlow) => JSON.stringify([f.namespace, f.workload, f.container, f.destinationIp, f.destinationPort]);
 
 function EgressDestination({ flow, range }: { flow: EgressFlow; range: NetworkRange }) {
   const ip = flow.destinationIp;
@@ -1007,7 +1037,7 @@ function EgressDestination({ flow, range }: { flow: EgressFlow; range: NetworkRa
 
 function EgressTable({ rows, range, fmt, t }: { rows: EgressFlow[]; range: NetworkRange; fmt: Formatters; t: Translate }) {
   const bytesCell = (n: number) => (
-    <td style={{ ...tdStyle, textAlign: 'right', whiteSpace: 'nowrap' }} title={Number.isFinite(n) ? `${fmt.num(n)} B` : undefined}>
+    <td style={{ ...tdStyle, textAlign: 'right', whiteSpace: 'nowrap' }} title={Number.isFinite(n) ? t('egress.bytesExact', { bytes: fmt.num(n) }) : undefined}>
       {fmt.bytes(n)}
     </td>
   );
@@ -1027,7 +1057,7 @@ function EgressTable({ rows, range, fmt, t }: { rows: EgressFlow[]; range: Netwo
       </thead>
       <tbody>
         {rows.map((f) => (
-          <tr key={`${f.container ?? ''}-${f.destinationIp}-${f.destinationPort}`}>
+          <tr key={flowKey(f)}>
             <td style={{ ...tdStyle, minWidth: '14rem' }}>
               <EgressDestination flow={f} range={range} />
               {f.isNew && (
@@ -1077,6 +1107,9 @@ function EgressSection({
     // "no data yet" is claimed only per `hasNoSourceData` (never succeeded,
     // or succeeded with the `upstream` "no series" warning).
     const neverCollected = hasNoSourceData(status, 'egress');
+    // A disabled collector explains the empty result itself; do not point
+    // at the node agent then.
+    const disabled = status.ok && status.data.collectors.some((c) => c.name === 'egress' && !c.enabled);
     body = neverCollected ? (
       <p role="status" style={noteStyle}>
         {t('egress.noDataYet')}
@@ -1084,19 +1117,19 @@ function EgressSection({
     ) : (
       <>
         <p style={noteStyle}>{t('empty')}</p>
-        <p style={noteStyle}>{t('egress.emptyHint')}</p>
+        <p style={noteStyle}>{t(disabled ? 'egress.disabledHint' : 'egress.emptyHint')}</p>
       </>
     );
   } else {
     const items = result.data.items;
     // Group per workload, largest total first; rows keep bytes order.
-    const groups = new Map<string, { label: string; total: number; rows: EgressFlow[] }>();
+    const groups = new Map<string, { key: string; label: string; total: number; rows: EgressFlow[] }>();
     for (const f of items) {
-      const label = workloadLabel(f, t);
-      const g = groups.get(label) ?? { label, total: 0, rows: [] };
+      const key = workloadKey(f);
+      const g = groups.get(key) ?? { key, label: workloadLabel(f, t), total: 0, rows: [] };
       g.total += flowBytes(f);
       g.rows.push(f);
-      groups.set(label, g);
+      groups.set(key, g);
     }
     const sorted = [...groups.values()].sort((a, b) => b.total - a.total);
     for (const g of sorted) g.rows.sort((a, b) => flowBytes(b) - flowBytes(a));
@@ -1112,14 +1145,14 @@ function EgressSection({
         <p style={noteStyle}>{t('egress.fromListedRows', { count: items.length })}</p>
         <BarList
           title={t('egress.topWorkloads')}
-          rows={sorted.slice(0, 10).map((g) => ({ key: g.label, label: g.label, value: g.total }))}
+          rows={sorted.slice(0, 10).map((g) => ({ key: g.key, label: g.label, value: g.total }))}
           fmt={{ ...fmt, num: fmt.bytes }}
           emptyText={t('empty')}
         />
         <p style={noteStyle}>{t('egress.note')}</p>
         {sorted.map((g, i) => (
           <SubBlock
-            key={g.label}
+            key={g.key}
             id={`netmon-egress-${i}`}
             title={g.label}
             aside={<span style={noteStyle}>{fmt.bytes(g.total)}</span>}

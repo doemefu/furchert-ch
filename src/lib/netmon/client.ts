@@ -317,10 +317,22 @@ function isSshAuthResponse(v: unknown): v is SshAuthResponse {
   return isObject(v) && Array.isArray(v.items);
 }
 
-// Items are grouped by workload and linked by `destinationIp` at render, so
-// each one must be an object with a string destination.
+// Items are grouped, keyed and linked by these fields at render, so a row
+// that does not match §7.2 makes the whole response "malformed" instead of
+// throwing during render. Numeric counters are formatted NaN-safely.
+const isStringOrNull = (v: unknown) => v === null || typeof v === 'string';
+
+function isEgressFlow(v: unknown): boolean {
+  return (
+    isObject(v) &&
+    typeof v.destinationIp === 'string' &&
+    typeof v.destinationPort === 'number' &&
+    ['fqdn', 'node', 'namespace', 'workload', 'container'].every((k) => isStringOrNull(v[k]))
+  );
+}
+
 function isEgressTopResponse(v: unknown): v is EgressTopResponse {
-  return isObject(v) && Array.isArray(v.items) && v.items.every((i) => isObject(i) && typeof i.destinationIp === 'string');
+  return isObject(v) && Array.isArray(v.items) && v.items.every(isEgressFlow);
 }
 
 // ── Fetchers (§7.2) ─────────────────────────────────────────────────────────

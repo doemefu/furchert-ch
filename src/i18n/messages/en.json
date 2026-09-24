@@ -370,12 +370,14 @@
         "newHint": "Not seen for this workload and destination in the previous 30 days.",
         "hostProcess": "host process",
         "flows": "Listed flows",
-        "newFlows": "New destinations",
+        "newFlows": "New flows",
         "topWorkloads": "Top workloads by traffic",
         "fromListedRows": "{count, plural, one {Totals derived from the # listed flow (top flows by traffic).} other {Totals derived from the # listed flows (top flows by traffic).}}",
         "note": "A destination's first hour can be undercounted: the counters only start when the agent first sees the connection.",
         "noDataYet": "No egress data yet: the egress collector has not succeeded. Data appears about an hour after the coroot node agent runs on the nodes.",
-        "emptyHint": "If this stays empty, check that the coroot node agent runs on the nodes."
+        "emptyHint": "If this stays empty, check that the coroot node agent runs on the nodes.",
+        "disabledHint": "The egress collector is disabled in data-service.",
+        "bytesExact": "{bytes} bytes"
       },
       "logins": {
         "title": "Logins"

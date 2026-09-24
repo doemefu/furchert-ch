@@ -370,12 +370,14 @@
         "newHint": "Für diesen Workload und dieses Ziel in den vorherigen 30 Tagen nicht gesehen.",
         "hostProcess": "Host-Prozess",
         "flows": "Aufgeführte Flows",
-        "newFlows": "Neue Ziele",
+        "newFlows": "Neue Flows",
         "topWorkloads": "Top-Workloads nach Verkehr",
         "fromListedRows": "{count, plural, one {Summen aus dem # aufgeführten Flow (Top-Flows nach Verkehr).} other {Summen aus den # aufgeführten Flows (Top-Flows nach Verkehr).}}",
         "note": "Die erste Stunde eines Ziels kann zu tief ausfallen: Die Zähler beginnen erst, wenn der Agent die Verbindung zum ersten Mal sieht.",
         "noDataYet": "Noch keine ausgehenden Daten: Der Egress-Collector war noch nie erfolgreich. Daten erscheinen etwa eine Stunde, nachdem der coroot-Node-Agent auf den Nodes läuft.",
-        "emptyHint": "Bleibt dies leer, prüfen, ob der coroot-Node-Agent auf den Nodes läuft."
+        "emptyHint": "Bleibt dies leer, prüfen, ob der coroot-Node-Agent auf den Nodes läuft.",
+        "disabledHint": "Der Egress-Collector ist im data-service deaktiviert.",
+        "bytesExact": "{bytes} Byte"
       },
       "logins": {
         "title": "Logins"
