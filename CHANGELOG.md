@@ -6,6 +6,22 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **`/dashboard/network` — network monitoring, inbound section** (NM-1, #61;
+  contract `infrastructure/docs/060-network-monitoring.md` §7/§8): a new
+  ADMIN-only dashboard page with a "Network" subnav tab. Server-rendered from
+  data-service's read API (`/api/netmon/status`, `/inbound/summary`,
+  `/inbound/firewall-events`, `/ips/{ip}`) with a cached client-credentials
+  token for the existing `furchert-ch` client (scope `netmon:read`, no new
+  secret; `src/lib/netmon/{token,client}.ts`, `src/netmon.env.ts`, env
+  `DATA_SERVICE_URL`/`DATA_SERVICE_TOKEN_URL`). Collector status strip,
+  totals, inline-SVG timeline, top client IPs with `?ip=` detail, div-bar
+  lists for countries/ASNs/hosts/paths/status codes, and a paged firewall
+  events table; window `?window=24h|7d|30d`. No chart library, no client JS,
+  no route handler. Each section fails independently to an honest
+  "unavailable" / HTTP-error note; tokens and IPs are never logged. New
+  shared `NoAccess` component for signed-in non-ADMIN users (to be reused by
+  #44/#45); `SignInGate` gains an optional return path. LAN, egress and
+  login sections are labelled placeholders until NM-3/NM-2/NM-4.
 - **Contact form now delivers real mail** (#46): `submitContact()` sends the
   validated submission by authenticated SMTP to `info@furchert.ch` via
   Infomaniak (`mail.infomaniak.com:587`, `nodemailer` 10.0.9, plain text

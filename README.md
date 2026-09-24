@@ -5,7 +5,8 @@ The single web frontend for the doemefu homelab — Dominic Furchert's personal 
 
 - **Public site:** Home · About · IT · Rowing · Projects · Automation · Contact (DE/EN)
 - **Private `/dashboard`** (OIDC-gated via `auth.furchert.ch`): homelab overview
-  with live cluster/app metrics from Prometheus (server-side); integrated admin
+  with live cluster/app metrics from Prometheus (server-side); ADMIN-only
+  `/dashboard/network` with inbound traffic data from data-service (NM-1); integrated admin
   GUIs for `homelab-auth-service` and `homelab-device-service` are Phase 6, upcoming.
 - **`/automation` (incl. `/automation/scan`) is a visual mockup only** — no backend.
 
@@ -31,6 +32,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 7 | Deployment (Flux CD + Cloudflare Tunnel) | done |
 | — | Live dashboard metrics from Prometheus (#17) | done |
 | — | Contact-form SMTP delivery (Infomaniak, #46) | done |
+| — | `/dashboard/network` inbound section (NM-1, #61) | done |
 
 ## Documentation
 

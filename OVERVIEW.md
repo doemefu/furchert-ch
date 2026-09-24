@@ -52,12 +52,15 @@ mailer.
 | Route | Page | Status |
 |-------|------|--------|
 | `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — Auth/Device subnav tabs and per-tile "Manage" buttons are visibly disabled until Phase 6 |
+| `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`; window `?window=24h\|7d\|30d`. LAN/Egress/Logins sections are labelled "not yet available" placeholders | **live (NM-1, #61)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
 | `/[locale]/dashboard/auth` | auth-service admin GUI (real REST API) | Phase 6 |
 | `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 |
 
 `/dashboard` is gated by **real OIDC** (Auth.js v5 → auth.furchert.ch, Auth Code +
 PKCE). The authoritative gate is a server-side `auth()` check in the page (and, in
-Phase 6, in every admin route handler with `role === 'ADMIN'`). OIDC access/ID
+Phase 6, in every admin route handler with `role === 'ADMIN'`). ADMIN-only pages
+(`/dashboard/network` today) additionally check `asRole(session.user?.role) ===
+'ADMIN'` in the page and render the shared `NoAccess` state otherwise. OIDC access/ID
 tokens never reach the browser; sign-out ends the IdP session. See `INTERFACES.md`
 §1 and `DEPLOYMENT.md` for the client contract and required secrets.
 
@@ -83,6 +86,10 @@ unexpected violations). The "first automated tests" half of #42 remains open
   unreachable or returns nothing, the dashboard shows the known node hardware
   with honest "—" placeholders, `unknown` status dots, and a visible
   "unavailable" note — never fabricated numbers.
+- **Live (NM-1, #61):** `/dashboard/network` reads data-service's netmon API
+  server-side with a client-credentials token (see `INTERFACES.md` §2). Each
+  section degrades independently to an honest "unavailable" / HTTP-error note;
+  IP addresses are shown to ADMIN sessions only and are never logged.
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard,

@@ -1,10 +1,12 @@
 // Dev Area subnav — ported from prototype `projects-board.jsx:65-93`.
-// Phase 5 only enables the "Overview" tab; Auth/Device tabs are visibly
+// "Overview" and "Network" (NM-1, #61) are live; Auth/Device tabs are visibly
 // disabled until Phase 6 wires up the admin GUIs (TODO(phase6) below).
+// The Network tab is shown to every signed-in user — the page itself decides
+// access (ADMIN only, docs/060 §8).
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
-type DevSubnavActive = 'overview';
+type DevSubnavActive = 'overview' | 'network';
 
 const containerStyle = {
   borderBottom: '1px solid rgba(162,167,176,.22)',
@@ -73,6 +75,14 @@ export async function DevSubnav({ active }: { active: DevSubnavActive }) {
           style={{ ...tabBase, ...(active === 'overview' ? tabActive : tabInactive) }}
         >
           {t('overview')}
+        </Link>
+
+        <Link
+          href="/dashboard/network"
+          aria-current={active === 'network' ? 'page' : undefined}
+          style={{ ...tabBase, ...(active === 'network' ? tabActive : tabInactive) }}
+        >
+          {t('network')}
         </Link>
 
         {/* TODO(phase6): swap these <button disabled>s for <Link href="/dashboard/auth">

@@ -34,6 +34,13 @@ spec:
               value: "https://furchert.ch"
             - name: PROMETHEUS_URL
               value: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+            # /dashboard/network (NM-1, #61): data-service read API + the
+            # auth-service token endpoint for the client-credentials grant.
+            # Plain values; the grant reuses OIDC_CLIENT_ID/OIDC_CLIENT_SECRET.
+            - name: DATA_SERVICE_URL
+              value: "http://data-service.apps.svc.cluster.local:8082"
+            - name: DATA_SERVICE_TOKEN_URL
+              value: "http://auth-service.apps.svc.cluster.local:8080/oauth2/token"
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
