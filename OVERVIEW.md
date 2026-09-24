@@ -52,7 +52,7 @@ mailer.
 | Route | Page | Status |
 |-------|------|--------|
 | `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — Auth/Device subnav tabs and per-tile "Manage" buttons are visibly disabled until Phase 6 |
-| `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`, LAN section (connections per port by source, UFW blocks as a lower bound, SSH auth outcomes); window `?window=24h\|7d\|30d`. Egress/Logins sections are labelled "not yet available" placeholders | **live (NM-1, #61; LAN NM-3, #62)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
+| `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`, LAN section (connections per port by source, UFW blocks as a lower bound, SSH auth outcomes), egress section (top external destinations per workload with FQDN or IP, bytes sent/received, connects, "new" badge); window `?window=24h\|7d\|30d`. The Logins section is a labelled "not yet available" placeholder | **live (NM-1, #61; LAN NM-3, #62; egress NM-2, #63)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
 | `/[locale]/dashboard/auth` | auth-service admin GUI (real REST API) | Phase 6 |
 | `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 |
 
@@ -92,6 +92,9 @@ unexpected violations). The "first automated tests" half of #42 remains open
   IP addresses are shown to ADMIN sessions only and are never logged. The LAN
   section (NM-3, #62) shows "not yet available" until data-service serves
   `/lan/*`, and "no LAN data yet" until the node collector role is rolled out.
+  The egress section (NM-2, #63) shows "not yet available" until data-service
+  serves `/egress/top`, and "no egress data yet" while the `egress` collector
+  has never succeeded (coroot node agent not rolled out).
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard,
