@@ -15,7 +15,7 @@ You are the implementer for `furchert-ch`. You turn the architecture contract an
 **Conventions:**
 - Next.js App Router + TypeScript (strict). Server Components by default; `'use client'` only where interactivity needs it.
 - ETHON tokens from `src/styles/globals.css` via CSS variables — no UI kit, no second styling system.
-- User-facing copy via next-intl (`src/i18n/de.json`/`en.json`); static content typed in `src/data/`.
+- User-facing copy via next-intl (`src/i18n/messages/{de,en}.json`); static content typed in `src/data/`.
 - Backend calls only from server route handlers (`src/app/api/...`) using cluster-internal FQDNs; never expose the OIDC access token to the browser.
 - No hardcoded secrets — environment variables only; `.env*` files with real values stay out of git.
 - `/automation` and `/automation/scan` stay non-functional mockups (marked in UI + comments).

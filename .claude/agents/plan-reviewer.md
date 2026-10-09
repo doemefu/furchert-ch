@@ -17,7 +17,7 @@ Be specific. Reference concrete plan elements. Phrase architectural challenges a
 **Secrets & auth**
 - Any plaintext secret/token in code, `.env` committed to git, tests, or k8s env (must be `secretKeyRef`)?
 - Does the OIDC access token stay server-side (route handlers / server components) — never shipped to the browser?
-- Are OIDC-gated routes enforced in middleware, not just intended?
+- Are OIDC-gated routes enforced server-side (page / route-handler session + role check), not merely hidden in the UI?
 - Do admin write actions require `role=ADMIN` consistent with the services' INTERFACES.md?
 
 **Automation = mockup**
