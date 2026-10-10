@@ -33,7 +33,7 @@ You receive a summary of what changed (from the worklog/plan) and audit the docs
 ## Output format
 
 Flat numbered checklist. Each item: name the exact file, section, and the exact content to add/change. Example:
-> 3. `DEPLOYMENT.md` § Secrets — Add row: "`OIDC_CLIENT_SECRET` — furchert-ch OIDC client secret, from `homelab-furchert-ch-secrets`."
+> 3. `DEPLOYMENT.md` § Secrets — Add row: "`OIDC_CLIENT_SECRET` — furchert-ch OIDC client secret, from `furchert-ch-secrets`."
 
 If a doc needs no change: "`README.md` — no updates required."
 End with: `X items across Y documents.`

@@ -18,7 +18,7 @@ You are the DevOps engineer for `furchert-ch`. You keep the deployment in sync w
 - Image tag is a Flux-managed setter (`# {"$imagepolicy": "flux-system:furchert-ch"}`), never `latest`
 - App config via env; secrets via `secretKeyRef` from the existing `furchert-ch-secrets` k8s secret. **Plaintext secrets in git are forbidden. Secrets are SOPS + age encrypted by the user, never by Claude; Claude never reads or edits `*.sops.*` files — name the file and key and hand it to the user.**
 - Cluster-internal upstreams: `auth-service.apps.svc.cluster.local:8080`, `device-service.apps.svc.cluster.local:8081`
-- Changes inside `../infrastructure/` follow that repo's own workflow and follow that repo's own workflow (one branch + PR there).
+- Changes inside `../infrastructure/` follow that repo's own workflow (one branch + PR there).
 
 **When notified an area is approved and deploy-affecting:**
 1. Read the app's required env from the code/`.env.local.example`
