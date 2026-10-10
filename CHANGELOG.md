@@ -92,6 +92,11 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Base image pulled from the ECR Public mirror**: the `Dockerfile` now uses
+  `public.ecr.aws/docker/library/node:22.23.1-alpine` (the same Docker
+  official image and tag) instead of Docker Hub, after anonymous Docker Hub
+  pulls from the shared GitHub runners failed Build-and-Push with `429 Too
+  Many Requests` on 2026-10-09.
 - **ESLint 8.57.1 → 9.39.5, eslint-config-next 15.5.25 → 16.3.5** (#59):
   `.eslintrc.json` (`root: true`, `ignorePatterns`) is removed and replaced
   by a flat `eslint.config.mjs` (core-web-vitals + typescript presets;
