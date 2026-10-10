@@ -19,11 +19,13 @@
 
 - This repo is 1 of several homelab repos. It **consumes** sibling services; it does not host backend business logic.
 - `/dashboard` authenticates with the **real** `homelab-auth-service` via OIDC (Authorization Code + PKCE) at `https://auth.furchert.ch`.
-- `/dashboard/network` reads `homelab-data-service` server-side with a `client_credentials` token (scope `netmon:read`; `INTERFACES.md` §2 "data-service"); the dashboard overview reads Prometheus server-side (`INTERFACES.md` §2 "Prometheus").
+- `/dashboard/network` reads `homelab-data-service` server-side with a `client_credentials` token (scope `netmon:read`; `INTERFACES.md` §2 "data-service"; producer contract `../data-service/INTERFACES.md`, spec `../docs/060-network-monitoring.md`); the dashboard overview reads Prometheus server-side (`INTERFACES.md` §2 "Prometheus").
 - The planned admin GUIs will call the real REST APIs of `homelab-auth-service` (`../auth-service/INTERFACES.md`) and `homelab-device-service` (`../device-service/INTERFACES.md`), proxied server-side so the access token stays off the client.
 - **The `/automation` section (incl. `/automation/scan`) is a visual MOCKUP only** — no Claude API, no scan backend, no persistence. Everything else is real.
 
-**Design source of truth:** the exported Claude Design prototype (ETHON system), *not* the older `furchert-ch-website-spec.md` (which suggested antd and was superseded during design iteration).
+**Full architecture spec:** `../docs/052-architecture-target.md`
+
+**Design source of truth:** the exported Claude Design prototype (ETHON system).
 
 **Implementation history:** `.claude/worklogs/` (local-only) and `docs/INDEX.md`
 
