@@ -47,6 +47,7 @@ Review the plan for defects (secret exposure, missing handlers, version pinning,
 Reviews against plan, reports issues by severity. Critical issues block progress.
 - **GitHub:** move the corresponding issue to **In review**.
 - Invoke superpowers requesting-code-review Skill.
+- Commit, push and open the PR on a feature branch without asking; merging is always the user's.
 - **Copilot quota / CodeRabbit fallback:** request a Copilot review first. If GitHub reports the Copilot review quota exhausted, comment `@coderabbitai review` on the PR to trigger CodeRabbit explicitly — CodeRabbit is not installed on this repository (confirmed 2026-08-28: no response to the manual trigger), so there is no bot fallback here. Substitute the parent-workspace `reviewer` subagent + `/code-review`, and disclose in a PR comment which review path was used before merging.
 
 ## Phase 6 — ship
