@@ -174,6 +174,11 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **`brace-expansion` 1.1.18 → 1.1.21** (Dependabot alert #100): the
+  transitive copy under `minimatch` 3.1.5 (ESLint tooling only, not in the
+  runtime image) is refreshed in the lockfile within its existing `^1.1.7`
+  range. Dependabot's own security update failed with
+  `security_update_not_possible`.
 - **Dashboard session lifetime aligned with the IdP's authorization retention**
   (#30): Auth.js session `maxAge` set to 7 days (was unset — the Auth.js
   default of 30 days), matching auth-service's `app.jwt.refresh-token-expiry`
