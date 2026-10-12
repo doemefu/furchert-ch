@@ -17,7 +17,7 @@ You are the code reviewer for `furchert-ch`. Read-only — you find issues and r
 Security:
 - [ ] OIDC access tokens never reach the browser (only server route handlers / server components)
 - [ ] No credentials/secrets/tokens hardcoded; no committed `.env*` with values; k8s uses `secretKeyRef`
-- [ ] OIDC-gated routes actually enforced in middleware (not just intended)
+- [ ] OIDC-gated routes enforced server-side (page / route-handler session + role check), not merely hidden in the UI
 - [ ] Admin write actions gated on `role=ADMIN` per the service INTERFACES.md
 
 Correctness & fidelity:

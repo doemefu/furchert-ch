@@ -11,7 +11,7 @@
 `furchert-ch` is the **single web frontend for the whole doemefu homelab**. It is two things in one Next.js app:
 
 1. **Public personal site** — Home, About, IT, Rowing, Projects, Automation, Contact (German + English).
-2. **Private cluster control surface** — an OIDC-gated `/dashboard` with a homelab overview plus integrated admin GUIs for `homelab-auth-service` and `homelab-device-service`.
+2. **Private cluster control surface** — an OIDC-gated `/dashboard` with a homelab overview and an ADMIN-only `/dashboard/network` (data from `homelab-data-service`). Admin GUIs for `homelab-auth-service` and `homelab-device-service` are planned (Phase 6), not yet built.
 
 **Domain:** furchert.ch · **Deploy target:** k3s `apps` namespace via Flux CD, behind Cloudflare Tunnel. Live at https://furchert.ch since 2026-06-25, deployed via Flux image automation from `ghcr.io/doemefu/furchert-ch`.
 
@@ -19,10 +19,13 @@
 
 - This repo is 1 of several homelab repos. It **consumes** sibling services; it does not host backend business logic.
 - `/dashboard` authenticates with the **real** `homelab-auth-service` via OIDC (Authorization Code + PKCE) at `https://auth.furchert.ch`.
-- Admin GUIs call the real REST APIs of `homelab-auth-service` (`../auth-service/INTERFACES.md`) and `homelab-device-service` (`../device-service/INTERFACES.md`), proxied server-side so the access token stays off the client.
+- `/dashboard/network` reads `homelab-data-service` server-side with a `client_credentials` token (scope `netmon:read`; `INTERFACES.md` §2 "data-service"; producer contract `../data-service/INTERFACES.md`, spec `../docs/060-network-monitoring.md`); the dashboard overview reads Prometheus server-side (`INTERFACES.md` §2 "Prometheus").
+- The planned admin GUIs will call the real REST APIs of `homelab-auth-service` (`../auth-service/INTERFACES.md`) and `homelab-device-service` (`../device-service/INTERFACES.md`), proxied server-side so the access token stays off the client.
 - **The `/automation` section (incl. `/automation/scan`) is a visual MOCKUP only** — no Claude API, no scan backend, no persistence. Everything else is real.
 
-**Design source of truth:** the exported Claude Design prototype (ETHON system), *not* the older `furchert-ch-website-spec.md` (which suggested antd and was superseded during design iteration).
+**Full architecture spec:** `../docs/052-architecture-target.md`
+
+**Design source of truth:** the exported Claude Design prototype (ETHON system).
 
 **Implementation history:** `.claude/worklogs/` (local-only) and `docs/INDEX.md`
 
@@ -32,7 +35,7 @@
 - Do **not** use `latest` for any container image or dependency — pin exact versions (no `^`/`~` ranges).
 - Do **not** introduce new dependencies without explicit user approval.
 - Do **not** make the `/automation` section functional — it is a mockup by design. No silent fake success anywhere else either.
-- Commit, push and open PRs on feature branches without asking (standing permission, 2026-08-28). Merging, force-pushes, playbook runs, cluster mutations and anything touching SOPS/secrets need an explicit go for that task.
+- Commit, push and open PRs on feature branches without asking (standing permission, 2026-08-28). Merging PRs is always the user's. Rolling out changes the user has already merged needs no extra go (2026-10-09); force-pushes, playbook runs, other cluster mutations and anything touching secrets need an explicit go. SOPS files are never read or edited by Claude — the user edits them.
 - Before any merge, wait for the Copilot review and fix or answer every comment (CodeRabbit is not installed here).
 - All code, comments, and documentation in **English**.
 - Minimize diff size: no drive-by refactors, no style-only churn, no renames unless required.
@@ -43,17 +46,17 @@
 
 | Component | Choice | Version |
 |-----------|--------|---------|
-| Framework | Next.js (App Router, TypeScript) | next 16.3.5, typescript 6.0.3 |
+| Framework | Next.js (App Router, TypeScript) | next 16.3.8, typescript 6.0.3 |
 | UI runtime | React (Server + Client Components) | react / react-dom 19.3.0 |
 | Package manager | pnpm | pnpm@9.15.4 (`packageManager` field) |
-| Lint | ESLint flat config (`eslint.config.mjs`: eslint-config-next core-web-vitals + typescript) | eslint 9.39.5, eslint-config-next 16.3.5 |
-| i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.14.5 |
+| Lint | ESLint flat config (`eslint.config.mjs`: eslint-config-next core-web-vitals + typescript) | eslint 9.39.5, eslint-config-next 16.3.8 |
+| i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.14.9 |
 | Auth | Auth.js (next-auth) generic OIDC → auth.furchert.ch | 5.0.0-beta.32 |
 | Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
 | Fonts | DM Sans + DM Mono (`next/font`) | — |
 | Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `node:22.23.1-alpine` |
 
-Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.1 while the runtime is Node 22 — a known, harmless mismatch.
+Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.4 while the runtime is Node 22 — a known, harmless mismatch.
 
 ## Agent Team
 
