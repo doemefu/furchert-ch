@@ -54,7 +54,7 @@
 | Auth | Auth.js (next-auth) generic OIDC → auth.furchert.ch | 5.0.0-beta.32 |
 | Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
 | Fonts | DM Sans + DM Mono (`next/font`) | — |
-| Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `node:22.23.1-alpine` |
+| Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `public.ecr.aws/docker/library/node:22.23.1-alpine` (ECR Public mirror of the Docker official image) |
 
 Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.4 while the runtime is Node 22 — a known, harmless mismatch.
 
