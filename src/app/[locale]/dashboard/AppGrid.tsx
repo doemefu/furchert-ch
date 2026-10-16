@@ -2,13 +2,14 @@
 
 // Client island for the dashboard's app/service tiles. Owns one piece of
 // state — the active category filter. Tile layout ported from prototype
-// `dashboard.jsx:198-269`. Manage button on internal apps is disabled
-// until Phase 6 (TODO below).
+// `dashboard.jsx:198-269`. Manage links to the in-app admin GUI where one
+// exists (Auth Service, #44); IoT Platform stays disabled until #45.
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { StatusDot, STATUS_COLOR } from '@/components/ui/StatusDot';
 import type { HomelabApp } from '@/data/homelab-apps';
+import { Link } from '@/i18n/navigation';
 
 const ICON_MAP: Record<string, IconName> = {
   'IoT Platform': 'iot',
@@ -22,9 +23,10 @@ const ICON_MAP: Record<string, IconName> = {
   Terra1: 'chip',
 };
 
-// Apps with in-app admin GUIs (built in Phase 6). Until then, the Manage
-// button is rendered disabled — clicking would 404.
+// Apps with in-app admin GUIs (Phase 6). An app without a route yet renders
+// a disabled Manage button — a link would 404.
 const INTERNAL_APPS = new Set<string>(['Auth Service', 'IoT Platform']);
+const ADMIN_ROUTES: Record<string, string> = { 'Auth Service': '/dashboard/auth' };
 
 const sectionLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
@@ -259,8 +261,15 @@ export function AppGrid({
                     </a>
                   )}
 
-                  {isInternal ? (
-                    // TODO(phase6): replace with <Link href={`/dashboard/${app.name === 'Auth Service' ? 'auth' : 'devices'}`}>
+                  {isInternal && ADMIN_ROUTES[app.name] ? (
+                    <Link
+                      href={ADMIN_ROUTES[app.name]}
+                      style={{ ...actionBase, background: 'var(--n-100)', color: 'var(--white)', cursor: 'pointer' }}
+                    >
+                      {t('manage')} <Icon name="arrow" size={10} />
+                    </Link>
+                  ) : isInternal ? (
+                    // TODO(phase6): replace with <Link href="/dashboard/devices"> once #45 ships.
                     <button type="button" disabled style={disabledAction}>
                       {t('manage')} <span style={{ color: 'var(--n-40)' }}>· {t('soon')}</span>
                     </button>

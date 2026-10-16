@@ -41,6 +41,8 @@ spec:
               value: "http://data-service.apps.svc.cluster.local:8082"
             - name: DATA_SERVICE_TOKEN_URL
               value: "http://auth-service.apps.svc.cluster.local:8080/oauth2/token"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service.apps.svc.cluster.local:8080"
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

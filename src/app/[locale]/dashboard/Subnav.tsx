@@ -1,12 +1,12 @@
 // Dev Area subnav — ported from prototype `projects-board.jsx:65-93`.
-// "Overview" and "Network" (NM-1, #61) are live; Auth/Device tabs are visibly
-// disabled until Phase 6 wires up the admin GUIs (TODO(phase6) below).
-// The Network tab is shown to every signed-in user — the page itself decides
-// access (ADMIN only, docs/060 §8).
+// "Overview", "Network" (NM-1, #61) and "Auth Service" (#44) are live; the
+// Device tab stays visibly disabled until #45 ships (TODO(phase6) below).
+// Network and Auth Service are shown to every signed-in user — each page
+// decides access itself (ADMIN only).
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
-type DevSubnavActive = 'overview' | 'network';
+type DevSubnavActive = 'overview' | 'network' | 'auth';
 
 const containerStyle = {
   borderBottom: '1px solid rgba(162,167,176,.22)',
@@ -85,11 +85,16 @@ export async function DevSubnav({ active }: { active: DevSubnavActive }) {
           {t('network')}
         </Link>
 
-        {/* TODO(phase6): swap these <button disabled>s for <Link href="/dashboard/auth">
-            and <Link href="/dashboard/devices"> once the admin GUIs ship. */}
-        <button type="button" disabled style={{ ...tabBase, ...tabDisabled }}>
-          {t('authService')} <span style={{ color: 'var(--n-30)' }}>· {t('soon')}</span>
-        </button>
+        <Link
+          href="/dashboard/auth"
+          aria-current={active === 'auth' ? 'page' : undefined}
+          style={{ ...tabBase, ...(active === 'auth' ? tabActive : tabInactive) }}
+        >
+          {t('authService')}
+        </Link>
+
+        {/* TODO(phase6): swap this <button disabled> for <Link href="/dashboard/devices">
+            once the device admin GUI ships (#45). */}
         <button type="button" disabled style={{ ...tabBase, ...tabDisabled }}>
           {t('deviceService')} <span style={{ color: 'var(--n-30)' }}>· {t('soon')}</span>
         </button>
