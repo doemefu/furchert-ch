@@ -6,6 +6,23 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **`/dashboard/auth` — auth-service admin GUI** (#44, Epic #43; contract
+  `../auth-service/INTERFACES.md` §4/§8, ported from the prototype
+  `auth-admin.jsx`): ADMIN-only page with Overview (live UP/DOWN, user and
+  device-client counts, JWKS key), Users (list with search and status/role
+  filters, create, edit username/email/role/status, delete, admin password
+  reset), Device clients (list, register with the one-time secret shown once,
+  revoke) and JWKS (public key set). Sessions & tokens and the audit log have
+  no auth-service API and are labelled "not available". Calls run
+  server-side with the admin's own access token; every mutation is a Server
+  Action that re-checks the session and the ADMIN role. The user list needs
+  doemefu/homelab-auth-service#115. The dev-area tab and the dashboard's
+  "Manage" link for Auth Service are now live (Device Service stays
+  disabled until #45). New optional env `AUTH_SERVICE_URL` (default: the
+  cluster-internal auth-service; set in `k8s/deployment.yaml`).
+- **First automated tests**: Vitest (`pnpm test`) for the auth-admin client,
+  form validation, token refresh and the Server Actions' role gate; runs in
+  CI (`ci.yml`, `build.yml`).
 - **`/dashboard/network` — logins section** (NM-4, #64; contract
   `infrastructure/docs/060-network-monitoring.md` §7.2/§8 plus the
   doemefu/homelab#134 amendment): replaces the logins placeholder with data
@@ -92,6 +109,10 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Sign in again once after this release**: the session now also stores the
+  OIDC access and refresh token (server-side, in the encrypted session
+  cookie) for the admin GUI. Older sessions keep working everywhere else;
+  `/dashboard/auth` asks for a fresh sign-in.
 - **Base image pulled from the ECR Public mirror**: the `Dockerfile` now uses
   `public.ecr.aws/docker/library/node:22.23.1-alpine` (the same Docker
   official image and tag) instead of Docker Hub, after anonymous Docker Hub

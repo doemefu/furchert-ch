@@ -26,8 +26,12 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     role?: Role;
-    // access_token is intentionally not persisted yet (see auth.config.ts jwt
-    // callback); Phase 6 adds it back with chunk-aware cookie handling.
     idToken?: string;
+    // Persisted at sign-in for the /dashboard/auth admin proxy (#44); read
+    // only server-side via `lib/authadmin/accessToken.ts`.
+    accessToken?: string;
+    refreshToken?: string;
+    /** Access-token expiry, epoch seconds. */
+    accessTokenExpiresAt?: number;
   }
 }

@@ -8,6 +8,7 @@ pnpm build                        # Production build (Next standalone)
 pnpm start                        # Serve the production build
 pnpm lint                         # ESLint 9 CLI with flat config (eslint .; eslint.config.mjs; next lint was removed in Next 16)
 pnpm typecheck                    # tsc --noEmit (if not folded into lint/build)
+pnpm test                         # vitest run (unit tests, src/**/*.test.ts; also runs in CI)
 docker build -t furchert-ch .     # Build container image
 ```
 

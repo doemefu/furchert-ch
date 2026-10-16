@@ -46,8 +46,8 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
-`https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service /
-device-service (Phase 6); `PROMETHEUS_URL` — base URL of
+`https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service (`AUTH_SERVICE_URL`, #44, see
+below) / device-service (#45); `PROMETHEUS_URL` — base URL of
 `kube-prometheus-stack-prometheus` (issue #17), read server-side only for the
 `/dashboard` live cluster/app metrics. Defaults to
 `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
@@ -69,6 +69,18 @@ grant (NM-1, #61; `INTERFACES.md` §2 "data-service"). Both default to these
 values if unset and are set explicitly in `k8s/deployment.yaml`. The grant
 reuses `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET` — **no new secret**. Left unset in
 dev, the page skips every call and shows a "not configured" state.
+`AUTH_SERVICE_URL` (`http://auth-service.apps.svc.cluster.local:8080`) — the
+auth-service admin REST API behind `/dashboard/auth` (#44; `INTERFACES.md` §2
+"auth-service"). Defaults to this value if unset and is set explicitly in
+`k8s/deployment.yaml`. Calls carry the signed-in admin's own access token; the
+refresh grant reuses `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET` — **no new secret**.
+Left unset in dev, the page shows a "not configured" state.
+
+**`/dashboard/auth` rollout (#44):** the user list needs
+doemefu/homelab-auth-service#115 (`GET /api/v1/users`); until it is live the
+Users tab shows "not available yet" (everything else works). After the first
+deploy, each admin signs in again once — sessions from before #44 carry no
+access token, and the page says so instead of failing.
 
 **`/dashboard/network` rollout order (NM-1):** homelab#116 (data-service
 secret keys via `59_app_services.yml`) → homelab-data-service#14 (collectors +
@@ -179,6 +191,7 @@ the old pod keeps serving traffic throughout.
 ## Validation
 
 ```bash
+pnpm test
 docker build -t furchert-ch .
 kubectl apply --dry-run=client -k k8s/
 ```
@@ -188,7 +201,7 @@ kubectl apply --dry-run=client -k k8s/
 The image is built by CI and rolled out by Flux; there is no manual `kubectl apply`.
 
 1. **Build (automatic).** Push to `main` → `.github/workflows/build.yml` runs
-   `verify` (lint/typecheck/build; also fixes the `main-<UTC ts>` timestamp for
+   `verify` (lint/typecheck/test/build; also fixes the `main-<UTC ts>` timestamp for
    the run), then builds each platform natively in parallel — `linux/amd64` on
    `ubuntu-24.04`, `linux/arm64` on `ubuntu-24.04-arm` (no QEMU) — pushing each
    image by digest only. A final `merge` job creates the multi-arch manifest
@@ -235,6 +248,11 @@ cleared, not just that the redirect fired (a redirect-only check would have
 passed the pre-#30 `__Secure-` cookie bug below while leaving the user
 signed in).
 
+Then smoke `/dashboard/auth` as an ADMIN: the health pill shows UP; the Device
+clients and JWKS tabs load; the Users tab loads (or shows "not available yet"
+until doemefu/homelab-auth-service#115 is live); a USER account sees "no
+access".
+
 **Security headers (#42) — verify after this milestone's first deploy:**
 
 ```bash
@@ -247,6 +265,17 @@ If any of the three is missing headers, see Troubleshooting below.
 
 ### Troubleshooting
 
+- **`/dashboard/auth` always says "sign in again"** — the session predates #44
+  (sign out and in once), or the server-side refresh fails: check
+  `kubectl -n apps logs deploy/furchert-ch | grep '\[authadmin\]'` for
+  `token refresh failed: HTTP <status>|unreachable`. Typical causes: the
+  `refresh_token` grant missing on the `furchert-ch` client, a mismatched
+  `oidc-client-secret`, or a purged authorization (7-day TTL, `INTERFACES.md` §1).
+- **`/dashboard/auth` Users tab "not available yet"** — auth-service lacks
+  `GET /api/v1/users` (doemefu/homelab-auth-service#115).
+- **`/dashboard/auth` "auth-service unavailable"** — `AUTH_SERVICE_URL` is wrong
+  or auth-service is down; check the `[authadmin] <endpoint>: unreachable|HTTP 5xx`
+  log lines and `kubectl -n apps get svc auth-service`.
 - **Pod CrashLoopBackOff on boot, `[auth] required env var … missing`** — a
   `furchert-ch-secrets` key is absent; re-run `59_app_services.yml`.
 - **Login fails with `invalid_client` / redirect mismatch** — `oidc-client-secret`

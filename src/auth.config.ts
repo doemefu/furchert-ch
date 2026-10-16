@@ -78,11 +78,14 @@ export const authConfig = {
   ],
   callbacks: {
     jwt({ token, user, account }) {
-      // First sign-in: persist role + id_token onto the JWT (server-side only).
-      // We deliberately do NOT persist the access_token yet: it would enlarge
-      // the session cookie (risking Auth.js cookie chunking, which complicates
-      // logout) and nothing needs it before Phase 6. Phase 6 will reintroduce
-      // access_token persistence together with chunk-aware cookie clearing.
+      // First sign-in: persist role, id_token and — since #44 (/dashboard/auth)
+      // — the access/refresh token pair onto the JWT. The JWT is the
+      // encrypted, httpOnly session cookie: none of these reach the browser
+      // session (see `session` below). The access token authorises the
+      // admin's own calls to auth-service's REST API server-side
+      // (`lib/authadmin/accessToken.ts` refreshes it in memory, because RSC
+      // renders cannot rewrite the cookie). Cookie growth is handled by
+      // Auth.js chunking; federated-logout clears every chunk (#30).
       //
       // Re-normalise the role here even though `profile()` already did: if a
       // future code path ever populates `user` from somewhere other than
@@ -90,6 +93,12 @@ export const authConfig = {
       // narrowing still holds.
       if (user) token.role = asRole(user.role);
       if (account?.id_token) token.idToken = account.id_token;
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        // `expires_at` is epoch seconds (Auth.js normalises `expires_in`).
+        token.accessTokenExpiresAt = typeof account.expires_at === 'number' ? account.expires_at : undefined;
+      }
       return token;
     },
     session({ session, token }) {

@@ -2,8 +2,8 @@
 
 > This frontend only **consumes** interfaces; it exposes none for other services.
 > §1 (OIDC client) is **implemented** as of Phase 4. §2's Prometheus metrics
-> source is **implemented** as of issue #17; the auth-service/device-service
-> REST proxies land in Phase 6. §3 (outbound SMTP for the contact form) is
+> source is **implemented** as of issue #17; the auth-service admin proxy as
+> of issue #44 (device-service follows with #45). §3 (outbound SMTP for the contact form) is
 > implemented as of issue #46. §2's data-service netmon read API (NM-1) is
 > implemented as of issue #61; its LAN endpoints (NM-3) as of issue #62; its egress endpoint (NM-2) as of
 > issue #63; its logins endpoints (NM-4) as of issue #64.
@@ -24,11 +24,15 @@
 | Post-logout redirect | `https://furchert.ch` (+ `http://localhost:3000` for dev) |
 | Claims used | `sub`, `name`, `email`, `role` (`USER`/`ADMIN`) |
 | Server-side grant (#61) | The same client also runs `client_credentials` with scope `netmon:read` (auth-service V6) for the data-service read API — see §2 "data-service" |
+| Refresh grant (#44) | `refresh_token` (registered for the client; auth-service reuses refresh tokens for `furchert-ch`) — renews the admin's access token server-side for §2 "auth-service" |
 
 - Session strategy = JWT. The `role` claim is exposed to the browser session
-  (fail-closed to `USER`). **Access/ID tokens are kept server-side only** and
-  never reach the client. Phase 4 persists only the `id_token` (for logout);
-  the `access_token` is (re)introduced in Phase 6 when admin proxying needs it.
+  (fail-closed to `USER`). **Access/refresh/ID tokens are kept server-side
+  only** and never reach the client: they live on the encrypted, httpOnly
+  session JWT (`id_token` for logout since Phase 4; `access_token`,
+  `refresh_token` and its expiry since #44 for the admin proxy). Sessions
+  signed in before #44 carry no access token; `/dashboard/auth` asks those
+  admins to sign in again once.
 - Session `maxAge` is **7 days** (#30), matching auth-service's
   `app.jwt.refresh-token-expiry: 604800000` (ms; `auth-service/src/main/
   resources/application.yaml`) — the refresh-token TTL / `oauth2_authorization`
@@ -57,21 +61,59 @@
 
 ## 2. Backend REST APIs consumed (server-side proxy)
 
-Calls are made from Next route handlers using the user's OIDC access token; the
-token never reaches the browser. Cluster-internal base URLs.
+Calls are made server-side (Server Components and Server Actions) using the
+user's OIDC access token; the token never reaches the browser. Cluster-internal
+base URLs.
 
-### auth-service — `http://auth-service.apps.svc.cluster.local:8080`
-Per `../auth-service/INTERFACES.md` (to be enumerated in Phase 6): user management
-(`/api/v1/users`), OIDC clients (`/api/v1/clients`), JWKS (`/oauth2/jwks`).
+### auth-service — `http://auth-service.apps.svc.cluster.local:8080` (#44)
+
+Consumed by `/[locale]/dashboard/auth` (ADMIN only). Contract:
+`../auth-service/INTERFACES.md` §4 (users) and §8 (device clients).
+
+| Setting | Value |
+|---------|-------|
+| Env | `AUTH_SERVICE_URL` (default `http://auth-service.apps.svc.cluster.local:8080`); `src/authadmin.env.ts`. Outside production every call is skipped unless it is set ("not configured" state) |
+| Auth | `Authorization: Bearer <admin's access token>` (user token carrying `role=ADMIN`). Read from the session JWT by `src/lib/authadmin/accessToken.ts`; when it is within 60 s of expiry it is refreshed with `grant_type=refresh_token` at `${AUTH_SERVICE_URL}/oauth2/token` (HTTP Basic with `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET`) and cached in memory (RSC renders cannot rewrite the cookie). A failed refresh renders "sign in again" |
+| Gating | Page: session → `role === 'ADMIN'` → usable access token. Every Server Action (`dashboard/auth/actions.ts`) repeats the session + ADMIN + token checks before calling auth-service; auth-service enforces ADMIN again |
+| Self-protection | The signed-in admin (JWT `sub` = auth-service username) cannot delete, deactivate or demote their own account: the UI disables it and `updateUserAction`/`deleteUserAction` refuse it after a `GET /api/v1/users/{id}` lookup (fail closed if `sub` is unknown) — auth-service itself does not prevent it |
+| Known gap | auth-service does not revoke authorizations on a role-only change, and refresh-grant tokens keep the role from sign-in: a demoted admin keeps admin tokens (and this session's `role`) until the refresh token expires (≤ 7 d). Deactivate the account (revokes immediately) when access must end now; follow-up in auth-service |
+| Timeout | 5 s per request, `cache: 'no-store'` |
+| Logging | `[authadmin]` + endpoint name + HTTP status only — never tokens, bodies, passwords or client secrets |
+
+| Method | Path | Used for | Shape consumed |
+|--------|------|----------|----------------|
+| GET | `/api/v1/users/{id}` | Self-protection lookup before delete/demote/deactivate | `UserResponse` |
+| GET | `/api/v1/users?page&size` | Users tab (50/page), overview count (first 100) — needs doemefu/homelab-auth-service#115 | `{ users: UserResponse[], page, size, totalElements }` |
+| POST | `/api/v1/users` | Create user | body `{ username, email, password, role }` → `UserResponse` |
+| PUT | `/api/v1/users/{id}` | Edit username, email, role, status | body `{ username, email, role, status }` → `UserResponse` |
+| DELETE | `/api/v1/users/{id}` | Delete user (revokes their sessions) | `204` |
+| POST | `/api/v1/users/{id}/reset-password` | Admin password reset (no current password) | body `{ newPassword }` → `204` |
+| GET | `/api/v1/clients` | Device clients tab, overview count | `DeviceClientResponse[]` (`clientId`, `description`, `createdAt`, `scopes`) |
+| POST | `/api/v1/clients` | Register device client | body `{ clientId, description? }` → `{ clientId, clientSecret, scopes, createdAt }`; the secret is shown once in the browser, never stored or logged |
+| DELETE | `/api/v1/clients/{clientId}` | Revoke device client | `204` |
+| GET | `/oauth2/jwks` | JWKS tab, overview tile (public, no token) | `{ keys: [{ kid, kty, alg, use, n }] }` |
+| GET | `/actuator/health` | UP/DOWN pill (public, no token) | `{ status }` |
+
+`UserResponse` = `{ id, username, email, role: USER|ADMIN, status: ACTIVE|INACTIVE, createdAt, updatedAt }`.
+
+Error handling — nothing is ever fabricated: `401` → "sign in again";
+`403` → "ADMIN role required"; `404` on the user list → "not available yet"
+(auth-service without #115), on a mutation → "not found"; `400` shows
+auth-service's `error` message and per-field `details`; `409` (duplicate
+device client) → "already exists"; network/`5xx` → "auth-service
+unavailable"; a body that does not match the shapes above → "unexpected
+response". Sessions & tokens and the audit log have no auth-service API and
+render labelled "not available" placeholders. SSO/OIDC clients are defined in
+auth-service's `application.yaml` and are not manageable here.
 
 ### device-service — `http://device-service.apps.svc.cluster.local:8081`
-Per `../device-service/INTERFACES.md` (Phase 6): `/devices`, `/devices/{id}`,
+Per `../device-service/INTERFACES.md` (Phase 6, #45): `/devices`, `/devices/{id}`,
 `/devices/{id}/control`. Live WebSocket/STOMP stream optional/deferred.
 
 Surfaces in the admin GUIs without a backing endpoint are rendered as clearly
 labelled placeholders — never fabricated data.
 
-(Exact endpoint/shape table added in Phase 6.)
+(Exact device-service endpoint/shape table added with #45.)
 
 ### Prometheus — `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090` (issue #17)
 

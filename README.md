@@ -6,8 +6,9 @@ The single web frontend for the doemefu homelab — Dominic Furchert's personal 
 - **Public site:** Home · About · IT · Rowing · Projects · Automation · Contact (DE/EN)
 - **Private `/dashboard`** (OIDC-gated via `auth.furchert.ch`): homelab overview
   with live cluster/app metrics from Prometheus (server-side); ADMIN-only
-  `/dashboard/network` with inbound, LAN, egress and login data from data-service (NM-1…NM-4); integrated admin
-  GUIs for `homelab-auth-service` and `homelab-device-service` are Phase 6, upcoming.
+  `/dashboard/network` with inbound, LAN, egress and login data from data-service (NM-1…NM-4); ADMIN-only
+  `/dashboard/auth` (users, device clients, JWKS from `homelab-auth-service`'s REST
+  API, #44); the `homelab-device-service` admin GUI follows with #45.
 - **`/automation` (incl. `/automation/scan`) is a visual mockup only** — no backend.
 
 Stack: Next.js (App Router, TypeScript), next-intl, Auth.js (OIDC). Deployed to k3s
@@ -28,7 +29,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 3 | Automation section (mockup) | done |
 | 4 | Real OIDC dashboard auth | done |
 | 5 | Dashboard shell | done |
-| 6 | Integrated admin GUIs | pending |
+| 6 | Integrated admin GUIs | in progress (auth-service #44 done; device-service #45 pending) |
 | 7 | Deployment (Flux CD + Cloudflare Tunnel) | done |
 | — | Live dashboard metrics from Prometheus (#17) | done |
 | — | Contact-form SMTP delivery (Infomaniak, #46) | done |
@@ -36,6 +37,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | — | `/dashboard/network` LAN section (NM-3, #62) | done |
 | — | `/dashboard/network` egress section (NM-2, #63) | done |
 | — | `/dashboard/network` logins section (NM-4, #64) | done |
+| — | `/dashboard/auth` auth-service admin GUI (#44) | done |
 
 ## Documentation
 
@@ -54,5 +56,6 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 ```bash
 pnpm install
 pnpm dev        # http://localhost:3000
+pnpm test       # vitest unit tests
 ```
 

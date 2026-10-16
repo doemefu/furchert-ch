@@ -12,10 +12,16 @@
 pnpm install
 pnpm dev          # http://localhost:3000
 pnpm lint
+pnpm typecheck
+pnpm test         # vitest unit tests (src/**/*.test.ts)
 pnpm build
 ```
 
-CI (`ci.yml`) runs this same lint/typecheck/build `verify` job on every PR,
+Unit tests use vitest (node environment, no DOM; config `vitest.config.mts`,
+the `@/` alias mirrors tsconfig); put them next to the code as `*.test.ts`
+under `src/`.
+
+CI (`ci.yml`) runs this same lint/typecheck/test/build `verify` job on every PR,
 capped at a 15-minute `timeout-minutes` guard (normal runtime ~1–2 min). If
 your PR's `verify` job is cancelled at 15 minutes, treat that as a genuine
 hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §
@@ -53,6 +59,13 @@ kubectl -n apps port-forward svc/auth-service 18080:8080
 Set `DATA_SERVICE_URL=http://localhost:18082` and
 `DATA_SERVICE_TOKEN_URL=http://localhost:18080/oauth2/token` in `.env.local`.
 If either is unset, the page skips every call and shows a "not configured" state.
+
+Optional — `/dashboard/auth` locally (auth-service admin GUI, #44; needs an
+ADMIN account): reuse the auth-service port-forward above and set
+`AUTH_SERVICE_URL=http://localhost:18080` in `.env.local`. Unset, the page
+shows a "not configured" state. If you signed in before pulling #44, sign out
+and in again — older sessions carry no access token. The Users tab needs
+doemefu/homelab-auth-service#115 deployed.
 
 Local contact-form testing requires the commented `SMTP_*`/`CONTACT_TO` block
 in `.env.local.example` filled in with a real Infomaniak application
