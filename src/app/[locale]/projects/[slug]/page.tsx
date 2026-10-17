@@ -11,6 +11,12 @@ import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
 const HOST = 'https://furchert.ch';
 
 // Static params: locale × slug (the parent [locale] layout composes locales).
+// `dynamicParams = false`: an unknown slug is a plain 404, never rendered on
+// demand. Otherwise every made-up slug writes ~180 KB to Next's on-disk route
+// cache, an unbounded disk-fill vector under the pod's size-limited
+// emptyDir (#78).
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) =>
     PROJECTS.map((p) => ({ locale, slug: p.slug })),
