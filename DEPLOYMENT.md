@@ -15,7 +15,7 @@
 
 The only writable paths are two 64 Mi `emptyDir`s:
 
-- `/app/.next/server/route-cache`: Next 16's on-disk route cache. `strace` on the standalone server showed it is the only path written at runtime. The build does not ship anything there; prerendered pages live in `.next/server/app`. The cache is bounded to known routes (≈ 3 MB after visiting every page). `projects/[slug]` sets `dynamicParams = false` because otherwise every made-up slug wrote ~180 KB there (200 requests → 37 MB), enough to hit the `sizeLimit` and get the pod evicted. If the cache is unwritable, pages still render but each cache miss logs an `EACCES` stack.
+- `/app/.next/server/route-cache`: Next 16's on-disk route cache. `strace` on the standalone server showed it is the only path written at runtime. The build does not ship anything there; prerendered pages live in `.next/server/app`. The cache is bounded to known routes (≈ 3 MB after visiting every page). The `[locale]` layout and `projects/[slug]` set `dynamicParams = false`. Without it, every made-up slug (~180 KB; 200 requests → 37 MB) and every dotted first path segment such as `/a1.x/about` (which skips the intl proxy) was rendered on demand and cached, enough to hit the `sizeLimit` and get the pod evicted. 350 junk URLs across both patterns now add nothing. If the cache is unwritable, pages still render but each cache miss logs an `EACCES` stack.
 - `/tmp`: for libraries that use `os.tmpdir()`.
 
 If a future Next upgrade or a new dependency logs `EROFS`/`EACCES`, add an `emptyDir` for that path rather than dropping `readOnlyRootFilesystem`. Any new dynamic route must not cache unbounded params: set `dynamicParams = false` or keep it `force-dynamic`.

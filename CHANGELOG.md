@@ -9,9 +9,9 @@ All notable changes per milestone. Newest first.
 - **Pod hardening** (#78): the Deployment runs as non-root UID/GID 1001 with
   `seccompProfile: RuntimeDefault`, no privilege escalation, all capabilities
   dropped and a read-only root filesystem; `emptyDir`s for Next's route cache
-  and `/tmp` are the only writable paths. `/projects/[slug]` now 404s unknown
-  slugs without rendering them (`dynamicParams = false`), so made-up URLs can
-  no longer fill the route cache.
+  and `/tmp` are the only writable paths. Unknown locales and `/projects/[slug]`
+  slugs now 404 without being rendered (`dynamicParams = false`), so made-up
+  URLs can no longer fill the route cache.
 - **`replicas: 1` documented as a hard constraint** (#83) while the
   contact-form rate limiter is in-process (DEPLOYMENT.md "Replicas").
 
