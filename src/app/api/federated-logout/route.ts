@@ -1,11 +1,22 @@
-// Federated (RP-initiated) logout. Runs server-side so the id_token never
-// reaches the browser (worklog D-C / F6): read the JWT, build the IdP
-// end-session URL with `id_token_hint`, then return a redirect that also
+// Federated (RP-initiated) logout. Runs server-side: read the JWT, build the
+// IdP end-session URL with `id_token_hint`, then return a redirect that also
 // expires the local Auth.js session cookie. The SignOutButton submits a POST
 // form here.
+//
+// The id_token is never in a response body, cookie or client bundle — but it
+// IS in the `Location` of the redirect, so for that one hop it reaches the
+// browser's address bar/history and the IdP's request logs (#79). Accepted
+// trade-off: auth-service needs the hint for logout (INTERFACES.md §1), and
+// the token stored here is the one issued at sign-in, which Spring
+// Authorization Server signs with `exp = iat + 30 min` (not configurable via
+// TokenSettings; auth-service's token customizer does not override it). Only
+// a logout within 30 min of sign-in exposes an unexpired token; later the
+// hint is expired and is useful only as a logout hint. See DEPLOYMENT.md
+// "Federated logout — id_token exposure".
 import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { AUTH_ENV } from '@/auth.env';
+import { isSameOriginRequest } from '@/lib/auth/sameOrigin';
 import { sessionCookie } from '@/lib/auth/shared';
 
 // Always dynamic — reads cookies, calls AUTH_ENV (which throws when env is
@@ -64,17 +75,8 @@ export async function POST(req: NextRequest) {
     ? new URL(process.env.AUTH_URL).origin
     : req.nextUrl.origin;
 
-  // CSRF guard: modern browsers send `Sec-Fetch-Site` on every request — a
-  // forged cross-site POST is `cross-site`/`same-site` and is rejected. For
-  // clients without fetch metadata, fall back to matching the `Origin` header
-  // against the expected public origin.
-  const secFetchSite = req.headers.get('sec-fetch-site');
-  const origin = req.headers.get('origin');
-  const sameOrigin =
-    secFetchSite === 'same-origin' ||
-    secFetchSite === 'none' ||
-    (secFetchSite === null && (origin === null || origin === expectedOrigin));
-  if (!sameOrigin) {
+  // CSRF guard (`Sec-Fetch-Site`, falling back to `Origin`).
+  if (!isSameOriginRequest(req.headers, expectedOrigin)) {
     return NextResponse.json({ error: 'Cross-origin logout rejected' }, { status: 403 });
   }
 

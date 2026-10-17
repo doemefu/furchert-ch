@@ -14,6 +14,13 @@ All notable changes per milestone. Newest first.
   URLs can no longer fill the route cache.
 - **`replicas: 1` documented as a hard constraint** (#83) while the
   contact-form rate limiter is in-process (DEPLOYMENT.md "Replicas").
+- **Federated logout:** the route's header comment now states that the
+  `id_token_hint` is visible in the redirect URL, and DEPLOYMENT.md documents
+  the accepted exposure window: at most 30 min after sign-in, the fixed
+  id_token lifetime (#79).
+- **Unit tests for access-control logic** (#81): `asRole()`, the
+  `/dashboard/network` search-param parsers (moved to `searchParams.ts`) and
+  the logout CSRF check (`src/lib/auth/sameOrigin.ts`).
 
 ### Added
 
