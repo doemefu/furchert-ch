@@ -38,8 +38,10 @@ Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -
 
 **Accepted window: at most 30 minutes after sign-in.**
 - The hint is the id_token stored on the session JWT at sign-in (`auth.config.ts`). Token refreshes do not replace it.
-- Spring Authorization Server (7.1.1, used by auth-service) always issues id_tokens with `exp = iat + 30 min`. This is hard-coded in its `JwtGenerator`; `TokenSettings` has no id-token TTL.
-- A logout more than 30 minutes after sign-in, the normal case for a 7-day session, therefore exposes an **expired** token. Resource servers reject it, and auth-service still accepts it as a logout hint, because its logout handler checks only the signature.
+- Spring Authorization Server (7.1.1, used by auth-service) issues id_tokens with `exp = iat + 30 min`. This is hard-coded in its `JwtGenerator`, `TokenSettings` has no id-token TTL, and auth-service's token customizer does not override `exp`. If it ever does, update this section.
+- A logout more than 30 minutes after sign-in, the normal case for a 7-day session, therefore exposes an **expired** token. Resource servers reject it, but auth-service still accepts it as a logout hint:
+  - SAS's logout provider finds the authorization by token value and does not check expiry.
+  - Once that row is purged, auth-service's fallback handler accepts any hint carrying a valid signature.
 
 **Residual risk inside the window.** An unexpired id_token is a JWT signed by auth-service's key and carries the `role` claim. Today auth-service's `/api/v1/**` and device-service validate bearer tokens only by signature and expiry, so within those 30 minutes a leaked admin id_token would be accepted there like an access token. The real fix belongs in those resource servers: reject id_tokens, e.g. require a `scope` claim or an `at+jwt` header. That is tracked outside this repo.
 
