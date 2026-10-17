@@ -15,6 +15,11 @@ export const metadata: Metadata = {
     'Software Engineer · Zürich. IoT-Plattformen, Homelab-Infrastruktur, AI-Automation.',
 };
 
+// Unknown locales are a plain 404, never rendered on demand. Paths with a
+// dot skip the intl proxy's redirect (see `proxy.ts` matcher), and each one
+// would otherwise write to Next's size-limited on-disk route cache (#78).
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }

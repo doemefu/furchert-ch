@@ -6,9 +6,23 @@
 
 - Container: multi-stage `Dockerfile`, Next.js standalone output, pinned base image.
 - Registry: `ghcr.io/doemefu/furchert-ch:main-<UTC timestamp>` (built by GitHub Actions).
-- Cluster: k3s, namespace `apps`, `replicas: 1`, resource requests+limits, liveness+readiness probes.
+- Cluster: k3s, namespace `apps`, `replicas: 1` (do not raise — see "Replicas" below), resource requests+limits, liveness+readiness probes.
+- Pod hardening (#78): runs as UID 1001 (`nextjs`) / GID 1001 (`nodejs`), `runAsNonRoot`, `seccompProfile: RuntimeDefault`, no privilege escalation, all capabilities dropped, read-only root filesystem — see "Pod hardening" below.
 - GitOps: Flux CD via `../infrastructure/cluster/apps/furchert-ch/` (source, imagerepo, imagepolicy, imageupdate, sync, kustomization — copied from the auth-service set). Image tag is a Flux-managed setter.
 - Ingress: Cloudflare Tunnel → `furchert.ch` → `furchert-ch.apps.svc.cluster.local` (see `../infrastructure/APPS.md` ingress pattern).
+
+### Pod hardening (#78)
+
+The only writable paths are two 64 Mi `emptyDir`s:
+
+- `/app/.next/server/route-cache`: Next 16's on-disk route cache. `strace` on the standalone server showed it is the only path written at runtime. The build does not ship anything there; prerendered pages live in `.next/server/app`. The cache is bounded to known routes (≈ 3 MB after visiting every page). The `[locale]` layout and `projects/[slug]` set `dynamicParams = false`. Without it, every made-up slug (~180 KB; 200 requests → 37 MB) and every dotted first path segment such as `/a1.x/about` (which skips the intl proxy) was rendered on demand and cached, enough to hit the `sizeLimit` and get the pod evicted. 350 junk URLs across both patterns now add nothing. If the cache is unwritable, pages still render but each cache miss logs an `EACCES` stack.
+- `/tmp`: for libraries that use `os.tmpdir()`.
+
+If a future Next upgrade or a new dependency logs `EROFS`/`EACCES`, add an `emptyDir` for that path rather than dropping `readOnlyRootFilesystem`. Any new dynamic route must not cache unbounded params: set `dynamicParams = false` or keep it `force-dynamic`.
+
+### Replicas (#83)
+
+**Keep `replicas: 1`.** The contact-form rate limiter (`src/lib/contact/rateLimit.ts`) holds its state in process memory. With more than one replica each pod enforces its own independent limits, so a sender could get N× the intended quota (traffic is not sticky). Before raising `replicas`, move the limiter to a shared store (e.g. Redis) — tracked as a precondition, not a config change. The authadmin token-refresh cache (`src/lib/authadmin/accessToken.ts`) is also per-process, but that is only an optimisation and stays correct at any replica count.
 
 ## Security headers (#42)
 
