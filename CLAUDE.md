@@ -80,7 +80,7 @@ Seven project-level agents in `.claude/agents/` handle bigger implementations.
 src/app/[locale]/        # public pages (about, contact, it, projects, rowing, automation) + /dashboard (overview, network, auth) (App Router)
 src/app/api/             # auth/[...nextauth], federated-logout, health (server-side proxies; no scan API)
 src/components/{ui,layout}/, Providers.tsx
-src/lib/                 # server-side clients: metrics (Prometheus), netmon (data-service), authadmin (auth-service admin API), contact (SMTP); auth/shared.ts (Basic auth + session-cookie name); fonts.ts
+src/lib/                 # server-side clients: metrics (Prometheus), netmon (data-service), authadmin (auth-service admin API), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts
 src/*.env.ts             # lazy env accessors (auth, metrics, netmon, authadmin, contact)
 src/data/                # typed static data (projects, cluster nodes, apps, home stats, ...)
 src/i18n/                # messages/{de,en}.json + next-intl config (navigation.ts, request.ts, routing.ts)
