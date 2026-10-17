@@ -11,8 +11,11 @@ export function basicAuth(clientId: string, clientSecret: string): string {
   return `Basic ${Buffer.from(pair, 'utf8').toString('base64')}`;
 }
 
-// The Auth.js v5 session cookie as Auth.js itself names it: `__Secure-`
-// prefixed in production (HTTPS). In v5 the JWE salt is derived from the
+// The Auth.js v5 session cookie name. Auth.js itself picks the `__Secure-`
+// prefix from the AUTH_URL protocol (https); this keys it on NODE_ENV
+// instead, which matches only while production ⇔ https AUTH_URL — true for
+// the cluster deployment, not for `pnpm start` on http://localhost (there
+// session reads find no cookie). In v5 the JWE salt is derived from the
 // cookie name, so callers of `getToken` pass `cookieName` as `salt` too —
 // passing both explicitly is defensive against future cookie-name changes
 // that would otherwise silently break session reads.
