@@ -4,6 +4,15 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Security
+
+- **Pod hardening** (#78): the Deployment runs as non-root UID/GID 1001 with
+  `seccompProfile: RuntimeDefault`, no privilege escalation, all capabilities
+  dropped and a read-only root filesystem; `emptyDir`s for Next's route cache
+  and `/tmp` are the only writable paths.
+- **`replicas: 1` documented as a hard constraint** (#83) while the
+  contact-form rate limiter is in-process (DEPLOYMENT.md "Replicas").
+
 ### Added
 
 - **`/dashboard/auth` — auth-service admin GUI** (#44, Epic #43; contract

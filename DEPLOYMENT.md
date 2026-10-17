@@ -6,7 +6,12 @@
 
 - Container: multi-stage `Dockerfile`, Next.js standalone output, pinned base image.
 - Registry: `ghcr.io/doemefu/furchert-ch:main-<UTC timestamp>` (built by GitHub Actions).
-- Cluster: k3s, namespace `apps`, `replicas: 1`, resource requests+limits, liveness+readiness probes.
+- Cluster: k3s, namespace `apps`, `replicas: 1` (do not raise — see "Replicas" below), resource requests+limits, liveness+readiness probes.
+- Pod hardening (#78): runs as UID/GID 1001 (`nextjs`, `runAsNonRoot`), `seccompProfile: RuntimeDefault`, no privilege escalation, all capabilities dropped, read-only root filesystem. The only writable paths are two 64 Mi `emptyDir`s: `/app/.next/server/route-cache` (Next 16's on-disk route cache — verified with `strace` on the standalone server to be the only path it writes; if it were unwritable Next would silently skip caching) and `/tmp`. If a future Next upgrade or new dependency logs `EROFS`/`EACCES`, add an `emptyDir` for that path rather than dropping `readOnlyRootFilesystem`.
+
+### Replicas (#83)
+
+**Keep `replicas: 1`.** The contact-form rate limiter (`src/lib/contact/rateLimit.ts`) holds its state in process memory. With more than one replica each pod enforces its own independent limits, so a sender could get N× the intended quota (traffic is not sticky). Before raising `replicas`, move the limiter to a shared store (e.g. Redis) — tracked as a precondition, not a config change. The authadmin token-refresh cache (`src/lib/authadmin/accessToken.ts`) is also per-process, but that is only an optimisation and stays correct at any replica count.
 - GitOps: Flux CD via `../infrastructure/cluster/apps/furchert-ch/` (source, imagerepo, imagepolicy, imageupdate, sync, kustomization — copied from the auth-service set). Image tag is a Flux-managed setter.
 - Ingress: Cloudflare Tunnel → `furchert.ch` → `furchert-ch.apps.svc.cluster.local` (see `../infrastructure/APPS.md` ingress pattern).
 
