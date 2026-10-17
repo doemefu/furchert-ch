@@ -6,14 +6,13 @@
 //
 // Logging: `[authadmin]` prefix, endpoint name + HTTP status only — never
 // tokens, request bodies, passwords or the one-time device client secret.
+import 'server-only';
 import { AUTHADMIN_ENV, shouldAttemptAuthAdmin } from '@/authadmin.env';
+import { USER_ROLES, USER_STATUSES, type UserRole, type UserStatus } from './userFields';
 
 // ── response shapes ─────────────────────────────────────────────────────────
 
-export type UserRole = 'USER' | 'ADMIN';
-export type UserStatus = 'ACTIVE' | 'INACTIVE';
-export const USER_ROLES: readonly UserRole[] = ['USER', 'ADMIN'];
-export const USER_STATUSES: readonly UserStatus[] = ['ACTIVE', 'INACTIVE'];
+export { USER_ROLES, USER_STATUSES, type UserRole, type UserStatus };
 
 export interface AdminUser {
   id: number;
