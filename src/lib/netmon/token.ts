@@ -7,6 +7,7 @@
 // Reuses the existing `furchert-ch` OIDC client (no new secret): auth-service
 // grants it `client_credentials` with scope `netmon:read` (auth-service V6).
 import { AUTH_ENV } from '@/auth.env';
+import { basicAuth } from '@/lib/auth/shared';
 import { NETMON_ENV } from '@/netmon.env';
 
 const SCOPE = 'netmon:read';
@@ -23,13 +24,6 @@ interface CachedToken {
 let cached: CachedToken | null = null;
 // De-duplicates concurrent renders that all miss the cache at once.
 let inFlight: Promise<string> | null = null;
-
-// RFC 6749 §2.3.1: client_id and client_secret are form-urlencoded before
-// Base64 in HTTP Basic auth. Spring Authorization Server URL-decodes them.
-function basicAuth(clientId: string, clientSecret: string): string {
-  const pair = `${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`;
-  return `Basic ${Buffer.from(pair, 'utf8').toString('base64')}`;
-}
 
 async function requestToken(): Promise<string> {
   // AUTH_ENV throws with an actionable message if the OIDC env is missing;

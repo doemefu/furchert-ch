@@ -14,6 +14,7 @@ import { headers } from 'next/headers';
 import { getToken, type JWT } from 'next-auth/jwt';
 import { AUTH_ENV } from '@/auth.env';
 import { AUTHADMIN_ENV, shouldAttemptAuthAdmin } from '@/authadmin.env';
+import { basicAuth, sessionCookie } from '@/lib/auth/shared';
 
 export type AdminTokenResult =
   /** `subject` = the admin's own `sub` (auth-service username), for self-protection checks. */
@@ -37,12 +38,6 @@ interface Refreshed {
 const cache = new Map<string, Refreshed>();
 const failed = new Map<string, number>(); // key → retry-after (epoch s)
 const inFlight = new Map<string, Promise<Refreshed | null>>();
-
-// RFC 6749 §2.3.1 Basic auth (same encoding as `lib/netmon/token.ts`).
-function basicAuth(clientId: string, clientSecret: string): string {
-  const pair = `${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`;
-  return `Basic ${Buffer.from(pair, 'utf8').toString('base64')}`;
-}
 
 async function refreshAccessToken(refreshToken: string, nowS: number): Promise<Refreshed | null> {
   // Same local-dev guard as the REST client: no stall on the in-cluster FQDN.
@@ -135,10 +130,9 @@ export function clearAdminTokenCache(): void {
 }
 
 // Reads the session JWT from the request cookies. Cookie name and salt must
-// match how Auth.js set the cookie (same rule as `api/federated-logout`).
+// match how Auth.js set the cookie (`sessionCookie`).
 async function readSessionJwt(): Promise<JWT | null> {
-  const secureCookie = process.env.NODE_ENV === 'production';
-  const cookieName = secureCookie ? '__Secure-authjs.session-token' : 'authjs.session-token';
+  const { secureCookie, cookieName } = sessionCookie();
   try {
     return await getToken({
       req: { headers: await headers() },
