@@ -43,7 +43,7 @@ Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -
   - SAS's logout provider finds the authorization by token value and does not check expiry.
   - Once that row is purged, auth-service's fallback handler accepts any hint carrying a valid signature.
 
-**Residual risk inside the window.** An unexpired id_token is a JWT signed by auth-service's key and carries the `role` claim. Today auth-service's `/api/v1/**` and device-service validate bearer tokens only by signature and expiry, so within those 30 minutes a leaked admin id_token would be accepted there like an access token. The real fix belongs in those resource servers: reject id_tokens, e.g. require a `scope` claim or an `at+jwt` header. That is tracked outside this repo.
+**Residual risk inside the window.** An unexpired id_token is a JWT signed by auth-service's key and carries the `role` claim. Today auth-service's `/api/v1/**` and device-service validate bearer tokens only by signature and expiry, so within those 30 minutes a leaked admin id_token would be accepted there like an access token. Fixed in auth-service by doemefu/homelab-auth-service#117: `/api/v1/**` rejects ID tokens (`azp` claim) with 401. Once that is deployed, a leaked id_token is only good as a logout hint. Audience binding for access tokens, and device-service, are tracked in doemefu/homelab-auth-service#118.
 
 **Rejected alternative.** POST the hint to `/connect/logout` from an auto-submitting form. This keeps the token out of URLs and logs, but it still ships the token to the browser in the page body. It also needs an inline script and would require `form-action` to allow `auth.furchert.ch` once the CSP is enforced. Revisit it if the resource-server fix does not land.
 
