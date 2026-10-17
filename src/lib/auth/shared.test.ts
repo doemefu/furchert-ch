@@ -13,9 +13,9 @@ describe('basicAuth', () => {
     expect(decode(header)).toBe(`furchert-ch:${secret}`);
   });
 
-  it('form-urlencodes both parts before Base64 (RFC 6749 §2.3.1)', () => {
-    const secret = ['a', 'b'].join(':') + '/ü';
-    expect(decode(basicAuth('my client', secret))).toBe('my%20client:a%3Ab%2F%C3%BC');
+  it('percent-encodes both parts before Base64 (RFC 6749 §2.3.1)', () => {
+    const secret = ['a', 'b'].join(':') + '/ü*!';
+    expect(decode(basicAuth('my client', secret))).toBe('my%20client:a%3Ab%2F%C3%BC*!');
   });
 });
 
