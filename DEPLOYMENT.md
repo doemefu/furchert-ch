@@ -32,6 +32,19 @@
 
 Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -s https://furchert.ch/de | grep -i cloudflareinsights` found nothing — Cloudflare Web Analytics/Rocket Loader is not injecting a beacon on this zone today, so `script-src`/`connect-src` need no `*.cloudflareinsights.com` addition. Re-check this if that Cloudflare zone feature is ever turned on, since it would otherwise report (or, once enforcing, break) on every page load.
 
+## Federated logout — id_token exposure (#79)
+
+`POST /api/federated-logout` redirects the browser to auth-service's `/connect/logout?id_token_hint=<id_token>&post_logout_redirect_uri=…`. The id_token is never in a response body, a cookie or the client bundle, but it **is** in that redirect URL, so for one hop it is visible in the address bar, the browser history and auth-service's (and Cloudflare's) request logs.
+
+**Accepted window: at most 30 minutes after sign-in.**
+- The hint is the id_token stored on the session JWT at sign-in (`auth.config.ts`). Token refreshes do not replace it.
+- Spring Authorization Server (7.1.1, used by auth-service) always issues id_tokens with `exp = iat + 30 min`. This is hard-coded in its `JwtGenerator`; `TokenSettings` has no id-token TTL.
+- A logout more than 30 minutes after sign-in, the normal case for a 7-day session, therefore exposes an **expired** token. Resource servers reject it, and auth-service still accepts it as a logout hint, because its logout handler checks only the signature.
+
+**Residual risk inside the window.** An unexpired id_token is a JWT signed by auth-service's key and carries the `role` claim. Today auth-service's `/api/v1/**` and device-service validate bearer tokens only by signature and expiry, so within those 30 minutes a leaked admin id_token would be accepted there like an access token. The real fix belongs in those resource servers: reject id_tokens, e.g. require a `scope` claim or an `at+jwt` header. That is tracked outside this repo.
+
+**Rejected alternative.** POST the hint to `/connect/logout` from an auto-submitting form. This keeps the token out of URLs and logs, but it still ships the token to the browser in the page body. It also needs an inline script and would require `form-action` to allow `auth.furchert.ch` once the CSP is enforced. Revisit it if the resource-server fix does not land.
+
 ## Required secrets / env (provisioned by the user via SOPS — never in git)
 
 k8s secret `furchert-ch-secrets` in the `apps` namespace (values user-provisioned

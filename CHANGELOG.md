@@ -4,6 +4,16 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Security
+
+- **Federated logout:** the route's header comment now states that the
+  `id_token_hint` is visible in the redirect URL, and DEPLOYMENT.md documents
+  the accepted exposure window: at most 30 min after sign-in, the fixed
+  id_token lifetime (#79).
+- **Unit tests for access-control logic** (#81): `asRole()`, the
+  `/dashboard/network` search-param parsers (moved to `searchParams.ts`) and
+  the logout CSRF check (`src/lib/auth/sameOrigin.ts`).
+
 ### Added
 
 - **`/dashboard/auth` — auth-service admin GUI** (#44, Epic #43; contract
