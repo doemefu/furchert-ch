@@ -2,8 +2,10 @@
 // reads the Auth.js session cookie directly (netmon client-credentials token,
 // authadmin token refresh, federated logout). Pure functions, no I/O.
 
-// RFC 6749 §2.3.1: client_id and client_secret are form-urlencoded before
-// Base64 in HTTP Basic auth. Spring Authorization Server URL-decodes them.
+// RFC 6749 §2.3.1: client_id and client_secret are encoded before Base64 in
+// HTTP Basic auth. `encodeURIComponent` is close to, not exactly,
+// form-urlencoding (space → `%20`, not `+`; `!'()*` stay literal); Spring
+// Authorization Server URL-decodes either form to the same value.
 export function basicAuth(clientId: string, clientSecret: string): string {
   const pair = `${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`;
   return `Basic ${Buffer.from(pair, 'utf8').toString('base64')}`;
