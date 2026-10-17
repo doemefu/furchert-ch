@@ -6,6 +6,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { AUTH_ENV } from '@/auth.env';
+import { sessionCookie } from '@/lib/auth/shared';
 
 // Always dynamic — reads cookies, calls AUTH_ENV (which throws when env is
 // missing). The `force-dynamic` opts out of Next's static-generation probe
@@ -77,19 +78,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Cross-origin logout rejected' }, { status: 403 });
   }
 
-  const secureCookie = process.env.NODE_ENV === 'production';
-  const cookieName = secureCookie
-    ? '__Secure-authjs.session-token'
-    : 'authjs.session-token';
+  const { secureCookie, cookieName } = sessionCookie();
 
   try {
     const token = await getToken({
       req,
       secret: AUTH_ENV.AUTH_SECRET,
       secureCookie,
-      // In Auth.js v5 the JWE salt is derived from the cookie name, so both
-      // must agree. Passing them explicitly is defensive against future
-      // cookie-name changes that would otherwise silently break logout.
+      // Salt = cookie name in Auth.js v5 (see `sessionCookie`).
       salt: cookieName,
       cookieName,
     });
