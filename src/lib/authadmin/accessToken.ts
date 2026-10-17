@@ -9,6 +9,7 @@
 // stored refresh token (auth-service reuses refresh tokens for `furchert-ch`)
 // and cached until shortly before expiry, keyed by a SHA-256 of the refresh
 // token so the raw token is never used as a map key. Tokens are never logged.
+import 'server-only';
 import { createHash } from 'node:crypto';
 import { headers } from 'next/headers';
 import { getToken, type JWT } from 'next-auth/jwt';

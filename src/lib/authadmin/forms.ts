@@ -3,7 +3,7 @@
 // (../auth-service/INTERFACES.md §4 + §8) and the serialisable action state.
 // Pure module — imported by the Server Actions (authoritative check) and by
 // the client forms (inline hints), so the two cannot drift.
-import { USER_ROLES, USER_STATUSES, type UserRole, type UserStatus } from './client';
+import { USER_ROLES, USER_STATUSES, type UserRole, type UserStatus } from './userFields';
 
 export type ActionErrorCode =
   | 'session' // no session, no stored token, or token rejected → sign in again

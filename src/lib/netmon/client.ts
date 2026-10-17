@@ -7,6 +7,7 @@
 //
 // Logging (§10): `[netmon]` prefix, endpoint name + HTTP status only — never
 // tokens, never URLs with query strings, never IP addresses.
+import 'server-only';
 import { NETMON_ENV, shouldAttemptNetmon } from '@/netmon.env';
 import { getNetmonToken, invalidateNetmonToken } from './token';
 

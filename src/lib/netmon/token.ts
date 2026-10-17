@@ -6,6 +6,7 @@
 //
 // Reuses the existing `furchert-ch` OIDC client (no new secret): auth-service
 // grants it `client_credentials` with scope `netmon:read` (auth-service V6).
+import 'server-only';
 import { AUTH_ENV } from '@/auth.env';
 import { basicAuth } from '@/lib/auth/shared';
 import { NETMON_ENV } from '@/netmon.env';

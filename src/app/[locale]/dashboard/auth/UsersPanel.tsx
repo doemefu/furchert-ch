@@ -12,7 +12,7 @@ import { createPortal } from 'react-dom';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { IDLE, type ActionState } from '@/lib/authadmin/forms';
-import type { UserRole, UserStatus } from '@/lib/authadmin/client';
+import type { UserRole, UserStatus } from '@/lib/authadmin/userFields';
 import { createUserAction, deleteUserAction, resetPasswordAction, updateUserAction } from './actions';
 import { FieldError, FormError } from './FormFeedback';
 import { MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle, BORDER } from './ui';
