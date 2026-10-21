@@ -6,6 +6,10 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **Node 22.23.1 → 22.23.4** (#100): Node's bundled root store moves to NSS
+  3.131.1, which distrusts the emSign roots behind the compromised eMudhra
+  intermediates (https://blog.cloudflare.com/emudhra-certificate-compromise);
+  22.23.1 still accepted those chains. 22.23.4 is also a Node security release.
 - **Pod hardening** (#78): the Deployment runs as non-root UID/GID 1001 with
   `seccompProfile: RuntimeDefault`, no privilege escalation, all capabilities
   dropped and a read-only root filesystem; `emptyDir`s for Next's route cache
