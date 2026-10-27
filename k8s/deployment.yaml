@@ -30,7 +30,7 @@ spec:
       containers:
         - name: furchert-ch
           # Image tag is managed by Flux CD image automation.
-          image: ghcr.io/doemefu/furchert-ch:main-20261022T082745 # {"$imagepolicy": "flux-system:furchert-ch"}
+          image: ghcr.io/doemefu/furchert-ch:main-20261027T211820 # {"$imagepolicy": "flux-system:furchert-ch"}
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
