@@ -1,10 +1,8 @@
 # CLAUDE.md — homelab-furchert-ch
 
-> **Session start:** Read `.claude/memory/MEMORY.md` completely. The topmost entry shows the current state. If there is an entry with `status: in_progress`, read the linked worklog and ask the user: *"I see we were interrupted at [SLUG]. Continue?"* — before doing anything else.
+> In-progress worklogs are listed at session start by the `homelab-workflow` plugin; start work with `/homelab-workflow:start-task`. Durable facts go to auto memory.
 
-> **After each completed change:** Insert a new block **at the top** of `.claude/memory/MEMORY.md`. The file grows top-down — newest entries always visible first.
-
-> `.claude/memory/` and `.claude/worklogs/` are gitignored — local-only; cross-check `git log`/GitHub when they look stale.
+> `.claude/memory/`, `.claude/worklogs/` and `.claude/worktrees/` are gitignored — local-only; cross-check `git log`/GitHub when they look stale.
 
 ## Project Overview
 
@@ -40,7 +38,7 @@
 - All code, comments, and documentation in **English**.
 - Minimize diff size: no drive-by refactors, no style-only churn, no renames unless required.
 - Recreate the design **pixel-faithfully** from the prototype source; do not redesign.
-- Always run the relevant lint/build commands for the touched area and record results in the worklog.
+- Always run the relevant lint/typecheck/test/build commands for the touched area and record results in the worklog.
 
 ## Tech Stack (pinned — see `package.json`)
 
@@ -62,17 +60,7 @@ Exact versions are pinned in `package.json` and the `Dockerfile` base image. Not
 
 ## Agent Team
 
-Seven project-level agents in `.claude/agents/` handle bigger implementations.
-
-| Agent | Model | Role |
-|-------|-------|------|
-| `architect` | opus | Defines page/route/component contracts + backend API usage map before code |
-| `implementer` | sonnet | Builds pages/components per the contract and the prototype |
-| `reviewer` | opus | Reviews for security, pixel fidelity, contract compliance |
-| `documenter` | sonnet | Keeps README/OVERVIEW/INTERFACES/DEPLOYMENT accurate |
-| `devops` | sonnet | Dockerfile, k8s manifests, Flux wiring, Cloudflare Tunnel ingress |
-| `plan-reviewer` | (inherit) | Phase 3 plan defect + architecture review |
-| `doc-auditor` | (inherit) | Phase 6 documentation gap audit |
+Agents come from the `homelab-workflow` plugin: `homelab-workflow:<role>` for `architect`, `implementer`, `reviewer`, `documenter`, `devops`, `plan-reviewer`, `doc-auditor`. Repo specifics for each role live in `.claude/agent-context.md` (one section per role). There are no repo-only agents.
 
 ## Repository Layout
 
@@ -97,17 +85,30 @@ vitest.config.mts        # unit tests (src/**/*.test.ts)
 
 ## Process & Conventions
 
-Detailed process rules live in `.claude/rules/` (auto-loaded by Claude Code):
+Process comes from the `homelab-workflow` plugin skills: `/homelab-workflow:start-task`, `workflow` (6-phase milestone flow, worklogs, plan structure), `review-gate`, `project-board`, `cross-repo`. Repo rules in `.claude/rules/` (auto-loaded by path):
 
 | Rule file | Covers |
 |-----------|--------|
-| `workflow.md` | 6-phase milestone workflow (resumable; includes plan-approval checklist) |
-| `worklog-conventions.md` | Worklog location, naming, header, structure |
-| `plan-structure.md` | 8-section plan template |
-| `commands.md` | pnpm / Next / Docker / kubectl commands |
 | `code-style-conventions.md` | TypeScript/React/Next, ETHON tokens, secrets |
-| `review-guidelines.md` | Security, diffs, version pinning, pixel fidelity |
 | `documentation-files.md` | README, OVERVIEW, INTERFACES, DEPLOYMENT, CONTRIBUTING, CHANGELOG |
-| `github-project.md` | GitHub Project status transitions |
 
-Worklog template: `.claude/worklog-template.md` — copy it as the starting point for every new worklog. Each milestone ends in a buildable, shippable state and writes a newest-on-top block to `.claude/memory/MEMORY.md` so any later session can resume.
+Review: request Copilot first; CodeRabbit is not installed here. If Copilot quota is exhausted, use `homelab-workflow:reviewer` plus `/homelab-workflow:review-gate` and state in a PR comment which path was used. Use context7 for current Next.js / next-intl / Auth.js docs when planning. Each milestone ends buildable and shippable.
+
+## Commands
+
+```bash
+pnpm install                      # install pinned dependencies
+pnpm dev                          # dev server, http://localhost:3000
+pnpm build                        # production build (Next standalone)
+pnpm start                        # serve the production build
+pnpm lint                         # eslint . (flat config; `next lint` no longer exists in Next 16)
+pnpm typecheck                    # tsc --noEmit
+pnpm test                         # vitest run (src/**/*.test.ts; also runs in CI)
+docker build -t furchert-ch .     # build the container image
+kubectl apply --dry-run=client -k k8s/                     # validate manifests
+kubectl get pods -n apps                                   # app pods
+kubectl -n apps port-forward svc/auth-service 8080:8080    # auth-service locally
+kubectl -n apps port-forward svc/device-service 8081:8081  # device-service locally
+```
+
+Local OIDC needs the `furchert-ch` client registered in `../auth-service` (see `DEPLOYMENT.md`) and `OIDC_CLIENT_SECRET` + `AUTH_SECRET` in `.env.local` (out of git). Callback: `http://localhost:3000/api/auth/callback/furchert-ch`.
