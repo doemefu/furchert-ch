@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Stop: run tsc --noEmit, but only if this session edited .ts/.tsx (marker set by eslint-fix.sh).
-# Exits 0 when jq or tooling is missing, no marker exists, or a previous stop-hook block is active.
+# Stop (warn-only): run tsc --noEmit if this session edited .ts/.tsx (marker set by eslint-fix.sh).
+# Always exits 0; a failure is reported as a systemMessage, never as a forced continuation.
 command -v jq >/dev/null 2>&1 || exit 0
 payload=$(cat)
 [ "$(printf '%s' "$payload" | jq -r '.stop_hook_active // false')" = "true" ] && exit 0
@@ -10,6 +10,7 @@ marker="${TMPDIR:-/tmp}/furchert-tsc-$sid"
 cd "${CLAUDE_PROJECT_DIR:-$PWD}" || exit 0
 command -v node >/dev/null 2>&1 || exit 0
 [ -x node_modules/.bin/tsc ] || exit 0
-node_modules/.bin/tsc --noEmit >&2 || exit 2
 rm -f "$marker"
+out=$(node_modules/.bin/tsc --noEmit 2>&1) && exit 0
+jq -n --arg m "tsc --noEmit failed: $(printf '%s' "$out" | head -n 20)" '{systemMessage: $m}'
 exit 0
