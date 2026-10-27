@@ -92,7 +92,7 @@ Process comes from the `homelab-workflow` plugin skills: `/homelab-workflow:star
 | `code-style-conventions.md` | TypeScript/React/Next, ETHON tokens, secrets |
 | `documentation-files.md` | README, OVERVIEW, INTERFACES, DEPLOYMENT, CONTRIBUTING, CHANGELOG |
 
-Review: request Copilot first; CodeRabbit is not installed here. If Copilot quota is exhausted, use the `reviewer` agent plus `/code-review` and state in a PR comment which path was used. Use context7 for current Next.js / next-intl / Auth.js docs when planning. Each milestone ends buildable and shippable.
+Review: request Copilot first; CodeRabbit is not installed here. If Copilot quota is exhausted, use `homelab-workflow:reviewer` plus `/homelab-workflow:review-gate` and state in a PR comment which path was used. Use context7 for current Next.js / next-intl / Auth.js docs when planning. Each milestone ends buildable and shippable.
 
 ## Commands
 
