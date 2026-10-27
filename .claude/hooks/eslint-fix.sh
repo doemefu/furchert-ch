@@ -3,7 +3,11 @@
 # Exits 0 for other files or when tooling is missing; exits 2 with findings on stderr otherwise.
 f=$(jq -r '.tool_input.file_path // empty' 2>/dev/null)
 case "$f" in *.ts|*.tsx) ;; *) exit 0 ;; esac
-root="${CLAUDE_PROJECT_DIR:-$PWD}"
+# Resolve symlinks in the directory part so a path outside the project is never linted.
+root=$(cd "${CLAUDE_PROJECT_DIR:-$PWD}" 2>/dev/null && pwd -P) || exit 0
+dir=$(cd "$(dirname "$f")" 2>/dev/null && pwd -P) || exit 0
+[ -L "$f" ] && exit 0
+f="$dir/$(basename "$f")"
 case "$f" in "$root"/*) rel="${f#"$root"/}" ;; *) exit 0 ;; esac
 case "$rel" in node_modules/*|.next/*|.claude/*) exit 0 ;; esac
 [ -f "$f" ] || exit 0
