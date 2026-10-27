@@ -1,6 +1,11 @@
+---
+paths:
+  - "**/*.md"
+---
+
 # Documentation Files — Purpose & Owner
 
-When making changes, update the relevant file(s) — the `doc-auditor` subagent (Phase 6) identifies what needs updating. Docs are written in parallel with the code change, not after.
+When making changes, update the relevant file(s) — the `homelab-workflow:doc-auditor` agent identifies what needs updating. Docs are written in parallel with the code change, not after.
 
 | File              | Audience      | Covers |
 |-------------------|---------------|--------|

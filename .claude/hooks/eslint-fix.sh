@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# PostToolUse (Edit|Write): run eslint --fix on the edited .ts/.tsx file only.
+# Exits 0 for other files or when tooling is missing; exits 2 with findings on stderr otherwise.
+f=$(jq -r '.tool_input.file_path // empty' 2>/dev/null)
+case "$f" in *.ts|*.tsx) ;; *) exit 0 ;; esac
+root="${CLAUDE_PROJECT_DIR:-$PWD}"
+case "$f" in "$root"/*) rel="${f#"$root"/}" ;; *) exit 0 ;; esac
+case "$rel" in node_modules/*|.next/*|.claude/*) exit 0 ;; esac
+[ -f "$f" ] || exit 0
+command -v node >/dev/null 2>&1 || exit 0
+cd "$root" || exit 0
+[ -x node_modules/.bin/eslint ] || exit 0
+node_modules/.bin/eslint --fix "$f" >&2 || exit 2
+exit 0

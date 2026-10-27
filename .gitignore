@@ -54,3 +54,6 @@ atlassian-ide-plugin.xml
 Thumbs.db
 /.claude/memory/
 /.claude/worklogs/
+/.claude/worktrees/
+.claude/settings.local.json
+.claude/**/.DS_Store

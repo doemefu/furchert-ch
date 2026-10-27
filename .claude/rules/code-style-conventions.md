@@ -1,3 +1,11 @@
+---
+paths:
+  - "src/**/*.{ts,tsx,css}"
+  - "src/i18n/messages/*.json"
+  - "eslint.config.mjs"
+  - "next.config.mjs"
+---
+
 # Code Style & Conventions
 
 ### TypeScript / React / Next.js
