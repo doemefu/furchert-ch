@@ -223,7 +223,7 @@
       "meta": "Tage in Zürcher Zeit · geladen {time}",
       "unavailable": "Prometheus nicht erreichbar — keine Daten angezeigt.",
       "partial": "Einige Daten konnten nicht geladen werden: {groups}. Betroffene Werte zeigen —.",
-      "restartsUnknownColours": "Neustarts konnten nicht geladen werden; Farben zeigen nur die Verfügbarkeit.",
+      "restartsUnknownColours": "Neustarts sind für einige oder alle Services unbekannt; deren Farben zeigen nur die Verfügbarkeit.",
       "empty": "Keine Workloads gefunden.",
       "groups": {
         "availability": "Verfügbarkeitsverlauf",

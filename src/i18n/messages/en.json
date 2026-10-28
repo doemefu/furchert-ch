@@ -223,7 +223,7 @@
       "meta": "Days in Europe/Zurich time · loaded {time}",
       "unavailable": "Prometheus unavailable — no data shown.",
       "partial": "Some data could not be loaded: {groups}. Affected values show —.",
-      "restartsUnknownColours": "Restarts could not be loaded; colours reflect availability only.",
+      "restartsUnknownColours": "Restarts are unknown for some or all services; their colours reflect availability only.",
       "empty": "No workloads found.",
       "groups": {
         "availability": "availability history",
