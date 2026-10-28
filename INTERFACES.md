@@ -174,8 +174,8 @@ MEM are matched to the inventory by (namespace, name) only, from pod names via
 
 Fallbacks — nothing is fabricated:
 - Inventory rejected, or empty (kube-state-metrics down looks the same): the page shows the "unavailable" notice and logs `[metrics] Prometheus unavailable: <reason>`; the same if all five queries fail, or if `ServicesShell` catches an unexpected error (logged as `[metrics] Prometheus unavailable: service health failed (<ErrorName>)`).
-- Any other group (availability, restarts, cpu, mem) rejected, or fulfilled but empty while workloads exist (a scrape gap), counts as failed: one "partial" notice names the groups, the matching values show "—" / grey bars, and the warning `[metrics] Prometheus queries failed: <group> (<Name>: <message>|empty result), …` is logged (URLs in the message redacted to `<url>`, no PromQL, no stack).
-- A workload with no restarts series (or a failed restarts group) shows restarts as unknown ("—"), never 0; colours then reflect availability only, with an extra notice when the whole group failed.
+- Any other group (availability, restarts, cpu, mem) rejected, or fulfilled but empty while workloads exist (CPU/MEM: only while at least one workload has desired > 0) (a scrape gap), counts as failed: one "partial" notice names the groups, the matching values show "—" / grey bars, and the warning `[metrics] Prometheus queries failed: <group> (<Name>: <message>|empty result), …` is logged (URLs in the message redacted to `<url>`, no PromQL, no stack).
+- A workload with no restarts series (or a failed restarts group) shows restarts as unknown ("—"), never 0; colours then reflect availability only, with an extra notice when the restarts group failed or any row with data has no restarts series.
 
 Known limitations: availability is desired vs. available/ready replicas, so
 there is no OOMKilled or crash-reason signal; restarts use `increase(...[1h])`

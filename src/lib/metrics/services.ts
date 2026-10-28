@@ -3,7 +3,8 @@ import 'server-only';
 // (issue #47). `getServiceHealth()` runs five Prometheus queries in parallel
 // and hands the results to the pure report builder in `serviceHealth.ts`.
 // Like `cluster.ts`, a failed query group degrades honestly (`available`
-// flags in the report; an empty group counts as failed while workloads exist);
+// flags in the report; an empty group counts as failed while workloads exist, CPU/MEM only while
+// at least one workload has desired > 0);
 // only a missing inventory degrades to `null`.
 import { SERVICE_HEALTH_EXCLUDE, SERVICE_HEALTH_NAMESPACES } from '@/data/service-health';
 import { shouldAttemptMetrics } from '@/metrics.env';
@@ -115,6 +116,8 @@ export async function getServiceHealth(now: Date = new Date()): Promise<ServiceH
   const inventoryOk = inventoryRes.status === 'fulfilled' && inventoryRes.value.length > 0;
   // CPU/MEM rows come from running pods: with every workload at desired 0
   // there are none, so an empty usage result is legitimate then.
+  // Reads the inventory before the exclude list on purpose: an excluded workload
+  // with desired > 0 still has running pods, so samples exist.
   const anyDesired = inventoryOk && inventoryRes.value.some((s) => s.value > 0);
   const failures: string[] = [];
   function settle<T>(res: PromiseSettledResult<T[]>, label: string, emptyIsFailure: boolean): T[] | null {

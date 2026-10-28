@@ -360,7 +360,7 @@ If any of the three is missing headers, see Troubleshooting below.
   "unavailable" means no workload inventory: Prometheus unreachable, or
   kube-state-metrics down (an empty inventory looks the same). "Partial" names
   the query groups (availability, restarts, CPU, MEM) that failed or came back
-  empty; their values show "—" / grey bars. Check `PROMETHEUS_URL` and the
+  empty (CPU/MEM: only while at least one workload has desired > 0); their values show "—" / grey bars. Check `PROMETHEUS_URL` and the
   `kube-state-metrics` / cAdvisor scrape targets, and the pod logs for
   `[metrics] Prometheus unavailable: <reason>` and
   `[metrics] Prometheus queries failed: <group> (<Name>: <message>|empty result), …`

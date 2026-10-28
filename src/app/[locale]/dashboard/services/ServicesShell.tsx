@@ -437,7 +437,7 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
         )}
         {/* Also when only some rows lack restarts data: their colours then
             reflect availability only, which the legend alone would hide. */}
-        {(!report.available.restarts || report.services.some((s) => s.restarts14d === null)) && (
+        {(!report.available.restarts || report.services.some((s) => s.restarts14d === null && s.hoursWithData14d > 0)) && (
           <p style={noteStyle}>{t('restartsUnknownColours')}</p>
         )}
         {report.services.length === 0 ? (
