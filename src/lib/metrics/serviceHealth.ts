@@ -147,14 +147,17 @@ export function buildHourGrid(nowMs: number): HourGrid {
 
 // Floor, never round up, so 99.96 % is shown as 99.9 % and not as 100 %.
 // The epsilon absorbs float noise just below a permille boundary.
+// Only exactly 1 is 100 % (e.g. 1 - 1e-13 is 99.9 %): the ratio of sums of
+// integer replica counts is exactly 1 when nothing was missing.
 export function availabilityPermille(availability: number): number {
   return availability >= 1 ? 1000 : Math.min(999, Math.floor(availability * 1000 + 1e-9));
 }
 
 // Uses the same permille as the display, so colour and shown percentage never
 // disagree. With restarts unknown (null) the colour reflects availability only.
+// A non-finite availability is treated like no data, never as green.
 export function classifyBucket(availability: number | null, restarts: number | null): BucketStatus {
-  if (availability === null) return 'nodata';
+  if (availability === null || !Number.isFinite(availability)) return 'nodata';
   const permille = availabilityPermille(availability);
   if (permille < 990) return 'red';
   if (permille < 1000 || (restarts ?? 0) >= 1) return 'amber';

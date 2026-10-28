@@ -130,6 +130,13 @@ describe('classifyBucket', () => {
     expect(classifyBucket(null, 0)).toBe('nodata');
     expect(classifyBucket(null, null)).toBe('nodata');
   });
+
+  it('S6b treats a non-finite availability as nodata, never green', () => {
+    expect(classifyBucket(Number.NaN, 0)).toBe('nodata');
+    expect(classifyBucket(Number.NaN, null)).toBe('nodata');
+    expect(classifyBucket(Number.POSITIVE_INFINITY, 0)).toBe('nodata');
+    expect(classifyBucket(Number.NEGATIVE_INFINITY, 0)).toBe('nodata');
+  });
 });
 
 describe('formatting', () => {
@@ -477,5 +484,129 @@ describe('buildServiceHealthReport', () => {
     expect(noAvail?.restarts).toBe(2);
     expect(noAvail?.availability).toBeNull();
     expect(noAvail?.status).toBe('nodata');
+  });
+
+  it('S25 colours a low-availability day red and a restart-only day amber', () => {
+    const values = new Map(everyHour(GRID, 1));
+    for (const h of hoursOfDay(GRID, '2026-10-22').slice(0, 12)) values.set(h, 0.5);
+    const restartHour = hoursOfDay(GRID, '2026-10-23')[9];
+    // A second restart inside the last 24 h pins the hour-level amber, since
+    // only those hours are exposed in `hourly`.
+    const recentRestartHour = GRID.hourStartsMs[GRID.hourStartsMs.length - 3];
+    const report = buildServiceHealthReport(
+      inputs({
+        availability: [avail('apps', 'auth-service', values)],
+        restarts: [
+          restarts('apps', 'auth-service', [
+            [restartHour, 1],
+            [recentRestartHour, 1],
+          ]),
+        ],
+      }),
+    );
+    const [svc] = report.services;
+
+    for (const day of svc.daily.filter((d) => !d.isToday)) {
+      const expected = day.date === '2026-10-22' ? 'red' : day.date === '2026-10-23' ? 'amber' : 'green';
+      expect(day.status).toBe(expected);
+    }
+    expect(svc.daily.find((d) => d.date === '2026-10-23')?.availability).toBe(1);
+    expect(svc.daily.find((d) => d.date === '2026-10-23')?.restarts).toBe(1);
+    expect(classifyBucket(1, 1)).toBe('amber');
+    for (const hour of svc.hourly) {
+      expect(hour.status).toBe(hour.startMs === recentRestartHour ? 'amber' : 'green');
+    }
+  });
+
+  it('S26 skips inventory rows with an unknown kind or no workload', () => {
+    const report = buildServiceHealthReport(
+      inputs({
+        inventory: [
+          { metric: { namespace: 'apps', workload: 'node-agent', kind: 'DaemonSet' }, value: 1 },
+          { metric: { namespace: 'apps', kind: 'Deployment' }, value: 1 },
+          { metric: { namespace: 'apps', workload: '', kind: 'Deployment' }, value: 1 },
+          { metric: { workload: 'no-namespace', kind: 'Deployment' }, value: 1 },
+        ],
+      }),
+    );
+    expect(report.services).toEqual([]);
+  });
+
+  it('S27 never lets missing hours turn a day red or amber', () => {
+    const day = hoursOfDay(GRID, '2026-10-21');
+    const report = buildServiceHealthReport(
+      inputs({ availability: [avail('apps', 'auth-service', day.slice(5, 8).map((h) => [h, 1]))] }),
+    );
+    const daily = report.services[0].daily.find((d) => d.date === '2026-10-21');
+    expect(daily?.status).toBe('green');
+    expect(daily?.hoursWithData).toBe(3);
+    expect(daily?.hoursExpected).toBe(24);
+    expect(daily?.availability).toBe(1);
+    expect(daily?.restarts).toBe(0);
+  });
+
+  it('S28 pins the F10 keying limitation', () => {
+    const last = GRID.hourStartsMs[GRID.hourStartsMs.length - 1];
+    const report = buildServiceHealthReport(
+      inputs({
+        inventory: [inv('apps', 'redis', 'Deployment'), inv('apps', 'redis', 'StatefulSet')],
+        availability: [avail('apps', 'redis', everyHour(GRID, 1), 'StatefulSet')],
+        restarts: [restarts('apps', 'redis', [[last, 1]])],
+      }),
+    );
+    const deployment = report.services.find((s) => s.kind === 'Deployment');
+    const statefulSet = report.services.find((s) => s.kind === 'StatefulSet');
+
+    // Restarts carry no kind, so both rows get the same values (documented limitation).
+    expect(deployment?.restarts24h).toBe(1);
+    expect(statefulSet?.restarts24h).toBe(1);
+    // Availability carries the kind and matches exactly.
+    expect(deployment?.daily.every((d) => d.status === 'nodata')).toBe(true);
+    expect(deployment?.availability14d).toBeNull();
+    expect(statefulSet?.daily.filter((d) => !d.isToday).every((d) => d.status === 'green')).toBe(true);
+    expect(statefulSet?.availability14d).toBe(1);
+  });
+
+  it('S29 handles duplicate points, restart rounding and duplicate usage rows', () => {
+    const [a, b] = GRID.hourStartsMs.slice(-2);
+    const sameHourTwice: PromSeries = {
+      metric: { namespace: 'apps', workload: 'auth-service', kind: 'Deployment' },
+      points: [
+        { tMs: b + H, v: 0.5 },
+        { tMs: b + H, v: 1 },
+      ],
+    };
+    const report = buildServiceHealthReport(
+      inputs({
+        availability: [sameHourTwice],
+        restarts: [
+          restarts('apps', 'auth-service', [
+            [a, -0.4],
+            [b, 0.5],
+          ]),
+        ],
+        cpu: [usage('apps', 'auth-service', 'a', 'limit', 0.2), usage('apps', 'auth-service', 'b', 'limit', 0.9)],
+        mem: [usage('apps', 'auth-service', 'b', 'limit', 0.9), usage('apps', 'auth-service', 'a', 'limit', 0.2)],
+      }),
+    );
+    const [svc] = report.services;
+    expect(svc.hourly[23].availability).toBe(1);
+    expect(svc.hourly.slice(-2).map((h) => h.restarts)).toEqual([0, 1]);
+    expect(svc.cpu).toEqual({ ratio: 0.9, basis: 'limit', container: 'b' });
+    expect(svc.mem).toEqual({ ratio: 0.9, basis: 'limit', container: 'b' });
+
+    const noCpu = buildServiceHealthReport(
+      inputs({ cpu: null, mem: [usage('apps', 'auth-service', 'a', 'limit', 0.2)] }),
+    );
+    expect(noCpu.services[0].cpu).toBeNull();
+    expect(noCpu.services[0].mem).not.toBeNull();
+    expect(noCpu.available.cpu).toBe(false);
+  });
+
+  it('S30 shows only exactly 1 as 100 %', () => {
+    const almostOne = 1 - 1e-13;
+    expect(availabilityPermille(almostOne)).toBe(999);
+    expect(formatAvailability(almostOne, 'en-GB')).toBe('99.9%');
+    expect(classifyBucket(almostOne, 0)).toBe('amber');
   });
 });
