@@ -219,18 +219,18 @@ Local dev: unless both `DATA_SERVICE_URL` and `DATA_SERVICE_TOKEN_URL` are set,
 every call is skipped (`shouldAttemptNetmon()`),
 see `.env.local.example` for the port-forward alternative.
 
-## 3. Outbound: Infomaniak SMTP (contact form)
+## 3. Outbound: iCloud SMTP (contact form)
 
-`furchert-ch` is an SMTP **client** of Infomaniak's mail service — the only
+`furchert-ch` is an SMTP **client** of iCloud Mail (moved from Infomaniak in #115, whose mail failed furchert.ch's DMARC `p=reject`) — the only
 outbound mail path in the homelab (issue #46).
 
 | Parameter | Value |
 |-----------|-------|
-| Endpoint | `mail.infomaniak.com:587` (STARTTLS, `requireTLS: true`) |
-| Auth identity | `SMTP_USER` — the mailer also sets the `From` address to this same value, since Infomaniak rejects a mismatch between the authenticated identity and `From` |
-| Env vars | `SMTP_HOST`, `SMTP_PORT` (default `587`), `SMTP_USER`, `SMTP_PASSWORD` (secret), `CONTACT_TO` (defaults to `SMTP_USER`) |
+| Endpoint | `smtp.mail.me.com:587` (STARTTLS, `requireTLS: true`) |
+| Auth identity | `SMTP_USER` — the full primary iCloud Mail address (from the Secret key `smtp-user`) with an iCloud app-specific password. `From` = `CONTACT_FROM`, a custom-domain address of the same account (`info@furchert.ch`), so SPF/DKIM/DMARC align |
+| Env vars | `SMTP_HOST`, `SMTP_PORT` (default `587`), `SMTP_USER`, `SMTP_PASSWORD` (secret), `CONTACT_FROM` (defaults to `SMTP_USER`), `CONTACT_TO` (defaults to `SMTP_USER`) |
 | Timeouts | `dnsTimeout` 5 s, `connectionTimeout` 5 s, `greetingTimeout` 5 s, `socketTimeout` 7 s — worst case before a visible error ≈ 22 s |
-| Message shape | Plain text only (no HTML part, by design); `from` = `SMTP_USER`; `to` = `CONTACT_TO`; `replyTo` = the submitter's name/email; subject `Contact form: <name>` — the 80-char cap (control characters stripped) applies to the sanitised `name` inside the subject, so the full subject is ≈ up to 95 chars |
+| Message shape | Plain text only (no HTML part, by design); `from` = `CONTACT_FROM`; `to` = `CONTACT_TO`; `replyTo` = the submitter's name/email; subject `Contact form: <name>` — the 80-char cap (control characters stripped) applies to the sanitised `name` inside the subject, so the full subject is ≈ up to 95 chars |
 | What is logged | Success: `{messageLength}` only. Failure: `{code, responseCode, command}` destructured from the nodemailer error only — never the raw error, its `message`, `response`, or `rejected`/`rejectedErrors` fields, and never the submitter's name, email, or message body. The honeypot check and rate-limit denials log nothing |
 | Rate limits | In-process (per pod) sliding window: 3 submissions / 10 min per client key (`cf-connecting-ip` → `x-forwarded-for` → `'unknown'`), 20 / hour globally; resets on pod restart (`replicas: 1`); a failed or unconfigured delivery gives the slot back (`undoContactRateLimit`) |
 

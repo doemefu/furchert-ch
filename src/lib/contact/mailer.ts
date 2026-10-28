@@ -44,8 +44,10 @@ ${input.message}
 
 -- Sent via the contact form at https://furchert.ch/contact`;
 
+  // The SMTP login (SMTP_USER) and the From address (CONTACT_FROM) differ on
+  // iCloud: the latter must be an address of the authenticated account.
   const info = await getTransporter().sendMail({
-    from: { name: 'furchert.ch contact form', address: CONTACT_ENV.SMTP_USER },
+    from: { name: 'furchert.ch contact form', address: CONTACT_ENV.CONTACT_FROM },
     to: CONTACT_ENV.CONTACT_TO,
     replyTo: { name: input.name, address: input.email },
     subject,

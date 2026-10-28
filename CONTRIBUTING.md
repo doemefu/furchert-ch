@@ -69,8 +69,8 @@ shows a "not configured" state. If you signed in before pulling #44, sign out
 and in again — older sessions carry no access token. The Users tab needs
 doemefu/homelab-auth-service#115 deployed.
 
-Local contact-form testing requires the commented `SMTP_*`/`CONTACT_TO` block
-in `.env.local.example` filled in with a real Infomaniak application
+Local contact-form testing requires the commented `SMTP_*`/`CONTACT_*` block
+in `.env.local.example` filled in with a real iCloud app-specific
 password to actually deliver mail. Left unset, submitting the form locally
 shows the visible server error by design (no fake success) — this is fine
 for UI-only work on the contact page.

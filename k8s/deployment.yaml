@@ -77,14 +77,23 @@ spec:
                 secretKeyRef:
                   name: furchert-ch-secrets
                   key: auth-secret
-            # SMTP delivery for the contact form (#46). SMTP_PASSWORD requires
-            # `furchert-ch-secrets` to carry key `smtp-password` — apply the
-            # infrastructure playbook (59_app_services.yml) before this manifest.
+            # SMTP delivery for the contact form (#46, iCloud since #115).
+            # SMTP_USER and SMTP_PASSWORD require `furchert-ch-secrets` to carry
+            # keys `smtp-user` (full primary iCloud Mail address) and
+            # `smtp-password` (iCloud app-specific password) — apply the
+            # infrastructure playbook (59_app_services.yml, homelab#255) before
+            # this manifest. CONTACT_FROM is a custom-domain address of the same
+            # iCloud account; delete it to fall back to the login address.
             - name: SMTP_HOST
-              value: "mail.infomaniak.com"
+              value: "smtp.mail.me.com"
             - name: SMTP_PORT
               value: "587"
             - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: furchert-ch-secrets
+                  key: smtp-user
+            - name: CONTACT_FROM
               value: "info@furchert.ch"
             - name: CONTACT_TO
               value: "info@furchert.ch"

@@ -26,7 +26,7 @@ including the locale-prefixed variants).
 
 The contact form posts to a typed `'use server'` action that validates the
 input, applies a honeypot and an in-process rate limiter, then delivers the
-message by authenticated SMTP (Infomaniak, `mail.infomaniak.com:587`) to
+message by authenticated SMTP (iCloud, `smtp.mail.me.com:587`) to
 `info@furchert.ch` with the submitter set as Reply-To. The success state
 still renders only on a real `{ok:true}` response (returned only once the
 mail server accepts the message), and invalid input / rate limiting / a
@@ -82,7 +82,7 @@ automated tests" half of #42 is tracked on that issue.
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (Infomaniak). The auth-service admin GUI `/dashboard/auth` (#44) is real; the device-service admin GUI (#45) is not wired yet.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) is real; the device-service admin GUI (#45) is not wired yet.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus

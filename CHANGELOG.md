@@ -204,6 +204,15 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **Contact form delivers again via iCloud SMTP** (#115, homelab#255): every
+  submission bounced because Infomaniak is not in furchert.ch's SPF and has no
+  aligned DKIM, so iCloud rejected it under DMARC `p=reject` (the form showed
+  success, the bounce was asynchronous). The mailer now sends through
+  `smtp.mail.me.com:587` as `CONTACT_FROM` (`info@furchert.ch`), authenticated
+  with `SMTP_USER` (new Secret key `smtp-user`, the primary iCloud address) and
+  an app-specific password. Apply homelab#255 and run playbook 59 before this
+  manifest (DEPLOYMENT.md "rollout order").
+
 - **Bound "Build and Push" CI runtime with `timeout-minutes` guards** (#41):
   root-caused the two known multi-hour hangs (2026-08-28 run 33155146183,
   ~4h06m; 2026-08-30 run 33333359400, ~6h00m — the latter ended only by
