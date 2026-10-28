@@ -1,8 +1,10 @@
-// Minimal typed client for the Prometheus HTTP API's instant-query endpoint
-// (issue #17). Server-only: imported exclusively from
-// `lib/metrics/cluster.ts`, which runs during SSR in `DashboardShell`. The
-// Prometheus URL and any response data never reach the browser. No new
-// dependency — uses the platform `fetch`.
+// Minimal typed client for the Prometheus HTTP API: instant queries
+// (`/api/v1/query`, issue #17) and range queries (`/api/v1/query_range`,
+// #47). Server-only (`import 'server-only'`): imported from
+// `lib/metrics/cluster.ts` (DashboardShell) and `lib/metrics/services.ts`
+// (ServicesShell), both of which run during SSR. The Prometheus URL and any
+// response data never reach the browser. No new dependency — uses the
+// platform `fetch`.
 import 'server-only';
 import { METRICS_ENV } from '@/metrics.env';
 

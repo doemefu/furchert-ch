@@ -3,7 +3,8 @@ import 'server-only';
 // (issue #47). `getServiceHealth()` runs five Prometheus queries in parallel
 // and hands the results to the pure report builder in `serviceHealth.ts`.
 // Like `cluster.ts`, a failed query group degrades honestly (`available`
-// flags in the report); only a missing inventory degrades to `null`.
+// flags in the report; an empty group counts as failed while workloads exist);
+// only a missing inventory degrades to `null`.
 import { SERVICE_HEALTH_EXCLUDE, SERVICE_HEALTH_NAMESPACES } from '@/data/service-health';
 import { shouldAttemptMetrics } from '@/metrics.env';
 import { queryInstant, queryRange } from './prometheus';
@@ -85,40 +86,67 @@ function unavailable(reason: string): null {
   return null;
 }
 
+// `name: message` of a rejection, nothing else (no `cause`, no stack). A URL
+// inside the message (e.g. fetch's "Failed to parse URL from …") is redacted.
+function reasonOf(err: unknown): string {
+  if (typeof err !== 'object' || err === null) return 'unknown error';
+  const { name, message } = err as { name?: unknown; message?: unknown };
+  const text = `${typeof name === 'string' ? name : 'Error'}: ${typeof message === 'string' ? message : ''}`;
+  return text.replace(/[a-z][a-z0-9+.-]*:\/\/\S+/gi, '<url>').slice(0, 200);
+}
+
 export async function getServiceHealth(now: Date = new Date()): Promise<ServiceHealthReport | null> {
   if (!shouldAttemptMetrics()) return null;
 
   const grid = buildHourGrid(now.getTime());
-  const [inventoryRes, availabilityRes, restartsRes, cpuRes, memRes] = await Promise.allSettled([
+  const settled = await Promise.allSettled([
     queryInstant(INVENTORY_QUERY),
     queryRange(AVAILABILITY_QUERY, grid.range),
     queryRange(RESTARTS_QUERY, grid.range),
     queryInstant(CPU_QUERY),
     queryInstant(MEM_QUERY),
   ]);
+  const [inventoryRes, availabilityRes, restartsRes, cpuRes, memRes] = settled;
 
-  const labelled = [
-    [inventoryRes, 'inventory'],
-    [availabilityRes, 'availability'],
-    [restartsRes, 'restarts'],
-    [cpuRes, 'cpu'],
-    [memRes, 'mem'],
-  ] as const;
-  const rejected = labelled.filter(([res]) => res.status === 'rejected').map(([, label]) => label);
-  if (rejected.length === labelled.length) return unavailable('all service-health queries failed');
-  if (rejected.length > 0) console.warn(`[metrics] Prometheus queries failed: ${rejected.join(', ')}`);
+  // With a non-empty inventory, a fulfilled but empty group means the data is
+  // missing (e.g. a scrape gap), not that everything is fine: it is reported
+  // and passed on as failed, so the page shows a partial notice instead of
+  // zero restarts (green) or silent "—" usage.
+  const inventoryOk = inventoryRes.status === 'fulfilled' && inventoryRes.value.length > 0;
+  const failures: string[] = [];
+  function settle<T>(res: PromiseSettledResult<T[]>, label: string, emptyIsFailure: boolean): T[] | null {
+    if (res.status === 'rejected') {
+      failures.push(`${label} (${reasonOf(res.reason)})`);
+      return null;
+    }
+    if (emptyIsFailure && res.value.length === 0) {
+      failures.push(`${label} (empty result)`);
+      return null;
+    }
+    return res.value;
+  }
+  const inventory = settle(inventoryRes, 'inventory', false);
+  const availability = settle(availabilityRes, 'availability', inventoryOk);
+  const restarts = settle(restartsRes, 'restarts', inventoryOk);
+  const cpu = settle(cpuRes, 'cpu', inventoryOk);
+  const mem = settle(memRes, 'mem', inventoryOk);
 
-  if (inventoryRes.status === 'rejected') return unavailable('service inventory query failed');
+  if (settled.every((res) => res.status === 'rejected')) {
+    return unavailable(`all service-health queries failed: ${failures.join(', ')}`);
+  }
+  if (failures.length > 0) console.warn(`[metrics] Prometheus queries failed: ${failures.join(', ')}`);
+
+  if (inventory === null) return unavailable('service inventory query failed');
   // kube-state-metrics being down looks exactly like an empty inventory.
-  if (inventoryRes.value.length === 0) return unavailable('no workload series');
+  if (inventory.length === 0) return unavailable('no workload series');
 
   return buildServiceHealthReport({
     grid,
-    inventory: inventoryRes.value,
-    availability: availabilityRes.status === 'fulfilled' ? availabilityRes.value : null,
-    restarts: restartsRes.status === 'fulfilled' ? restartsRes.value : null,
-    cpu: cpuRes.status === 'fulfilled' ? cpuRes.value : null,
-    mem: memRes.status === 'fulfilled' ? memRes.value : null,
+    inventory,
+    availability,
+    restarts,
+    cpu,
+    mem,
     exclude: SERVICE_HEALTH_EXCLUDE,
   });
 }

@@ -9,6 +9,7 @@ import { useState, type ReactNode } from 'react';
 
 export function StripToggle({
   id,
+  groupLabel,
   label,
   todayColor,
   todayOpacity,
@@ -17,6 +18,7 @@ export function StripToggle({
   hourly,
 }: {
   id: string;
+  groupLabel: string;
   label: string;
   todayColor: string;
   todayOpacity: number;
@@ -28,7 +30,7 @@ export function StripToggle({
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+      <div role="group" aria-label={groupLabel} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
         {pastBars}
         {/* Vertical padding only (offset by the negative margin) for a larger
             hit area without widening the 3px bar gap. No inline `outline`,

@@ -535,7 +535,10 @@ describe('buildServiceHealthReport', () => {
   it('S27 never lets missing hours turn a day red or amber', () => {
     const day = hoursOfDay(GRID, '2026-10-21');
     const report = buildServiceHealthReport(
-      inputs({ availability: [avail('apps', 'auth-service', day.slice(5, 8).map((h) => [h, 1]))] }),
+      inputs({
+        availability: [avail('apps', 'auth-service', day.slice(5, 8).map((h) => [h, 1]))],
+        restarts: [restarts('apps', 'auth-service', [[day[5], 0]])],
+      }),
     );
     const daily = report.services[0].daily.find((d) => d.date === '2026-10-21');
     expect(daily?.status).toBe('green');
@@ -608,5 +611,31 @@ describe('buildServiceHealthReport', () => {
     expect(availabilityPermille(almostOne)).toBe(999);
     expect(formatAvailability(almostOne, 'en-GB')).toBe('99.9%');
     expect(classifyBucket(almostOne, 0)).toBe('amber');
+  });
+
+  it('S31 leaves restarts unknown for a workload without a restarts series', () => {
+    const report = buildServiceHealthReport(
+      inputs({
+        inventory: [inv('apps', 'auth-service'), inv('apps', 'n8n')],
+        availability: [avail('apps', 'auth-service', everyHour(GRID, 1)), avail('apps', 'n8n', everyHour(GRID, 1))],
+        // Only n8n has a series, with a single point; its other hours count as 0.
+        restarts: [restarts('apps', 'n8n', [[GRID.hourStartsMs[0], 0]])],
+      }),
+    );
+    const byName = Object.fromEntries(report.services.map((s) => [s.name, s]));
+    const missing = byName['auth-service'];
+
+    expect(report.available.restarts).toBe(true);
+    expect(missing.hourly.every((h) => h.restarts === null)).toBe(true);
+    expect(missing.daily.every((d) => d.restarts === null)).toBe(true);
+    expect(missing.restarts24h).toBeNull();
+    expect(missing.restarts14d).toBeNull();
+    // Colours then reflect availability only.
+    expect(missing.daily.every((d) => d.status === 'green')).toBe(true);
+
+    expect(byName.n8n.hourly.every((h) => h.restarts === 0)).toBe(true);
+    expect(byName.n8n.daily.every((d) => d.restarts === 0)).toBe(true);
+    expect(byName.n8n.restarts24h).toBe(0);
+    expect(byName.n8n.restarts14d).toBe(0);
   });
 });

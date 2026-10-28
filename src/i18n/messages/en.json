@@ -236,7 +236,8 @@
         "green": "100% available, no restarts",
         "amber": "≥ 99% available or ≥ 1 restart",
         "red": "< 99% available",
-        "nodata": "No data"
+        "nodata": "No data",
+        "todayHint": "Rightmost bar = today; click it for the last 24 h"
       },
       "cpu": "CPU",
       "mem": "MEM",

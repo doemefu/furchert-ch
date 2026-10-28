@@ -31,7 +31,7 @@ export interface HourlyAvailability {
   startMs: number;
   /** [0,1]; null = no samples (did not exist, desired 0 all hour, or group failed). */
   availability: number | null;
-  /** Integer ≥ 0; null = restarts group failed. */
+  /** Integer ≥ 0; null = restarts group failed or no restarts series for this workload. */
   restarts: number | null;
   ongoing: boolean;
   status: BucketStatus;
@@ -46,7 +46,7 @@ export interface DailyAvailability {
   hoursWithData: number;
   /** Mean of the non-null hourly values; null if hoursWithData = 0. */
   availability: number | null;
-  /** Sum over ALL hours of the day, independent of hoursWithData; null only if the restarts group failed. */
+  /** Sum over ALL hours of the day, independent of hoursWithData; null if the restarts group failed or the workload has no restarts series. */
   restarts: number | null;
   isToday: boolean;
   /** Classified from the daily aggregate, not from the worst hour. */
@@ -234,8 +234,8 @@ function meanOf(values: HourValues): { mean: number | null; count: number } {
   return { mean: count === 0 ? null : sum / count, count };
 }
 
-function sumOf(values: HourValues, groupAvailable: boolean): number | null {
-  if (!groupAvailable) return null;
+function sumOf(values: HourValues, known: boolean): number | null {
+  if (!known) return null;
   return values.reduce<number>((acc, v) => acc + (v ?? 0), 0);
 }
 
@@ -291,8 +291,12 @@ export function buildServiceHealthReport(inputs: ServiceHealthInputs): ServiceHe
   const services: ServiceHealth[] = [...inventory.entries()].map(([key, row]) => {
     const workloadKey = `${row.namespace}/${row.name}`;
     const availValues = availability.get(key) ?? noHours;
-    // Hours without a restarts point count as 0 while the group is fulfilled.
-    const restartValues = restartsAvailable ? (restarts.get(workloadKey) ?? noHours).map((v) => v ?? 0) : noHours;
+    // Restarts are known only if the group was fulfilled AND this workload has
+    // a series; a missing series is unknown (null), never 0. Inside an existing
+    // series, hours without a point count as 0.
+    const restartSeries = restartsAvailable ? restarts.get(workloadKey) : undefined;
+    const restartsKnown = restartSeries !== undefined;
+    const restartValues = restartSeries ? restartSeries.map((v) => v ?? 0) : noHours;
 
     const hours: HourlyAvailability[] = grid.hourStartsMs.map((startMs, i) => ({
       startMs,
@@ -306,7 +310,7 @@ export function buildServiceHealthReport(inputs: ServiceHealthInputs): ServiceHe
     const daily: DailyAvailability[] = grid.dayKeys.map((date) => {
       const idx = hoursByDay.get(date) ?? [];
       const { mean, count } = meanOf(idx.map((i) => availValues[i]));
-      const dayRestarts = sumOf(idx.map((i) => restartValues[i]), restartsAvailable);
+      const dayRestarts = sumOf(idx.map((i) => restartValues[i]), restartsKnown);
       return {
         date,
         startMs: grid.hourStartsMs[idx[0]],
@@ -333,8 +337,8 @@ export function buildServiceHealthReport(inputs: ServiceHealthInputs): ServiceHe
       availability24h: avail24h.mean,
       availability14d: avail14d.mean,
       hoursWithData14d: avail14d.count,
-      restarts24h: sumOf(hourly.map((h) => h.restarts), restartsAvailable),
-      restarts14d: sumOf(restartValues, restartsAvailable),
+      restarts24h: sumOf(hourly.map((h) => h.restarts), restartsKnown),
+      restarts14d: sumOf(restartValues, restartsKnown),
     };
   });
 

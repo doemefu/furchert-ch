@@ -22,6 +22,7 @@ import {
   type MetricGroup,
   type ResourceUsage,
   type ServiceHealth,
+  type ServiceHealthReport,
 } from '@/lib/metrics/serviceHealth';
 import { LOCALE_TAG } from '../datetime';
 import { StripToggle } from './StripToggle';
@@ -265,8 +266,15 @@ function ServiceRow({ svc, windowHours, fmt, t }: { svc: ServiceHealth; windowHo
   const hoursWithData24h = svc.hourly.filter((h) => h.availability !== null).length;
   const pct = (a: number | null) => (a === null ? '—' : formatAvailability(a, fmt.tag));
   const num = (n: number | null) => (n === null ? '—' : fmt.int(n));
-  const cov24 = hoursWithData24h < HOURS_SHOWN ? t('coverage', { hours: hoursWithData24h }) : undefined;
-  const cov14 = svc.hoursWithData14d < windowHours ? t('coverage', { hours: svc.hoursWithData14d }) : undefined;
+  // Coverage hints only accompany a value; "—" needs no "based on 0 h".
+  const cov24 =
+    svc.availability24h !== null && hoursWithData24h < HOURS_SHOWN
+      ? t('coverage', { hours: hoursWithData24h })
+      : undefined;
+  const cov14 =
+    svc.availability14d !== null && svc.hoursWithData14d < windowHours
+      ? t('coverage', { hours: svc.hoursWithData14d })
+      : undefined;
 
   return (
     <li style={rowStyle}>
@@ -305,17 +313,14 @@ function ServiceRow({ svc, windowHours, fmt, t }: { svc: ServiceHealth; windowHo
         <div style={microLabel}>{t('daily')}</div>
         <StripToggle
           id={panelId}
+          groupLabel={t('dailyAria', { name: svc.name })}
           label={`${t('toggleLabel', { name: svc.name })} · ${todayTitle}`}
           todayColor={BUCKET_COLOR[todayStatus]}
           todayOpacity={bucketOpacity(todayStatus)}
           todayTitle={todayTitle}
-          pastBars={
-            <div role="group" aria-label={t('dailyAria', { name: svc.name })} style={{ display: 'flex', gap: 3 }}>
-              {past.map((d) => (
-                <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} width={7} height={12} />
-              ))}
-            </div>
-          }
+          pastBars={past.map((d) => (
+            <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} width={7} height={12} />
+          ))}
           hourly={<HourlyStrip svc={svc} fmt={fmt} t={t} />}
         />
       </div>
@@ -377,6 +382,7 @@ function Legend({ t }: { t: Translate }) {
           {t(`legend.${s}`)}
         </span>
       ))}
+      <span>{t('legend.todayHint')}</span>
     </div>
   );
 }
@@ -385,7 +391,15 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
   const t = await getTranslations('dashboard.services');
   const fmt = makeFormatters(locale);
   const now = new Date();
-  const report = await getServiceHealth(now);
+  // getServiceHealth degrades to null itself; an unexpected throw is treated
+  // the same way, so the page still renders the unavailable notice.
+  let report: ServiceHealthReport | null = null;
+  try {
+    report = await getServiceHealth(now);
+  } catch (err) {
+    const name = err instanceof Error ? err.name : 'unknown';
+    console.warn(`[metrics] Prometheus unavailable: service health failed (${name})`);
+  }
 
   const failed = report ? GROUP_ORDER.filter((g) => !report.available[g]) : [];
   const time = fmt.time(report ? report.generatedAtMs : now.getTime());
