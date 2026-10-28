@@ -184,13 +184,14 @@ provision the secret via SOPS. furchert-ch never edits secret/age/`.sops.*` file
 
 ### Contact-form SMTP secret — rollout order (#46, #115)
 
-The infrastructure PR that adds `smtp-password` (#46) and `smtp-user` (#115, homelab#255) to `furchert-ch-secrets` (via
+The infrastructure PR that adds `smtp-password` (#46) and `smtp-user` (#115,
+doemefu/homelab#256 for issue homelab#255) to `furchert-ch-secrets` (via
 `59_app_services.yml`) must be **merged and the playbook run before** this
 repo's `k8s/deployment.yaml` change (which references that secret key) is
 applied. Applying this repo's manifest first makes the pod enter
 `CreateContainerConfigError`, referencing the missing key (`smtp-user` for #115).
 
-**Do not merge the #115 PR before the homelab#255 PR is merged and
+**Do not merge the #115 PR before doemefu/homelab#256 is merged and
 `59_app_services.yml` has been run; verify with the key check first.**
 
 **Pre-merge check** (operator, after running the playbook):
@@ -330,22 +331,23 @@ If any of the three is missing headers, see Troubleshooting below.
 - **`EAUTH` / `535` in the `[contact] delivery failed` log line** — the
   app-specific password is wrong or revoked, or `smtp-user` is not the full
   primary iCloud Mail address (the short mail name does not work; a non-iCloud
-  Apple Account address fails with `550 5.1.1 Mailbox does not exist`). Regenerate
-  the app-specific password, update the SOPS var, run playbook 59, then
+  Apple Account address fails with `550 5.1.1 Mailbox does not exist`). Fix the
+  matching variable (`furchert_ch_smtp_password` with a new app-specific
+  password, or `furchert_ch_smtp_user`), run playbook 59, then
   `kubectl -n apps delete pod -l app=furchert-ch` (env is read at start; a
   Secret change does not restart the pod). Note: changing the Apple Account
   password revokes **all** app-specific passwords, which also breaks mcp-hub
   (`auth_expired`) and the contact form (EAUTH).
 - **Sender rejection (5xx) on send** — `CONTACT_FROM` (`info@furchert.ch`) must
   be an address of the same iCloud account (Settings → Custom Email Domain).
-  Rollback (a): delete the `CONTACT_FROM` env entry in `k8s/deployment.yaml`
+  Rollback: delete the `CONTACT_FROM` env entry in `k8s/deployment.yaml`
   (manifest only, no image build); `From` then falls back to the primary
   iCloud address.
 - **`ETIMEDOUT` / `ECONNECTION`** — outbound TCP 587 from the cluster is
   blocked (confirmed open as of 2026-09-13's egress probe, but re-verify if
-  the ISP or ingress changes); try `SMTP_PORT=465` (the mailer sets
-  `secure: true` automatically at that port) before assuming a code
-  regression.
+  the ISP or ingress changes); check egress to `smtp.mail.me.com:587` before
+  assuming a code regression. Apple documents only port 587 (STARTTLS) for
+  iCloud SMTP, so do not rely on `SMTP_PORT=465`.
 - **Contact form rejects everything with `errorRateLimited`** — either
   genuine abuse tripped the 20/hour global cap (`INTERFACES.md` §3), or
   (less likely) iCloud's own sending quota (about 1000 messages/day, versus
