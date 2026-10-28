@@ -71,7 +71,7 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 |-----------|---------|---------|
 | `auth-secret` | `AUTH_SECRET` | Auth.js v5 session encryption (`openssl rand -base64 33`; SOPS var `furchert_ch_auth_secret`) |
 | `oidc-client-secret` | `OIDC_CLIENT_SECRET` | `furchert-ch` OIDC client secret, **plaintext** (no `{noop}` prefix). The playbook sets it from the same SOPS var (`auth_service_furchert_ch_client_secret`) that auth-service stores `{noop}`-prefixed, so the two match by construction. |
-| `smtp-user` | `SMTP_USER` | iCloud SMTP login (SOPS var `furchert_ch_smtp_user`, #115): the **full primary iCloud Mail address** (name@icloud.com / @me.com / @mac.com), **not the short mail name mcp-hub uses** for its `icloud-username` |
+| `smtp-user` | `SMTP_USER` | iCloud SMTP login (SOPS var `furchert_ch_smtp_user`, #115): the **full primary iCloud Mail address** (name@icloud.com / @me.com / @mac.com), **not the short mail name mcp-hub uses** for its `icloud-username`, and **not a non-iCloud Apple Account address** (e.g. a Gmail or university address — iCloud answers `550 5.1.1 Mailbox does not exist`) |
 | `smtp-password` | `SMTP_PASSWORD` | Dedicated iCloud app-specific password labelled "furchert-ch contact SMTP" (contact-form SMTP; SOPS var `furchert_ch_smtp_password`; created at account.apple.com → Sign-In and Security → App-Specific Passwords; never shared with mcp-hub, so it can be revoked alone) |
 
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
@@ -329,7 +329,8 @@ If any of the three is missing headers, see Troubleshooting below.
   helper.
 - **`EAUTH` / `535` in the `[contact] delivery failed` log line** — the
   app-specific password is wrong or revoked, or `smtp-user` is not the full
-  primary iCloud Mail address (the short mail name does not work). Regenerate
+  primary iCloud Mail address (the short mail name does not work; a non-iCloud
+  Apple Account address fails with `550 5.1.1 Mailbox does not exist`). Regenerate
   the app-specific password, update the SOPS var, run playbook 59, then
   `kubectl -n apps delete pod -l app=furchert-ch` (env is read at start; a
   Secret change does not restart the pod). Note: changing the Apple Account
