@@ -7,6 +7,8 @@ The single web frontend for the doemefu homelab — Dominic Furchert's personal 
 - **Private `/dashboard`** (OIDC-gated via `auth.furchert.ch`): homelab overview
   with live cluster/app metrics from Prometheus (server-side); ADMIN-only
   `/dashboard/network` with inbound, LAN, egress and login data from data-service (NM-1…NM-4); ADMIN-only
+  `/dashboard/services` (per-workload CPU/MEM utilization, 14-day availability and
+  restarts from Prometheus, #47); ADMIN-only
   `/dashboard/auth` (users, device clients, JWKS from `homelab-auth-service`'s REST
   API, #44); the `homelab-device-service` admin GUI follows with #45.
 - **`/automation` (incl. `/automation/scan`) is a visual mockup only** — no backend.
@@ -38,6 +40,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | — | `/dashboard/network` egress section (NM-2, #63) | done |
 | — | `/dashboard/network` logins section (NM-4, #64) | done |
 | — | `/dashboard/auth` auth-service admin GUI (#44) | done |
+| — | `/dashboard/services` per-service utilization (#47) | done |
 
 ## Documentation
 

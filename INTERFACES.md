@@ -6,7 +6,8 @@
 > of issue #44 (device-service follows with #45). §3 (outbound SMTP for the contact form) is
 > implemented as of issue #46. §2's data-service netmon read API (NM-1) is
 > implemented as of issue #61; its LAN endpoints (NM-3) as of issue #62; its egress endpoint (NM-2) as of
-> issue #63; its logins endpoints (NM-4) as of issue #64.
+> issue #63; its logins endpoints (NM-4) as of issue #64. §2's Prometheus
+> service-health queries (`/dashboard/services`) are implemented as of issue #47.
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -118,9 +119,10 @@ labelled placeholders — never fabricated data.
 ### Prometheus — `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090` (issue #17)
 
 Read-only, unauthenticated (plain HTTP, no NetworkPolicy restricting `apps` →
-`monitoring`), consumed only from `DashboardShell` (a Server Component) via
-`src/lib/metrics/cluster.ts` — never through a route handler and never
-reachable from the browser. Four instant queries (`POST /api/v1/query`,
+`monitoring`), consumed from two Server Components — `DashboardShell` via
+`src/lib/metrics/cluster.ts` (#17) and `ServicesShell` via
+`src/lib/metrics/services.ts` (#47) — never through a route handler and never
+reachable from the browser. Both use the same `PROMETHEUS_URL`. Four instant queries (`POST /api/v1/query`,
 2.5 s timeout each, run in parallel) power the `/dashboard` cluster strip and
 the workload-backed app tiles:
 
@@ -132,6 +134,61 @@ the workload-backed app tiles:
 Any failure (unreachable, timeout, malformed response, empty result) degrades
 the dashboard to an honest "unavailable" fallback instead of fabricating
 data — see `OVERVIEW.md`.
+
+**Service health (#47)** — `/[locale]/dashboard/services`, ADMIN only (the page
+checks the role before `ServicesShell` renders, so nothing is queried for
+anyone else). `getServiceHealth()` runs five queries in parallel
+(`Promise.allSettled`): inventory, CPU and MEM as instant queries
+(`POST /api/v1/query`, 2.5 s) and availability and restarts as range queries
+(`POST /api/v1/query_range`, 5 s) — the first use of `query_range` here,
+via `queryRange()` in `src/lib/metrics/prometheus.ts`. Scope:
+`src/data/service-health.ts` — namespaces `apps` and `homeassistant`
+(`NSM` below = `namespace=~"apps|homeassistant"`), minus the exact-match
+exclude list (`apps/mosquitto-exporter`), applied in TypeScript. The queries
+as built in `src/lib/metrics/services.ts` (`${NSM}` expanded, `POD_RE` =
+`^(.+?)(?:-[a-z0-9]{8,10}-[a-z0-9]{5}|-[0-9]+)$`, which maps a pod name to its
+workload):
+
+- Inventory (instant): `max by (namespace, deployment) (kube_deployment_spec_replicas{NSM})` and `max by (namespace, statefulset) (kube_statefulset_replicas{NSM})`, each `label_replace`d to `workload` + `kind`, joined with `or`. Desired replicas decide which rows exist (desired 0 is kept, shown as "scaled to zero").
+- Availability (range, hourly): `clamp_max(sum by (namespace, deployment) (sum_over_time(kube_deployment_status_replicas_available{NSM}[1h])) / (sum by (namespace, deployment) (sum_over_time(kube_deployment_spec_replicas{NSM}[1h])) > 0), 1)`, and the StatefulSet twin with `kube_statefulset_status_replicas_ready` / `kube_statefulset_replicas`, joined with `or`. The `> 0` drops hours with desired 0 all hour (no data, not "down").
+- Restarts (range, hourly): `sum by (namespace, workload) (label_replace(increase(kube_pod_container_status_restarts_total{NSM}[1h]), "workload", "$1", "pod", POD_RE))`
+- CPU (instant): `topk by (namespace, workload) (1, label_replace(<ratio>, "workload", "$1", "pod", POD_RE))`, where `<ratio>` = usage / limit per container, with usage `max by (namespace, pod, container) (rate(container_cpu_usage_seconds_total{NSM, container!="", container!="POD"}[5m]))` and limit `max by (namespace, pod, container) (kube_pod_container_resource_limits{NSM, resource="cpu", unit="core"}) > 0`, joined `on (namespace, pod, container)`; for containers without a limit the same ratio against `kube_pod_container_resource_requests` is used (`or on (namespace, pod, container)`). Each ratio carries a `basis` label (`limit`/`request`); the UI marks request-based values.
+- MEM (instant): as CPU, with usage `max by (namespace, pod, container) (container_memory_working_set_bytes{NSM, container!="", container!="POD"})` and `resource="memory", unit="byte"`.
+
+Window and bucketing: `DAYS_SHOWN` = 14 Europe/Zurich days (13 full days plus
+today; 23/24/25-hour days on DST changes, built hour by hour in
+`src/lib/metrics/serviceHealth.ts`) — chosen to stay inside the 14 d
+Prometheus retention (a longer window is tracked in doemefu/homelab#247). The
+range runs hourly (`step=3600`); a point at T covers (T-1h, T], so it is
+mapped to the hour starting at T-1h, and `end` lies in the future while the
+last hour is ongoing. Hourly colours: red below 99.0 %, amber below 100 % or
+with at least one restart, green otherwise, grey = no data. Percentages are
+floored (99.96 % shows as 99.9 %; only exactly 1 is 100 %). Daily values are
+the mean of the hours with data, 14 d availability is hour-weighted; restarts
+are rounded per hour and then summed.
+
+Label assumptions: workloads come from `kube-state-metrics` (`deployment`,
+`statefulset` labels) and `container_*` series from cAdvisor; restarts, CPU and
+MEM are matched to the inventory by (namespace, name) only, from pod names via
+`POD_RE`.
+
+Fallbacks — nothing is fabricated:
+- Inventory rejected, or empty (kube-state-metrics down looks the same): the page shows the "unavailable" notice and logs `[metrics] Prometheus unavailable: <reason>`; the same if all five queries fail, or if `ServicesShell` catches an unexpected error (logged as `[metrics] Prometheus unavailable: service health failed (<ErrorName>)`).
+- Any other group (availability, restarts, cpu, mem) rejected, or fulfilled but empty while workloads exist (CPU/MEM: only while at least one workload has desired > 0) (a scrape gap), counts as failed: one "partial" notice names the groups, the matching values show "—" / grey bars, and the warning `[metrics] Prometheus queries failed: <group> (<Name>: <message>|empty result), …` is logged (URLs in the message redacted to `<url>`, no PromQL, no stack).
+- A workload with no restarts series (or a failed restarts group) shows restarts as unknown ("—"), never 0; colours then reflect availability only, with an extra notice when the restarts group failed or any row with data has no restarts series.
+
+Known limitations: availability is desired vs. available/ready replicas, so
+there is no OOMKilled or crash-reason signal; restarts use `increase(...[1h])`
+over non-overlapping hourly windows, so a counter jump between two windows can
+be missed (about 1 % per restart at a 30 s scrape interval) and very
+short-lived pods can be over-counted by extrapolation; availability is clamped
+per hour, not per sample, so a rolling-update surge can hide a one-scrape dip
+within the same hour; the usage figure is the single
+highest container, not a pod average; a Deployment and a StatefulSet with the
+same name in one namespace share one restarts/CPU/MEM series (matched by name
+only); past-day details (availability, restarts, hours covered) are available
+only as bar tooltips; CPU against a request can exceed 100 % (not clamped; the
+meter fill is capped).
 
 ### data-service — `http://data-service.apps.svc.cluster.local:8082` (NM-1, #61; NM-3, #62; NM-2, #63; NM-4, #64)
 

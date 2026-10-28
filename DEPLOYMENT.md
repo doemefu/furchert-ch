@@ -78,7 +78,8 @@ Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 `https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service (`AUTH_SERVICE_URL`, #44, see
 below) / device-service (#45); `PROMETHEUS_URL` — base URL of
 `kube-prometheus-stack-prometheus` (issue #17), read server-side only for the
-`/dashboard` live cluster/app metrics. Defaults to
+`/dashboard` live cluster/app metrics and the ADMIN-only
+`/dashboard/services` page (#47; no additional env, secret or manifest change). Defaults to
 `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
 if unset — set explicitly in `k8s/deployment.yaml` anyway (explicit over
 implicit). Optional by design: an unreachable/unset Prometheus degrades the
@@ -355,6 +356,17 @@ If any of the three is missing headers, see Troubleshooting below.
   and check pod logs for `[metrics] Prometheus unavailable: <reason>` /
   `[metrics] Prometheus queries failed: <cpu|mem|ready|workloads>` (terse
   message-only lines by design, no stack traces).
+- **`/dashboard/services` shows "unavailable" or a "partial" notice** (#47) —
+  "unavailable" means no workload inventory: Prometheus unreachable, or
+  kube-state-metrics down (an empty inventory looks the same). "Partial" names
+  the query groups (availability, restarts, CPU, MEM) that failed or came back
+  empty (CPU/MEM: only while at least one workload has desired > 0); their values show "—" / grey bars. Check `PROMETHEUS_URL` and the
+  `kube-state-metrics` / cAdvisor scrape targets, and the pod logs for
+  `[metrics] Prometheus unavailable: <reason>` and
+  `[metrics] Prometheus queries failed: <group> (<Name>: <message>|empty result), …`
+  (terse, URLs redacted, no PromQL). Rows missing entirely: the workload is
+  outside `apps`/`homeassistant` or on the exclude list in
+  `src/data/service-health.ts`.
 - **"Build and Push" run hangs** — historical (QEMU removed by #48). Root-caused
   2026-09-04 (issue #41): the confirmed multi-hour hangs (run 33155146183,
   2026-08-28, ~4 h 06 m; run 33333359400, 2026-08-30, ~6 h 00 m, ended by

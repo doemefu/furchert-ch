@@ -28,6 +28,18 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **`/dashboard/services` — service utilization and availability** (#47):
+  ADMIN-only page, new Services tab in the dev-area subnav. Per Deployment and
+  StatefulSet in `apps` and `homeassistant` (exclude list in
+  `src/data/service-health.ts`): CPU and MEM as a share of the highest
+  container's limit (request as marked fallback), a 14-day availability strip
+  (13 full Europe/Zurich days plus today) whose today bar expands a last-24-hours
+  hourly strip, and 24 h / 14 d availability and restart totals. Live from
+  Prometheus server-side (five queries; first `query_range` use, see
+  `INTERFACES.md` §2); failed or empty query groups degrade to "—" / grey bars
+  with a partial notice, never fabricated data. The 14-day window matches the
+  Prometheus retention; a longer window is tracked in doemefu/homelab#247. No
+  new dependency, env var or manifest change.
 - **`/dashboard/auth` — auth-service admin GUI** (#44, Epic #43; contract
   `../auth-service/INTERFACES.md` §4/§8, ported from the prototype
   `auth-admin.jsx`): ADMIN-only page with Overview (live UP/DOWN, user and

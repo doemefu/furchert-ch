@@ -53,6 +53,7 @@ mailer.
 |-------|------|--------|
 | `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — the Auth Service subnav tab and its tile's "Manage" link open `/dashboard/auth` (#44); the Device Service tab and the IoT Platform "Manage" button stay visibly disabled until #45 |
 | `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`, LAN section (connections per port by source, UFW blocks as a lower bound, SSH auth outcomes), egress section (top external destinations per workload with FQDN or IP, bytes sent/received, connects, "new" badge), logins section (outcome totals, stacked timeline, top source IPs by failed and locked attempts, accounts, login events filterable by outcome with paging); window `?window=24h\|7d\|30d` | **live (NM-1, #61; LAN NM-3, #62; egress NM-2, #63; logins NM-4, #64)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
+| `/[locale]/dashboard/services` | Service utilization and availability (ADMIN only): one row per Deployment/StatefulSet in `apps` and `homeassistant` (minus an exclude list), CPU and MEM as a share of the highest container's limit (request as marked fallback), a 14-day availability strip (13 full Europe/Zurich days + today; colour = availability and restarts) whose today bar expands a last-24-hours hourly strip, availability and restart totals for 24 h and 14 d | **live (#47)** — live Prometheus (`INTERFACES.md` §2 "Prometheus"); non-ADMIN users see a "no access" state |
 | `/[locale]/dashboard/auth` | auth-service admin GUI (ADMIN only): tabs `?tab=overview\|users\|clients\|sessions\|jwks\|audit`; UP/DOWN health pill; users list (50/page) with search/filters, create, edit, delete and admin password reset; device clients list/register/revoke with the generated secret shown exactly once; JWKS keys; Sessions & tokens and Audit log are labelled "not available" placeholders (no auth-service API) | **live (#44)** — real auth-service REST API with the admin's own access token (`INTERFACES.md` §2 "auth-service"); the Users tab shows "not available yet" until doemefu/homelab-auth-service#115; sessions from before #44 get a "sign in again" notice; non-ADMIN users see "no access" |
 | `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 (#45) |
 
@@ -60,7 +61,7 @@ mailer.
 PKCE). The authoritative gate is a server-side `auth()` check in the page (and in
 every admin Server Action, which repeats the session + `role === 'ADMIN'` +
 access-token checks). ADMIN-only pages
-(`/dashboard/network`, `/dashboard/auth`) additionally check `asRole(session.user?.role) ===
+(`/dashboard/network`, `/dashboard/services`, `/dashboard/auth`) additionally check `asRole(session.user?.role) ===
 'ADMIN'` in the page and render the shared `NoAccess` state otherwise. OIDC access/refresh/ID
 tokens live only on the encrypted httpOnly session JWT and never reach the browser; sign-out ends the IdP session. See `INTERFACES.md`
 §1 and `DEPLOYMENT.md` for the client contract and required secrets.
@@ -74,14 +75,14 @@ response headers (`X-Content-Type-Options`, `Referrer-Policy`,
 #42, shipped via `next.config.mjs` `headers()`. See `DEPLOYMENT.md` §
 "Security headers" for the exact values, the HSTS rollout plan, and the CSP
 graduation gate (dropping `-Report-Only` once a manual DevTools pass shows no
-unexpected violations). Since #44 the repo has unit tests (vitest 4.1.11, `pnpm test`,
+unexpected violations). Since #44 the repo has unit tests (vitest 5.0.5, `pnpm test`,
 `src/**/*.test.ts`, run in CI before `pnpm build`) covering the auth-admin
 token, client, form and Server Action logic; whether that closes the "first
 automated tests" half of #42 is tracked on that issue.
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics (see the "Live" bullet below); the contact form delivers real mail by SMTP (Infomaniak). The auth-service admin GUI `/dashboard/auth` (#44) is real; the device-service admin GUI (#45) is not wired yet.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (Infomaniak). The auth-service admin GUI `/dashboard/auth` (#44) is real; the device-service admin GUI (#45) is not wired yet.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus
@@ -89,6 +90,7 @@ automated tests" half of #42 is tracked on that issue.
   unreachable or returns nothing, the dashboard shows the known node hardware
   with honest "—" placeholders, `unknown` status dots, and a visible
   "unavailable" note — never fabricated numbers.
+- **Live (#47):** `/dashboard/services` reads Prometheus server-side at request time (five queries, one of them a 14-day `query_range`; see `INTERFACES.md` §2). A failed or empty query group shows "—" / grey bars plus one "partial" notice; a missing workload inventory shows an "unavailable" notice — nothing is fabricated. Limits: availability reflects desired vs. available replicas, so there is no OOMKilled signal; history is bounded by Prometheus retention (14 d; a longer window needs doemefu/homelab#247).
 - **Live (NM-1, #61):** `/dashboard/network` reads data-service's netmon API
   server-side with a client-credentials token (see `INTERFACES.md` §2). Each
   section degrades independently to an honest "unavailable" / HTTP-error note;
