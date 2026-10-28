@@ -1,12 +1,12 @@
 // Dev Area subnav — ported from prototype `projects-board.jsx:65-93`.
-// "Overview", "Network" (NM-1, #61) and "Auth Service" (#44) are live; the
-// Device tab stays visibly disabled until #45 ships (TODO(phase6) below).
-// Network and Auth Service are shown to every signed-in user — each page
-// decides access itself (ADMIN only).
+// "Overview", "Network" (NM-1, #61), "Services" (#47) and "Auth Service" (#44)
+// are live; the Device tab stays visibly disabled until #45 ships
+// (TODO(phase6) below). Network, Services and Auth Service are shown to every
+// signed-in user — each page decides access itself (ADMIN only).
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
-type DevSubnavActive = 'overview' | 'network' | 'auth';
+type DevSubnavActive = 'overview' | 'network' | 'services' | 'auth';
 
 const containerStyle = {
   borderBottom: '1px solid rgba(162,167,176,.22)',
@@ -83,6 +83,14 @@ export async function DevSubnav({ active }: { active: DevSubnavActive }) {
           style={{ ...tabBase, ...(active === 'network' ? tabActive : tabInactive) }}
         >
           {t('network')}
+        </Link>
+
+        <Link
+          href="/dashboard/services"
+          aria-current={active === 'services' ? 'page' : undefined}
+          style={{ ...tabBase, ...(active === 'services' ? tabActive : tabInactive) }}
+        >
+          {t('services')}
         </Link>
 
         <Link
