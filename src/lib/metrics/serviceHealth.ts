@@ -164,20 +164,30 @@ export function classifyBucket(availability: number | null, restarts: number | n
   return 'green';
 }
 
+// One formatter per (locale tag, variant): a page renders hundreds of values.
+const percentFormats = new Map<string, Intl.NumberFormat>();
+function percentFormat(localeTag: string, fractionDigits: 0 | 1): Intl.NumberFormat {
+  const key = `${localeTag}|${fractionDigits}`;
+  let fmt = percentFormats.get(key);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat(localeTag, {
+      style: 'percent',
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    });
+    percentFormats.set(key, fmt);
+  }
+  return fmt;
+}
+
 export function formatAvailability(availability: number, localeTag: string): string {
   const permille = availabilityPermille(availability);
-  if (permille === 1000) {
-    return new Intl.NumberFormat(localeTag, { style: 'percent', maximumFractionDigits: 0 }).format(1);
-  }
-  return new Intl.NumberFormat(localeTag, {
-    style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(permille / 1000);
+  if (permille === 1000) return percentFormat(localeTag, 0).format(1);
+  return percentFormat(localeTag, 1).format(permille / 1000);
 }
 
 export function formatUsage(ratio: number, localeTag: string): string {
-  return new Intl.NumberFormat(localeTag, { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
+  return percentFormat(localeTag, 0).format(ratio);
 }
 
 type HourValues = Array<number | null>;

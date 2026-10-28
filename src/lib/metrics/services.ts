@@ -113,6 +113,9 @@ export async function getServiceHealth(now: Date = new Date()): Promise<ServiceH
   // and passed on as failed, so the page shows a partial notice instead of
   // zero restarts (green) or silent "—" usage.
   const inventoryOk = inventoryRes.status === 'fulfilled' && inventoryRes.value.length > 0;
+  // CPU/MEM rows come from running pods: with every workload at desired 0
+  // there are none, so an empty usage result is legitimate then.
+  const anyDesired = inventoryOk && inventoryRes.value.some((s) => s.value > 0);
   const failures: string[] = [];
   function settle<T>(res: PromiseSettledResult<T[]>, label: string, emptyIsFailure: boolean): T[] | null {
     if (res.status === 'rejected') {
@@ -128,8 +131,8 @@ export async function getServiceHealth(now: Date = new Date()): Promise<ServiceH
   const inventory = settle(inventoryRes, 'inventory', false);
   const availability = settle(availabilityRes, 'availability', inventoryOk);
   const restarts = settle(restartsRes, 'restarts', inventoryOk);
-  const cpu = settle(cpuRes, 'cpu', inventoryOk);
-  const mem = settle(memRes, 'mem', inventoryOk);
+  const cpu = settle(cpuRes, 'cpu', anyDesired);
+  const mem = settle(memRes, 'mem', anyDesired);
 
   if (settled.every((res) => res.status === 'rejected')) {
     return unavailable(`all service-health queries failed: ${failures.join(', ')}`);

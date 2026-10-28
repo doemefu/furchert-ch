@@ -222,9 +222,18 @@ function Meter({ label, usage, fmt, t }: { label: string; usage: ResourceUsage |
   );
 }
 
-function HourlyStrip({ svc, fmt, t }: { svc: ServiceHealth; fmt: Formatters; t: Translate }) {
+function HourlyStrip({
+  svc,
+  generatedAtMs,
+  fmt,
+  t,
+}: {
+  svc: ServiceHealth;
+  generatedAtMs: number;
+  fmt: Formatters;
+  t: Translate;
+}) {
   const first = svc.hourly[0];
-  const last = svc.hourly[svc.hourly.length - 1];
   return (
     <div>
       <div style={microLabel}>{t('last24h')}</div>
@@ -235,7 +244,7 @@ function HourlyStrip({ svc, fmt, t }: { svc: ServiceHealth; fmt: Formatters; t: 
             <Bar key={h.startMs} status={h.status} title={hourTitle(h, fmt, t)} width={6} height={8} />
           ))}
         </div>
-        {first && last && (
+        {first && (
           <div
             style={{
               display: 'flex',
@@ -247,7 +256,8 @@ function HourlyStrip({ svc, fmt, t }: { svc: ServiceHealth; fmt: Formatters; t: 
             }}
           >
             <span>{fmt.time(first.startMs)}</span>
-            <span>{fmt.time(last.startMs + HOUR_MS)}</span>
+            {/* "now", not the end of the ongoing hour (which is in the future) */}
+            <span>{fmt.time(generatedAtMs)}</span>
           </div>
         )}
       </div>
@@ -255,7 +265,19 @@ function HourlyStrip({ svc, fmt, t }: { svc: ServiceHealth; fmt: Formatters; t: 
   );
 }
 
-function ServiceRow({ svc, windowHours, fmt, t }: { svc: ServiceHealth; windowHours: number; fmt: Formatters; t: Translate }) {
+function ServiceRow({
+  svc,
+  windowHours,
+  generatedAtMs,
+  fmt,
+  t,
+}: {
+  svc: ServiceHealth;
+  windowHours: number;
+  generatedAtMs: number;
+  fmt: Formatters;
+  t: Translate;
+}) {
   const past = svc.daily.slice(0, -1);
   const today = svc.daily[svc.daily.length - 1];
   const todayTitle = today ? dayTitle(today, fmt, t) : t('noData');
@@ -321,7 +343,7 @@ function ServiceRow({ svc, windowHours, fmt, t }: { svc: ServiceHealth; windowHo
           pastBars={past.map((d) => (
             <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} width={7} height={12} />
           ))}
-          hourly={<HourlyStrip svc={svc} fmt={fmt} t={t} />}
+          hourly={<HourlyStrip svc={svc} generatedAtMs={generatedAtMs} fmt={fmt} t={t} />}
         />
       </div>
 
@@ -413,7 +435,11 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
         {failed.length > 0 && (
           <p style={noteStyle}>{t('partial', { groups: failed.map((g) => t(`groups.${g}`)).join(', ') })}</p>
         )}
-        {!report.available.restarts && <p style={noteStyle}>{t('restartsUnknownColours')}</p>}
+        {/* Also when only some rows lack restarts data: their colours then
+            reflect availability only, which the legend alone would hide. */}
+        {(!report.available.restarts || report.services.some((s) => s.restarts14d === null)) && (
+          <p style={noteStyle}>{t('restartsUnknownColours')}</p>
+        )}
         {report.services.length === 0 ? (
           <p style={noteStyle}>{t('empty')}</p>
         ) : (
@@ -425,6 +451,7 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
                   key={`${svc.namespace}/${svc.kind}/${svc.name}`}
                   svc={svc}
                   windowHours={report.window.hours}
+                  generatedAtMs={report.generatedAtMs}
                   fmt={fmt}
                   t={t}
                 />

@@ -174,6 +174,24 @@ describe('getServiceHealth', () => {
     expect(mem).toContain('container_memory_working_set_bytes');
     expect(mem).toContain('unit="byte"');
   });
+  it('G11: empty cpu/mem is legitimate when every workload is scaled to zero', async () => {
+    const scaledToZero: PromSample = { ...inventorySample, value: 0 };
+    mockInstant([[scaledToZero], [], []]);
+    mockRange([[availabilitySeries], [restartsSeries]]);
+    const report = await getServiceHealth(NOW);
+    expect(report?.available).toEqual({ availability: true, restarts: true, cpu: true, mem: true });
+    expect(report?.services[0].cpu).toBeNull();
+    expect(report?.services[0].mem).toBeNull();
+    expect(warn).not.toHaveBeenCalled();
+
+    // One workload with desired > 0 makes an empty usage result a failure again.
+    vi.mocked(queryInstant).mockReset();
+    mockInstant([[scaledToZero, { ...inventorySample, metric: { ...inventorySample.metric, workload: 'n8n' } }], [], []]);
+    mockRange([[availabilitySeries], [restartsSeries]]);
+    const second = await getServiceHealth(NOW);
+    expect(second?.available).toEqual({ availability: true, restarts: true, cpu: false, mem: false });
+    expect(warn.mock.calls).toEqual([['[metrics] Prometheus queries failed: cpu (empty result), mem (empty result)']]);
+  });
 });
 
 describe('POD_RE', () => {
@@ -181,11 +199,12 @@ describe('POD_RE', () => {
   it.each([
     ['influxdb2-0', 'influxdb2'],
     ['home-assistant-0', 'home-assistant'],
-    ['n8n-5795469b-abcde', 'n8n'],
-    ['n8n-5795469b-12345', 'n8n'],
-    ['auth-service-7d9f8b6c5-24567', 'auth-service'],
-    ['club-mcp-7d9f8c6b5-x2x4z', 'club-mcp'],
-    ['mosquitto-exporter-6fd98557dd-5l69q', 'mosquitto-exporter'],
+    // Synthetic, low-entropy pod names of the real shapes (8-10 char hash).
+    ['n8n-abcdefgh-abcde', 'n8n'],
+    ['n8n-abcdefgh-12345', 'n8n'],
+    ['auth-service-abcdefghi-12345', 'auth-service'],
+    ['club-mcp-abcd1234-abc12', 'club-mcp'],
+    ['mosquitto-exporter-abcdefghij-abcde', 'mosquitto-exporter'],
   ])('G4: %s -> %s', (pod, workload) => {
     expect(re.exec(pod)?.[1]).toBe(workload);
   });
