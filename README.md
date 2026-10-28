@@ -34,7 +34,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 6 | Integrated admin GUIs | in progress (auth-service #44 done; device-service #45 pending) |
 | 7 | Deployment (Flux CD + Cloudflare Tunnel) | done |
 | — | Live dashboard metrics from Prometheus (#17) | done |
-| — | Contact-form SMTP delivery (Infomaniak, #46) | done |
+| — | Contact-form SMTP delivery (iCloud since #115; Infomaniak in #46) | done |
 | — | `/dashboard/network` inbound section (NM-1, #61) | done |
 | — | `/dashboard/network` LAN section (NM-3, #62) | done |
 | — | `/dashboard/network` egress section (NM-2, #63) | done |

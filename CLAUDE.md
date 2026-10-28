@@ -51,7 +51,7 @@
 | Unit tests | Vitest (node env, `vitest.config.mts`, `src/**/*.test.ts`; `pnpm test`, runs in CI) | vitest 5.0.5 |
 | i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.14.9 |
 | Auth | Auth.js (next-auth) generic OIDC → auth.furchert.ch | 5.0.0-beta.32 |
-| Mail | nodemailer (contact form → Infomaniak SMTP) | 10.1.2 |
+| Mail | nodemailer (contact form → iCloud SMTP) | 10.1.2 |
 | Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
 | Fonts | DM Sans + DM Mono (`next/font`) | — |
 | Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `public.ecr.aws/docker/library/node:22.23.4-alpine` (ECR Public mirror of the Docker official image) |

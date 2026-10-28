@@ -71,7 +71,8 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 |-----------|---------|---------|
 | `auth-secret` | `AUTH_SECRET` | Auth.js v5 session encryption (`openssl rand -base64 33`; SOPS var `furchert_ch_auth_secret`) |
 | `oidc-client-secret` | `OIDC_CLIENT_SECRET` | `furchert-ch` OIDC client secret, **plaintext** (no `{noop}` prefix). The playbook sets it from the same SOPS var (`auth_service_furchert_ch_client_secret`) that auth-service stores `{noop}`-prefixed, so the two match by construction. |
-| `smtp-password` | `SMTP_PASSWORD` | Infomaniak application password for `info@furchert.ch` (contact-form SMTP; SOPS var `furchert_ch_smtp_password`; created by an Infomaniak Manager → Mail Service → address → "Devices" application password, not the mailbox login password — fall back to the mailbox password only if the plan tier offers no application passwords) |
+| `smtp-user` | `SMTP_USER` | iCloud SMTP login (SOPS var `furchert_ch_smtp_user`, #115): the **full primary iCloud Mail address** (name@icloud.com / @me.com / @mac.com), **not the short mail name mcp-hub uses** for its `icloud-username` |
+| `smtp-password` | `SMTP_PASSWORD` | Dedicated iCloud app-specific password labelled "furchert-ch contact SMTP" (contact-form SMTP; SOPS var `furchert_ch_smtp_password`; created at account.apple.com → Sign-In and Security → App-Specific Passwords; never shared with mcp-hub, so it can be revoked alone) |
 
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
@@ -88,10 +89,11 @@ For local dev, port-forward it first:
 `kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:9090`,
 then set `PROMETHEUS_URL=http://localhost:19090` in `.env.local`. Left unset
 in dev, the dashboard skips the fetch immediately (no 2.5 s stall on an
-unreachable cluster-internal FQDN). `SMTP_HOST` (`mail.infomaniak.com`),
-`SMTP_PORT` (`587`), `SMTP_USER` (`info@furchert.ch`), `CONTACT_TO` (defaults
-to `SMTP_USER`, set explicitly to `info@furchert.ch`) — the contact form's
-outbound SMTP delivery (#46), see `INTERFACES.md` §3. `DATA_SERVICE_URL`
+unreachable cluster-internal FQDN). `SMTP_HOST` (`smtp.mail.me.com`),
+`SMTP_PORT` (`587`), `CONTACT_FROM` and `CONTACT_TO` (both default to
+`SMTP_USER`, set explicitly to `info@furchert.ch` so the private login never
+shows as From/To; `SMTP_USER` itself comes from the Secret) — the contact
+form's outbound SMTP delivery (#46, iCloud since #115), see `INTERFACES.md` §3. `DATA_SERVICE_URL`
 (`http://data-service.apps.svc.cluster.local:8082`) and `DATA_SERVICE_TOKEN_URL`
 (`http://auth-service.apps.svc.cluster.local:8080/oauth2/token`) — the
 `/dashboard/network` read API and the token endpoint for its client-credentials
@@ -180,23 +182,23 @@ provision the secret via SOPS. furchert-ch never edits secret/age/`.sops.*` file
    DB) per `../auth-service/INTERFACES.md §6`. The plaintext `OIDC_CLIENT_SECRET`
    used by this app must match the `{noop}`-prefixed value stored for the client.
 
-### Contact-form SMTP secret — rollout order (#46)
+### Contact-form SMTP secret — rollout order (#46, #115)
 
-The infrastructure PR that adds `smtp-password` to `furchert-ch-secrets` (via
+The infrastructure PR that adds `smtp-password` (#46) and `smtp-user` (#115, homelab#255) to `furchert-ch-secrets` (via
 `59_app_services.yml`) must be **merged and the playbook run before** this
 repo's `k8s/deployment.yaml` change (which references that secret key) is
 applied. Applying this repo's manifest first makes the pod enter
-`CreateContainerConfigError`, referencing the missing `smtp-password` key.
+`CreateContainerConfigError`, referencing the missing key (`smtp-user` for #115).
 
-**Do not merge this PR before homelab PR #103 is merged and
-`59_app_services.yml` has been run; verify with the byte-count check first.**
+**Do not merge the #115 PR before the homelab#255 PR is merged and
+`59_app_services.yml` has been run; verify with the key check first.**
 
 **Pre-merge check** (operator, after running the playbook):
 ```bash
-kubectl -n apps get secret furchert-ch-secrets -o jsonpath='{.data.smtp-password}' | wc -c
+kubectl -n apps describe secret furchert-ch-secrets
 ```
-Expect a byte count `> 0`. This only proves the key exists — it never prints
-the value.
+Expect the key `smtp-user` listed under Data with a non-zero byte count. This
+only proves the key exists — it never prints the value.
 
 **Post-merge check:**
 ```bash
@@ -210,11 +212,11 @@ Expect it to complete. Flux's `Kustomization` (`prune: true`, no `wait`/
 `kubectl -n apps get pods -l app=furchert-ch` and the rollout-status command
 above.
 
-**Harmless intermediate state:** Flux may apply the new env-var manifest
-before the new application code (with the SMTP delivery logic) has rolled
-out via image automation. The old running image simply ignores the new env
-vars until its own new image arrives — a brief window where the env is
-present but the send logic isn't yet is expected and not an error. Since
+**Harmless intermediate state:** Flux may apply the new manifest before the
+new image (with `CONTACT_FROM` support) has rolled out via image automation.
+The old image ignores `CONTACT_FROM` and sends with `From` = `SMTP_USER` (the
+primary iCloud address) until the new image arrives — delivery works, only the
+From address differs briefly; this is expected and not an error. Since
 `replicas: 1` with the default `RollingUpdate` strategy (`maxUnavailable: 0`),
 the old pod keeps serving traffic throughout.
 
@@ -325,14 +327,19 @@ If any of the three is missing headers, see Troubleshooting below.
   which derives `secure` from `secureCookie`/`NODE_ENV`. If this regresses,
   check that both call sites still pass the correct `secure` value to that
   helper.
-- **`EAUTH` / `535` in the `[contact] delivery failed` log line** — the SMTP
-  password is wrong or has been revoked in Infomaniak's Manager; regenerate
-  the application password and update the SOPS var + secret.
-- **"sender mismatch" style rejection** — `SMTP_USER` is not the full
-  authenticated mailbox address (e.g. an alias or a display-name form); the
-  mailer always sets `From` to `SMTP_USER` by construction (`INTERFACES.md`
-  §3), so set `SMTP_USER` to the real mailbox address Infomaniak
-  authenticated.
+- **`EAUTH` / `535` in the `[contact] delivery failed` log line** — the
+  app-specific password is wrong or revoked, or `smtp-user` is not the full
+  primary iCloud Mail address (the short mail name does not work). Regenerate
+  the app-specific password, update the SOPS var, run playbook 59, then
+  `kubectl -n apps delete pod -l app=furchert-ch` (env is read at start; a
+  Secret change does not restart the pod). Note: changing the Apple Account
+  password revokes **all** app-specific passwords, which also breaks mcp-hub
+  (`auth_expired`) and the contact form (EAUTH).
+- **Sender rejection (5xx) on send** — `CONTACT_FROM` (`info@furchert.ch`) must
+  be an address of the same iCloud account (Settings → Custom Email Domain).
+  Rollback (a): delete the `CONTACT_FROM` env entry in `k8s/deployment.yaml`
+  (manifest only, no image build); `From` then falls back to the primary
+  iCloud address.
 - **`ETIMEDOUT` / `ECONNECTION`** — outbound TCP 587 from the cluster is
   blocked (confirmed open as of 2026-09-13's egress probe, but re-verify if
   the ISP or ingress changes); try `SMTP_PORT=465` (the mailer sets
@@ -340,8 +347,8 @@ If any of the three is missing headers, see Troubleshooting below.
   regression.
 - **Contact form rejects everything with `errorRateLimited`** — either
   genuine abuse tripped the 20/hour global cap (`INTERFACES.md` §3), or
-  (less likely) Infomaniak's own sending quota was hit upstream within its
-  rolling 24 h window; check
+  (less likely) iCloud's own sending quota (about 1000 messages/day, versus
+  the in-app 20/hour) was hit upstream; check
   `kubectl -n apps logs deploy/furchert-ch --since=1h | grep '\[contact\]'`
   for the actual failure reason before assuming the limiter is misconfigured.
   Rate-limit denials are silent by design — no per-denial log line, to avoid
