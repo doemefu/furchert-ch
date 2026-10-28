@@ -29,6 +29,15 @@ function readContactTo(): string {
   return v && v.length > 0 ? v : readSmtpUser();
 }
 
+// The From address may differ from the SMTP login (iCloud logs in with the
+// primary iCloud address but sends as a custom-domain address of the same
+// account). Falls back to the login for local dev. Deliberately not part of
+// `isContactMailConfigured()`.
+function readContactFrom(): string {
+  const v = process.env.CONTACT_FROM;
+  return v && v.length > 0 ? v : readSmtpUser();
+}
+
 // Read lazily (at property access, i.e. request/build time) rather than at
 // module import, matching `METRICS_ENV` — keeps the build green regardless
 // of env.
@@ -47,6 +56,9 @@ export const CONTACT_ENV = {
   },
   get CONTACT_TO(): string {
     return readContactTo();
+  },
+  get CONTACT_FROM(): string {
+    return readContactFrom();
   },
 };
 
