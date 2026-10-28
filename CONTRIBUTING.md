@@ -49,6 +49,8 @@ kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 19090:90
 Set `PROMETHEUS_URL=http://localhost:19090` in `.env.local` (see
 `.env.local.example`). Left unset, the dashboard skips the fetch immediately
 and renders the honest "unavailable" fallback — fine for non-dashboard work.
+The same port-forward feeds `/dashboard/services` (#47, ADMIN account needed);
+its availability range queries take a few seconds, so keep the forward up.
 
 Optional — `/dashboard/network` locally (data-service, NM-1…NM-4, #61–#64; needs an
 ADMIN account):

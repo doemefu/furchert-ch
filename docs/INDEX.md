@@ -12,7 +12,8 @@ Implementation history lives in the local-only worklogs under `.claude/worklogs/
 scaffold, public pages, automation mockup, OIDC auth, dashboard shell, PR review
 rounds, deploy pipeline, the 2026-08 dependency refresh, and the #17 dashboard
 live-metrics wiring (Prometheus SSR), the NM-1…NM-4 `/dashboard/network`
-sections (#61–#64) and the `/dashboard/auth` auth-service admin GUI (#44)) and in the per-PR history on GitHub
+sections (#61–#64) the `/dashboard/auth` auth-service admin GUI (#44) and the
+`/dashboard/services` utilization page (#47)) and in the per-PR history on GitHub
 (`gh pr list --state merged`).
 
 See also: `.claude/memory/MEMORY.md` (current state, newest first).

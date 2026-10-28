@@ -72,4 +72,4 @@ Additional checks:
 - `DEPLOYMENT.md`: new env var or secret key; Dockerfile/k8s/Flux/Cloudflare Tunnel change; new troubleshooting case.
 - `CONTRIBUTING.md`: new local-dev step (pnpm script, local OIDC, port-forward), new test type/command, new CI workflow.
 - `CHANGELOG.md`: one entry per shipped milestone (this repo logs milestones; check its heading convention rather than assuming `[Unreleased]`).
-- Project context: public personal site + OIDC-gated `/dashboard` (homelab overview) and ADMIN-only `/dashboard/network` (data-service); auth/device admin GUIs planned; `/automation` is a mockup.
+- Project context: public personal site + OIDC-gated `/dashboard` (homelab overview) and ADMIN-only `/dashboard/network` (data-service), `/dashboard/services` (Prometheus) and `/dashboard/auth`; device admin GUIs planned; `/automation` is a mockup.
