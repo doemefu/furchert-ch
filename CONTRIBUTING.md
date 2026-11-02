@@ -26,7 +26,10 @@ capped at a 15-minute `timeout-minutes` guard (normal runtime ~1–2 min). If
 your PR's `verify` job is cancelled at 15 minutes, treat that as a genuine
 hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §
 "Build and Push run hangs" for the equivalent guard on the deploy pipeline
-(#41).
+(#41). On pull requests a second job, `image`, builds the container image
+(amd64, never pushed, base pulled via `mirror.gcr.io`) and checks that
+`/api/health` answers (#118); it reuses main's layer cache and takes a few
+minutes.
 
 Local OIDC (Auth.js v5): copy `.env.local.example` → `.env.local` (never
 committed) and set `AUTH_SECRET` (`openssl rand -base64 33`) and the plaintext

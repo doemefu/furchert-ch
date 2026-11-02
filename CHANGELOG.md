@@ -147,11 +147,16 @@ All notable changes per milestone. Newest first.
   OIDC access and refresh token (server-side, in the encrypted session
   cookie) for the admin GUI. Older sessions keep working everywhere else;
   `/dashboard/auth` asks for a fresh sign-in.
-- **Base image pulled from the ECR Public mirror**: the `Dockerfile` now uses
-  `public.ecr.aws/docker/library/node:22.23.1-alpine` (the same Docker
-  official image and tag) instead of Docker Hub, after anonymous Docker Hub
-  pulls from the shared GitHub runners failed Build-and-Push with `429 Too
-  Many Requests` on 2026-10-09.
+- **Base image digest-pinned and pulled via `mirror.gcr.io`** (#118): the
+  `Dockerfile` uses `node:22.23.4-alpine@sha256:<index digest>` (Docker
+  official image). Anonymous pulls from the shared GitHub runners failed
+  Build-and-Push with `429 Too Many Requests`, first on Docker Hub
+  (2026-10-09), then on the ECR Public mirror used in between (3 of the last
+  10 `main` runs failed, most others needed re-runs). CI's BuildKit builder
+  now pulls docker.io content through Google's Docker Hub mirror
+  `mirror.gcr.io` with docker.io as fallback; Dependabot tracks the base
+  image (`docker` ecosystem, majors ignored); PRs build and smoke-test the
+  image (`ci.yml` job `image`).
 - **ESLint 8.57.1 → 9.39.5, eslint-config-next 15.5.25 → 16.3.5** (#59):
   `.eslintrc.json` (`root: true`, `ignorePatterns`) is removed and replaced
   by a flat `eslint.config.mjs` (core-web-vitals + typescript presets;
