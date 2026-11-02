@@ -21,7 +21,8 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 //
 // `form-action` lists the IdP origin as a literal: SignOutButton POSTs to
 // /api/federated-logout, which redirects to the IdP's end-session endpoint,
-// and browsers apply `form-action` to that redirect. `headers()` is evaluated
+// and Auth.js's built-in /api/auth/signin page POSTs a form that redirects to
+// the IdP's authorize endpoint; browsers apply `form-action` to redirects. `headers()` is evaluated
 // at `next build` (baked into the routes manifest), so the runtime
 // `OIDC_ISSUER` cannot be used here.
 async function headers() {

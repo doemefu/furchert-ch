@@ -46,13 +46,15 @@ pins these exact values; change the config, the test and this table together.
 (then back to `https://furchert.ch`); browsers check `form-action` on the redirects
 of a form submission, so `'self'` alone would block sign-out. The origin is a literal
 because `headers()` is evaluated at `next build`, not at runtime — if the IdP origin
-(`OIDC_ISSUER`) ever changes, change it here too. Sign-in is not affected:
-`signIn()` uses `fetch` + `window.location`, not a form. Admin forms whose action is
-a client closure render a `javascript:` action before hydration; submitting one that
-early logs a `form-action` violation in DevTools instead of throwing — same outcome,
-not a regression.
+(`OIDC_ISSUER`) ever changes, change it here too (`src/securityHeaders.test.ts`
+checks it against `k8s/deployment.yaml`). The dashboard's sign-in buttons use
+`signIn()` (`fetch` + `window.location`), which `form-action` does not govern, but
+Auth.js's built-in `/api/auth/signin` page (the fallback `signIn()` can land on)
+POSTs a form that is redirected to the IdP — it needs the IdP origin too. Admin
+forms whose action is a client closure are intercepted by React before hydration
+and replayed afterwards, so `form-action` never sees them.
 
-**HSTS rollout.** This domain never sent `Strict-Transport-Security` before #51 (neither app nor Cloudflare edge). It started at `max-age=86400` (1 day, 2026-09-04) and was raised to `max-age=31536000` (1 year) on 2026-11-03 after two months without HTTPS-access problems (#42). `includeSubDomains`/`preload` are deliberately omitted — several sibling homelab services share this apex (`auth`/`device`/`club`/`n8n`/`grafana.furchert.ch`, see the parent `CLAUDE.md`) and are separate repos this app has no mandate to declare HSTS-safe for, and `ha.furchert.ch` is not served through the tunnel. Rollback: every STS header a returning browser receives replaces its stored `max-age`, so serving `max-age=0` (or a shorter value) shortens the policy for every visitor who comes back; only visitors who never return keep the old window. The Cloudflare edge must not add its own HSTS header (exactly one `strict-transport-security` line in the verify step below).
+**HSTS rollout.** This domain never sent `Strict-Transport-Security` before #51 (neither app nor Cloudflare edge). It started at `max-age=86400` (1 day, 2026-09-04) and was raised to `max-age=31536000` (1 year) on 2026-11-03 after two months without HTTPS-access problems (#42). `includeSubDomains`/`preload` are deliberately omitted — several sibling homelab services share this apex (`auth`/`device`/`club`/`n8n`/`grafana.furchert.ch`, see the parent `CLAUDE.md`) and are separate repos this app has no mandate to declare HSTS-safe for; not every name under the apex is served over HTTPS. Rollback: every STS header a returning browser receives replaces its stored `max-age`, so serving `max-age=0` (or a shorter value) shortens the policy for every visitor who comes back; only visitors who never return keep the old window. The Cloudflare edge must not add its own HSTS header (exactly one `strict-transport-security` line in the verify step below).
 
 **CSP graduation gate.** Since 2026-11-03 (#42) the directives that do not depend on inline scripts or styles (`frame-ancestors`, `object-src`, `base-uri`, `form-action`) are enforced. There is no `report-uri`/`report-to` collector yet, so a violation of the enforced part (e.g. a future cross-origin form target) only shows in the visiting browser's DevTools console — accepted until the collector decision below. `default-src`/`script-src`/`style-src`/`img-src`/`font-src`/`connect-src` stay Report-Only: enforcing them needs an owner decision on #42 (nonces vs. hashes vs. keeping `'unsafe-inline'`, plus a report collector). To graduate them:
 1. Open each main public route and a signed-in `/dashboard` load in a real browser.

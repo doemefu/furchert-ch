@@ -2,6 +2,7 @@
 // strings are asserted on purpose: every CSP/HSTS change must be a
 // deliberate edit of both the config and this test (and of DEPLOYMENT.md
 // § "Security headers"), not something to fix by loosening an assertion.
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import nextConfig from '../next.config.mjs';
 
@@ -39,6 +40,19 @@ describe('security headers (next.config.mjs)', () => {
       // form-action on that redirect.
       "form-action 'self' https://auth.furchert.ch",
     ]);
+  });
+
+  // `headers()` is build-time, so the IdP origin is a literal there; this
+  // keeps it from drifting away from the deployed OIDC_ISSUER.
+  it('allows the IdP origin the deployment configures as OIDC_ISSUER', async () => {
+    const manifest = readFileSync(new URL('../k8s/deployment.yaml', import.meta.url), 'utf8');
+    const issuer = /- name: OIDC_ISSUER\s+value: "([^"]+)"/.exec(manifest)?.[1];
+    expect(issuer).toBeDefined();
+    const h = await headerMap();
+    const formAction = directives(h.get('Content-Security-Policy') ?? '').find((d) =>
+      d.startsWith('form-action '),
+    );
+    expect(formAction?.split(' ')).toContain(new URL(issuer!).origin);
   });
 
   it('keeps the script/style policy Report-Only, without the enforced directives', async () => {

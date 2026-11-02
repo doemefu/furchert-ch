@@ -19,7 +19,6 @@ All notable changes per milestone. Newest first.
   request origin (`https://0.0.0.0:3000/` behind the tunnel); it now uses
   `AUTH_URL` like the other branches, which the enforced `form-action` also
   requires.
-
 - **Node 22.23.1 → 22.23.4** (#100): Node's bundled root store moves to NSS
   3.131.1, which distrusts the emSign roots behind the compromised eMudhra
   intermediates (https://blog.cloudflare.com/emudhra-certificate-compromise);

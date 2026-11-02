@@ -18,6 +18,7 @@ describe('POST /api/federated-logout', () => {
   beforeEach(() => {
     vi.stubEnv('AUTH_URL', 'https://furchert.ch');
     vi.stubEnv('AUTH_SECRET', 'test-only-not-a-secret');
+    vi.stubEnv('OIDC_ISSUER', 'https://auth.furchert.ch');
     getToken.mockReset();
   });
   afterEach(() => {
