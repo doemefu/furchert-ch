@@ -54,7 +54,7 @@
 | Mail | nodemailer (contact form → iCloud SMTP) | 10.1.2 |
 | Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
 | Fonts | DM Sans + DM Mono (`next/font`) | — |
-| Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `public.ecr.aws/docker/library/node:22.23.4-alpine` (ECR Public mirror of the Docker official image) |
+| Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `node:22.23.4-alpine`, digest-pinned in the `Dockerfile` (Dependabot `docker`); CI pulls it via `mirror.gcr.io` (#118) |
 
 Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.5 while the runtime is Node 22 — a known, harmless mismatch.
 

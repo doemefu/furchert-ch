@@ -241,6 +241,14 @@ The image is built by CI and rolled out by Flux; there is no manual `kubectl app
    list and pushes `ghcr.io/doemefu/furchert-ch:main-<UTC ts>` (+ a `sha` tag)
    only after both platform builds succeeded, then asserts the list contains
    both `linux/amd64` and `linux/arm64` (#48).
+   The node base image is `node:<tag>@sha256:<digest>` from Docker Hub (tag and
+   digest bumped by Dependabot's `docker` ecosystem; bump `node-version` in
+   `ci.yml`/`build.yml` with it). The build job's BuildKit builder pulls
+   docker.io content through Google's Docker Hub mirror `mirror.gcr.io` and
+   falls back to docker.io (`buildkitd-config-inline` in `build.yml`; #118) —
+   anonymous ECR Public and Docker Hub pulls from shared runners hit `429`.
+   PRs build and smoke-test the amd64 image with the same mirror (`ci.yml`
+   job `image`, never pushed).
 2. **Image automation (automatic).** Flux `ImageRepository`/`ImagePolicy`
    (`infrastructure/cluster/apps/furchert-ch/`) pick the newest `main-<ts>` tag and
    `ImageUpdateAutomation` writes it back into `k8s/deployment.yaml` on `main`.
@@ -417,6 +425,13 @@ If any of the three is missing headers, see Troubleshooting below.
   the older code — re-running an older run is not a no-op. The per-platform
   build cache from before #48 (default scope) is no longer written and
   expires on its own.
+- **A build leg fails pulling the node base image (`429 Too Many Requests`,
+  `not found`)** — BuildKit tries `mirror.gcr.io` first and docker.io second
+  (#118). The mirror only caches frequently pulled content, so a digest that
+  Dependabot just proposed may not be on it yet; the docker.io fallback is
+  anonymous and best-effort. The digest pin guarantees identical bytes from
+  either host. Re-run per the rules in the previous bullet; if the PR's
+  `image` job already failed the same way, wait and re-run it before merging.
 - **A security header (#42) is missing from a live response** — `next.config.mjs`'s
   `headers()` matches `source: '/:path*'`, which covers pages, `/api/*`, and
   `/_next/static/*` alike, and (per Next.js's documented execution order —

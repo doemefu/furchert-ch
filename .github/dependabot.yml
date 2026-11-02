@@ -25,3 +25,18 @@ updates:
     groups:
       actions-minor-and-patch:
         update-types: ["minor", "patch"]
+
+  # Node base image in the Dockerfile (tag + digest, all three stages in one PR).
+  # When the node tag moves, bump `node-version` in ci.yml and build.yml in the
+  # same PR. Majors stay a deliberate manual change (Node 22 runtime).
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]

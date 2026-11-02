@@ -32,3 +32,45 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+  # Builds the container image (amd64 only, never pushed) and smoke-tests
+  # /api/health, so Dockerfile and base-image bumps fail on the PR instead of
+  # on main, where a failed leg silently blocks the rollout (#118).
+  image:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        with:
+          # Same registry mirror as build.yml (#118). Keep in sync.
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
+      - name: Build image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        timeout-minutes: 15
+        with:
+          context: .
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: furchert-ch:ci
+          # Read-only reuse of main's amd64 layer cache; PRs never write it.
+          cache-from: type=gha,scope=build-linux-amd64
+      - name: Smoke-test /api/health
+        run: |
+          docker run -d --name furchert-ch -p 3000:3000 furchert-ch:ci
+          for _ in $(seq 1 30); do
+            if body=$(curl -fsS http://127.0.0.1:3000/api/health 2>/dev/null) \
+              && [ "$body" = '{"status":"ok"}' ]; then
+              echo "health: $body"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Container did not report healthy within 60 s" >&2
+          docker logs furchert-ch >&2
+          exit 1
