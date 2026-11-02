@@ -12,11 +12,18 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 // (`headers` runs in step 1, before Proxy in step 3), even to
 // proxy-issued redirects such as the bare `/` → `/de` locale redirect.
 //
-// Full rationale for each directive — why `'unsafe-inline'` appears twice,
-// why the CSP ships Report-Only, the HSTS rollout plan, and the CSP
-// graduation gate — lives in `CHANGELOG.md` and `DEPLOYMENT.md` § Security
-// headers, not duplicated here, so there is one place to update when any
-// of it changes (e.g. raising `max-age` or dropping `-Report-Only`).
+// Full rationale for each directive — why the CSP is split into an enforced
+// part and a Report-Only part, why `'unsafe-inline'` appears twice, the HSTS
+// rollout, and the CSP graduation gate — lives in `CHANGELOG.md` and
+// `DEPLOYMENT.md` § Security headers, not duplicated here, so there is one
+// place to update when any of it changes. `src/securityHeaders.test.ts`
+// pins the exact values.
+//
+// `form-action` lists the IdP origin as a literal: SignOutButton POSTs to
+// /api/federated-logout, which redirects to the IdP's end-session endpoint,
+// and browsers apply `form-action` to that redirect. `headers()` is evaluated
+// at `next build` (baked into the routes manifest), so the runtime
+// `OIDC_ISSUER` cannot be used here.
 async function headers() {
   return [
     {
@@ -26,7 +33,16 @@ async function headers() {
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         { key: 'X-Frame-Options', value: 'DENY' },
         { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-        { key: 'Strict-Transport-Security', value: 'max-age=86400' },
+        { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+        {
+          key: 'Content-Security-Policy',
+          value: [
+            "frame-ancestors 'none'",
+            "object-src 'none'",
+            "base-uri 'self'",
+            "form-action 'self' https://auth.furchert.ch",
+          ].join('; '),
+        },
         {
           key: 'Content-Security-Policy-Report-Only',
           value: [
@@ -36,10 +52,6 @@ async function headers() {
             "img-src 'self' data:",
             "font-src 'self'",
             "connect-src 'self'",
-            "base-uri 'self'",
-            "form-action 'self'",
-            "frame-ancestors 'none'",
-            "object-src 'none'",
           ].join('; '),
         },
       ],
@@ -52,6 +64,8 @@ const nextConfig = {
   // Standalone output for the container image (Phase 7 / Dockerfile).
   output: 'standalone',
   reactStrictMode: true,
+  // No `X-Powered-By: Next.js` on responses (#42).
+  poweredByHeader: false,
   // nodemailer is the first real runtime dependency; it is not in Next's
   // built-in server-external-packages allowlist, so without this it would
   // be bundled into the server build instead of traced into
