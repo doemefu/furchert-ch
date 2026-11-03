@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
+import { buildPageMetadata } from '@/lib/seo/metadata';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ExpCard } from '@/components/ui/ExpCard';
 import { ROWING_CARDS } from '@/data/rowing';
-
-const HOST = 'https://furchert.ch';
 
 export async function generateMetadata({
   params,
@@ -19,17 +17,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
+  return buildPageMetadata({
+    locale,
+    href: '/rowing',
     title: `${t('pages.rowing.headerTitle')} — furchert.ch`,
     description: t('pages.rowing.headerSub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/rowing' }),
-        en: HOST + getPathname({ locale: 'en', href: '/rowing' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/rowing' }),
-      },
-    },
-  };
+  });
 }
 
 export default async function RowingPage({

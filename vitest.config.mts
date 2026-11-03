@@ -16,5 +16,10 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    // next-intl's ESM build imports `next/navigation` without a file
+    // extension, which plain Node ESM cannot resolve. Inlining next-intl lets
+    // Vite resolve it, so tests can use the real `@/i18n/navigation`
+    // (`getPathname`) instead of a hand-written mock of the URL rules.
+    server: { deps: { inline: ['next-intl'] } },
   },
 });

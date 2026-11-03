@@ -1,0 +1,34 @@
+# furchert.ch — Dominic Furchert
+
+> Personal website of Dominic Furchert, a software engineer in Switzerland. He helps small and medium-sized businesses (SMEs, German: KMU) in the Zürcher Oberland use AI in their everyday work, and he shows his software and homelab projects. The site is in German (default) and English.
+
+- Offer: AI for SMEs in the Zürcher Oberland (services, trades and production). Free first conversation on site or by video, then one trial run with a written quote. Accounting and bookkeeping are not part of the offer.
+- Data protection: processing in Switzerland or the EU wherever possible; sensitive data only with Swiss providers or on the customer's own premises.
+- Background: trained as an application developer (EFZ) at UBS; studies Software Systems (BSc) at the University of Zurich.
+- Volunteer roles: president of the Ruderclub Rapperswil-Jona (about 200 members), safety chief of the national rowing regatta in Schmerikon, firefighter, J+S coach.
+- German pages are under /de, English pages under /en.
+
+## Pages
+
+- [KI für KMU im Zürcher Oberland](https://furchert.ch/de/automation): the AI offer for SMEs, with examples, process, data protection and FAQ. English: [AI for SMEs in the Zürcher Oberland](https://furchert.ch/en/automation)
+- [Über mich](https://furchert.ch/de/about): background, timeline and roles. English: [About](https://furchert.ch/en/about)
+- [Projekte](https://furchert.ch/de/projects): software and homelab projects. English: [Projects](https://furchert.ch/en/projects)
+- [IT & Tech](https://furchert.ch/de/it): professional experience and tech stack. English: [IT & Tech](https://furchert.ch/en/it)
+- [Rudern](https://furchert.ch/de/rowing): rowing club presidency and regatta safety. English: [Rowing](https://furchert.ch/en/rowing)
+- [Kontakt](https://furchert.ch/de/contact): contact form and public profiles. English: [Contact](https://furchert.ch/en/contact)
+
+## Projects
+
+- [Homelab Infrastructure as Code](https://furchert.ch/en/projects/homelab): a 4-node k3s cluster provisioned with Ansible.
+- [IoT Platform — Terra1](https://furchert.ch/en/projects/iot-platform): ESP32 sensor nodes, MQTT and Spring Boot services.
+- [Homelab Auth Service](https://furchert.ch/en/projects/auth-service): identity and access management for the homelab.
+- [RCRJ Club Assist](https://furchert.ch/en/projects/club-assist): AI-assisted club management for the rowing club.
+- [Aemtlifyer](https://furchert.ch/en/projects/aemtlifyer): role and task management for the rowing club.
+- [Karaokee — SoPra FS26](https://furchert.ch/en/projects/karaokee): group karaoke app, a university software project.
+
+## Optional
+
+- [Home](https://furchert.ch/de): start page. English: [Home](https://furchert.ch/en)
+- [Sitemap](https://furchert.ch/sitemap.xml): all pages with language versions.
+- [GitHub](https://github.com/doemefu): public repositories.
+- [LinkedIn](https://linkedin.com/in/dominic-furchert): professional profile.

@@ -6,6 +6,24 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Site-wide SEO and GEO baseline** (#134): every public page builds its
+  metadata with `buildPageMetadata` (`src/lib/seo/metadata.ts`): a
+  self-referencing canonical, `de`/`en`/`x-default` alternates, OpenGraph
+  (`de_CH`/`en_GB`) and Twitter tags. hreflang now comes only from the HTML
+  and the sitemap: the next-intl middleware no longer sends a `Link` header
+  (`alternateLinks: false`), whose `x-default` named the unprefixed URL and
+  contradicted both. The sitemap's `<lastmod>` is each page's last significant
+  change from `src/lib/seo/pages.ts` instead of the build time; the automation
+  page's "Stand" date reads the same entry. JSON-LD: `WebSite`, `WebPage` and
+  the owner's `Person` on the home page, a `ProfilePage` on `/about`, all
+  sharing the ids `https://furchert.ch/#website` and
+  `https://furchert.ch/#person`; the automation and homelab pages now point to
+  the site with `isPartOf`. The homelab page's lastmod is the date the page
+  shows (`LAB_CONTENT_UPDATED`). robots.txt adds `Content-Signal: search=yes,
+  ai-input=yes, ai-train=no` (Cloudflare's managed block cannot set
+  `ai-input`). New `/llms.txt`: a short Markdown summary with the key links,
+  following the llmstxt.org proposal (an emerging convention, not a standard).
+  Vitest inlines next-intl so tests run the real router. No new dependency.
 - **Public homelab showcase and live status** on `/projects/homelab`: what runs
   in the homelab (public repos only) and the live status of six public services
   (up/down and 14-day availability) from the new unauthenticated

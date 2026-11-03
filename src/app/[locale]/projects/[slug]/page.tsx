@@ -2,16 +2,15 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { routing, isLocale } from '@/i18n/routing';
-import { Link, getPathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { Btn } from '@/components/ui/Btn';
 import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
 import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 import { buildHomelabJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { HomelabSections } from './HomelabSections';
-
-const HOST = 'https://furchert.ch';
 
 // Static params: locale × slug (the parent [locale] layout composes locales).
 // `dynamicParams = false`: an unknown slug is a plain 404, never rendered on
@@ -34,46 +33,24 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const project = PROJECTS.find((p) => p.slug === slug);
   if (!project || !isLocale(locale)) return {};
+  const href = `/projects/${slug}`;
   // The homelab page is also the public showcase + live status: own title and
-  // description (search intent), canonical and social tags. Other projects
-  // keep the generic metadata (site-wide SEO is handled separately).
-  const lab =
-    slug === 'homelab'
-      ? await (async () => {
-          const t = await getTranslations({ locale, namespace: 'pages.lab' });
-          const title = `${t('metaTitle')} — furchert.ch`;
-          const description = t('metaDescription');
-          const url = HOST + getPathname({ locale, href: `/projects/${slug}` });
-          return {
-            title,
-            description,
-            canonical: url,
-            openGraph: {
-              type: 'website' as const,
-              siteName: 'furchert.ch',
-              title,
-              description,
-              url,
-              locale: locale === 'de' ? 'de_CH' : 'en_GB',
-              alternateLocale: locale === 'de' ? 'en_GB' : 'de_CH',
-            },
-            twitter: { card: 'summary' as const, title, description },
-          };
-        })()
-      : null;
-  return {
-    title: lab?.title ?? `${project.title} — furchert.ch`,
-    description: lab?.description ?? project.i18n[locale].summary,
-    ...(lab ? { openGraph: lab.openGraph, twitter: lab.twitter } : {}),
-    alternates: {
-      ...(lab ? { canonical: lab.canonical } : {}),
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: `/projects/${slug}` }),
-        en: HOST + getPathname({ locale: 'en', href: `/projects/${slug}` }),
-        'x-default': HOST + getPathname({ locale: 'de', href: `/projects/${slug}` }),
-      },
-    },
-  };
+  // description (search intent). Other projects use their name and summary.
+  if (slug === 'homelab') {
+    const t = await getTranslations({ locale, namespace: 'pages.lab' });
+    return buildPageMetadata({
+      locale,
+      href,
+      title: `${t('metaTitle')} — furchert.ch`,
+      description: t('metaDescription'),
+    });
+  }
+  return buildPageMetadata({
+    locale,
+    href,
+    title: `${project.title} — furchert.ch`,
+    description: project.i18n[locale].summary,
+  });
 }
 
 export default async function ProjectDetailPage({
@@ -98,7 +75,7 @@ export default async function ProjectDetailPage({
             __html: serializeJsonLd(
               buildHomelabJsonLd({
                 locale,
-                pageUrl: HOST + getPathname({ locale, href: `/projects/${p.slug}` }),
+                pageUrl: localizedUrl(locale, `/projects/${p.slug}`),
                 name: p.title,
                 description: p.i18n[locale].detail,
                 dateModified: LAB_CONTENT_UPDATED,

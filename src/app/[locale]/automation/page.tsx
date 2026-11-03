@@ -11,22 +11,22 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { Link, getPathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { FAQS } from '@/data/automation-faqs';
 import { buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
+import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { FAQAccordion } from './FAQAccordion';
 
-const HOST = 'https://furchert.ch';
 const DOTS_LIGHT =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.08'/%3E%3C/svg%3E\")";
 
-// Date of the last content change; shown on the page and used as
-// `dateModified` in the JSON-LD. Update it whenever the copy changes.
-const LAST_UPDATED = '2026-11-03';
-
-const OG_LOCALE = { de: 'de_CH', en: 'en_GB' } as const;
+// Date of the last content change; shown on the page, used as
+// `dateModified` in the JSON-LD and as the sitemap's lastmod. Update it in
+// src/lib/seo/pages.ts whenever the copy changes.
+const LAST_UPDATED = PAGE_LAST_MODIFIED['/automation'];
 
 // Short direct answer under a question heading (GEO: quotable by AI search).
 const leadStyle = {
@@ -54,31 +54,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  const title = `${t('pages.automation.heroLabel')} — furchert.ch`;
-  const description = t('pages.automation.metaDescription');
-  const url = HOST + getPathname({ locale, href: '/automation' });
-  return {
-    title,
-    description,
-    openGraph: {
-      type: 'website',
-      siteName: 'furchert.ch',
-      title,
-      description,
-      url,
-      locale: OG_LOCALE[locale],
-      alternateLocale: OG_LOCALE[locale === 'de' ? 'en' : 'de'],
-    },
-    twitter: { card: 'summary', title, description },
-    alternates: {
-      canonical: url,
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/automation' }),
-        en: HOST + getPathname({ locale: 'en', href: '/automation' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/automation' }),
-      },
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/automation',
+    title: `${t('pages.automation.heroLabel')} — furchert.ch`,
+    description: t('pages.automation.metaDescription'),
+  });
 }
 
 export default async function AutomationPage({
@@ -95,7 +76,7 @@ export default async function AutomationPage({
   const mailHref = `mailto:dominic@furchert.ch?subject=${encodeURIComponent(t('pages.automation.mailSubject'))}`;
   const jsonLd = buildAutomationJsonLd({
     locale,
-    pageUrl: HOST + getPathname({ locale, href: '/automation' }),
+    pageUrl: localizedUrl(locale, '/automation'),
     name: t('pages.automation.heroLabel'),
     description: t('pages.automation.heroSub'),
     areaServed: 'Zürcher Oberland',
