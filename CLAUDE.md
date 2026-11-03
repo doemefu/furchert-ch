@@ -8,7 +8,7 @@
 
 `furchert-ch` is the **single web frontend for the whole doemefu homelab**. It is two things in one Next.js app:
 
-1. **Public personal site** — Home, About, IT, Rowing, Projects, Automation, Contact (German + English).
+1. **Public personal site** — Home, About, IT, Rowing, Projects, Automation, Contact, Impressum, Datenschutz (German + English).
 2. **Private cluster control surface** — an OIDC-gated `/dashboard` with a homelab overview and an ADMIN-only `/dashboard/network` (data from `homelab-data-service`) and an ADMIN-only `/dashboard/services` (per-workload CPU/MEM, 14-day availability and restarts from Prometheus, #47) and an ADMIN-only `/dashboard/auth` (users, device clients and JWKS via `homelab-auth-service`'s REST API, #44). The `homelab-device-service` admin GUI is planned (#45).
 
 **Domain:** furchert.ch · **Deploy target:** k3s `apps` namespace via Flux CD, behind Cloudflare Tunnel. Live at https://furchert.ch since 2026-06-25, deployed via Flux image automation from `ghcr.io/doemefu/furchert-ch`.
@@ -65,7 +65,7 @@ Agents come from the `homelab-workflow` plugin: `homelab-workflow:<role>` for `a
 ## Repository Layout
 
 ```
-src/app/[locale]/        # public pages (about, contact, it, projects, rowing, automation) + /dashboard (overview, network, services, auth) (App Router)
+src/app/[locale]/        # public pages (about, contact, it, projects, rowing, automation, imprint, privacy) + /dashboard (overview, network, services, auth) (App Router)
 src/app/api/             # auth/[...nextauth], federated-logout, health (server-side proxies; no scan API)
 src/components/{ui,layout}/, Providers.tsx
 src/lib/                 # server-side clients: metrics (Prometheus: cluster.ts, services.ts + pure serviceHealth.ts), netmon (data-service), authadmin (auth-service admin API), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts

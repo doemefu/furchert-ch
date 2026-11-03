@@ -41,6 +41,16 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Impressum and Datenschutz pages** (#16): `/[locale]/imprint` and
+  `/[locale]/privacy` (DE + EN) replace the footer placeholders and are in the
+  sitemap. The imprint names the owner and the published e-mail address (no
+  postal address, owner decision). The privacy notice describes the actual
+  processing: Cloudflare delivery, the self-hosted security monitoring
+  (retention periods, local blocklists, AbuseIPDB lookups), the contact form via
+  iCloud Mail, sign-in records, the `NEXT_LOCALE` cookie and the recipients
+  abroad. Copy lives in `src/data/legal.ts`; `src/data/legal.test.ts` guards
+  it (no e-mail in text, no postal address, required facts).
+
 - **`/dashboard/services` — service utilization and availability** (#47):
   ADMIN-only page, new Services tab in the dev-area subnav. Per Deployment and
   StatefulSet in `apps` and `homeassistant` (exclude list in

@@ -133,15 +133,12 @@ export async function Footer() {
         >
           <span>{t('footer.copy')}</span>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            {/* Imprint/Privacy pages are not implemented yet (follow-up). Render
-                as non-interactive placeholders rather than `href="#"` so they
-                don't masquerade as real navigation. */}
-            <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
+            <Link href="/imprint" style={{ ...linkStyle, color: 'var(--n-60)' }}>
               {t('footer.imprint')}
-            </span>
-            <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
+            </Link>
+            <Link href="/privacy" style={{ ...linkStyle, color: 'var(--n-60)' }}>
               {t('footer.privacy')}
-            </span>
+            </Link>
           </div>
         </div>
       </div>

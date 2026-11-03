@@ -17,6 +17,8 @@ whole cluster — there is no separate admin app.
 | `/[locale]/rowing` | Rowing |
 | `/[locale]/projects`, `/projects/[slug]` | Projects + detail |
 | `/[locale]/contact` | Contact |
+| `/[locale]/imprint` | Impressum / Imprint (#16; name + e-mail, no postal address) |
+| `/[locale]/privacy` | Datenschutz / Privacy (#16; copy in `src/data/legal.ts`) |
 
 Locales: `de` (default) and `en`; `/` redirects to `/de`. Each public route
 emits locale-aware `<title>` / `<meta description>` and hreflang alternates;
@@ -105,8 +107,6 @@ automated tests" half of #42 is tracked on that issue.
   and "no login data yet" while the `login-events` collector has no source
   data (e.g. auth-service's outbox not enabled); attempted usernames are never shown, only an 8-character hash tag.
 - **Live (#44):** `/dashboard/auth` calls auth-service's admin REST API server-side with the signed-in admin's own access token (refreshed in memory). Every failure renders an honest state ("sign in again", "ADMIN role required", "not available yet", "auth-service unavailable", "unexpected response"); Sessions & tokens and the audit log are labelled "not available" placeholders, never fabricated data.
-- **Placeholder:** footer **Impressum** / **Datenschutz** render as
-  non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard,
   Turnstile / a shared (multi-replica-safe) rate limiter, n8n notifications,
   WebSocket device stream. Tracked here as work progresses.
