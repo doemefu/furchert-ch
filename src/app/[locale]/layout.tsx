@@ -7,10 +7,11 @@ import { dmSans, dmMono } from '@/lib/fonts';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Providers } from '@/components/Providers';
+import { ownerTitle } from '@/lib/seo/metadata';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'furchert.ch — Dominic Furchert',
+  title: ownerTitle('furchert.ch'),
   description:
     'Dominic Furchert, Software Engineer: KI für KMU im Zürcher Oberland, IoT-Plattform, Homelab.',
 };

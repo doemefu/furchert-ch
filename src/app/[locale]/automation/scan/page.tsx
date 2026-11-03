@@ -21,7 +21,7 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale,
     href: '/automation/scan',
-    title: `${t('pages.scan.step1HeaderLabel')} — Dominic Furchert`,
+    title: `${t('pages.scan.step1HeaderLabel')} | Dominic Furchert`,
     description: t('pages.scan.bannerBody'),
     noindex: true,
   });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPageMetadata, languageAlternates, localizedUrl } from './metadata';
+import { buildPageMetadata, languageAlternates, localizedUrl, ownerTitle } from './metadata';
 
 const base = { title: 'Über mich — furchert.ch', description: 'Kurzbeschreibung.' };
 
@@ -63,5 +63,12 @@ describe('buildPageMetadata', () => {
     expect(
       buildPageMetadata({ ...base, locale: 'de', href: '/automation/scan', noindex: true }).robots,
     ).toEqual({ index: false, follow: true });
+  });
+});
+
+describe('ownerTitle', () => {
+  it('appends the owner with "|" (no em dash)', () => {
+    expect(ownerTitle('Kontakt')).toBe('Kontakt | Dominic Furchert');
+    expect(ownerTitle('IoT Platform: Terra1')).not.toContain('\u2014');
   });
 });
