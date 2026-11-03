@@ -102,11 +102,12 @@ export default async function AutomationPage({
     faq: faqItems,
     dateModified: LAST_UPDATED,
   });
-  const updatedText = `${t('pages.automation.updatedLabel')}: ${new Intl.DateTimeFormat(locale, {
+  const updatedLabel = t('pages.automation.updatedLabel');
+  const updatedDate = new Intl.DateTimeFormat(locale, {
     month: 'long',
     year: 'numeric',
     timeZone: 'UTC',
-  }).format(new Date(LAST_UPDATED))}`;
+  }).format(new Date(LAST_UPDATED));
 
   return (
     <div>
@@ -571,7 +572,7 @@ export default async function AutomationPage({
               color: 'var(--n-60)',
             }}
           >
-            <time dateTime={LAST_UPDATED}>{updatedText}</time>
+            {updatedLabel}: <time dateTime={LAST_UPDATED}>{updatedDate}</time>
           </p>
         </div>
       </div>

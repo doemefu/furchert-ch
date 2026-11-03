@@ -30,10 +30,17 @@ const keysDeep = (value: unknown, acc = new Set<string>()): Set<string> => {
 };
 
 describe('buildAutomationJsonLd', () => {
-  it('is a schema.org graph of WebPage, Service and FAQPage', () => {
+  it('is a schema.org graph of one WebPage that is also the FAQPage, and the Service', () => {
     const data = buildAutomationJsonLd(input);
     expect(data['@context']).toBe('https://schema.org');
-    expect(graph().map((n) => n['@type'])).toEqual(['WebPage', 'Service', 'FAQPage']);
+    expect(graph().map((n) => n['@type'])).toEqual([['WebPage', 'FAQPage'], 'Service']);
+  });
+
+  it('describes the page once and links it to the service', () => {
+    const [page, service] = graph();
+    expect(page['@id']).toBe(`${PAGE}#webpage`);
+    expect(page.about).toEqual({ '@id': service['@id'] });
+    expect(page.mainEntity).toBeDefined();
   });
 
   it('points every node at the canonical page URL', () => {
@@ -44,7 +51,7 @@ describe('buildAutomationJsonLd', () => {
   });
 
   it('mirrors the visible FAQ one to one', () => {
-    const faq = graph().find((n) => n['@type'] === 'FAQPage') as Node;
+    const faq = graph()[0] as Node;
     const entities = faq.mainEntity as Array<{ name: string; acceptedAnswer: { text: string } }>;
     expect(entities.map((e) => [e.name, e.acceptedAnswer.text])).toEqual(
       FAQ.map((f) => [f.q, f.a]),
