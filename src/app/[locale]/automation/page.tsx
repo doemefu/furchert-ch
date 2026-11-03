@@ -1,12 +1,13 @@
 // Ported from the prototype (pages.jsx PageAutomation, lines 459-592) and
-// reworked for the SME offer (Zürcher Oberland). RSC; only the FAQ block
-// is a client island. The "problem" block is now everyday use cases and
-// the "comparison" block is the data protection block; the section
-// styles are the prototype's, only the two grids became responsive
-// (single column on narrow phones). No prices on this page.
+// reworked for the SME offer (Zürcher Oberland). RSC; only the FAQ block is
+// a client island. Sections: hero, trade stories, one before/after example,
+// process and prices (owner-approved prices, 2026-11-03), data protection,
+// about, call to action, FAQ. The new sections are server components next to
+// this file and reuse the page's existing section styles (sectionStyles.ts);
+// the grids are responsive (single column on narrow phones).
 // The prototype's `id="scan"` FAQ placeholder stays dropped (worklog F1).
-// The hero no longer links to the /automation/scan demo (its sample report
-// still shows prices and ROI figures); the route itself is unchanged.
+// The /automation/scan demo is not linked from here: its sample report does
+// not match the published packages.
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
@@ -15,6 +16,10 @@ import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { FAQS } from '@/data/automation-faqs';
+import { AutomationStories } from './AutomationStories';
+import { AutomationExample } from './AutomationExample';
+import { AutomationPricing } from './AutomationPricing';
+import { labelMono, leadStyle } from './sectionStyles';
 import { buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
@@ -27,24 +32,6 @@ const DOTS_LIGHT =
 // `dateModified` in the JSON-LD and as the sitemap's lastmod. Update it in
 // src/lib/seo/pages.ts whenever the copy changes.
 const LAST_UPDATED = PAGE_LAST_MODIFIED['/automation'];
-
-// Short direct answer under a question heading (GEO: quotable by AI search).
-const leadStyle = {
-  fontSize: '1rem',
-  color: 'var(--n-70)',
-  lineHeight: 1.55,
-  maxWidth: '62ch',
-  marginBottom: '2.5rem',
-};
-
-const labelMono = {
-  fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
-  textTransform: 'uppercase' as const,
-  color: 'var(--n-50)',
-  marginBottom: '1rem',
-};
 
 export async function generateMetadata({
   params,
@@ -79,7 +66,7 @@ export default async function AutomationPage({
     pageUrl: localizedUrl(locale, '/automation'),
     name: t('pages.automation.heroLabel'),
     description: t('pages.automation.heroSub'),
-    areaServed: 'Zürcher Oberland',
+    areaServed: t('pages.automation.areaServed'),
     faq: faqItems,
     dateModified: LAST_UPDATED,
   });
@@ -163,137 +150,24 @@ export default async function AutomationPage({
               {t('pages.automation.heroCtaContact')} <Icon name="arrow" size={12} />
             </Btn>
           </div>
+          <p
+            style={{
+              marginTop: '1.5rem',
+              fontFamily: 'var(--mono)',
+              fontSize: '.8125rem',
+              letterSpacing: '.04em',
+              color: 'var(--n-40)',
+            }}
+          >
+            {t('pages.automation.heroPriceLine')}
+          </p>
         </div>
       </div>
 
       <div className="container border-x">
-        {/* USE CASES */}
-        <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={labelMono}>{t('pages.automation.useCaseLabel')}</p>
-          <h2
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'clamp(1.5rem,3vw,2.25rem)',
-              fontWeight: 500,
-              letterSpacing: '-.03em',
-              color: 'var(--n-100)',
-              marginBottom: '1rem',
-            }}
-          >
-            {t('pages.automation.useCaseHeading')}
-          </h2>
-          <p style={leadStyle}>{t('pages.automation.useCaseLead')}</p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(280px, 30%)), 1fr))',
-              gap: '0',
-            }}
-          >
-            {([1, 2, 3, 4, 5, 6] as const).map((n) => (
-              <div
-                key={n}
-                style={{
-                  padding: '2rem',
-                  borderRight: '1px solid rgba(162,167,176,.22)',
-                  borderBottom: '1px solid rgba(162,167,176,.22)',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    letterSpacing: '-.02em',
-                    color: 'var(--n-100)',
-                    marginBottom: '.5rem',
-                  }}
-                >
-                  {t(`pages.automation.useCase${n}Title`)}
-                </div>
-                <p style={{ fontSize: '.9375rem', color: 'var(--n-60)', lineHeight: 1.55 }}>
-                  {t(`pages.automation.useCase${n}Text`)}
-                </p>
-              </div>
-            ))}
-          </div>
-          <p style={{ marginTop: '2rem', fontSize: '1rem', color: 'var(--n-70)', fontStyle: 'italic' }}>
-            {t('pages.automation.useCaseFooter')}
-          </p>
-        </div>
-
-        {/* PROCESS STEPS */}
-        <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={labelMono}>{t('pages.automation.processLabel')}</p>
-          <h2
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'clamp(1.5rem,3vw,2.25rem)',
-              fontWeight: 500,
-              letterSpacing: '-.03em',
-              color: 'var(--n-100)',
-              marginBottom: '1rem',
-            }}
-          >
-            {t('pages.automation.processHeading')}
-          </h2>
-          <p style={leadStyle}>{t('pages.automation.processLead')}</p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '0',
-            }}
-          >
-            {([1, 2, 3] as const).map((n) => (
-              <div
-                key={n}
-                style={{ padding: '2rem', borderRight: '1px solid rgba(162,167,176,.22)' }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: '2rem',
-                    fontWeight: 400,
-                    letterSpacing: '-.02em',
-                    color: 'var(--n-20)',
-                    lineHeight: 1,
-                    marginBottom: '1rem',
-                  }}
-                >
-                  0{n}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontSize: '1.125rem',
-                    fontWeight: 500,
-                    letterSpacing: '-.02em',
-                    color: 'var(--n-100)',
-                    marginBottom: '.25rem',
-                  }}
-                >
-                  {t(`pages.automation.step${n}Title`)}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: '.72rem',
-                    letterSpacing: '.04em',
-                    textTransform: 'uppercase',
-                    color: 'var(--blue-base)',
-                    marginBottom: '.75rem',
-                  }}
-                >
-                  {t(`pages.automation.step${n}Sub`)}
-                </div>
-                <p style={{ fontSize: '.9375rem', color: 'var(--n-60)', lineHeight: 1.55 }}>
-                  {t(`pages.automation.step${n}Desc`)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <AutomationStories locale={locale} />
+        <AutomationExample locale={locale} />
+        <AutomationPricing locale={locale} />
 
         {/* DATA PROTECTION (two-column) */}
         <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
@@ -352,8 +226,11 @@ export default async function AutomationPage({
                     color: 'var(--n-60)',
                   }}
                 >
-                  <span style={{ width: 16, height: 16, flexShrink: 0, color: 'var(--n-40)' }}>
-                    —
+                  <span
+                    aria-hidden="true"
+                    style={{ width: 16, flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                  >
+                    <span style={{ display: 'block', width: 10, height: 1, background: 'var(--n-40)' }} />
                   </span>
                   {t(`pages.automation.privacyLeft${n}`)}
                 </div>
@@ -417,31 +294,6 @@ export default async function AutomationPage({
             flexWrap: 'wrap',
           }}
         >
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              background: 'var(--n-20)',
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'var(--mono)',
-                fontSize: '.65rem',
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
-                color: 'var(--n-50)',
-                textAlign: 'center',
-                padding: '.25rem',
-              }}
-            >
-              {t('pages.automation.aboutMiniPhotoCaption')}
-            </div>
-          </div>
           <div style={{ flex: 1, minWidth: 220 }}>
             <div
               style={{
