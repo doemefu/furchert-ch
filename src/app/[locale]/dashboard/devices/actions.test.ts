@@ -60,6 +60,7 @@ describe('role gate (every action)', () => {
   it.each(ALL)('%s rejects a missing session', async (_n, action, input) => {
     auth.mockResolvedValue(null);
     expect(await action(IDLE, fd(input))).toEqual({ status: 'error', code: 'session' });
+    expect(getAdminAccessToken).not.toHaveBeenCalled();
     expect(anyClientCall()).toBe(false);
   });
 
@@ -74,6 +75,7 @@ describe('role gate (every action)', () => {
       auth.mockResolvedValue({ user });
       expect(await action(IDLE, fd(input))).toEqual({ status: 'error', code: 'forbidden' });
     }
+    expect(getAdminAccessToken).not.toHaveBeenCalled();
     expect(anyClientCall()).toBe(false);
   });
 
@@ -93,7 +95,7 @@ describe('controlDeviceAction', () => {
   it('validates before calling device-service', async () => {
     expect(await actions.controlDeviceAction(IDLE, fd({ ...control, id: '1/../../actuator' }))).toEqual({
       status: 'error',
-      code: 'validation',
+      code: 'invalid',
       fieldErrors: { id: 'id' },
     });
     expect(client.controlDevice).not.toHaveBeenCalled();
@@ -153,7 +155,7 @@ describe('saveScheduleAction', () => {
   it('blocks per-second expressions locally', async () => {
     expect(await actions.saveScheduleAction(IDLE, fd({ ...schedule, cronExpression: '* * * * * *' }))).toEqual({
       status: 'error',
-      code: 'validation',
+      code: 'invalid',
       fieldErrors: { cronExpression: 'cronSeconds' },
     });
     expect(client.createSchedule).not.toHaveBeenCalled();
@@ -185,7 +187,7 @@ describe('deleteScheduleAction', () => {
   it('rejects a bad id', async () => {
     expect(await actions.deleteScheduleAction(IDLE, fd({ id: 'abc' }))).toEqual({
       status: 'error',
-      code: 'validation',
+      code: 'invalid',
       fieldErrors: { id: 'id' },
     });
     expect(client.deleteSchedule).not.toHaveBeenCalled();
@@ -237,7 +239,7 @@ describe('setScheduleActiveAction', () => {
   it('rejects a target state other than true/false', async () => {
     expect(await actions.setScheduleActiveAction(IDLE, fd({ id: '5', active: 'yes' }))).toEqual({
       status: 'error',
-      code: 'validation',
+      code: 'invalid',
       fieldErrors: { active: 'active' },
     });
     expect(client.getSchedule).not.toHaveBeenCalled();

@@ -55,6 +55,19 @@ export function SchedulesPanel({
   const errorText = useErrorText();
   // null = closed, 'new' = create form, number = edit that schedule id.
   const [drawer, setDrawer] = useState<null | 'new' | number>(null);
+  // The button that opened the drawer, captured on click (before the drawer's
+  // autoFocus moves focus), so closing the drawer can return focus to it.
+  const opener = useRef<HTMLElement | null>(null);
+  const openDrawer = (target: 'new' | number, el: HTMLElement) => {
+    opener.current = el;
+    setDrawer(target);
+  };
+  const closeDrawer = () => {
+    setDrawer(null);
+    const el = opener.current;
+    opener.current = null;
+    if (el?.isConnected) el.focus();
+  };
   const [banner, setBanner] = useState<string | null>(null);
   const [rowError, setRowError] = useState<{ id: number; text: string } | null>(null);
   const editing = typeof drawer === 'number' ? schedules.find((s) => s.id === drawer) : undefined;
@@ -93,7 +106,7 @@ export function SchedulesPanel({
           <MonoLabel>{t('schedules.count', { count: schedules.length })}</MonoLabel>
           <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)' }}>{t('schedules.source')}</span>
         </div>
-        <button type="button" onClick={() => setDrawer('new')} style={btnPrimary}>
+        <button type="button" onClick={(e) => openDrawer('new', e.currentTarget)} style={btnPrimary}>
           {t('schedules.new')}
         </button>
       </div>
@@ -218,7 +231,7 @@ export function SchedulesPanel({
                 <ActiveSwitch row={s} onResult={onRowResult} />
               </span>
               <span style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button type="button" onClick={() => setDrawer(s.id)} style={btnSmall}>
+                <button type="button" onClick={(e) => openDrawer(s.id, e.currentTarget)} style={btnSmall}>
                   {t('schedules.edit')}
                 </button>
               </span>
@@ -232,7 +245,7 @@ export function SchedulesPanel({
           key="new"
           deviceNames={deviceNames}
           nowMs={nowMs}
-          onClose={() => setDrawer(null)}
+          onClose={closeDrawer}
           onSaved={(saved) => {
             setRowError(null);
             setBanner(savedText(saved));
@@ -245,7 +258,7 @@ export function SchedulesPanel({
           row={editing}
           deviceNames={deviceNames}
           nowMs={nowMs}
-          onClose={() => setDrawer(null)}
+          onClose={closeDrawer}
           onSaved={(saved) => {
             setRowError(null);
             setBanner(savedText(saved));
@@ -355,15 +368,6 @@ function ScheduleDrawer({
   // Options: the known devices plus the stored name when it is no longer registered.
   const options = deviceNames ? [...deviceNames] : null;
   const missing = options !== null && row?.deviceName && !options.includes(row.deviceName) ? row.deviceName : null;
-
-  // Return focus to whatever opened the drawer.
-  const opener = useRef<Element | null>(null);
-  useEffect(() => {
-    opener.current = document.activeElement;
-    return () => {
-      if (opener.current instanceof HTMLElement) opener.current.focus();
-    };
-  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

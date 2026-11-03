@@ -10,7 +10,8 @@ import { isDeviceField, type DeviceField } from './fields';
 export type DeviceActionErrorCode =
   | 'session' // no session, no stored token, or token rejected → sign in again
   | 'forbidden' // not ADMIN (here or at device-service)
-  | 'validation'
+  | 'invalid' // rejected here, before device-service was called
+  | 'validation' // rejected by device-service (400)
   | 'payload' // the schedule's stored payload is not the standard shape, so a toggle would rewrite it
   | 'notFound'
   | 'unavailable'

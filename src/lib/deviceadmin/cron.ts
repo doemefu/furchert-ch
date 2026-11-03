@@ -66,13 +66,16 @@ function wallToInstant(wallAsUtc: number): number {
   return instant;
 }
 
-/** Next instant (strictly after `nowMs`) at which Zurich shows hh:mm. */
+/**
+ * Next instant (strictly after `nowMs`) at which Zurich shows hh:mm. A day on
+ * which that wall time does not exist (02:xx on the spring switch) is skipped.
+ */
 function nextZurichOccurrence(hour: number, minute: number, nowMs: number): number {
   const today = zurichWall(nowMs);
-  for (let addDays = 0; addDays < 3; addDays++) {
-    const wall = Date.UTC(today.year, today.month - 1, today.day + addDays, hour, minute);
-    const instant = wallToInstant(wall);
-    if (instant > nowMs) return instant;
+  for (let addDays = 0; addDays < 4; addDays++) {
+    const instant = wallToInstant(Date.UTC(today.year, today.month - 1, today.day + addDays, hour, minute));
+    const w = zurichWall(instant);
+    if (instant > nowMs && w.hour === hour && w.minute === minute) return instant;
   }
   return wallToInstant(Date.UTC(today.year, today.month - 1, today.day + 1, hour, minute));
 }
@@ -143,16 +146,50 @@ export function nextOffsetChange(fromMs: number): { atMs: number; offsetAfter: n
 }
 
 /**
- * For a daily UTC schedule: when the next daylight-saving switch happens and
- * the Zurich time the schedule fires at from then on. Null for other shapes.
+ * For a daily UTC schedule: the first run after the next daylight-saving
+ * switch (`atMs`, so its Zurich date is the day the new time starts) and the
+ * Zurich time it fires at from then on. Null for other shapes.
  */
 export function nextDailyShift(expr: string, nowMs: number): { atMs: number; hour: number; minute: number } | null {
   const daily = dailyUtc(expr);
   if (!daily) return null;
   const change = nextOffsetChange(nowMs);
   if (!change) return null;
-  const total = (((daily.hour * 60 + daily.minute + change.offsetAfter) % 1440) + 1440) % 1440;
-  return { atMs: change.atMs, hour: Math.floor(total / 60), minute: total % 60 };
+  const firstRun = nextUtcOccurrence(daily.hour, daily.minute, change.atMs - 1);
+  const w = zurichWall(firstRun);
+  return { atMs: firstRun, hour: w.hour, minute: w.minute };
+}
+
+const TIME = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+/** "08:05" → { hour: 8, minute: 5 }, or null. */
+export function parseTime(v: string): { hour: number; minute: number } | null {
+  const m = TIME.exec(v);
+  return m ? { hour: Number(m[1]), minute: Number(m[2]) } : null;
+}
+
+export interface CronFormState {
+  mode: 'daily' | 'interval' | 'custom';
+  /** "hh:mm", Zurich time. */
+  time: string;
+  minutes: IntervalMinutes;
+  custom: string;
+}
+
+/**
+ * The expression the schedule form submits. An untouched form keeps the stored
+ * expression as it is: near a daylight-saving switch, showing a stored UTC time
+ * in Zurich time and converting it back can land one hour apart, and a save
+ * that only changes the device, target state or `active` must not move the run.
+ */
+export function cronFromForm(form: CronFormState, nowMs: number, initial: string | null, touched: boolean): string {
+  if (!touched && initial !== null) return initial.trim();
+  if (form.mode === 'daily') {
+    const t = parseTime(form.time);
+    return t ? buildCron({ kind: 'daily', ...t }, nowMs) : '';
+  }
+  if (form.mode === 'interval') return buildCron({ kind: 'interval', minutes: form.minutes }, nowMs);
+  return form.custom.trim();
 }
 
 /**

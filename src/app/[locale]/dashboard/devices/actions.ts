@@ -75,7 +75,7 @@ export async function controlDeviceAction(_prev: DeviceActionState, fd: FormData
   const admin = await requireAdminToken();
   if (!admin.ok) return admin.state;
   const input = parseControl(fd);
-  if (!input.ok) return fail('validation', { fieldErrors: input.fieldErrors });
+  if (!input.ok) return fail('invalid', { fieldErrors: input.fieldErrors });
   const { id, field, state } = input.value;
   const r = await controlDevice(admin.token, id, { field, state });
   if (!r.ok) return fromFailure(r);
@@ -87,7 +87,7 @@ export async function saveScheduleAction(_prev: DeviceActionState, fd: FormData)
   const admin = await requireAdminToken();
   if (!admin.ok) return admin.state;
   const input = parseSchedule(fd);
-  if (!input.ok) return fail('validation', { fieldErrors: input.fieldErrors });
+  if (!input.ok) return fail('invalid', { fieldErrors: input.fieldErrors });
   const { id, ...body } = input.value;
   const r = id === null ? await createSchedule(admin.token, body) : await updateSchedule(admin.token, id, body);
   if (!r.ok) return fromFailure(r);
@@ -99,7 +99,7 @@ export async function deleteScheduleAction(_prev: DeviceActionState, fd: FormDat
   const admin = await requireAdminToken();
   if (!admin.ok) return admin.state;
   const id = parseScheduleId(fd);
-  if (!id) return fail('validation', { fieldErrors: { id: 'id' } });
+  if (!id) return fail('invalid', { fieldErrors: { id: 'id' } });
   const r = await deleteSchedule(admin.token, id);
   if (!r.ok) return fromFailure(r);
   revalidatePath(PAGE_PATH, 'page');
@@ -113,7 +113,7 @@ export async function setScheduleActiveAction(_prev: DeviceActionState, fd: Form
   const admin = await requireAdminToken();
   if (!admin.ok) return admin.state;
   const input = parseActive(fd);
-  if (!input.ok) return fail('validation', { fieldErrors: input.fieldErrors });
+  if (!input.ok) return fail('invalid', { fieldErrors: input.fieldErrors });
   const { id, active } = input.value;
   const current = await getSchedule(admin.token, id);
   if (!current.ok) return fromFailure(current);
