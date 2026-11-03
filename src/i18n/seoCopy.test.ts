@@ -14,7 +14,8 @@ const metaOf = (m: typeof de): Record<string, Meta> => ({
   projects: m.pages.projects,
   automation: m.pages.automation,
   contact: m.contact,
-  lab: m.pages.lab,
+  // The project page appends the name to this title (projects/[slug]/page.tsx).
+  lab: { ...m.pages.lab, metaTitle: `${m.pages.lab.metaTitle} — Dominic Furchert` },
 });
 const locales = { de: metaOf(de), en: metaOf(en) };
 
