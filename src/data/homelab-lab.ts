@@ -36,8 +36,8 @@ export const LAB_SERVICES: Record<LabServiceId, Record<Locale, { label: string; 
     en: { label: 'Login service', desc: 'Own OIDC identity provider' },
   },
   iot: {
-    de: { label: 'IoT-Plattform', desc: 'Terrarium-Steuerung, Messwerte und Live-Ansicht' },
-    en: { label: 'IoT platform', desc: 'Terrarium control, readings and live view' },
+    de: { label: 'IoT-Plattform', desc: 'Messwerte, Live-Ansicht und Zeitpläne für Geräte' },
+    en: { label: 'IoT platform', desc: 'Readings, live view and schedules for devices' },
   },
   automation: {
     de: { label: 'Workflow-Automation', desc: 'Automatisierte Abläufe' },
@@ -99,12 +99,12 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
     icon: 'chip',
     i18n: {
       de: {
-        title: 'IoT: Terrarium-Steuerung',
-        text: 'Ein ESP32 steuert ein Terrarium. Die Messwerte laufen per MQTT in eine Zeitreihen-Datenbank und live ins Dashboard.',
+        title: 'IoT-Plattform',
+        text: 'Die Plattform nimmt Messwerte von ESP32-Geräten per MQTT entgegen, speichert sie in einer Zeitreihen-Datenbank und stellt sie per WebSocket live bereit. Zeitpläne für die Geräte verwaltet eine REST-Schnittstelle. Das Terrarium als erstes Gerät ist derzeit pausiert.',
       },
       en: {
-        title: 'IoT: terrarium control',
-        text: 'An ESP32 controls a terrarium. The readings flow via MQTT into a time-series database and live into the dashboard.',
+        title: 'IoT platform',
+        text: 'The platform receives readings from ESP32 devices via MQTT, stores them in a time-series database and serves them live over WebSocket. A REST API manages the schedules of the devices. The terrarium, the first device, is currently paused.',
       },
     },
     repos: [
