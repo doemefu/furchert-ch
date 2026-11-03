@@ -121,8 +121,9 @@ labelled placeholders — never fabricated data.
 Read-only, unauthenticated (plain HTTP, no NetworkPolicy restricting `apps` →
 `monitoring`), consumed from two Server Components — `DashboardShell` via
 `src/lib/metrics/cluster.ts` (#17) and `ServicesShell` via
-`src/lib/metrics/services.ts` (#47) — never through a route handler and never
-reachable from the browser. Both use the same `PROMETHEUS_URL`. Four instant queries (`POST /api/v1/query`,
+`src/lib/metrics/services.ts` (#47) — and, in reduced form, by the public
+`GET /api/homelab-status` route handler (see "Public homelab status" below).
+Prometheus itself is never reachable from the browser. All use the same `PROMETHEUS_URL`. Four instant queries (`POST /api/v1/query`,
 2.5 s timeout each, run in parallel) power the `/dashboard` cluster strip and
 the workload-backed app tiles:
 
@@ -134,6 +135,36 @@ the workload-backed app tiles:
 Any failure (unreachable, timeout, malformed response, empty result) degrades
 the dashboard to an honest "unavailable" fallback instead of fabricating
 data — see `OVERVIEW.md`.
+
+**Public homelab status** — `GET /api/homelab-status`, unauthenticated, feeds
+the live block on `/[locale]/projects/homelab` (a client island fetches it on
+mount and about once a minute). `src/lib/metrics/labStatus.ts` asks Prometheus
+about a fixed allowlist of six public-facing workloads (constants only, no
+input reaches PromQL; `max by (namespace, deployment)` over the kube-state-metrics
+series): current ready/desired replicas, plus `avg_over_time` and
+`count_over_time` of "at least one replica ready while desired > 0" over
+`[14d:5m]` (coverage below 90 % of the 4032 samples hides the figure). The
+response is the whole contract:
+
+```json
+{ "checkedAt": "2026-11-03T15:26:00.000Z", "windowDays": 14,
+  "services": [ { "id": "website", "status": "up", "uptime": 99.9 } ] }
+```
+
+`id` is an opaque public id (`website`, `identity`, `iot`, `automation`,
+`assistant`, `monitoring`), `status` is `up`, `down` or `unknown`, `uptime` is
+a percentage floored to one decimal or `null` (absent when `SHOW_UPTIME` in
+`src/data/homelab-lab.ts` is false, in which case it is not queried). No
+workload names, namespaces, hosts, versions or error texts leave the server.
+Always HTTP 200; any failure reads as `unknown` (kube-state-metrics down looks
+like an empty result and is `unknown`, never `down`). The request is ignored
+(query strings included). Caching is in-process: status 60 s, uptime 15 min,
+one load at a time, a failed refresh keeps serving the last good value (5 min
+for status, 1 h for uptime), retries no sooner than 15 s / 60 s; response header
+`Cache-Control: public, max-age=30`. At most one evaluation of the three
+queries per window and per pod reaches Prometheus (the 14-day queries use a 4 s
+timeout). The figure is a cluster-level view, not an external probe, and planned
+maintenance counts as downtime.
 
 **Service health (#47)** — `/[locale]/dashboard/services`, ADMIN only (the page
 checks the role before `ServicesShell` renders, so nothing is queried for

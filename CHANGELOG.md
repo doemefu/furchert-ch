@@ -4,6 +4,15 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Added
+
+- **Public homelab showcase and live status** on `/projects/homelab`: what runs
+  in the homelab (public repos only) and the live status of six public services
+  (up/down and 14-day availability) from the new unauthenticated
+  `GET /api/homelab-status` (cached, allowlisted opaque ids, never an error
+  text, `unknown` when Prometheus is unavailable). No new dependency, no
+  manifest change.
+
 ### Security
 
 - **Security headers tightened** (#42): HSTS raised from 1 day to 1 year

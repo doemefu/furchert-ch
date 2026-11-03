@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAutomationJsonLd, serializeJsonLd, SITE_URL } from './jsonLd';
+import { buildAutomationJsonLd, buildHomelabJsonLd, serializeJsonLd, SITE_URL } from './jsonLd';
 
 const FAQ = [
   { q: 'Was kostet das?', a: 'Das hängt vom Ablauf ab.' },
@@ -101,5 +101,33 @@ describe('serializeJsonLd', () => {
       a: '</script><script>alert(1)</script>',
       b: '\u2028\u2029',
     });
+  });
+});
+
+describe('buildHomelabJsonLd', () => {
+  const lab = {
+    locale: 'en' as const,
+    pageUrl: `${SITE_URL}/en/projects/homelab`,
+    name: 'Homelab Infrastructure as Code',
+    description: 'Infrastructure as Code for a mixed homelab.',
+    dateModified: '2026-11-03',
+  };
+
+  it('is a modest WebPage authored by the owner', () => {
+    const data = buildHomelabJsonLd(lab);
+    expect(data['@context']).toBe('https://schema.org');
+    const page = data['@graph'] as Array<Record<string, unknown>>;
+    expect(page).toHaveLength(1);
+    expect(page[0]['@type']).toBe('WebPage');
+    expect(page[0].url).toBe(lab.pageUrl);
+    expect(page[0].inLanguage).toBe('en');
+    expect(page[0].dateModified).toBe('2026-11-03');
+    const author = page[0].author as Record<string, unknown>;
+    expect(Object.keys(author).sort()).toEqual(['@id', '@type', 'name', 'sameAs', 'url']);
+  });
+
+  it('carries no live values, hosts, contact data or prices', () => {
+    const json = JSON.stringify(buildHomelabJsonLd(lab));
+    expect(json).not.toMatch(/uptime|status|telephone|email|address|CHF|offers|\.furchert\.ch/i);
   });
 });
