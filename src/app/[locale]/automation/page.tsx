@@ -7,6 +7,8 @@
 // Copy was reworked for the SME offer (Zürcher Oberland): the "problem"
 // block is now everyday use cases and the "comparison" block is the data
 // protection block; layout and styles are unchanged. No prices on this page.
+// The hero no longer links to the /automation/scan demo (its sample report
+// still shows prices and ROI figures); the route itself is unchanged.
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
@@ -132,25 +134,6 @@ export default async function AutomationPage({
             <Btn href="/contact" dark>
               {t('pages.automation.heroCtaContact')} <Icon name="arrow" size={12} />
             </Btn>
-            <Link
-              href="/automation/scan"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '.45rem',
-                fontFamily: 'var(--mono)',
-                fontSize: '.8125rem',
-                letterSpacing: '.02em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                border: '1px solid rgba(255,255,255,.2)',
-                borderRadius: '2px',
-                padding: '.875rem 1.375rem',
-                color: 'var(--n-40)',
-              }}
-            >
-              {t('pages.automation.heroCtaScan')}
-            </Link>
           </div>
         </div>
       </div>
