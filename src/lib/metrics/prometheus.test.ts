@@ -144,3 +144,29 @@ describe('queryInstant (regression)', () => {
     await expect(queryInstant('up')).rejects.toThrow('resultType=matrix');
   });
 });
+
+describe('queryInstant timeout parameter', () => {
+  const vector = { status: 'success', data: { resultType: 'vector', result: [] } };
+
+  // Prometheus rejects fractional durations such as "2.5s" with HTTP 400, so
+  // the parameter must be an integer number of milliseconds.
+  it('sends the default 2.5 s as "2500ms"', async () => {
+    fetchMock.mockResolvedValue(respond(200, vector));
+    await queryInstant('up');
+    const body = fetchMock.mock.calls[0][1].body as URLSearchParams;
+    expect(body.get('query')).toBe('up');
+    expect(body.get('timeout')).toBe('2500ms');
+  });
+
+  it('sends an explicit timeout as whole milliseconds', async () => {
+    fetchMock.mockResolvedValue(respond(200, vector));
+    await queryInstant('up', 4000);
+    expect((fetchMock.mock.calls[0][1].body as URLSearchParams).get('timeout')).toBe('4000ms');
+  });
+
+  it('rounds a fractional timeout to a whole millisecond', async () => {
+    fetchMock.mockResolvedValue(respond(200, vector));
+    await queryInstant('up', 1234.6);
+    expect((fetchMock.mock.calls[0][1].body as URLSearchParams).get('timeout')).toBe('1235ms');
+  });
+});

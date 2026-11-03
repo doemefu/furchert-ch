@@ -22,7 +22,7 @@ If a future Next upgrade or a new dependency logs `EROFS`/`EACCES`, add an `empt
 
 ### Replicas (#83)
 
-**Keep `replicas: 1`.** The contact-form rate limiter (`src/lib/contact/rateLimit.ts`) holds its state in process memory. With more than one replica each pod enforces its own independent limits, so a sender could get N× the intended quota (traffic is not sticky). Before raising `replicas`, move the limiter to a shared store (e.g. Redis) — tracked as a precondition, not a config change. The authadmin token-refresh cache (`src/lib/authadmin/accessToken.ts`) is also per-process, but that is only an optimisation and stays correct at any replica count.
+**Keep `replicas: 1`.** The contact-form rate limiter (`src/lib/contact/rateLimit.ts`) holds its state in process memory. With more than one replica each pod enforces its own independent limits, so a sender could get N× the intended quota (traffic is not sticky). Before raising `replicas`, move the limiter to a shared store (e.g. Redis) — tracked as a precondition, not a config change. The authadmin token-refresh cache (`src/lib/authadmin/accessToken.ts`) is also per-process, but that is only an optimisation and stays correct at any replica count. The same holds for the public homelab status cache (`src/lib/metrics/labStatus.ts`): with N replicas each pod refreshes on its own, so Prometheus sees N evaluations per window instead of one.
 
 ## Security headers (#42)
 

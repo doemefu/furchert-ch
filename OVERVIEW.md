@@ -15,7 +15,7 @@ whole cluster — there is no separate admin app.
 | `/[locale]/about` | About (bio, facts, timeline, interests) |
 | `/[locale]/it` | IT & Tech |
 | `/[locale]/rowing` | Rowing |
-| `/[locale]/projects`, `/projects/[slug]` | Projects + detail |
+| `/[locale]/projects`, `/projects/[slug]` | Projects + detail. `/projects/homelab` also shows what runs in the homelab (static showcase, public repos only) and a live status of six public services (up/down, 14-day availability) from `GET /api/homelab-status`; unknown when Prometheus is unavailable (`INTERFACES.md` §2 "Prometheus") |
 | `/[locale]/contact` | Contact |
 
 Locales: `de` (default) and `en`; `/` redirects to `/de`. Each public route
