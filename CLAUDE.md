@@ -9,7 +9,7 @@
 `furchert-ch` is the **single web frontend for the whole doemefu homelab**. It is two things in one Next.js app:
 
 1. **Public personal site** — Home, About, IT, Rowing, Projects, Automation, Contact (German + English).
-2. **Private cluster control surface** — an OIDC-gated `/dashboard` with a homelab overview and an ADMIN-only `/dashboard/network` (data from `homelab-data-service`) and an ADMIN-only `/dashboard/services` (per-workload CPU/MEM, 14-day availability and restarts from Prometheus, #47) and an ADMIN-only `/dashboard/auth` (users, device clients and JWKS via `homelab-auth-service`'s REST API, #44). The `homelab-device-service` admin GUI is planned (#45).
+2. **Private cluster control surface** — an OIDC-gated `/dashboard` with a homelab overview and an ADMIN-only `/dashboard/network` (data from `homelab-data-service`) and an ADMIN-only `/dashboard/services` (per-workload CPU/MEM, 14-day availability and restarts from Prometheus, #47) and an ADMIN-only `/dashboard/auth` (users, device clients and JWKS via `homelab-auth-service`'s REST API, #44) and an ADMIN-only `/dashboard/devices` (device state, manual control and schedules via `homelab-device-service`'s REST API, #45 slice 1; device registration/deletion pending).
 
 **Domain:** furchert.ch · **Deploy target:** k3s `apps` namespace via Flux CD, behind Cloudflare Tunnel. Live at https://furchert.ch since 2026-06-25, deployed via Flux image automation from `ghcr.io/doemefu/furchert-ch`.
 
@@ -18,7 +18,7 @@
 - This repo is 1 of several homelab repos. It **consumes** sibling services; it does not host backend business logic.
 - `/dashboard` authenticates with the **real** `homelab-auth-service` via OIDC (Authorization Code + PKCE) at `https://auth.furchert.ch`.
 - `/dashboard/network` reads `homelab-data-service` server-side with a `client_credentials` token (scope `netmon:read`; `INTERFACES.md` §2 "data-service"; producer contract `../data-service/INTERFACES.md`, spec `../docs/060-network-monitoring.md`); the dashboard overview and the ADMIN-only `/dashboard/services` (#47) read Prometheus server-side (`INTERFACES.md` §2 "Prometheus").
-- `/dashboard/auth` calls the real REST API of `homelab-auth-service` (`../auth-service/INTERFACES.md`; `INTERFACES.md` §2 "auth-service") server-side with the signed-in admin's own access token (stored on the encrypted session JWT, refreshed in memory by `src/lib/authadmin/accessToken.ts`); mutations are Server Actions that re-check the ADMIN role. The planned device-service GUI (#45) will do the same against `../device-service/INTERFACES.md`.
+- `/dashboard/auth` calls the real REST API of `homelab-auth-service` (`../auth-service/INTERFACES.md`; `INTERFACES.md` §2 "auth-service") server-side with the signed-in admin's own access token (stored on the encrypted session JWT, refreshed in memory by `src/lib/authadmin/accessToken.ts`); mutations are Server Actions that re-check the ADMIN role. `/dashboard/devices` (#45) does the same against device-service (`INTERFACES.md` §2 "device-service"; producer contract: `../device-service/README.md` "REST Endpoints" and "Schedules").
 - **The `/automation` section (incl. `/automation/scan`) is a visual MOCKUP only** — no Claude API, no scan backend, no persistence. Everything else is real.
 
 **Full architecture spec:** `../docs/052-architecture-target.md`
@@ -65,11 +65,11 @@ Agents come from the `homelab-workflow` plugin: `homelab-workflow:<role>` for `a
 ## Repository Layout
 
 ```
-src/app/[locale]/        # public pages (about, contact, it, projects, rowing, automation) + /dashboard (overview, network, services, auth) (App Router)
+src/app/[locale]/        # public pages (about, contact, it, projects, rowing, automation) + /dashboard (overview, network, services, auth, devices) (App Router)
 src/app/api/             # auth/[...nextauth], federated-logout, health (server-side proxies; no scan API)
 src/components/{ui,layout}/, Providers.tsx
-src/lib/                 # server-side clients: metrics (Prometheus: cluster.ts, services.ts + pure serviceHealth.ts), netmon (data-service), authadmin (auth-service admin API), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts
-src/*.env.ts             # lazy env accessors (auth, metrics, netmon, authadmin, contact)
+src/lib/                 # server-side clients: metrics (Prometheus: cluster.ts, services.ts + pure serviceHealth.ts), netmon (data-service), authadmin (auth-service admin API), deviceadmin (device-service API + cron presets), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts
+src/*.env.ts             # lazy env accessors (auth, metrics, netmon, authadmin, deviceadmin, contact)
 src/data/                # typed static data (projects, cluster nodes, apps, home stats, ...)
 src/i18n/                # messages/{de,en}.json + next-intl config (navigation.ts, request.ts, routing.ts)
 src/proxy.ts             # next-intl locale routing (Next 16 proxy convention, formerly middleware.ts)

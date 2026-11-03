@@ -6,6 +6,20 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Device-service admin GUI, slice 1** (#45): ADMIN-only `/dashboard/devices`
+  with the same gate, token handling and look as `/dashboard/auth`. Overview
+  tiles (devices live, last message, active schedules, next run); one card per
+  device with its last known state and age and switch on/off for light, night
+  light and rain (`POST /devices/{id}/control`) — enabled only while the device
+  reports, since commands are not stored by the broker; schedules list, create,
+  edit, delete and activate/deactivate (`/schedules`) with cron presets in
+  Zurich time (stored as UTC, the daylight-saving shift is shown) plus a raw
+  field that rejects per-second expressions, device-service's validation
+  messages under the field, and its `nextRun` shown after saving. Subnav tab
+  and the IoT Platform tile's "Manage" link are live. New env
+  `DEVICE_SERVICE_URL` (plain value, no new secret). Device registration and
+  deletion follow in a later slice. No new dependency.
+
 - **Site-wide SEO and GEO baseline** (#134): every public page builds its
   metadata with `buildPageMetadata` (`src/lib/seo/metadata.ts`): a
   self-referencing canonical, `de`/`en`/`x-default` alternates, OpenGraph

@@ -3,7 +3,7 @@
 > This frontend only **consumes** interfaces; it exposes none for other services.
 > §1 (OIDC client) is **implemented** as of Phase 4. §2's Prometheus metrics
 > source is **implemented** as of issue #17; the auth-service admin proxy as
-> of issue #44 (device-service follows with #45). §3 (outbound SMTP for the contact form) is
+> of issue #44; the device-service proxy as of issue #45 (slice 1). §3 (outbound SMTP for the contact form) is
 > implemented as of issue #46. §2's data-service netmon read API (NM-1) is
 > implemented as of issue #61; its LAN endpoints (NM-3) as of issue #62; its egress endpoint (NM-2) as of
 > issue #63; its logins endpoints (NM-4) as of issue #64. §2's Prometheus
@@ -107,14 +107,48 @@ response". Sessions & tokens and the audit log have no auth-service API and
 render labelled "not available" placeholders. SSO/OIDC clients are defined in
 auth-service's `application.yaml` and are not manageable here.
 
-### device-service — `http://device-service.apps.svc.cluster.local:8081`
-Per `../device-service/INTERFACES.md` (Phase 6, #45): `/devices`, `/devices/{id}`,
-`/devices/{id}/control`. Live WebSocket/STOMP stream optional/deferred.
+### device-service — `http://device-service.apps.svc.cluster.local:8081` (#45)
 
-Surfaces in the admin GUIs without a backing endpoint are rendered as clearly
-labelled placeholders — never fabricated data.
+Consumed by `/[locale]/dashboard/devices` (ADMIN only), slice 1: device state,
+manual control and schedules. Producer contract: `../device-service/README.md`
+sections "REST Endpoints" and "Schedules" (device-service has no `INTERFACES.md`).
 
-(Exact device-service endpoint/shape table added with #45.)
+| Setting | Value |
+|---------|-------|
+| Env | `DEVICE_SERVICE_URL` (default `http://device-service.apps.svc.cluster.local:8081`); `src/deviceadmin.env.ts`. Outside production every call is skipped unless it is set ("not configured" state) |
+| Auth | `Authorization: Bearer <admin's access token>` — the same user token as §2 "auth-service" (`src/lib/authadmin/accessToken.ts`, refreshed in memory). device-service accepts it: auth-service issuer, `role` claim, no `azp` |
+| Gating | Page: session → `role === 'ADMIN'` → usable access token. Every Server Action (`dashboard/devices/actions.ts`) repeats the session + ADMIN + token checks, validates ids and fields before any URL is built, then calls device-service; device-service enforces `role=ADMIN` again for control and every schedule write |
+| Control | Enabled only for devices whose last message is under 10 minutes old (`src/lib/deviceadmin/fields.ts`): commands are published with QoS 1 but not retained, so an offline device would never get them while the API still answers `200`. Success is shown as "sent", not "done" |
+| Schedules | A schedule publishes to `terraGeneral/{field}/schedule`, which every terrarium receives; `deviceName` is a grouping label only (the UI says so). Cron runs in **UTC** in device-service: the "daily at hh:mm" preset converts Zurich time to UTC with the offset of the next run and shows when daylight saving moves it; the raw field rejects per-second expressions (seconds field must be one number 0–59, or a macro) before device-service sees them. The toggle re-reads the schedule (`GET /schedules/{id}`) and PUTs it with only `active` changed; schedules with a non-standard payload (`state: null`) or missing fields are not toggled |
+| Timeout | 5 s per request, `cache: 'no-store'` |
+| Logging | `[deviceadmin]` + endpoint name + HTTP status only — never tokens, request bodies or error bodies |
+| Known gaps | (1) device-service does not check the token audience yet (doemefu/homelab-auth-service#101, doemefu/homelab-device-service#81). When it starts to, furchert-ch's access token must carry the device-service audience first; until then every call would answer `401` and the page would ask to sign in again, which signing in cannot fix. (2) As for auth-service: a demoted admin keeps admin tokens until the refresh token expires (≤ 7 d) |
+
+| Method | Path | Used for | Shape consumed |
+|--------|------|----------|----------------|
+| GET | `/devices` | Devices tab, overview tiles, schedule form device list | `DeviceStateDto[]` |
+| POST | `/devices/{id}/control` | Switch light / night light / rain | body `{ field: light\|nightLight\|rain, state: 0\|1 }` → `200` empty; `404` unknown id |
+| GET | `/schedules` | Schedules tab, overview tiles and next runs | `ScheduleDto[]` (ordered by id, unpaginated) |
+| GET | `/schedules/{id}` | Re-read before the active toggle | `ScheduleDto` |
+| POST | `/schedules` | Create schedule | body `{ deviceName, field, state, cronExpression, active }` → `201` `ScheduleDto` |
+| PUT | `/schedules/{id}` | Edit schedule, active toggle (full replace) | same body → `200` `ScheduleDto` |
+| DELETE | `/schedules/{id}` | Delete schedule (after a confirm dialog) | `204` |
+| GET | `/actuator/health` | UP/DOWN pill (public, no token) | `{ status }` |
+
+`DeviceStateDto` = `{ id, name, mqttOnline, temperature, humidity, light, nightLight, rain, lastSeen }` — every field
+but `id`/`name` may be null; switch states are `"0"`/`"1"` (`"off"`/`"on"` in older rows); `lastSeen` is a
+`LocalDateTime` without offset, written in UTC. `ScheduleDto` = `{ id, deviceName, field, state, payload,
+cronExpression, active, nextRun }` — `state` is null for a non-standard payload, `nextRun` (ISO-8601 with offset) is
+null for an inactive or unevaluable schedule, and `deviceName`/`field`/`payload`/`cronExpression` may be null in
+hand-edited rows; such rows still render.
+
+Error handling — nothing is ever fabricated: `401` → "sign in again"; `403` →
+"ADMIN role required"; `400 {"error", "details": ["<field>: <message>", …]}` →
+device-service's messages under the field they name (the rest in the form
+error); `404` → "not found"; network/`5xx` → "device-service unavailable"; a
+body that does not match the shapes above → "unexpected response". Device
+registration and deletion (`POST /devices`, `DELETE /devices/{name}`) are not
+used yet (later slice of #45); the live STOMP stream stays deferred.
 
 ### Prometheus — `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090` (issue #17)
 

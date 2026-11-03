@@ -6,7 +6,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 
 - Output goes to `INTERFACES.md` (route/component/API-usage contract); for cross-repo work also a spec under `../docs/`.
 - Read first: `docs/INDEX.md`, and the prototype source for the area in scope (design bundle: `shared.jsx`, `pages.jsx`, `dashboard.jsx`, `auth-admin.jsx`, `device-admin.jsx`), which is authoritative for layout and styling. The old `furchert-ch-website-spec.md` is superseded; never follow it.
-- For dashboard/admin work also read `../auth-service/INTERFACES.md` and `../device-service/INTERFACES.md`. Do not invent backend endpoints; only those documented there (and `../data-service/INTERFACES.md` for `/dashboard/network`).
+- For dashboard/admin work also read `../auth-service/INTERFACES.md` and `../device-service/README.md` ("REST Endpoints", "Schedules"). Do not invent backend endpoints; only those documented there (and `../data-service/INTERFACES.md` for `/dashboard/network`).
 - Per area the contract must define: route(s) (App Router path, locale handling) and which are public vs. OIDC-gated; component tree (props, data source `src/data/*` / i18n / backend, client vs. server component); i18n keys added (de/en) and static data modules touched.
 - For backend-connected surfaces: exact upstream endpoints (method, path, auth, request/response shape), the Next route handler that proxies them (so the OIDC access token stays server-side), and the role gating (`role=ADMIN` for admin writes).
 - Surfaces with no real endpoint must be explicit labelled placeholders.
@@ -29,7 +29,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 Review in addition to the generic checklist:
 - OIDC access tokens never reach the browser; OIDC-gated routes enforced server-side; admin write actions gated on `role=ADMIN` per the service `INTERFACES.md` files.
 - Pixel fidelity: the UI matches the prototype source for the touched page (tokens, spacing, `.border-x` grid) in DE and EN.
-- Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/INTERFACES.md`; surfaces without a real endpoint are labelled placeholders, never fabricated "live" data.
+- Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules"); surfaces without a real endpoint are labelled placeholders, never fabricated "live" data.
 - `/automation` stays a mockup: no outbound network calls, no scan API routes, no fake success.
 - Server vs. client components used appropriately; data fetched server-side.
 - No `.env*` with values committed; k8s uses `secretKeyRef`.
@@ -57,7 +57,7 @@ Review in addition to the generic checklist:
 Additional checks:
 - Secrets and auth: OIDC access token stays server-side; OIDC-gated routes enforced server-side; admin writes require `role=ADMIN`; no `.env` committed, k8s env via `secretKeyRef`.
 - Automation = mockup: plan keeps `/automation` and `/automation/scan` non-functional (no Claude API, no `/api/scan/*`, no persistence, no accidental backend wiring).
-- Backend integration: consumed endpoints exist in `../auth-service/INTERFACES.md` / `../device-service/INTERFACES.md` (not invented); shapes correct; failure handled (backend down, 401/403); surfaces without an endpoint are explicit placeholders.
+- Backend integration: consumed endpoints exist in `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules") (not invented); shapes correct; failure handled (backend down, 401/403); surfaces without an endpoint are explicit placeholders.
 - Design fidelity: pixel-faithful recreation of the prototype (tokens, `.border-x` grid, DE+EN), not a redesign; the superseded `furchert-ch-website-spec.md` is not followed by mistake.
 - Next.js: server/client split correct, data fetched server-side, both locales handled, `/` to `/de` redirect intact, no required in-memory state across pod restarts.
 - Failure mode question: what does the user see if auth-service or device-service is unavailable?
