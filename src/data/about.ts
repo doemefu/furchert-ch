@@ -6,14 +6,14 @@ import type { Locale } from '@/i18n/routing';
 
 export const BIO: Record<Locale, string[]> = {
   de: [
-    'Ich bin Dominic Furchert: Software Engineer, Vereinspräsident und jemand, der gerne Systeme baut, die im echten Leben funktionieren. Aufgewachsen in der Region Zürichsee/Obersee, ausgebildet als Applikationsentwickler bei der UBS, jetzt kurz vor dem Bachelor-Abschluss in Software Systems an der UZH.',
-    'Neben dem Studium führe ich den Ruderclub Rapperswil-Jona mit rund 200 Mitgliedern als Präsident, inklusive eines Infrastrukturprojekts im Millionenbereich und der Organisation einer nationalen Regatta. Das hat mich mindestens so viel gelehrt wie jedes Informatik-Modul.',
+    'Ich bin Dominic Furchert, Software Engineer und Vereinspräsident. Aufgewachsen in der Region Zürichsee/Obersee, ausgebildet als Applikationsentwickler bei der UBS, jetzt kurz vor dem Bachelor-Abschluss in Software Systems an der UZH.',
+    'Neben dem Studium führe ich den Ruderclub Rapperswil-Jona mit rund 200 Mitgliedern als Präsident. Dazu gehören ein Infrastrukturprojekt im Millionenbereich und die Organisation einer nationalen Regatta. Das hat mich mindestens so viel gelehrt wie jedes Informatik-Modul.',
     'Daneben bin ich Feuerwehrmann und J+S-Sportcoach. Beruflich helfe ich KMU im Zürcher Oberland aus Dienstleistung, Handwerk und Produktion, Abläufe mit KI zu vereinfachen: ohne Grossprojekt, Schritt für Schritt.',
   ],
   en: [
-    "I'm Dominic Furchert: software engineer, club president, and someone who likes building systems that work in real life. Raised in the Lake Zurich / Obersee region, trained as an application developer at UBS, and now close to finishing my Bachelor's in Software Systems at UZH.",
-    'Alongside my studies I lead the Rapperswil-Jona Rowing Club and its roughly 200 members as president, including a multi-million-franc infrastructure project and the organisation of a national regatta. That has taught me at least as much as any computer-science module.',
-    "I'm also a firefighter and a J+S sports coach. Professionally, I help SMEs in the Zürcher Oberland in services, trades and production simplify their work with AI: no big project, one step at a time.",
+    "I'm Dominic Furchert, a software engineer and club president. Raised in the Lake Zurich / Obersee region, trained as an application developer at UBS, and now close to finishing my Bachelor's in Software Systems at UZH.",
+    'Alongside my studies I lead the Rapperswil-Jona Rowing Club and its roughly 200 members as president. The role includes a multi-million-franc infrastructure project and the organisation of a national regatta. That has taught me at least as much as any computer-science module.',
+    "I'm also a firefighter and a J+S sports coach. Professionally, I help SMEs in the Zürcher Oberland (services, trades and production) simplify their work with AI, one step at a time and without a big project.",
   ],
 };
 

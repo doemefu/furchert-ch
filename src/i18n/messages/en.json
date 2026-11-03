@@ -27,12 +27,12 @@
     "label": "About me",
     "exp": "Experience",
     "eng": "Engagement & Roles",
-    "p1": "I combine technical depth with organisational leadership and am equally at home in a Kubernetes cluster and a board meeting.",
+    "p1": "I combine technical depth with organisational leadership and feel as much at home in a Kubernetes cluster as in a board meeting.",
     "p2": "Currently: BSc Software Systems at UZH, SoPra FS26 (Karaokee), homelab infrastructure with Ansible + k3s, club management tool for RCRJ."
   },
   "cta": {
     "together": "Work together?",
-    "togsub": "I welcome interesting projects, from infrastructure to fullstack."
+    "togsub": "I'm glad to hear about projects from infrastructure to full stack."
   },
   "contact": {
     "label": "Contact",
@@ -62,7 +62,7 @@
       "headerLabel": "About me",
       "headerTitle": "Software Engineer. Club President. Firefighter.",
       "headerSub": "Three roles, one common thread: building systems that work in real life.",
-      "metaTitle": "About me: software engineer | Dominic Furchert",
+      "metaTitle": "About me: background and roles | Dominic Furchert",
       "metaDescription": "Dominic Furchert's background: application developer apprenticeship at UBS, Software Systems studies at UZH, president of the Rapperswil-Jona Rowing Club.",
       "timeline": "Timeline",
       "interests": "Interests"

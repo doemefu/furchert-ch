@@ -10,6 +10,7 @@ import { IT_CARDS, TECH_STACK } from '@/data/it';
 import { PROJECTS } from '@/data/projects';
 import { ROWING_CARDS } from '@/data/rowing';
 import { TICKER_ITEMS } from '@/data/ticker';
+import { ownerTitle } from '@/lib/seo/metadata';
 
 // Search-result copy: every public page has its own title and description in
 // both languages, short enough not to be cut off in results, and naming the
@@ -24,7 +25,7 @@ const metaOf = (m: typeof de): Record<string, Meta> => ({
   automation: m.pages.automation,
   contact: m.contact,
   // The project page appends the name to this title (projects/[slug]/page.tsx).
-  lab: { ...m.pages.lab, metaTitle: `${m.pages.lab.metaTitle} | Dominic Furchert` },
+  lab: { ...m.pages.lab, metaTitle: ownerTitle(m.pages.lab.metaTitle) },
 });
 const locales = { de: metaOf(de), en: metaOf(en) };
 

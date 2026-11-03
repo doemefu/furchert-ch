@@ -1,4 +1,4 @@
-# furchert.ch: Dominic Furchert
+# furchert.ch | Dominic Furchert
 
 > Personal website of Dominic Furchert, a software engineer in Zurich, Switzerland. He helps small and medium-sized businesses (SMEs, German: KMU) in the Zürcher Oberland use AI in their everyday work, and he shows his software and homelab projects. The site is in German (default) and English.
 
@@ -24,7 +24,7 @@
 - [Homelab Auth Service](https://furchert.ch/en/projects/auth-service): identity and access management for the homelab.
 - [RCRJ Club Assist](https://furchert.ch/en/projects/club-assist): AI-assisted club management for the rowing club.
 - [Aemtlifyer](https://furchert.ch/en/projects/aemtlifyer): role and task management for the rowing club.
-- [Karaokee: SoPra FS26](https://furchert.ch/en/projects/karaokee): group karaoke app, a university software project.
+- [Karaokee (SoPra FS26)](https://furchert.ch/en/projects/karaokee): group karaoke app, a university software project.
 
 ## Optional
 

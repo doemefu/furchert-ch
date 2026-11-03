@@ -9,7 +9,7 @@ import { Btn } from '@/components/ui/Btn';
 import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
 import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 import { buildHomelabJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
-import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
+import { buildPageMetadata, localizedUrl, ownerTitle } from '@/lib/seo/metadata';
 import { HomelabSections } from './HomelabSections';
 
 // Static params: locale × slug (the parent [locale] layout composes locales).
@@ -41,14 +41,14 @@ export async function generateMetadata({
     return buildPageMetadata({
       locale,
       href,
-      title: `${t('metaTitle')} | Dominic Furchert`,
+      title: ownerTitle(t('metaTitle')),
       description: t('metaDescription'),
     });
   }
   return buildPageMetadata({
     locale,
     href,
-    title: `${project.title} | Dominic Furchert`,
+    title: ownerTitle(project.title),
     description: project.i18n[locale].summary,
   });
 }

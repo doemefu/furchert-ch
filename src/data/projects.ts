@@ -84,7 +84,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: 'karaokee',
-    title: 'Karaokee: SoPra FS26',
+    title: 'Karaokee (SoPra FS26)',
     status: 'wip',
     tags: ['Spring Boot 3', 'REST', 'OpenAPI', 'React', 'TypeScript'],
     github: 'https://github.com/doemefu/very-cool-karaoke-client',

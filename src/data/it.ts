@@ -83,14 +83,14 @@ export const IT_CARDS: ItCard[] = [
     tags: ['C / C++', 'Embedded', 'Sensoren', 'Formula Student'],
     i18n: {
       de: {
-        title: 'Formula Student: Embedded Systems',
+        title: 'Embedded Systems',
         org: 'AMZ Racing',
         since: 'ETH Formula Student',
         text: 'Sensorintegration in die Pedal Box eines Formula Student Rennwagens. Hardware trifft Software trifft Teamarbeit unter Druck.',
         learning: '"Embedded Systems in einem Rennwagen haben mein Interesse an IoT geweckt."',
       },
       en: {
-        title: 'Formula Student: Embedded Systems',
+        title: 'Embedded Systems',
         org: 'AMZ Racing',
         since: 'ETH Formula Student',
         text: 'Sensor integration into the pedal box of a Formula Student race car. Hardware meets software meets teamwork under pressure.',
