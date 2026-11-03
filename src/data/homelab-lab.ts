@@ -70,11 +70,11 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
     i18n: {
       de: {
         title: 'Cluster und GitOps',
-        text: 'Vier Rechner, zwei Raspberry Pi und zwei MacBook Air, bilden einen k3s-Cluster. Ansible richtet sie ein, Flux liefert jede Änderung aus Git aus.',
+        text: '4 Rechner (2 Raspberry Pi, 2 MacBook Air) bilden einen k3s-Cluster. Ansible richtet sie ein, und was im Git-Repository steht, rollt Flux automatisch aus.',
       },
       en: {
         title: 'Cluster and GitOps',
-        text: 'Four machines, two Raspberry Pis and two MacBook Airs, form a k3s cluster. Ansible sets them up, Flux delivers every change from Git.',
+        text: '4 machines (2 Raspberry Pis, 2 MacBook Airs) form a k3s cluster. Ansible sets them up, and whatever is in the Git repository is rolled out automatically by Flux.',
       },
     },
     repos: [{ label: 'homelab', href: `${GH}/homelab` }],
@@ -85,11 +85,11 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
     i18n: {
       de: {
         title: 'Eigener Login-Dienst',
-        text: 'Ein selbst gebauter OIDC-Identity-Provider stellt Tokens aus. Diese Website und die anderen Dienste prüfen sie.',
+        text: 'Ein selbst gebauter OIDC-Login-Dienst. Wer sich im geschützten Dashboard dieser Website anmeldet, wird dort geprüft; die anderen Dienste vertrauen denselben Tokens.',
       },
       en: {
         title: 'Own login service',
-        text: 'A self-built OIDC identity provider issues the tokens. This website and the other services verify them.',
+        text: 'A self-built OIDC login service. Anyone signing in to the protected dashboard of this website is checked there; the other services trust the same tokens.',
       },
     },
     repos: [{ label: 'homelab-auth-service', href: `${GH}/homelab-auth-service` }],
