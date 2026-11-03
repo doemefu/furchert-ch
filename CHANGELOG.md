@@ -193,7 +193,6 @@ All notable changes per milestone. Newest first.
   `src/i18n/seoCopy.test.ts` now rejects "—" in titles, descriptions, public
   messages and page data; page dates in `src/lib/seo/pages.ts` follow the
   changed pages, and the date test uses the Swiss calendar day.
-
 - **Search-result copy and a clearer introduction** (#134): every public page
   has its own title and meta description in both languages (`metaTitle` /
   `metaDescription` in the messages); every title names Dominic Furchert and
