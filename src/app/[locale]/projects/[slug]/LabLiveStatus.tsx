@@ -10,10 +10,12 @@
 import { useEffect, useState } from 'react';
 import { StatusDot, type DotStatus } from '@/components/ui/StatusDot';
 import type { LabServiceId } from '@/data/homelab-lab';
+import { LOCALE_TAG } from '@/app/[locale]/dashboard/datetime';
+import type { Locale } from '@/i18n/routing';
 import { parseLabStatus, summarize, type LiveRow, type LiveStatus } from '@/lib/lab/parseStatus';
 
 export interface LabLiveStatusProps {
-  locale: string;
+  locale: Locale;
   rows: Array<{ id: LabServiceId; label: string; desc: string }>;
   windowDays: number;
   showUptime: boolean;
@@ -21,6 +23,7 @@ export interface LabLiveStatusProps {
     summaryChecking: string;
     summaryAllUp: string;
     summaryDown: string;
+    summaryPartial: string;
     summaryUnknown: string;
     up: string;
     down: string;
@@ -50,7 +53,12 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
     let ctrl: AbortController | undefined;
 
     async function tick() {
+      if (stopped) return;
+      // Never two loops: a tick that starts while another is pending or in
+      // flight (tab shown again, slow fetch) replaces it.
+      if (timer) clearTimeout(timer);
       timer = undefined;
+      ctrl?.abort();
       ctrl = new AbortController();
       const { signal } = ctrl;
       try {
@@ -91,8 +99,10 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
         ? strings.summaryAllUp
         : summary === 'someDown'
           ? strings.summaryDown
-          : strings.summaryUnknown;
-  const pct = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
+          : summary === 'partial'
+            ? strings.summaryPartial
+            : strings.summaryUnknown;
+  const pct = new Intl.NumberFormat(LOCALE_TAG[locale], { maximumFractionDigits: 1 });
 
   return (
     <div>

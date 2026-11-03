@@ -8,7 +8,7 @@ export interface LiveRow {
   status: LiveStatus;
   uptime: number | null;
 }
-export type LabSummary = 'allUp' | 'someDown' | 'unknown';
+export type LabSummary = 'allUp' | 'someDown' | 'partial' | 'unknown';
 
 const STATUSES: readonly string[] = ['up', 'down', 'unknown'];
 
@@ -33,5 +33,7 @@ export function summarize(rows: ReadonlyMap<LabServiceId, LiveRow>): LabSummary 
   const statuses = LAB_SERVICE_IDS.map((id) => rows.get(id)?.status ?? 'unknown');
   if (statuses.includes('down')) return 'someDown';
   if (statuses.every((s) => s === 'up')) return 'allUp';
+  // Some up, the rest unknown (e.g. a workload scaled to zero for maintenance).
+  if (statuses.includes('up')) return 'partial';
   return 'unknown';
 }

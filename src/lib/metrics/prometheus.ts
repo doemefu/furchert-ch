@@ -30,7 +30,8 @@ export async function queryInstant(promql: string, timeoutMs = 2500): Promise<Pr
   const res = await fetch(`${METRICS_ENV.PROMETHEUS_URL}/api/v1/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ query: promql }),
+    // `timeout` lets Prometheus stop evaluating when the client gives up.
+    body: new URLSearchParams({ query: promql, timeout: `${timeoutMs / 1000}s` }),
     cache: 'no-store',
     signal: AbortSignal.timeout(timeoutMs),
   });

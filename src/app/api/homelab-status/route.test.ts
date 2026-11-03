@@ -15,7 +15,7 @@ beforeEach(() => {
 
 describe('GET /api/homelab-status', () => {
   it('is dynamic and answers with the provider result and an explicit cache header', async () => {
-    const body = { checkedAt: '2026-11-03T12:00:00.000Z', windowDays: 14, services: [{ id: 'website', status: 'up', uptime: 100 }] };
+    const body = { windowDays: 14, services: [{ id: 'website', status: 'up', uptime: 100 }] };
     getLabStatus.mockResolvedValue(body);
     const res = await GET();
     expect(dynamic).toBe('force-dynamic');

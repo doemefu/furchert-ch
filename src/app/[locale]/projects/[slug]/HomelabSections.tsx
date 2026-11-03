@@ -12,6 +12,7 @@ import {
   LAB_UPTIME_WINDOW_DAYS,
   SHOW_UPTIME,
 } from '@/data/homelab-lab';
+import { LOCALE_TAG } from '@/app/[locale]/dashboard/datetime';
 import { LabLiveStatus } from './LabLiveStatus';
 
 const label = {
@@ -40,7 +41,7 @@ const lead = {
 
 export async function HomelabSections({ locale }: { locale: Locale }) {
   const t = await getTranslations({ locale, namespace: 'pages.lab' });
-  const updated = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+  const updated = new Intl.DateTimeFormat(LOCALE_TAG[locale], { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(LAB_CONTENT_UPDATED),
   );
 
@@ -55,7 +56,6 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(260px, 30%)), 1fr))',
             borderTop: '1px solid rgba(162,167,176,.22)',
-            borderLeft: '1px solid rgba(162,167,176,.22)',
           }}
         >
           {LAB_SHOWCASE.map((item) => (
@@ -151,6 +151,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
             summaryChecking: t('summaryChecking'),
             summaryAllUp: t('summaryAllUp'),
             summaryDown: t('summaryDown'),
+            summaryPartial: t('summaryPartial'),
             summaryUnknown: t('summaryUnknown'),
             up: t('up'),
             down: t('down'),

@@ -41,6 +41,11 @@ describe('summarize', () => {
     rows.set('iot', { status: 'down', uptime: null });
     expect(summarize(rows)).toBe('someDown');
   });
+  it('is partial when some services are up and the rest are unknown', () => {
+    const rows = parseLabStatus(good('up'));
+    rows.set('assistant', { status: 'unknown', uptime: null });
+    expect(summarize(rows)).toBe('partial');
+  });
   it('is unknown without data or with unknown services', () => {
     expect(summarize(new Map())).toBe('unknown');
     expect(summarize(parseLabStatus(good('unknown')))).toBe('unknown');

@@ -85,11 +85,11 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
     i18n: {
       de: {
         title: 'Eigener Login-Dienst',
-        text: 'Ein selbst gebauter OIDC-Login-Dienst. Wer sich im geschützten Dashboard dieser Website anmeldet, wird dort geprüft; die anderen Dienste vertrauen denselben Tokens.',
+        text: 'Ein selbst gebauter OIDC-Login-Dienst. Wer sich im geschützten Dashboard dieser Website anmeldet, wird dort geprüft. Auch die IoT-Plattform prüft dieselben Tokens.',
       },
       en: {
         title: 'Own login service',
-        text: 'A self-built OIDC login service. Anyone signing in to the protected dashboard of this website is checked there; the other services trust the same tokens.',
+        text: 'A self-built OIDC login service. Anyone signing in to the protected dashboard of this website is checked there. The IoT platform accepts the same tokens too.',
       },
     },
     repos: [{ label: 'homelab-auth-service', href: `${GH}/homelab-auth-service` }],
@@ -133,11 +133,11 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
     i18n: {
       de: {
         title: 'KI und Automation',
-        text: 'Workflow-Automation und ein KI-Chat-Assistent für einen Verein laufen im eigenen Cluster.',
+        text: 'Workflow-Automation und ein KI-Chat-Assistent für einen Verein laufen im selben Cluster.',
       },
       en: {
         title: 'AI and automation',
-        text: 'Workflow automation and an AI chat assistant for a club run in the own cluster.',
+        text: 'Workflow automation and an AI chat assistant for a club run on the same cluster.',
       },
     },
     repos: [],
@@ -148,11 +148,11 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
     i18n: {
       de: {
         title: 'Diese Website',
-        text: 'Auch furchert.ch läuft im Cluster, hinter einem Cloudflare Tunnel und ohne offene Ports.',
+        text: 'Auch furchert.ch läuft im Cluster, hinter einem Cloudflare Tunnel und ohne eingehende Portfreigaben.',
       },
       en: {
         title: 'This website',
-        text: 'furchert.ch itself runs in the cluster as well, behind a Cloudflare Tunnel and with no open ports.',
+        text: 'furchert.ch itself runs in the cluster as well, behind a Cloudflare Tunnel and with no inbound port forwarding.',
       },
     },
     repos: [{ label: 'furchert-ch', href: `${GH}/furchert-ch` }],

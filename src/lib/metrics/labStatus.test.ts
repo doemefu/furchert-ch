@@ -198,7 +198,6 @@ describe('createLabStatusProvider', () => {
     const p = createLabStatusProvider({ ...base, query: vi.fn(okQuery) });
     const res = await p.get();
     expect(res.windowDays).toBe(14);
-    expect(res.checkedAt).toBe('2026-11-03T12:00:00.000Z');
     expect(res.services.map((s) => s.id)).toEqual([...LAB_SERVICE_IDS]);
     for (const s of res.services) {
       expect(Object.keys(s).sort()).toEqual(['id', 'status', 'uptime']);

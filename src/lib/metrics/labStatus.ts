@@ -23,8 +23,6 @@ export interface LabServiceStatus {
 }
 
 export interface LabStatusResponse {
-  /** Last successful status snapshot, rounded down to the minute. */
-  checkedAt: string;
   windowDays: number;
   services: LabServiceStatus[];
 }
@@ -69,7 +67,7 @@ const STATUS_TTL_MS = 60_000;
 const STATUS_RETRY_MS = 15_000;
 const STATUS_MAX_STALE_MS = 5 * 60_000;
 const UPTIME_TTL_MS = 15 * 60_000;
-const UPTIME_RETRY_MS = 60_000;
+const UPTIME_RETRY_MS = 5 * 60_000;
 const UPTIME_MAX_STALE_MS = 60 * 60_000;
 const UPTIME_TIMEOUT_MS = 4000;
 
@@ -117,8 +115,6 @@ export function buildUptimeRows(avg: PromSample[], count: PromSample[]): Map<Lab
 
 export interface Cache<T> {
   get(): Promise<T | null>;
-  /** Epoch ms of the last successful load, -Infinity if none. */
-  lastSuccessAt(): number;
 }
 
 // TTL cache with one load at a time. A failed refresh serves the last good
@@ -161,7 +157,6 @@ export function createCache<T>(opts: {
         });
       return inflight;
     },
-    lastSuccessAt: () => at,
   };
 }
 
@@ -216,10 +211,8 @@ export function createLabStatusProvider(deps: LabStatusDeps): { get(): Promise<L
 
   return {
     async get() {
-      const minute = (t: number) => new Date(Math.floor(t / 60_000) * 60_000).toISOString();
       if (!deps.metricsEnabled()) {
         return {
-          checkedAt: minute(deps.now()),
           windowDays: LAB_UPTIME_WINDOW_DAYS,
           services: LAB_SERVICE_IDS.map((id) => ({
             id,
@@ -232,9 +225,7 @@ export function createLabStatusProvider(deps: LabStatusDeps): { get(): Promise<L
         statusCache.get(),
         deps.showUptime ? uptimeCache.get() : Promise.resolve(null),
       ]);
-      const checked = Number.isFinite(statusCache.lastSuccessAt()) && status ? statusCache.lastSuccessAt() : deps.now();
       return {
-        checkedAt: minute(checked),
         windowDays: LAB_UPTIME_WINDOW_DAYS,
         services: LAB_SERVICE_IDS.map((id) => ({
           id,
@@ -247,9 +238,8 @@ export function createLabStatusProvider(deps: LabStatusDeps): { get(): Promise<L
 }
 
 // All services unknown, for a failure outside the provider (it handles its own).
-export function unknownStatus(now: number = Date.now()): LabStatusResponse {
+export function unknownStatus(): LabStatusResponse {
   return {
-    checkedAt: new Date(Math.floor(now / 60_000) * 60_000).toISOString(),
     windowDays: LAB_UPTIME_WINDOW_DAYS,
     services: LAB_SERVICE_IDS.map((id) => ({
       id,

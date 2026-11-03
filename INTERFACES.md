@@ -143,11 +143,12 @@ about a fixed allowlist of six public-facing workloads (constants only, no
 input reaches PromQL; `max by (namespace, deployment)` over the kube-state-metrics
 series): current ready/desired replicas, plus `avg_over_time` and
 `count_over_time` of "at least one replica ready while desired > 0" over
-`[14d:5m]` (coverage below 90 % of the 4032 samples hides the figure). The
+`[14d:5m]` (coverage below 90 % of the 4032 samples hides the figure; the window must not
+exceed the Prometheus retention, currently 14 d). The
 response is the whole contract:
 
 ```json
-{ "checkedAt": "2026-11-03T15:26:00.000Z", "windowDays": 14,
+{ "windowDays": 14,
   "services": [ { "id": "website", "status": "up", "uptime": 99.9 } ] }
 ```
 
@@ -160,11 +161,13 @@ Always HTTP 200; any failure reads as `unknown` (kube-state-metrics down looks
 like an empty result and is `unknown`, never `down`). The request is ignored
 (query strings included). Caching is in-process: status 60 s, uptime 15 min,
 one load at a time, a failed refresh keeps serving the last good value (5 min
-for status, 1 h for uptime), retries no sooner than 15 s / 60 s; response header
-`Cache-Control: public, max-age=30`. At most one evaluation of the three
-queries per window and per pod reaches Prometheus (the 14-day queries use a 4 s
-timeout). The figure is a cluster-level view, not an external probe, and planned
-maintenance counts as downtime.
+for status, 1 h for uptime), retries no sooner than 15 s (status) / 5 min
+(uptime); response header `Cache-Control: public, max-age=30`. At most one
+evaluation of the four queries per window and per pod reaches Prometheus (the
+14-day queries use a 4 s timeout, also sent to Prometheus as the `timeout`
+parameter). The figure is a cluster-level view, not an external probe: restarts
+and updates count as downtime, time when a workload is deliberately scaled to
+zero does not. Rollback: revert the PR, or set `SHOW_UPTIME = false`.
 
 **Service health (#47)** — `/[locale]/dashboard/services`, ADMIN only (the page
 checks the role before `ServicesShell` renders, so nothing is queried for
