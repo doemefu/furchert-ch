@@ -117,6 +117,24 @@ describe('public copy', () => {
     for (const m of [de, en]) expect(JSON.stringify(publicMessages(m))).not.toContain('\u2014');
   });
 
+  // Owner (2026-11-03): English pages say "Zurich" ("around Zurich", "the
+  // Zurich area"); only German names the Zürcher Oberland.
+  it('never names the Oberland in English', () => {
+    const englishData: string[] = [];
+    const collect = (value: unknown, inEnglish: boolean): void => {
+      if (typeof value === 'string') {
+        if (inEnglish) englishData.push(value);
+      } else if (Array.isArray(value)) {
+        value.forEach((v) => collect(v, inEnglish));
+      } else if (value && typeof value === 'object') {
+        for (const [k, v] of Object.entries(value)) collect(v, inEnglish || k === 'en');
+      }
+    };
+    collect(data, false);
+    expect(JSON.stringify(publicMessages(en))).not.toMatch(/Oberland/);
+    for (const text of englishData) expect(text).not.toMatch(/Oberland/);
+  });
+
   it('has no em dash in the page data', () => {
     for (const [name, value] of Object.entries(data)) {
       expect(JSON.stringify(value), name).not.toContain('\u2014');

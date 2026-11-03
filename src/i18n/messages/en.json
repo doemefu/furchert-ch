@@ -11,7 +11,7 @@
     "label": "Software Engineer · Zurich",
     "title1": "Technology",
     "title2": " that creates impact.",
-    "sub": "I'm Dominic Furchert. I help SMEs in the Zürcher Oberland simplify their work with AI, and I build systems from ESP32 firmware to Kubernetes clusters.",
+    "sub": "I'm Dominic Furchert. I help SMEs around Zurich simplify their work with AI, and I build systems from ESP32 firmware to Kubernetes clusters.",
     "cta1": "About me",
     "cta2": "AI Automation",
     "seeProjects": "See projects"
@@ -20,7 +20,7 @@
     "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing: from mainframe to Kubernetes." },
     "rowing": { "title": "Rowing", "text": "President RCRJ. Safety Chief, National Rowing Regatta Schmerikon." },
     "projects": { "title": "Projects", "text": "IoT platform, homelab k3s cluster, AI-powered club assistant." },
-    "automation": { "title": "AI Automation", "text": "AI and automation for small and medium-sized businesses in the Zürcher Oberland." },
+    "automation": { "title": "AI Automation", "text": "AI and automation for small and medium-sized businesses around Zurich." },
     "more": "→ More"
   },
   "about": {
@@ -56,7 +56,7 @@
       "areas": "Areas",
       "areasTitle": "What defines me.",
       "metaTitle": "Dominic Furchert | Software Engineer · AI for SMEs",
-      "metaDescription": "Dominic Furchert, a software engineer, helps SMEs in the Zürcher Oberland simplify their work with AI. Plus projects, a homelab and rowing."
+      "metaDescription": "Dominic Furchert, a software engineer, helps SMEs in the Zurich area simplify their work with AI. Plus projects, a homelab and rowing."
     },
     "about": {
       "headerLabel": "About me",

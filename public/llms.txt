@@ -1,6 +1,6 @@
 # furchert.ch | Dominic Furchert
 
-> Personal website of Dominic Furchert, a software engineer in Zurich, Switzerland. He helps small and medium-sized businesses (SMEs, German: KMU) in the Zürcher Oberland use AI in their everyday work, and he shows his software and homelab projects. The site is in German (default) and English.
+> Personal website of Dominic Furchert, a software engineer in Zurich, Switzerland. He helps small and medium-sized businesses (SMEs, German: KMU) around Zurich use AI in their everyday work, and he shows his software and homelab projects. The site is in German (default) and English.
 
 - Offer: AI for SMEs in the Zürcher Oberland (services, trades and production). Free first conversation on site or by video, then one trial run with a written quote. Accounting and bookkeeping are not part of the offer.
 - Data protection: processing in Switzerland or the EU wherever possible; sensitive data only with Swiss providers or on the customer's own premises.

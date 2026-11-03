@@ -190,13 +190,14 @@ All notable changes per milestone. Newest first.
   Furchert | …"); titles built in code use `ownerTitle`
   (`src/lib/seo/metadata.ts`). The home hero drops the filler
   "wiederkehrende", and the about, rowing and home texts lose phrases that
-  read like filler. English names his location "Zurich" (German keeps "Zürcher
-  Oberland"). Project names read "IoT Platform: Terra1" and "Karaokee (SoPra
-  FS26)". `src/i18n/seoCopy.test.ts` rejects "—" in titles, descriptions,
-  public messages and page data (the `/automation` copy joins with its
-  rewrite), and `llmsTxt.test.ts` in llms.txt; page dates in
-  `src/lib/seo/pages.ts` follow the changed pages, and the date test uses the
-  Swiss calendar day.
+  read like filler. English says "Zurich" ("around Zurich", "the Zurich area")
+  and never names the Oberland; German keeps "Zürcher Oberland". Project names
+  read "IoT Platform: Terra1" and "Karaokee (SoPra FS26)".
+  `src/i18n/seoCopy.test.ts` rejects "—" in titles, descriptions, public
+  messages and page data, and "Oberland" in English copy (the `/automation`
+  copy joins with its rewrite), and `llmsTxt.test.ts` in llms.txt; page dates
+  in `src/lib/seo/pages.ts` follow the changed pages, and the date test uses
+  the Swiss calendar day.
 - **Search-result copy and a clearer introduction** (#134): every public page
   has its own title and meta description in both languages (`metaTitle` /
   `metaDescription` in the messages); every title names Dominic Furchert and
