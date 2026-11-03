@@ -197,6 +197,16 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Search-result copy and a clearer introduction** (#134): every public page
+  has its own title and meta description in both languages (`metaTitle` /
+  `metaDescription` in the messages); every title names Dominic Furchert and
+  each description says what the page is about. The home hero now introduces
+  him by name and leads with the AI offer for SMEs in the Zürcher Oberland;
+  the about text and the 2026 timeline entry describe that offer instead of
+  "Industrie-KMU". The site names one place for him, the Zürcher Oberland (EN
+  "Zurich Oberland"), in the hero label, the footer and on `/contact`; the
+  rowing club keeps its name. `src/i18n/seoCopy.test.ts` keeps titles at most
+  60 and descriptions 70-160 characters, name-bearing and free of "ß".
 - **Sign in again once after this release**: the session now also stores the
   OIDC access and refresh token (server-side, in the encrypted session
   cookie) for the admin GUI. Older sessions keep working everywhere else;

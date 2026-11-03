@@ -14,7 +14,6 @@ import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { buildHomeJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 
-const TITLE = 'furchert.ch — Dominic Furchert';
 const DOTS =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.3'/%3E%3C/svg%3E\")";
 
@@ -34,7 +33,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return buildPageMetadata({ locale, href: '/', title: TITLE, description: t('hero.sub') });
+  return buildPageMetadata({
+    locale,
+    href: '/',
+    title: t('pages.home.metaTitle'),
+    description: t('pages.home.metaDescription'),
+  });
 }
 
 const iconMap: Record<string, string> = {
@@ -58,8 +62,8 @@ export default async function HomePage({
   const jsonLd = buildHomeJsonLd({
     locale,
     pageUrl: localizedUrl(locale, '/'),
-    name: TITLE,
-    description: t('hero.sub'),
+    name: t('pages.home.metaTitle'),
+    description: t('pages.home.metaDescription'),
     dateModified: PAGE_LAST_MODIFIED['/'],
   });
 
