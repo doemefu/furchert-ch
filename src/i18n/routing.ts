@@ -5,6 +5,10 @@ export const routing = defineRouting({
   defaultLocale: 'de',
   // Always prefix so `/` redirects to `/de` (spec §3.3).
   localePrefix: 'always',
+  // No hreflang `Link` response header: the page HTML and the sitemap carry
+  // hreflang (src/lib/seo/metadata.ts). The header named the unprefixed URL
+  // as x-default and so contradicted them.
+  alternateLinks: false,
 });
 
 export type Locale = (typeof routing.locales)[number];

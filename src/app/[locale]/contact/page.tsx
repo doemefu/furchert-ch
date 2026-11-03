@@ -2,11 +2,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
+import { buildPageMetadata } from '@/lib/seo/metadata';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ContactForm } from './ContactForm';
-
-const HOST = 'https://furchert.ch';
 
 export async function generateMetadata({
   params,
@@ -16,17 +14,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
+  return buildPageMetadata({
+    locale,
+    href: '/contact',
     title: `${t('contact.title')} — furchert.ch`,
     description: t('contact.sub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/contact' }),
-        en: HOST + getPathname({ locale: 'en', href: '/contact' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/contact' }),
-      },
-    },
-  };
+  });
 }
 
 const CONTACTS: { label: string; value: string; href: string | null }[] = [

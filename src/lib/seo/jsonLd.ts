@@ -11,16 +11,27 @@ export type JsonLd = Record<string, unknown>;
 const OWNER_NAME = 'Dominic Furchert';
 // The same profile links the footer shows.
 const OWNER_PROFILES = ['https://github.com/doemefu', 'https://linkedin.com/in/dominic-furchert'];
+// Shown on the home page ("Software Engineer · Zürich") and the about page.
+const OWNER_JOB_TITLE = 'Software Engineer';
 
-// Stable `@id` so a later site-wide Person node can be merged with this one.
+// Stable `@id`s: every page refers to the same site and the same person, so
+// search engines merge the nodes into one entity.
+export const WEBSITE_ID = `${SITE_URL}/#website`;
+export const PERSON_ID = `${SITE_URL}/#person`;
+
 function personNode(): JsonLd {
   return {
     '@type': 'Person',
-    '@id': `${SITE_URL}/#person`,
+    '@id': PERSON_ID,
     name: OWNER_NAME,
     url: SITE_URL,
     sameAs: OWNER_PROFILES,
   };
+}
+
+// The full Person node: on the home page and the about page.
+function ownerNode(): JsonLd {
+  return { ...personNode(), jobTitle: OWNER_JOB_TITLE };
 }
 
 // JSON for an inline `<script type="application/ld+json">`: `<` and the two
@@ -30,6 +41,70 @@ export function serializeJsonLd(data: JsonLd): string {
     .replace(/</g, '\\u003c')
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029');
+}
+
+export interface PageJsonLdInput {
+  locale: Locale;
+  /** Canonical absolute URL of the localized page. */
+  pageUrl: string;
+  /** Page name, e.g. the document title or the visible h1. */
+  name: string;
+  /** ISO date of the last significant change (src/lib/seo/pages.ts). */
+  dateModified: string;
+}
+
+// Home page: the WebSite node (Google reads the site name from the home page;
+// `/` redirects to `/de`, so both locale home pages carry the same node), the
+// localized page and the owner.
+export function buildHomeJsonLd(input: PageJsonLdInput & { description: string }): JsonLd {
+  const { pageUrl } = input;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': WEBSITE_ID,
+        url: `${SITE_URL}/`,
+        name: 'furchert.ch',
+        alternateName: OWNER_NAME,
+        inLanguage: ['de', 'en'],
+        publisher: { '@id': PERSON_ID },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: input.name,
+        description: input.description,
+        inLanguage: input.locale,
+        dateModified: input.dateModified,
+        isPartOf: { '@id': WEBSITE_ID },
+        about: { '@id': PERSON_ID },
+      },
+      ownerNode(),
+    ],
+  };
+}
+
+// About page: the owner's profile page, with the Person nested as its main
+// entity.
+export function buildProfilePageJsonLd(input: PageJsonLdInput): JsonLd {
+  const { pageUrl } = input;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'ProfilePage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: input.name,
+        inLanguage: input.locale,
+        dateModified: input.dateModified,
+        isPartOf: { '@id': WEBSITE_ID },
+        mainEntity: ownerNode(),
+      },
+    ],
+  };
 }
 
 export interface AutomationJsonLdInput {
@@ -62,6 +137,7 @@ export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
         description: input.description,
         inLanguage: input.locale,
         dateModified: input.dateModified,
+        isPartOf: { '@id': WEBSITE_ID },
         about: { '@id': `${pageUrl}#service` },
         mainEntity: input.faq.map((item) => ({
           '@type': 'Question',

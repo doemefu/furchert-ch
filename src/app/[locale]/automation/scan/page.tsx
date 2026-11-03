@@ -7,10 +7,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
+import { buildPageMetadata } from '@/lib/seo/metadata';
 import { WizardShell } from './WizardShell';
-
-const HOST = 'https://furchert.ch';
 
 export async function generateMetadata({
   params,
@@ -20,18 +18,13 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
+  return buildPageMetadata({
+    locale,
+    href: '/automation/scan',
     title: `${t('pages.scan.step1HeaderLabel')} — furchert.ch`,
     description: t('pages.scan.bannerBody'),
-    robots: { index: false, follow: true },
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/automation/scan' }),
-        en: HOST + getPathname({ locale: 'en', href: '/automation/scan' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/automation/scan' }),
-      },
-    },
-  };
+    noindex: true,
+  });
 }
 
 export default async function ScanPage({

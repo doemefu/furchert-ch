@@ -19,10 +19,17 @@ whole cluster — there is no separate admin app.
 | `/[locale]/contact` | Contact |
 
 Locales: `de` (default) and `en`; `/` redirects to `/de`. Each public route
-emits locale-aware `<title>` / `<meta description>` and hreflang alternates;
+emits locale-aware `<title>` / `<meta description>`, a self-referencing
+canonical, hreflang alternates (`de`, `en`, `x-default` → German) and
+OpenGraph/Twitter tags via `buildPageMetadata` (`src/lib/seo/metadata.ts`);
+hreflang lives only in the HTML and the sitemap (no middleware `Link` header).
+JSON-LD: `WebSite` + `Person` on the home page, `ProfilePage` on `/about`,
+`WebPage`/`FAQPage` + `Service` on `/automation` (`src/lib/seo/jsonLd.ts`).
 `/robots.txt` and `/sitemap.xml` are served from `src/app/{robots,sitemap}.ts`
-(sitemap covers every public route × locale; robots disallows `/dashboard`
-including the locale-prefixed variants).
+(sitemap covers every public route × locale with each page's last-modified date
+from `src/lib/seo/pages.ts`; robots disallows `/dashboard` including the
+locale-prefixed variants and states the Content Signals). `/llms.txt` is a
+static summary for AI tools (`public/llms.txt`).
 
 The contact form posts to a typed `'use server'` action that validates the
 input, applies a honeypot and an in-process rate limiter, then delivers the
