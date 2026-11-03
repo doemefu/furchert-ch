@@ -31,7 +31,7 @@ export const DEMO_REPORT: { i18n: Record<Locale, DemoReport> } = {
   i18n: {
     de: {
       section1:
-        'Beispiel-Report — illustrativer Inhalt. Auf Basis Ihrer Angaben wäre Ihr Betrieb ein typisches KMU mit gemischter Auftragsabwicklung und mehreren manuellen Übergängen zwischen E-Mail-Posteingang, ERP und Excel-Listen. Erfahrungsgemäss entstehen die grössten Reibungspunkte am Übergang zwischen Posteingang und ERP-System.',
+        'Beispiel-Report, illustrativer Inhalt. Auf Basis Ihrer Angaben wäre Ihr Betrieb ein typisches KMU mit gemischter Auftragsabwicklung und mehreren manuellen Übergängen zwischen E-Mail-Posteingang, ERP und Excel-Listen. Erfahrungsgemäss entstehen die grössten Reibungspunkte am Übergang zwischen Posteingang und ERP-System.',
       potentials: [
         {
           tier: 'high',
@@ -65,13 +65,13 @@ export const DEMO_REPORT: { i18n: Record<Locale, DemoReport> } = {
       recommended:
         'Basierend auf Ihren Angaben würde ich illustrativ empfehlen, mit der Dokumentenverarbeitung zu starten. Sie liefert den schnellsten ROI bei geringstem Risiko. Geschätzter Aufwand: 2–3 Wochen · Geschätzte Kosten: CHF 5\'000–8\'000 · Geschätzte Einsparung: ~6 h / Woche ≈ CHF 18\'000 / Jahr.',
       next:
-        'Dieser Report ist ein Beispiel. Für eine echte, persönliche Analyse — inklusive Branchenrecherche und konkretem Massnahmenplan — buchen Sie ein unverbindliches Erstgespräch oder fordern Sie eine vertiefte Analyse an. Lieferzeit: 1–2 Arbeitstage. Kosten: kostenlos (Teil meines Angebots).',
+        'Dieser Report ist ein Beispiel. Für eine echte, persönliche Analyse mit Branchenrecherche und konkretem Massnahmenplan buchen Sie ein unverbindliches Erstgespräch oder fordern Sie eine vertiefte Analyse an. Lieferzeit: 1–2 Arbeitstage. Kosten: kostenlos (Teil meines Angebots).',
       disclaimer:
         'Diese Analyse ist ein Beispiel und basiert auf Demo-Eingaben. Sie ersetzt keine detaillierte Vor-Ort-Analyse. Die geschätzten Einsparungen sind Richtwerte.',
     },
     en: {
       section1:
-        'Sample report — illustrative content. Based on your answers your company would be a typical SME with mixed order intake and several manual hops between email inbox, ERP and Excel sheets. The biggest friction usually sits at the handover between the inbox and the ERP.',
+        'Sample report, illustrative content. Based on your answers your company would be a typical SME with mixed order intake and several manual hops between email inbox, ERP and Excel sheets. The biggest friction usually sits at the handover between the inbox and the ERP.',
       potentials: [
         {
           tier: 'high',
@@ -105,7 +105,7 @@ export const DEMO_REPORT: { i18n: Record<Locale, DemoReport> } = {
       recommended:
         "Based on your answers I would illustratively suggest starting with document processing. It delivers the fastest ROI at the lowest risk. Estimated effort: 2–3 weeks · estimated cost: CHF 5,000–8,000 · estimated saving: ~6 h / week ≈ CHF 18,000 / year.",
       next:
-        'This report is an example. For a real, personal analysis — including industry research and a concrete action plan — book a no-strings call or request a deep-dive analysis. Turnaround: 1–2 working days. Cost: free (part of my offering).',
+        'This report is an example. For a real, personal analysis with industry research and a concrete action plan, book a no-strings call or request a deep-dive analysis. Turnaround: 1–2 working days. Cost: free (part of my offering).',
       disclaimer:
         'This analysis is an example and is based on demo input. It does not replace a detailed on-site review. The estimated savings are guideline figures.',
     },

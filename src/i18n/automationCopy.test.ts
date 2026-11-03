@@ -57,7 +57,15 @@ const faqCost = (locale: Locale) =>
 const APPROVED_AMOUNTS = ["CHF 190", "CHF 500", "CHF 600", "CHF 1'500", "CHF 2'500", "CHF 6'000"];
 // "ab"/"from" prices: never shown without the word in front.
 const FROM_AMOUNTS = ["CHF 190", "CHF 2'500", "CHF 6'000"];
-const MONEY = /(?:CHF|SFr\.?|Fr\.|Franken|francs?)\s*\d[\d'’,.]*|\d{1,3}(?:['’,]\d{3})+/gi;
+// An amount next to a currency word (either side, any thousands separator,
+// optional cents), a Swiss "120.–" price, or a bare number with a
+// thousands separator.
+const AMOUNT = String.raw`\d{1,3}(?:['’,.]\d{3})*(?:[.,]\d{1,2})?`;
+const CURRENCY = String.raw`(?:CHF|SFr\.?|Fr\.|Franken|francs?)`;
+const MONEY = new RegExp(
+  `${CURRENCY}\\s*${AMOUNT}|${AMOUNT}\\s*${CURRENCY}|\\d+\\.[–-]|\\d{1,3}(?:['’,]\\d{3})+`,
+  'gi',
+);
 
 const VAT_SENTENCE: Record<Locale, string> = {
   de: 'Keine Mehrwertsteuer, da nicht mehrwertsteuerpflichtig.',

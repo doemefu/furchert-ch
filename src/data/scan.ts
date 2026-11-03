@@ -144,11 +144,11 @@ export const SCAN_QUESTIONS = [
     optional: true,
     i18n: {
       de: {
-        text: 'Wenn Sie morgen aufwachen und ein einziger Prozess in Ihrem Betrieb wäre automatisiert — welcher wäre das?',
+        text: 'Wenn Sie morgen aufwachen und ein einziger Prozess in Ihrem Betrieb wäre automatisiert: Welcher wäre das?',
         placeholder: 'Beschreiben Sie kurz, was Sie am meisten entlasten würde…',
       },
       en: {
-        text: 'If you woke up tomorrow and a single process in your company were automated — which one would it be?',
+        text: 'If you woke up tomorrow and a single process in your company were automated, which one would it be?',
         placeholder: 'Briefly describe what would relieve you the most…',
       },
     },
