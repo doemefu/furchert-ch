@@ -46,8 +46,10 @@ export function CTAStrip({ together, togsub }: { together: string; togsub: strin
           <p style={{ color: 'var(--n-40)', marginTop: '.5rem', fontSize: '1rem' }}>{togsub}</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          {/* Leaf span: Cloudflare Email Obfuscation rewrites the address in
+              the SSR HTML until its decoder runs (#125). */}
           <a href="mailto:dominic@furchert.ch" style={linkStyle}>
-            dominic@furchert.ch <Icon name="arrow" size={12} />
+            <span suppressHydrationWarning>dominic@furchert.ch</span> <Icon name="arrow" size={12} />
           </a>
           <a
             href="https://github.com/doemefu"

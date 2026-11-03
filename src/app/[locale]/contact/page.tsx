@@ -108,6 +108,9 @@ export default async function ContactPage({
                       target={c.href.startsWith('http') ? '_blank' : undefined}
                       rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                       style={{ fontSize: '.9375rem', color: 'var(--blue-base)', textDecoration: 'none' }}
+                      // Cloudflare Email Obfuscation rewrites the e-mail entry in the
+                      // SSR HTML until its decoder runs (#125).
+                      suppressHydrationWarning
                     >
                       {c.value}
                     </a>
