@@ -222,6 +222,13 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **Hydration error #418 behind Cloudflare Email Obfuscation** (#125):
+  Cloudflare rewrites the contact address in the SSR HTML until its decoder
+  script runs, so React's hydration failed on every public page and re-rendered
+  it on the client. The address elements (footer, CTA strip, contact page, plus
+  the admin user list and the dashboard's signed-in name) now accept the
+  rewrite via `suppressHydrationWarning` on leaf elements; markup and design
+  are unchanged.
 - **Contact form delivers again via iCloud SMTP** (#115, homelab#255): every
   submission bounced because Infomaniak is not in furchert.ch's SPF and has no
   aligned DKIM, so iCloud rejected it under DMARC `p=reject` (the form showed

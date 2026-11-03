@@ -110,7 +110,7 @@ export default async function ContactPage({
                       style={{ fontSize: '.9375rem', color: 'var(--blue-base)', textDecoration: 'none' }}
                       // Cloudflare Email Obfuscation rewrites the e-mail entry in the
                       // SSR HTML until its decoder runs (#125).
-                      suppressHydrationWarning
+                      suppressHydrationWarning={c.href.startsWith('mailto:')}
                     >
                       {c.value}
                     </a>

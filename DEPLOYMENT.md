@@ -63,6 +63,8 @@ and replayed afterwards, so `form-action` never sees them.
 
 Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -s https://furchert.ch/de | grep -i cloudflareinsights` found nothing — Cloudflare Web Analytics/Rocket Loader is not injecting a beacon on this zone today, so `script-src`/`connect-src` need no `*.cloudflareinsights.com` addition. Re-check this if that Cloudflare zone feature is ever turned on, since it would otherwise report (or, once enforcing, break) on every page load.
 
+Cloudflare **Email Address Obfuscation** is on for this zone (#125): it rewrites addresses in the HTML and injects the same-origin `/cdn-cgi/scripts/…/email-decode.min.js`, which restores them; the components that render addresses tolerate the rewrite during hydration (`suppressHydrationWarning` on leaf elements). If `script-src` moves to nonces or `'strict-dynamic'`, that injected script carries no nonce and would be blocked, leaving visitors with "[email protected]" — turn the obfuscation off first (it protects nothing: the RSC payload carries the plain address).
+
 ## Federated logout — id_token exposure (#79)
 
 `POST /api/federated-logout` redirects the browser to auth-service's `/connect/logout?id_token_hint=<id_token>&post_logout_redirect_uri=…`. The id_token is never in a response body, a cookie or the client bundle, but it **is** in that redirect URL, so for one hop it is visible in the address bar, the browser history and auth-service's (and Cloudflare's) request logs.

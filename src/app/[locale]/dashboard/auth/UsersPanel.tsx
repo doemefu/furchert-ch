@@ -163,7 +163,8 @@ export function UsersPanel({
             >
               <span style={{ color: 'var(--n-50)' }}>#{u.id}</span>
               <span style={{ color: 'var(--n-100)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.username}</span>
-              <span style={{ color: 'var(--n-60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email}</span>
+              {/* Cloudflare Email Obfuscation rewrites addresses in the SSR HTML (#125). */}
+              <span style={{ color: 'var(--n-60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} suppressHydrationWarning>{u.email}</span>
               <span>
                 <Pill tone={u.role === 'ADMIN' ? 'info' : 'mute'}>{u.role}</Pill>
               </span>

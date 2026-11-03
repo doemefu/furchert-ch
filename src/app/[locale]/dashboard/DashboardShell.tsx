@@ -149,7 +149,9 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
               <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
                 {t('signedInAs')}{' '}
               </span>
-              {userName}
+              {/* Leaf span: userName falls back to the e-mail, which Cloudflare
+                  Email Obfuscation rewrites in the SSR HTML (#125). */}
+              <span suppressHydrationWarning>{userName}</span>
             </span>
             <a
               href="https://github.com/doemefu/homelab"
