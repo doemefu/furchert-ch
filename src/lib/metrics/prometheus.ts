@@ -24,14 +24,20 @@ interface PrometheusQueryResponse {
 // Runs a PromQL instant query and returns its vector samples. Throws on any
 // non-2xx response or a response shape that is not a successful vector —
 // callers (`getLiveCluster`) treat a throw the same as a timeout via
-// `Promise.allSettled`.
-export async function queryInstant(promql: string): Promise<PromSample[]> {
+// `Promise.allSettled`. `timeoutMs` defaults to 2.5 s; long-window queries
+// (public lab status, 14 d subquery) pass a larger value.
+export async function queryInstant(promql: string, timeoutMs = 2500): Promise<PromSample[]> {
+  // Whole milliseconds for both the abort timer and Prometheus's `timeout`
+  // parameter (it rejects fractional durations such as "2.5s" with HTTP 400,
+  // and `AbortSignal.timeout` throws on non-integers).
+  const ms = Math.round(timeoutMs);
   const res = await fetch(`${METRICS_ENV.PROMETHEUS_URL}/api/v1/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ query: promql }),
+    // `timeout` lets Prometheus stop evaluating when the client gives up.
+    body: new URLSearchParams({ query: promql, timeout: `${ms}ms` }),
     cache: 'no-store',
-    signal: AbortSignal.timeout(2500),
+    signal: AbortSignal.timeout(ms),
   });
 
   if (!res.ok) {

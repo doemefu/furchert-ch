@@ -48,13 +48,13 @@ export const PROJECTS: Project[] = [
     i18n: {
       de: {
         summary:
-          '4-Node k3s Cluster (2× Raspberry Pi 4, 2× MacBook Air M1) via Ansible provisioniert. Longhorn Storage, Cloudflare Tunnel, SOPS/age Secrets.',
+          '4-Node k3s Cluster (2× Raspberry Pi, 2× MacBook Air) via Ansible provisioniert. Longhorn Storage, Cloudflare Tunnel, SOPS/age Secrets.',
         detail:
           'Infrastructure as Code für ein gemischtes Homelab. Alle 4 Nodes werden via Ansible konfiguriert und gehärtet. k3s als leichtgewichtiges Kubernetes, Longhorn für verteilten Block-Storage, Cloudflare Tunnel für sicheren Zugang ohne offene Ports.',
       },
       en: {
         summary:
-          '4-node k3s cluster (2× Raspberry Pi 4, 2× MacBook Air M1) provisioned via Ansible. Longhorn storage, Cloudflare Tunnel, SOPS/age secrets.',
+          '4-node k3s cluster (2× Raspberry Pi, 2× MacBook Air) provisioned via Ansible. Longhorn storage, Cloudflare Tunnel, SOPS/age secrets.',
         detail:
           'Infrastructure as Code for a mixed homelab. All 4 nodes are configured and hardened via Ansible. k3s as lightweight Kubernetes, Longhorn for distributed block storage, Cloudflare Tunnel for secure access without open ports.',
       },

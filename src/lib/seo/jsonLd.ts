@@ -157,3 +157,34 @@ export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
     ],
   };
 }
+
+export interface HomelabJsonLdInput {
+  locale: Locale;
+  pageUrl: string;
+  /** Visible h1. */
+  name: string;
+  /** Visible lead paragraph. */
+  description: string;
+  /** ISO date of the last change of the static description. */
+  dateModified: string;
+}
+
+// A deliberately small description of the page. Live status values are not
+// part of it: they change by the minute and are not page metadata.
+export function buildHomelabJsonLd(input: HomelabJsonLdInput): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${input.pageUrl}#webpage`,
+        url: input.pageUrl,
+        name: input.name,
+        description: input.description,
+        inLanguage: input.locale,
+        dateModified: input.dateModified,
+        author: personNode(),
+      },
+    ],
+  };
+}
