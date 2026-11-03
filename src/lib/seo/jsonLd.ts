@@ -54,7 +54,8 @@ export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'WebPage',
+        // One entity for the page: it is the web page and its FAQ.
+        '@type': ['WebPage', 'FAQPage'],
         '@id': `${pageUrl}#webpage`,
         url: pageUrl,
         name: input.name,
@@ -62,6 +63,11 @@ export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
         inLanguage: input.locale,
         dateModified: input.dateModified,
         about: { '@id': `${pageUrl}#service` },
+        mainEntity: input.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: { '@type': 'Answer', text: item.a },
+        })),
       },
       {
         '@type': 'Service',
@@ -71,15 +77,6 @@ export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
         description: input.description,
         provider: personNode(),
         areaServed: { '@type': 'Place', name: input.areaServed },
-      },
-      {
-        '@type': 'FAQPage',
-        '@id': `${pageUrl}#faq`,
-        mainEntity: input.faq.map((item) => ({
-          '@type': 'Question',
-          name: item.q,
-          acceptedAnswer: { '@type': 'Answer', text: item.a },
-        })),
       },
     ],
   };
