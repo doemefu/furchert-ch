@@ -82,12 +82,18 @@ export async function AutomationStories({ locale }: { locale: Locale }) {
       >
         {STORIES.map((story) => {
           const c = story.i18n[locale];
+          // "Beispiel · Trade · Size": the label in the tag, the rest beside
+          // it so long trade names can wrap on phones.
+          const [tagLabel, ...tagRest] = c.tag.split(' · ');
           return (
             <article
               key={story.id}
               style={{ padding: '2rem', borderRight: HAIRLINE, borderBottom: HAIRLINE }}
             >
-              <Tag blue>{c.tag}</Tag>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '.5rem' }}>
+                <Tag blue>{tagLabel}</Tag>
+                <span style={fieldLabel}>{tagRest.join(' · ')}</span>
+              </div>
               <h3 style={{ ...cardTitle, margin: '1rem 0 1.5rem', textWrap: 'balance' }}>
                 {c.title}
               </h3>

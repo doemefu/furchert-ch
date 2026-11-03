@@ -125,9 +125,9 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
               >
                 0{i + 1}
               </div>
-              {c.optional && <p style={{ ...subLine, marginBottom: '.35rem' }}>{c.optional}</p>}
               <h3 style={cardTitle}>{c.name}</h3>
               <PriceLine c={c} />
+              {c.optional && <p style={{ ...subLine, marginTop: '.5rem' }}>{c.optional}</p>}
               <Summary c={c} />
               <Details c={c} />
             </li>
