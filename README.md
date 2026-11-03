@@ -10,7 +10,8 @@ The single web frontend for the doemefu homelab — Dominic Furchert's personal 
   `/dashboard/services` (per-workload CPU/MEM utilization, 14-day availability and
   restarts from Prometheus, #47); ADMIN-only
   `/dashboard/auth` (users, device clients, JWKS from `homelab-auth-service`'s REST
-  API, #44); the `homelab-device-service` admin GUI follows with #45.
+  API, #44); ADMIN-only `/dashboard/devices` (device state and manual control,
+  schedules from `homelab-device-service`'s REST API, #45 slice 1).
 - **`/automation` (incl. `/automation/scan`) is a visual mockup only** — no backend.
 
 Stack: Next.js (App Router, TypeScript), next-intl, Auth.js (OIDC). Deployed to k3s
@@ -31,7 +32,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 3 | Automation section (mockup) | done |
 | 4 | Real OIDC dashboard auth | done |
 | 5 | Dashboard shell | done |
-| 6 | Integrated admin GUIs | in progress (auth-service #44 done; device-service #45 pending) |
+| 6 | Integrated admin GUIs | in progress (auth-service #44 done; device-service #45 slice 1 done — device registration/deletion pending) |
 | 7 | Deployment (Flux CD + Cloudflare Tunnel) | done |
 | — | Live dashboard metrics from Prometheus (#17) | done |
 | — | Contact-form SMTP delivery (iCloud since #115; Infomaniak in #46) | done |
@@ -40,6 +41,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | — | `/dashboard/network` egress section (NM-2, #63) | done |
 | — | `/dashboard/network` logins section (NM-4, #64) | done |
 | — | `/dashboard/auth` auth-service admin GUI (#44) | done |
+| — | `/dashboard/devices` device-service admin GUI, slice 1: state, control, schedules (#45) | done |
 | — | `/dashboard/services` per-service utilization (#47) | done |
 
 ## Documentation

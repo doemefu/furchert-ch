@@ -67,6 +67,10 @@ spec:
               value: "http://auth-service.apps.svc.cluster.local:8080/oauth2/token"
             - name: AUTH_SERVICE_URL
               value: "http://auth-service.apps.svc.cluster.local:8080"
+            # /dashboard/devices (#45): device-service REST API, called with the
+            # signed-in admin's own access token. Plain value, no new secret.
+            - name: DEVICE_SERVICE_URL
+              value: "http://device-service.apps.svc.cluster.local:8081"
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

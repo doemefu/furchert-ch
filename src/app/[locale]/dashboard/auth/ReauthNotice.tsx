@@ -3,19 +3,28 @@
 // Shown when the session has no usable access token for auth-service's
 // admin API (session predates #44, or the refresh failed). Card styling
 // mirrors NoAccess; the button restarts the real OIDC sign-in.
+// /dashboard/devices (#45) reuses it with its own return path and copy.
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
 import { btnPrimary, errorTextStyle } from './ui';
 
-export function ReauthNotice({ locale }: { locale: string }) {
-  const t = useTranslations('dashboard.authAdmin.reauth');
+export function ReauthNotice({
+  locale,
+  returnPath = '/dashboard/auth',
+  namespace = 'dashboard.authAdmin.reauth',
+}: {
+  locale: string;
+  returnPath?: string;
+  namespace?: string;
+}) {
+  const t = useTranslations(namespace);
   const [error, setError] = useState(false);
   const onSignIn = async () => {
     setError(false);
     try {
-      await signIn('furchert-ch', { redirectTo: `/${locale}/dashboard/auth` });
+      await signIn('furchert-ch', { redirectTo: `/${locale}${returnPath}` });
     } catch (err) {
       console.error('[ReauthNotice] sign-in failed', err);
       setError(true);
