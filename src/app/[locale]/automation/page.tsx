@@ -4,6 +4,9 @@
 // next-intl Link to /automation/scan (worklog F1: the prototype's
 // `id="scan"` placeholder on the FAQ block is intentionally dropped —
 // a real route replaces it).
+// Copy was reworked for the SME offer (Zürcher Oberland): the "problem"
+// block is now everyday use cases and the "comparison" block is the data
+// protection block; layout and styles are unchanged. No prices on this page.
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
@@ -153,9 +156,9 @@ export default async function AutomationPage({
       </div>
 
       <div className="container border-x">
-        {/* PROBLEM */}
+        {/* USE CASES */}
         <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={labelMono}>{t('pages.automation.problemLabel')}</p>
+          <p style={labelMono}>{t('pages.automation.useCaseLabel')}</p>
           <h2
             style={{
               fontFamily: 'var(--sans)',
@@ -166,16 +169,16 @@ export default async function AutomationPage({
               marginBottom: '2.5rem',
             }}
           >
-            {t('pages.automation.problemHeading')}
+            {t('pages.automation.useCaseHeading')}
           </h2>
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
               gap: '0',
             }}
           >
-            {([1, 2, 3] as const).map((n) => (
+            {([1, 2, 3, 4, 5, 6] as const).map((n) => (
               <div
                 key={n}
                 style={{
@@ -194,16 +197,16 @@ export default async function AutomationPage({
                     marginBottom: '.5rem',
                   }}
                 >
-                  {t(`pages.automation.problem${n}Title`)}
+                  {t(`pages.automation.useCase${n}Title`)}
                 </div>
                 <p style={{ fontSize: '.9375rem', color: 'var(--n-60)', lineHeight: 1.55 }}>
-                  {t(`pages.automation.problem${n}Text`)}
+                  {t(`pages.automation.useCase${n}Text`)}
                 </p>
               </div>
             ))}
           </div>
           <p style={{ marginTop: '2rem', fontSize: '1rem', color: 'var(--n-70)', fontStyle: 'italic' }}>
-            {t('pages.automation.problemFooter')}
+            {t('pages.automation.useCaseFooter')}
           </p>
         </div>
 
@@ -279,11 +282,21 @@ export default async function AutomationPage({
           </div>
         </div>
 
-        {/* COMPARISON */}
+        {/* DATA PROTECTION (two-column) */}
         <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={{ ...labelMono, marginBottom: '2rem' }}>
-            {t('pages.automation.comparisonLabel')}
-          </p>
+          <p style={labelMono}>{t('pages.automation.privacyLabel')}</p>
+          <h2
+            style={{
+              fontFamily: 'var(--sans)',
+              fontSize: 'clamp(1.5rem,3vw,2.25rem)',
+              fontWeight: 500,
+              letterSpacing: '-.03em',
+              color: 'var(--n-100)',
+              marginBottom: '2.5rem',
+            }}
+          >
+            {t('pages.automation.privacyHeading')}
+          </h2>
           <div
             style={{
               display: 'grid',
@@ -310,7 +323,7 @@ export default async function AutomationPage({
                   marginBottom: '1rem',
                 }}
               >
-                {t('pages.automation.comparisonLeftTitle')}
+                {t('pages.automation.privacyLeftTitle')}
               </div>
               {([1, 2, 3, 4, 5] as const).map((n) => (
                 <div
@@ -328,7 +341,7 @@ export default async function AutomationPage({
                   <span style={{ width: 16, height: 16, flexShrink: 0, color: 'var(--n-40)' }}>
                     —
                   </span>
-                  {t(`pages.automation.comparisonLeft${n}`)}
+                  {t(`pages.automation.privacyLeft${n}`)}
                 </div>
               ))}
             </div>
@@ -343,7 +356,7 @@ export default async function AutomationPage({
                   marginBottom: '1rem',
                 }}
               >
-                {t('pages.automation.comparisonRightTitle')}
+                {t('pages.automation.privacyRightTitle')}
               </div>
               {([1, 2, 3, 4, 5] as const).map((n) => (
                 <div
@@ -361,11 +374,22 @@ export default async function AutomationPage({
                   <span style={{ color: 'var(--blue-base)', flexShrink: 0 }}>
                     <Icon name="check" size={16} />
                   </span>
-                  {t(`pages.automation.comparisonRight${n}`)}
+                  {t(`pages.automation.privacyRight${n}`)}
                 </div>
               ))}
             </div>
           </div>
+          <p
+            style={{
+              marginTop: '1.5rem',
+              fontSize: '.875rem',
+              color: 'var(--n-60)',
+              lineHeight: 1.55,
+              maxWidth: '68ch',
+            }}
+          >
+            {t('pages.automation.privacyFootnote')}
+          </p>
         </div>
 
         {/* ABOUT MINI */}
