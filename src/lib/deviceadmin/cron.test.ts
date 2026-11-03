@@ -105,6 +105,12 @@ describe('nextDailyShift', () => {
     expect(nextDailyShift('0 30 0 * * *', WINTER)).toEqual({ atMs: at('2027-03-29T00:30:00Z'), hour: 2, minute: 30 });
   });
 
+  it('looks past a switch that happens before the next run', () => {
+    // On 2027-03-27 at 07:30 UTC the next 07:00 UTC run is already in summer time (09:00);
+    // the shift that matters is the autumn one.
+    expect(nextDailyShift('0 0 7 * * *', at('2027-03-27T07:30:00Z'))).toEqual({ atMs: at('2027-10-31T07:00:00Z'), hour: 8, minute: 0 });
+  });
+
   it('is null for non-daily schedules', () => {
     expect(nextDailyShift('0 */15 * * * *', WINTER)).toBeNull();
     expect(nextDailyShift('0 30 6 * * MON-FRI', WINTER)).toBeNull();

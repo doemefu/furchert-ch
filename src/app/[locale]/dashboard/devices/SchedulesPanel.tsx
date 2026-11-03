@@ -58,6 +58,7 @@ export function SchedulesPanel({
   // The button that opened the drawer, captured on click (before the drawer's
   // autoFocus moves focus), so closing the drawer can return focus to it.
   const opener = useRef<HTMLElement | null>(null);
+  const newButton = useRef<HTMLButtonElement | null>(null);
   const openDrawer = (target: 'new' | number, el: HTMLElement) => {
     opener.current = el;
     setDrawer(target);
@@ -106,7 +107,7 @@ export function SchedulesPanel({
           <MonoLabel>{t('schedules.count', { count: schedules.length })}</MonoLabel>
           <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)' }}>{t('schedules.source')}</span>
         </div>
-        <button type="button" onClick={(e) => openDrawer('new', e.currentTarget)} style={btnPrimary}>
+        <button type="button" ref={newButton} onClick={(e) => openDrawer('new', e.currentTarget)} style={btnPrimary}>
           {t('schedules.new')}
         </button>
       </div>
@@ -264,6 +265,8 @@ export function SchedulesPanel({
             setBanner(savedText(saved));
           }}
           onDeleted={(id) => {
+            // The deleted row's edit button disappears with the refreshed list.
+            opener.current = newButton.current;
             setRowError(null);
             setBanner(t('schedules.deleted', { id }));
           }}

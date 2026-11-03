@@ -37,11 +37,10 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
   const [time, setTime] = useState(start.kind === 'daily' ? fmt.hm(start.hour, start.minute) : '08:00');
   const [minutes, setMinutes] = useState<IntervalMinutes>(start.kind === 'interval' ? start.minutes : 15);
   const [custom, setCustom] = useState(start.kind === 'custom' ? start.expr : (initial ?? ''));
-  const [touched, setTouched] = useState(false);
-  const touch = <T,>(set: (v: T) => void) => (v: T) => {
-    setTouched(true);
-    set(v);
-  };
+  // "Changed" means different from what the form opened with, so changing a
+  // value and changing it back keeps the stored expression too.
+  const [opened] = useState(() => ({ mode, time, minutes, custom }));
+  const touched = mode !== opened.mode || time !== opened.time || minutes !== opened.minutes || custom !== opened.custom;
 
   const daily = parseTime(time);
   const expr = cronFromForm({ mode, time, minutes, custom }, nowMs, initial, touched);
@@ -52,14 +51,15 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
     const [, m, h] = expr.split(' ');
     means = t('dailyMeans', { local: fmt.hm(daily.hour, daily.minute), utc: fmt.hm(Number(h), Number(m)) });
     const s = nextDailyShift(expr, nowMs);
-    if (s) shift = t('dailyShift', { date: fmt.date(s.atMs), shifted: fmt.hm(s.hour, s.minute), intended: fmt.hm(daily.hour, daily.minute) });
+    // Hidden when the switch lands on the intended time (a 02:xx run moved by the spring gap).
+    if (s && (s.hour !== daily.hour || s.minute !== daily.minute)) shift = t('dailyShift', { date: fmt.date(s.atMs), shifted: fmt.hm(s.hour, s.minute), intended: fmt.hm(daily.hour, daily.minute) });
   } else if (mode === 'interval') {
     means = minutes === 60 ? t('hourly') : t('intervalMeans', { minutes });
   }
 
   const radio = (value: Mode, label: string) => (
     <label style={{ display: 'flex', alignItems: 'center', gap: '.45rem', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)', minWidth: '9.5rem' }}>
-      <input type="radio" name="cronMode" value={value} checked={mode === value} onChange={() => touch(setMode)(value)} />
+      <input type="radio" name="cronMode" value={value} checked={mode === value} onChange={() => setMode(value)} />
       {label}
     </label>
   );
@@ -77,7 +77,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
           type="time"
           step={60}
           value={time}
-          onChange={(e) => touch(setTime)(e.target.value)}
+          onChange={(e) => setTime(e.target.value)}
           disabled={mode !== 'daily'}
           required={mode === 'daily'}
           aria-label={t('dailyTime')}
@@ -89,7 +89,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
         {radio('interval', t('interval'))}
         <select
           value={minutes}
-          onChange={(e) => touch(setMinutes)(Number(e.target.value) as IntervalMinutes)}
+          onChange={(e) => setMinutes(Number(e.target.value) as IntervalMinutes)}
           disabled={mode !== 'interval'}
           aria-label={t('intervalLabel')}
           style={{ ...fieldStyle, width: 'auto' }}
@@ -108,7 +108,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
           <>
             <input
               value={custom}
-              onChange={(e) => touch(setCustom)(e.target.value)}
+              onChange={(e) => setCustom(e.target.value)}
               required
               maxLength={100}
               spellCheck={false}

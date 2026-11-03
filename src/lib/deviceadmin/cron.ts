@@ -153,7 +153,9 @@ export function nextOffsetChange(fromMs: number): { atMs: number; offsetAfter: n
 export function nextDailyShift(expr: string, nowMs: number): { atMs: number; hour: number; minute: number } | null {
   const daily = dailyUtc(expr);
   if (!daily) return null;
-  const change = nextOffsetChange(nowMs);
+  // Measured from the next run: if a switch falls before it, the time shown
+  // for that run is already the new one, and the shift that matters is the next.
+  const change = nextOffsetChange(nextUtcOccurrence(daily.hour, daily.minute, nowMs));
   if (!change) return null;
   const firstRun = nextUtcOccurrence(daily.hour, daily.minute, change.atMs - 1);
   const w = zurichWall(firstRun);
