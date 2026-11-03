@@ -132,9 +132,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
             color: 'var(--n-60)',
           }}
         >
-          <time dateTime={LAB_CONTENT_UPDATED}>
-            {t('showcaseUpdated')}: {updated}
-          </time>
+          {t('showcaseUpdated')}: <time dateTime={LAB_CONTENT_UPDATED}>{updated}</time>
         </p>
       </section>
 
