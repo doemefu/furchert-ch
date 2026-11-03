@@ -20,8 +20,8 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale,
     href: '/rowing',
-    title: `${t('pages.rowing.headerTitle')} — furchert.ch`,
-    description: t('pages.rowing.headerSub'),
+    title: t('pages.rowing.metaTitle'),
+    description: t('pages.rowing.metaDescription'),
   });
 }
 

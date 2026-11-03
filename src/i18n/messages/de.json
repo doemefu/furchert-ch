@@ -8,10 +8,10 @@
     "contact": "Kontakt"
   },
   "hero": {
-    "label": "Software Engineer · Zürich",
+    "label": "Software Engineer · Zürcher\u00a0Oberland",
     "title1": "Technologie,",
     "title2": " die Wirkung erzeugt.",
-    "sub": "Ich baue Systeme — von der ESP32-Firmware bis zum Kubernetes-Cluster. Präzise, pragmatisch, mit Blick für das Ganze.",
+    "sub": "Ich bin Dominic Furchert. Ich helfe KMU im Zürcher Oberland, wiederkehrende Abläufe mit KI zu vereinfachen — und baue Systeme von der ESP32-Firmware bis zum Kubernetes-Cluster.",
     "cta1": "Mehr über mich",
     "cta2": "KI-Automation entdecken",
     "seeProjects": "Projekte ansehen"
@@ -38,6 +38,8 @@
     "label": "Kontakt",
     "title": "Schreib mir",
     "sub": "Ich antworte in der Regel innerhalb von 24 Stunden.",
+    "metaTitle": "Kontakt — Dominic Furchert",
+    "metaDescription": "Nachricht an Dominic Furchert per Formular oder E-Mail, etwa für ein kostenloses Erstgespräch zu KI im eigenen Betrieb. Antwort meist innerhalb von 24 Stunden.",
     "send": "Nachricht senden",
     "name": "Name",
     "email": "E-Mail",
@@ -52,12 +54,16 @@
   "pages": {
     "home": {
       "areas": "Bereiche",
-      "areasTitle": "Was mich ausmacht."
+      "areasTitle": "Was mich ausmacht.",
+      "metaTitle": "Dominic Furchert — Software Engineer · KI für KMU",
+      "metaDescription": "Dominic Furchert, Software Engineer, hilft KMU im Zürcher Oberland, wiederkehrende Abläufe mit KI zu vereinfachen. Dazu: Projekte, Homelab, Rudern."
     },
     "about": {
       "headerLabel": "Über mich",
       "headerTitle": "Software Engineer. Vereinspräsident. Feuerwehrmann.",
       "headerSub": "Drei Rollen, ein roter Faden: Systeme bauen, die im echten Leben funktionieren.",
+      "metaTitle": "Über mich — Dominic Furchert, Software Engineer",
+      "metaDescription": "Werdegang von Dominic Furchert: Applikationsentwickler EFZ bei der UBS, Studium Software Systems an der UZH, Präsident des Ruderclubs Rapperswil-Jona.",
       "timeline": "Timeline",
       "interests": "Interessen"
     },
@@ -65,18 +71,24 @@
       "headerLabel": "IT & Tech",
       "headerTitle": "Vom Mainframe zur Microservice-Architektur.",
       "headerSub": "Professionelle Erfahrung in Grossbanken, Beratung, Formula Student und eigenem Studium.",
+      "metaTitle": "IT-Erfahrung: UBS, KPMG, AMZ Racing, UZH — Dominic Furchert",
+      "metaDescription": "Erfahrung und Tech-Stack von Dominic Furchert: COBOL-Batch-Systeme bei der UBS, IT-Audits bei KPMG, Embedded Systems bei AMZ Racing, Studium an der UZH.",
       "techStack": "Tech Stack"
     },
     "rowing": {
       "headerLabel": "Rudern",
       "headerTitle": "200 Mitglieder. Eine nationale Regatta. Ein CHF-5M-Projekt.",
       "headerSub": "Ehrenamtlich — und mindestens so lehrreich wie jedes Informatik-Modul.",
+      "metaTitle": "Präsident Ruderclub Rapperswil-Jona — Dominic Furchert",
+      "metaDescription": "Dominic Furchert präsidiert den Ruderclub Rapperswil-Jona (rund 200 Mitglieder) und ist Chef Sicherheit der Regatta Schmerikon mit rund 1'500 Athleten.",
       "photoCaption": "foto — regatta schmerikon"
     },
     "projects": {
       "headerLabel": "Projekte",
       "headerTitle": "Was ich baue — von Sensoren bis Servern.",
       "headerSub": "Open-source wo möglich. Infrastructure as Code. End-to-end.",
+      "metaTitle": "Projekte: IoT, Homelab und KI — Dominic Furchert",
+      "metaDescription": "Projekte von Dominic Furchert: IoT-Plattform mit ESP32 und MQTT, k3s-Homelab mit Ansible, KI-Assistent für den Ruderclub, eigener Login-Dienst.",
       "techStack": "Tech Stack",
       "details": "Details →",
       "allRepos": "Alle Repos auf GitHub",
@@ -109,6 +121,7 @@
     },
     "automation": {
       "heroLabel": "KI für KMU im Zürcher Oberland",
+      "metaTitle": "KI für KMU im Zürcher Oberland — Dominic Furchert",
       "heroTitlePre": "KI, die im Alltag Ihres Betriebs ",
       "heroTitleEm": "wirklich hilft",
       "heroTitlePost": ".",
@@ -221,8 +234,8 @@
     "navigation": "Navigation",
     "contact": "Kontakt",
     "social": "Social",
-    "role": "Software Engineer · Zürich",
-    "location": "Rapperswil-Jona, CH",
+    "role": "Software Engineer · Zürcher Oberland",
+    "location": "Zürcher Oberland",
     "imprint": "Impressum",
     "privacy": "Datenschutz"
   },
