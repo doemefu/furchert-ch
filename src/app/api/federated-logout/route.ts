@@ -95,8 +95,10 @@ export async function POST(req: NextRequest) {
     if (!token) {
       // No active session (no cookie, expired, bad signature). Don't bounce
       // the user through the IdP — that produces a confusing IdP-side prompt.
-      // Just send them home.
-      return NextResponse.redirect(new URL('/', req.url));
+      // Just send them home — to the public origin, not `req.url`, which
+      // behind the tunnel is internal (see below) and, as the target of a
+      // form POST's redirect, is also blocked by CSP `form-action` (#42).
+      return NextResponse.redirect(new URL('/', expectedOrigin));
     }
     if (!token.idToken) {
       // The JWT exists but no id_token was persisted (a session migrated from

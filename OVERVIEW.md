@@ -70,12 +70,13 @@ tokens live only on the encrypted httpOnly session JWT and never reach the brows
 
 Every route (public pages, `/dashboard`, and `/api/*`) carries hardening
 response headers (`X-Content-Type-Options`, `Referrer-Policy`,
-`X-Frame-Options`, `Permissions-Policy`, `Strict-Transport-Security`) plus a
-`Content-Security-Policy-Report-Only` baseline — headers-only slice of issue
-#42, shipped via `next.config.mjs` `headers()`. See `DEPLOYMENT.md` §
-"Security headers" for the exact values, the HSTS rollout plan, and the CSP
-graduation gate (dropping `-Report-Only` once a manual DevTools pass shows no
-unexpected violations). Since #44 the repo has unit tests (vitest 5.0.5, `pnpm test`,
+`X-Frame-Options`, `Permissions-Policy`, `Strict-Transport-Security` 1 year),
+an enforced `Content-Security-Policy` for the directives that do not depend on
+inline scripts or styles (`frame-ancestors`, `object-src`, `base-uri`,
+`form-action`), and a `Content-Security-Policy-Report-Only` policy for the rest
+— issue #42, shipped via `next.config.mjs` `headers()` (no `X-Powered-By`).
+See `DEPLOYMENT.md` § "Security headers" for the exact values, the HSTS rollout,
+and the CSP graduation gate for `script-src`/`style-src` (owner decision on #42). Since #44 the repo has unit tests (vitest 5.0.5, `pnpm test`,
 `src/**/*.test.ts`, run in CI before `pnpm build`) covering the auth-admin
 token, client, form and Server Action logic; whether that closes the "first
 automated tests" half of #42 is tracked on that issue.
