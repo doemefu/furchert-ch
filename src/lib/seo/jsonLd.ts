@@ -183,6 +183,7 @@ export function buildHomelabJsonLd(input: HomelabJsonLdInput): JsonLd {
         description: input.description,
         inLanguage: input.locale,
         dateModified: input.dateModified,
+        isPartOf: { '@id': WEBSITE_ID },
         author: personNode(),
       },
     ],

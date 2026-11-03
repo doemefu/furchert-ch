@@ -244,8 +244,9 @@ the old pod keeps serving traffic throughout.
 
 - **robots.txt is two layers.** Cloudflare's managed robots.txt (Bot
   Preference Sync, set in the Cloudflare dashboard) is prepended to the app's
-  `/robots.txt`. It disallows known AI-training crawlers and states
-  `search=yes, ai-train=no`. The app adds its own rules and
+  `/robots.txt`. It disallows known AI-training crawlers and states its own
+  Content-Signal line (for example `search=yes,ai-train=no,use=reference`; Cloudflare
+  maintains it). The app adds its own rules and
   `Content-Signal: search=yes, ai-input=yes, ai-train=no`, because the managed
   block never sets `ai-input`. Keep the managed robots.txt on: without it the
   training-crawler disallows are gone.
@@ -255,7 +256,7 @@ the old pod keeps serving traffic throughout.
 - **After a deploy that changes SEO metadata:**
 
 ```bash
-curl -s https://furchert.ch/robots.txt | grep -i content-signal   # managed line + the app's ai-input line
+curl -s https://furchert.ch/robots.txt | grep -i '^content-signal:'   # managed line + the app's ai-input line
 curl -s https://furchert.ch/sitemap.xml | grep -c '<lastmod>'      # one per public page
 curl -sI https://furchert.ch/llms.txt | head -1                    # 200
 curl -sI https://furchert.ch/de/about | grep -i '^link:' | grep -ci hreflang   # 0

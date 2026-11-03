@@ -7,9 +7,10 @@ import type { MetadataRoute } from 'next';
 //
 // Content Signals (contentsignals.org), owner decision: search and AI answers
 // yes, AI training no. Cloudflare's managed robots.txt is prepended to this
-// file and already says search=yes, ai-train=no and blocks known training
-// crawlers, but it never sets ai-input; that one has to come from here. The
-// two `User-agent: *` groups agree, and crawlers merge same-agent groups.
+// file; it blocks known training crawlers and adds its own Content-Signal line
+// (e.g. search=yes, ai-train=no), but it never sets ai-input, so that one has
+// to come from here. The two `User-agent: *` groups agree, and crawlers merge
+// same-agent groups.
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {

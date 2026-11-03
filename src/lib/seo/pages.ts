@@ -1,3 +1,5 @@
+import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
+
 // Last significant change of every indexable public page (ISO date). The
 // sitemap's <lastmod> comes from here, so it must stay accurate: search
 // engines ignore lastmod values that are not.
@@ -16,14 +18,14 @@ export const PAGE_LAST_MODIFIED = {
   '/it': SITE_LAUNCH_DATE,
   '/automation': '2026-11-03',
   '/rowing': SITE_LAUNCH_DATE,
-  '/projects': SITE_LAUNCH_DATE,
+  // The homelab summary in the project list was corrected on 2026-11-03 (#132).
+  '/projects': '2026-11-03',
   '/contact': SITE_LAUNCH_DATE,
   '/projects/iot-platform': SITE_LAUNCH_DATE,
-  '/projects/homelab': SITE_LAUNCH_DATE,
+  // The page shows this date itself ("Stand der Beschreibung").
+  '/projects/homelab': LAB_CONTENT_UPDATED,
   '/projects/club-assist': SITE_LAUNCH_DATE,
   '/projects/karaokee': SITE_LAUNCH_DATE,
   '/projects/auth-service': SITE_LAUNCH_DATE,
   '/projects/aemtlifyer': SITE_LAUNCH_DATE,
 } as const satisfies Record<string, `${number}-${number}-${number}`>;
-
-export type PublicPath = keyof typeof PAGE_LAST_MODIFIED;

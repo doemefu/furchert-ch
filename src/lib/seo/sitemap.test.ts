@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import sitemap from '@/app/sitemap';
 import { buildPageMetadata, languageAlternates, localizedUrl } from './metadata';
 import { PAGE_LAST_MODIFIED, SITE_LAUNCH_DATE } from './pages';
+import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 
 const entries = sitemap();
 const pages = Object.entries(PAGE_LAST_MODIFIED);
@@ -18,6 +19,10 @@ describe('sitemap', () => {
       const entry = entries.find((e) => e.url === localizedUrl('de', href));
       expect(entry?.lastModified, href).toBe(date);
     }
+  });
+
+  it('takes the homelab date from the date the page itself shows', () => {
+    expect(PAGE_LAST_MODIFIED['/projects/homelab']).toBe(LAB_CONTENT_UPDATED);
   });
 
   it('only has real calendar dates between the launch and today', () => {

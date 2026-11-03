@@ -16,6 +16,10 @@ const knownUrls = new Set([
   'https://furchert.ch/sitemap.xml',
 ]);
 
+// Any link to this site, whatever the scheme or subdomain (hostname check,
+// not a string prefix).
+const isSiteLink = (url: string) => /(^|\.)furchert\.ch$/.test(new URL(url).hostname);
+
 describe('llms.txt', () => {
   it('has the llmstxt.org shape', () => {
     expect(text.startsWith('# ')).toBe(true);
@@ -25,7 +29,7 @@ describe('llms.txt', () => {
   });
 
   it('links only to pages that exist on the site', () => {
-    const siteLinks = links.filter((url) => url.startsWith('https://furchert.ch'));
+    const siteLinks = links.filter(isSiteLink);
     expect(siteLinks.length).toBeGreaterThan(0);
     for (const url of siteLinks) expect(knownUrls.has(url), url).toBe(true);
   });

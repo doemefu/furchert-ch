@@ -4,6 +4,7 @@ import en from '@/i18n/messages/en.json';
 import {
   buildAutomationJsonLd,
   buildHomeJsonLd,
+  buildHomelabJsonLd,
   buildProfilePageJsonLd,
   PERSON_ID,
   SITE_URL,
@@ -120,6 +121,19 @@ describe('automation page', () => {
   it('belongs to the site and names the same owner', () => {
     expect(byType(automation, 'WebPage').isPartOf).toEqual({ '@id': WEBSITE_ID });
     expect((byType(automation, 'Service').provider as Node)['@id']).toBe(PERSON_ID);
+  });
+});
+
+describe('homelab page', () => {
+  it('belongs to the site', () => {
+    const lab = buildHomelabJsonLd({
+      locale: 'de',
+      pageUrl: `${SITE_URL}/de/projects/homelab`,
+      name: 'Homelab Infrastructure as Code',
+      description: 'Infrastructure as Code.',
+      dateModified: '2026-11-03',
+    });
+    expect(byType(lab, 'WebPage').isPartOf).toEqual({ '@id': WEBSITE_ID });
   });
 });
 
