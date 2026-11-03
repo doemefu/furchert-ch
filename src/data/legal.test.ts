@@ -54,7 +54,7 @@ describe('legal pages copy', () => {
 
   it.each(LOCALES)('privacy (%s) names every recipient, the hosting country and the retention periods', (locale) => {
     const text = strings(LEGAL_PAGES.privacy[locale]).join('\n');
-    for (const needle of ['Cloudflare', 'Apple', 'iCloud', 'AbuseIPDB', 'USA']) expect(text).toContain(needle);
+    for (const needle of ['Cloudflare', 'Apple', 'iCloud', 'AbuseIPDB', 'Sentry', 'USA']) expect(text).toContain(needle);
     expect(text).toContain(locale === 'de' ? 'Schweiz' : 'Switzerland');
     expect(text).toContain(`${RETENTION.requestDays}`);
     expect(text).toContain(`${RETENTION.securityDays}`);

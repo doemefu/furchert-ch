@@ -62,7 +62,7 @@ const IMPRINT: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Urheberrecht',
         paragraphs: [
-          'Texte, Bilder und Gestaltung dieser Website sind urheberrechtlich geschützt. Eine Verwendung ausserhalb der Grenzen des Urheberrechts bedarf der vorherigen Zustimmung.',
+          'Texte, Bilder und Gestaltung dieser Website sind urheberrechtlich geschützt. Der Quellcode der Website ist unter der MIT-Lizenz veröffentlicht; für alle übrigen Inhalte bedarf eine Verwendung ausserhalb der Grenzen des Urheberrechts der vorherigen Zustimmung.',
         ],
       },
     ],
@@ -92,7 +92,7 @@ const IMPRINT: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Copyright',
         paragraphs: [
-          'Texts, images and design of this website are protected by copyright. Any use beyond the limits of copyright law requires prior consent.',
+          'Texts, images and design of this website are protected by copyright. The source code of the website is published under the MIT License; for all other content, any use beyond the limits of copyright law requires prior consent.',
         ],
       },
     ],
@@ -126,8 +126,8 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Sicherheitsüberwachung',
         paragraphs: [
-          `Zum Erkennen und Abwehren von Angriffen holt der Verantwortliche die Zugriffsstatistiken und Sicherheitsereignisse von Cloudflare stündlich ab und speichert sie in einer eigenen Datenbank in der Schweiz: IP-Adresse, Land, aufgerufener Host und Pfad (ohne Parameter), HTTP-Methode, Statuscode und Anzahl Anfragen pro Stunde, bei Sicherheitsereignissen zusätzlich Zeitpunkt, Browserangaben (User-Agent) und Netzbetreiber. Zugriffsstatistiken werden nach ${requestDays} Tagen gelöscht, Sicherheitsereignisse und Angaben zum Ruf einer IP-Adresse nach ${securityDays} Tagen.`,
-          'IP-Adressen werden lokal mit öffentlichen Sperrlisten (Spamhaus, FireHOL) abgeglichen. Auffällige IP-Adressen – mit fehlgeschlagenen Anmeldungen, blockierten Anfragen oder vielen Fehlerantworten – sowie die aktivsten Adressen eines Tages werden zudem bei AbuseIPDB (Marathon Studios, Inc., USA) abgefragt. Dabei wird nur die IP-Adresse übermittelt; zurück kommt eine Bewertung, wie oft die Adresse wegen Missbrauchs gemeldet wurde.',
+          `Zum Erkennen und Abwehren von Angriffen holt der Verantwortliche die Zugriffsstatistiken und Sicherheitsereignisse von Cloudflare laufend ab und speichert sie in einer eigenen Datenbank in der Schweiz: IP-Adresse, Land, aufgerufener Host und Pfad (ohne Parameter), HTTP-Methode, Statuscode und Anzahl Anfragen pro Stunde, bei Sicherheitsereignissen zusätzlich Zeitpunkt, Browserangaben (User-Agent) und Netzbetreiber. Zugriffsstatistiken werden nach ${requestDays} Tagen gelöscht, Sicherheitsereignisse nach ${securityDays} Tagen und Angaben zum Ruf einer IP-Adresse ${securityDays} Tage, nachdem die Adresse zuletzt aufgetreten ist.`,
+          'IP-Adressen werden lokal mit öffentlichen Sperrlisten (Spamhaus, FireHOL) abgeglichen. Auffällige IP-Adressen – mit fehlgeschlagenen Anmeldungen, blockierten Anfragen oder vielen Fehlerantworten – sowie die aktivsten Adressen eines Tages werden zudem bei AbuseIPDB (Marathon Studios, Inc., USA) abgefragt. Dabei wird nur die IP-Adresse übermittelt; zurückgeliefert wird eine Bewertung, wie oft die Adresse wegen Missbrauchs gemeldet wurde.',
           'Grundlage ist das überwiegende Interesse an der Sicherheit der Website und der Dienste des Verantwortlichen.',
         ],
       },
@@ -135,25 +135,25 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
         heading: 'Kontaktformular und E-Mail',
         paragraphs: [
           'Wenn Sie das Kontaktformular verwenden, werden Name, E-Mail-Adresse und Nachricht per E-Mail an den Verantwortlichen gesendet. Das Postfach und der Versand laufen über iCloud Mail von Apple (Apple Distribution International Ltd., Irland, und Apple Inc., USA); die Daten können dabei auch in den USA bearbeitet werden. Dasselbe gilt für E-Mails, die Sie direkt senden.',
-          'Die Website selbst speichert die Formulardaten nicht und protokolliert nur die Länge der Nachricht. Zum Schutz vor Missbrauch wird die IP-Adresse kurzzeitig im Arbeitsspeicher der Anwendung gehalten, nie auf Datenträger oder in Protokolle geschrieben und bei einem Neustart verworfen. Nachrichten werden gelöscht, sobald sie für die Bearbeitung der Anfrage nicht mehr benötigt werden, ausser eine gesetzliche Aufbewahrungspflicht steht dem entgegen.',
+          'Die Website selbst speichert die Formulardaten nicht und protokolliert nur die Länge der Nachricht. Zum Schutz vor Missbrauch wird die IP-Adresse bis zum nächsten Neustart der Anwendung in deren Arbeitsspeicher gehalten, aber nie auf Datenträger oder in Protokolle geschrieben. Nachrichten werden gelöscht, sobald sie für die Bearbeitung der Anfrage nicht mehr benötigt werden, ausser eine gesetzliche Aufbewahrungspflicht steht dem entgegen.',
         ],
       },
       {
         heading: 'Anmeldung',
         paragraphs: [
-          `Der Bereich /dashboard ist nur für den Verantwortlichen bestimmt; die Anmeldung erfolgt über den eigenen Anmeldedienst auth.furchert.ch in der Schweiz. Jeder Anmeldeversuch wird mit Zeitpunkt, Ergebnis, IP-Adresse, Browserangaben und einem nicht umkehrbaren Kennwert (HMAC) des eingegebenen Benutzernamens erfasst, bei erfolgreicher Anmeldung zusätzlich mit der Benutzerkennung. Diese Daten liegen bis zu ${loginOutboxHours} Stunden im Anmeldedienst und werden danach für ${securityDays} Tage in der Sicherheitsdatenbank gespeichert.`,
+          `Der Bereich /dashboard ist nur für den Verantwortlichen bestimmt; die Anmeldung erfolgt über den eigenen Anmeldedienst auth.furchert.ch in der Schweiz. Jeder Anmeldeversuch wird mit Zeitpunkt, Ergebnis, IP-Adresse, Browserangaben und einem pseudonymisierten Kennwert (HMAC) des eingegebenen Benutzernamens erfasst, bei erfolgreicher Anmeldung zusätzlich mit der Benutzerkennung. Diese Daten werden für ${securityDays} Tage in der Sicherheitsdatenbank gespeichert; im Anmeldedienst selbst liegen sie höchstens ${loginOutboxHours} Stunden. Technische Fehlermeldungen des Anmeldedienstes können an den Fehlerüberwachungsdienst Sentry (Functional Software, Inc., USA) gesendet werden; IP-Adressen, Cookies und Benutzerangaben werden dabei nicht automatisch mitgesendet.`,
         ],
       },
       {
         heading: 'Cookies',
         paragraphs: [
-          'Die öffentlichen Seiten setzen nur das Cookie NEXT_LOCALE, das die gewählte Sprache speichert und beim Schliessen des Browsers verfällt. Bei einer Anmeldung setzen die Website und auth.furchert.ch technisch notwendige Sitzungs- und Sicherheits-Cookies. Es werden keine Cookies zu Werbe- oder Analysezwecken verwendet.',
+          'Abgesehen von allfälligen Sicherheits-Cookies von Cloudflare (siehe «Betrieb und Hosting») setzen die öffentlichen Seiten nur das Cookie NEXT_LOCALE, das die gewählte Sprache speichert und beim Schliessen des Browsers verfällt. Bei einer Anmeldung setzen die Website und auth.furchert.ch technisch notwendige Sitzungs- und Sicherheits-Cookies. Es werden keine Cookies zu Werbe- oder Analysezwecken verwendet.',
         ],
       },
       {
         heading: 'Empfänger im Ausland',
         paragraphs: [
-          'Personendaten können an folgende Empfänger im Ausland gelangen: Cloudflare (USA), Apple (Irland, USA) und AbuseIPDB (USA). Die übrigen Bearbeitungen finden auf eigenen Servern in der Schweiz statt.',
+          'Personendaten können an folgende Empfänger im Ausland gelangen: Cloudflare (USA), Apple (Irland, USA), AbuseIPDB (USA) und Sentry (USA). Die übrigen Bearbeitungen finden auf eigenen Servern in der Schweiz statt.',
         ],
       },
       {
@@ -165,7 +165,7 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Ihre Rechte',
         paragraphs: [
-          'Sie können Auskunft über Ihre Personendaten verlangen sowie deren Berichtigung oder Löschung beantragen und einer Bearbeitung widersprechen. Wenden Sie sich dafür an die oben genannte E-Mail-Adresse. Sie haben zudem das Recht, sich beim Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) zu beschweren.',
+          'Sie können Auskunft über Ihre Personendaten verlangen, deren Berichtigung oder Löschung beantragen, deren Herausgabe oder Übertragung verlangen und einer Bearbeitung widersprechen. Wenden Sie sich dafür an die oben genannte E-Mail-Adresse. Sie können sich zudem an den Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) wenden.',
         ],
       },
       {
@@ -202,34 +202,34 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Security monitoring',
         paragraphs: [
-          `To detect and defend against attacks, the controller fetches Cloudflare's access statistics and security events every hour and stores them in its own database in Switzerland: IP address, country, requested host and path (without parameters), HTTP method, status code and number of requests per hour; for security events also the time, browser details (user agent) and network operator. Access statistics are deleted after ${requestDays} days, security events and IP reputation data after ${securityDays} days.`,
-          'IP addresses are matched locally against public blocklists (Spamhaus, FireHOL). Conspicuous IP addresses – with failed sign-ins, blocked requests or many error responses – and the most active addresses of a day are also looked up at AbuseIPDB (Marathon Studios, Inc., USA). Only the IP address is transmitted; what comes back is a score of how often the address has been reported for abuse.',
+          `To detect and defend against attacks, the controller continuously fetches Cloudflare's access statistics and security events and stores them in the controller's own database in Switzerland: IP address, country, requested host and path (without parameters), HTTP method, status code and number of requests per hour; for security events also the time, browser details (user agent) and network operator. Access statistics are deleted after ${requestDays} days, security events after ${securityDays} days, and IP reputation data ${securityDays} days after the address was last seen.`,
+          'IP addresses are matched locally against public blocklists (Spamhaus, FireHOL). Suspicious IP addresses – with failed sign-ins, blocked requests or many error responses – and the most active addresses of a day are also looked up at AbuseIPDB (Marathon Studios, Inc., USA). Only the IP address is transmitted; what comes back is a score of how often the address has been reported for abuse.',
           "The basis is the overriding interest in the security of the website and the controller's services.",
         ],
       },
       {
         heading: 'Contact form and e-mail',
         paragraphs: [
-          "If you use the contact form, your name, e-mail address and message are sent to the controller by e-mail. The mailbox and the sending run on Apple's iCloud Mail (Apple Distribution International Ltd., Ireland, and Apple Inc., USA); the data may also be processed in the USA. The same applies to e-mails you send directly.",
-          "The website itself does not store the form data and only logs the length of the message. To prevent abuse, the IP address is held briefly in the application's memory, never written to disk or logs, and discarded on restart. Messages are deleted once they are no longer needed to handle the request, unless a legal retention obligation applies.",
+          "If you use the contact form, your name, e-mail address and message are sent to the controller by e-mail. Both the mailbox and the sending are provided by Apple's iCloud Mail (Apple Distribution International Ltd., Ireland, and Apple Inc., USA); the data may also be processed in the USA. The same applies to e-mails you send directly.",
+          "The website itself does not store the form data and only logs the length of the message. To prevent abuse, the IP address is held in the application's memory until the application restarts, but never written to disk or logs. Messages are deleted once they are no longer needed to handle the request, unless a legal retention obligation applies.",
         ],
       },
       {
         heading: 'Sign-in',
         paragraphs: [
-          `The /dashboard area is intended for the controller only; signing in uses the controller's own sign-in service auth.furchert.ch in Switzerland. Every sign-in attempt is recorded with time, outcome, IP address, browser details and a non-reversible value (HMAC) of the username entered, plus the user ID if the sign-in succeeds. This data stays in the sign-in service for up to ${loginOutboxHours} hours and is then kept in the security database for ${securityDays} days.`,
+          `The /dashboard area is intended for the controller only; signing in uses the controller's own sign-in service auth.furchert.ch in Switzerland. Every sign-in attempt is recorded with time, outcome, IP address, browser details and a pseudonymised value (HMAC) of the username entered, plus the user ID if the sign-in succeeds. This data is kept in the security database for ${securityDays} days; the sign-in service itself holds it for at most ${loginOutboxHours} hours. Technical error reports of the sign-in service may be sent to the error monitoring service Sentry (Functional Software, Inc., USA); IP addresses, cookies and user details are not attached automatically.`,
         ],
       },
       {
         heading: 'Cookies',
         paragraphs: [
-          'The public pages only set the NEXT_LOCALE cookie, which stores the chosen language and expires when the browser is closed. When signing in, the website and auth.furchert.ch set technically necessary session and security cookies. No cookies are used for advertising or analytics.',
+          'Apart from any Cloudflare security cookies (see "Operation and hosting"), the public pages only set the NEXT_LOCALE cookie, which stores the chosen language and expires when the browser is closed. When signing in, the website and auth.furchert.ch set technically necessary session and security cookies. No cookies are used for advertising or analytics.',
         ],
       },
       {
         heading: 'Recipients abroad',
         paragraphs: [
-          'Personal data may reach the following recipients abroad: Cloudflare (USA), Apple (Ireland, USA) and AbuseIPDB (USA). All other processing takes place on the controller\'s own servers in Switzerland.',
+          'Personal data may reach the following recipients abroad: Cloudflare (USA), Apple (Ireland, USA), AbuseIPDB (USA) and Sentry (USA). All other processing takes place on the controller\'s own servers in Switzerland.',
         ],
       },
       {
@@ -241,7 +241,7 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Your rights',
         paragraphs: [
-          'You can request information about your personal data, ask for it to be corrected or deleted, and object to its processing. To do so, contact the e-mail address above. You also have the right to lodge a complaint with the Federal Data Protection and Information Commissioner (FDPIC).',
+          'You can request information about your personal data, ask for it to be corrected or deleted, ask for it to be handed over or transferred, and object to its processing. To do so, contact the e-mail address above. You can also contact the Federal Data Protection and Information Commissioner (FDPIC).',
         ],
       },
       {
