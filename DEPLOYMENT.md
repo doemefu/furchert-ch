@@ -34,15 +34,32 @@ If a future Next upgrade or a new dependency logs `EROFS`/`EACCES`, add an `empt
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `X-Frame-Options` | `DENY` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
-| `Strict-Transport-Security` | `max-age=86400` (1 day — see "HSTS rollout" below) |
-| `Content-Security-Policy-Report-Only` | `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'` |
+| `Strict-Transport-Security` | `max-age=31536000` (1 year, apex only — see "HSTS rollout" below) |
+| `Content-Security-Policy` (enforced) | `frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://auth.furchert.ch` |
+| `Content-Security-Policy-Report-Only` | `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'` |
 
-**HSTS rollout.** This domain never sent `Strict-Transport-Security` before this change (neither app nor Cloudflare edge). Started conservative at `max-age=86400` (1 day) instead of the standard 1-year value, since a browser that receives HSTS enforces HTTPS-only for the full window with no way to revoke it early. **Follow-up action:** after a burn-in period with no HTTPS-access problems, raise `max-age` to a standard long-lived value (e.g. `31536000`) in `next.config.mjs`. `includeSubDomains`/`preload` are deliberately omitted — several sibling homelab services share this apex (`auth`/`device`/`club`/`n8n`/`grafana.furchert.ch`, see the parent `CLAUDE.md`) and are separate repos this app has no mandate to declare HSTS-safe for.
+`poweredByHeader: false` removes `X-Powered-By: Next.js`. `src/securityHeaders.test.ts`
+pins these exact values; change the config, the test and this table together.
 
-**CSP graduation gate.** `Content-Security-Policy-Report-Only` is deliberately not enforcing yet — there is no `report-uri`/`report-to` collector, so violations only surface in a visiting browser's own DevTools console. Before dropping `-Report-Only` (making it a blocking `Content-Security-Policy`):
+**Why `form-action` lists the IdP.** The sign-out button POSTs a form to
+`/api/federated-logout`, which redirects to `https://auth.furchert.ch/connect/logout`
+(then back to `https://furchert.ch`); browsers check `form-action` on the redirects
+of a form submission, so `'self'` alone would block sign-out. The origin is a literal
+because `headers()` is evaluated at `next build`, not at runtime — if the IdP origin
+(`OIDC_ISSUER`) ever changes, change it here too (`src/securityHeaders.test.ts`
+checks it against `k8s/deployment.yaml`). The dashboard's sign-in buttons use
+`signIn()` (`fetch` + `window.location`), which `form-action` does not govern, but
+Auth.js's built-in `/api/auth/signin` page (the fallback `signIn()` can land on)
+POSTs a form that is redirected to the IdP — it needs the IdP origin too. Admin
+forms whose action is a client closure are intercepted by React before hydration
+and replayed afterwards, so `form-action` never sees them.
+
+**HSTS rollout.** This domain never sent `Strict-Transport-Security` before #51 (neither app nor Cloudflare edge). It started at `max-age=86400` (1 day, 2026-09-04) and was raised to `max-age=31536000` (1 year) on 2026-11-03 after two months without HTTPS-access problems (#42). `includeSubDomains`/`preload` are deliberately omitted — several sibling homelab services share this apex (`auth`/`device`/`club`/`n8n`/`grafana.furchert.ch`, see the parent `CLAUDE.md`) and are separate repos this app has no mandate to declare HSTS-safe for, and this app cannot vouch that every name under the apex is HTTPS-only. Rollback: every STS header a returning browser receives replaces its stored `max-age`, so serving `max-age=0` (or a shorter value) shortens the policy for every visitor who comes back; only visitors who never return keep the old window. The Cloudflare edge must not add its own HSTS header (exactly one `strict-transport-security` line in the verify step below).
+
+**CSP graduation gate.** Since 2026-11-03 (#42) the directives that do not depend on inline scripts or styles (`frame-ancestors`, `object-src`, `base-uri`, `form-action`) are enforced. There is no `report-uri`/`report-to` collector yet, so a violation of the enforced part (e.g. a future cross-origin form target) only shows in the visiting browser's DevTools console — accepted until the collector decision below. `default-src`/`script-src`/`style-src`/`img-src`/`font-src`/`connect-src` stay Report-Only: enforcing them needs an owner decision on #42 (nonces vs. hashes vs. keeping `'unsafe-inline'`, plus a report collector). To graduate them:
 1. Open each main public route and a signed-in `/dashboard` load in a real browser.
 2. Check the DevTools console for `Content-Security-Policy-Report-Only` violation messages.
-3. If clean, rename the header key from `Content-Security-Policy-Report-Only` to `Content-Security-Policy` in `next.config.mjs`.
+3. If clean, move the Report-Only directives into the enforced `Content-Security-Policy` value in `next.config.mjs`, delete the `Content-Security-Policy-Report-Only` header, and update `src/securityHeaders.test.ts` and the table above.
 
 Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -s https://furchert.ch/de | grep -i cloudflareinsights` found nothing — Cloudflare Web Analytics/Rocket Loader is not injecting a beacon on this zone today, so `script-src`/`connect-src` need no `*.cloudflareinsights.com` addition. Re-check this if that Cloudflare zone feature is ever turned on, since it would otherwise report (or, once enforcing, break) on every page load.
 
@@ -298,8 +315,10 @@ access".
 
 ```bash
 curl -sI https://furchert.ch                  # bare `/` — proxy locale redirect; should carry the headers too
-curl -sI https://furchert.ch/de               # rendered page — all 6 headers from "Security headers" above
-curl -sI https://furchert.ch/api/health       # API route — all 6 headers (the case that justified next.config.js over proxy.ts)
+curl -sI https://furchert.ch/de               # rendered page — all 7 headers from "Security headers" above
+curl -sI https://furchert.ch/api/health       # API route — all 7 headers (the case that justified next.config.js over proxy.ts)
+curl -sI https://furchert.ch/de | grep -ci strict-transport-security   # 1 (2 = Cloudflare HSTS turned on too)
+curl -sI https://furchert.ch/de | grep -ci x-powered-by                # 0
 ```
 
 If any of the three is missing headers, see Troubleshooting below.

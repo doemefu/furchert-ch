@@ -6,6 +6,19 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **Security headers tightened** (#42): HSTS raised from 1 day to 1 year
+  (`max-age=31536000`, still no `includeSubDomains`/`preload`); the CSP
+  directives that do not depend on inline scripts or styles are now enforced
+  (`frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action
+  'self' https://auth.furchert.ch` — the IdP origin because sign-out POSTs a
+  form that redirects there); `script-src`/`style-src` and the rest stay
+  Report-Only pending the nonce/hash decision; `X-Powered-By` is no longer
+  sent. `src/securityHeaders.test.ts` pins the values.
+- **Sign-out without a session redirects to the public origin** (#42): the
+  no-session branch of `/api/federated-logout` redirected to the internal
+  request origin (`https://0.0.0.0:3000/` behind the tunnel); it now uses
+  `AUTH_URL` like the other branches, which the enforced `form-action` also
+  requires.
 - **Node 22.23.1 → 22.23.4** (#100): Node's bundled root store moves to NSS
   3.131.1, which distrusts the emSign roots behind the compromised eMudhra
   intermediates (https://blog.cloudflare.com/emudhra-certificate-compromise);
