@@ -40,6 +40,25 @@ describe('search-result copy', () => {
     expect(de.hero.sub).not.toContain('ß');
   });
 
+  it('names one public place for the owner: the Zürcher Oberland (owner decision)', () => {
+    // hero label, footer role and the location shown in the footer and on
+    // /contact. The hero label keeps the place on one line with a no-break space.
+    const plain = (text: string) => text.replace(/\u00a0/g, ' ');
+    expect(de.hero.label).toContain('Zürcher\u00a0Oberland');
+    expect(en.hero.label).toContain('Zurich\u00a0Oberland');
+    for (const text of [de.hero.label, de.footer.role, de.footer.location].map(plain)) {
+      expect(text).toContain('Zürcher Oberland');
+    }
+    for (const text of [en.hero.label, en.footer.role, en.footer.location].map(plain)) {
+      expect(text).toContain('Zurich Oberland');
+    }
+    for (const m of [de, en]) {
+      for (const text of [m.hero.label, m.footer.role, m.footer.location]) {
+        expect(text).not.toMatch(/Rapperswil|Zürich$|Zurich$/);
+      }
+    }
+  });
+
   it('introduces the owner by name on the home page', () => {
     expect(de.hero.sub).toContain('Dominic Furchert');
     expect(en.hero.sub).toContain('Dominic Furchert');

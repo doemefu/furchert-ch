@@ -30,7 +30,6 @@ const CONTACTS: { label: string; value: string; href: string | null }[] = [
     value: 'linkedin.com/in/dominic-furchert',
     href: 'https://linkedin.com/in/dominic-furchert',
   },
-  { label: 'Location', value: 'Rapperswil-Jona, CH', href: null },
 ];
 
 export default async function ContactPage({
@@ -42,6 +41,8 @@ export default async function ContactPage({
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations();
+  // The location is the same message the footer shows.
+  const contacts = [...CONTACTS, { label: 'Location', value: t('footer.location'), href: null }];
 
   return (
     <div>
@@ -81,7 +82,7 @@ export default async function ContactPage({
               {t('contact.ref')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {CONTACTS.map((c) => (
+              {contacts.map((c) => (
                 <div key={c.label}>
                   <div
                     style={{

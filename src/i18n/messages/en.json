@@ -8,7 +8,7 @@
     "contact": "Contact"
   },
   "hero": {
-    "label": "Software Engineer · Zurich",
+    "label": "Software Engineer · Zurich\u00a0Oberland",
     "title1": "Technology",
     "title2": " that creates impact.",
     "sub": "I'm Dominic Furchert. I help SMEs in the Zürcher Oberland simplify recurring work with AI — and build systems from ESP32 firmware to Kubernetes clusters.",
@@ -80,7 +80,7 @@
       "headerTitle": "200 members. A national regatta. A CHF 5M project.",
       "headerSub": "Voluntary — and at least as instructive as any computer-science module.",
       "metaTitle": "President, Rapperswil-Jona Rowing Club — Dominic Furchert",
-      "metaDescription": "Dominic Furchert, president of the Rapperswil-Jona Rowing Club (about 200 members), was safety chief of the 2026 Schmerikon regatta (about 1,500 athletes).",
+      "metaDescription": "Dominic Furchert, president of the Rapperswil-Jona Rowing Club (about 200 members), is safety chief of the Schmerikon regatta (about 1,500 athletes).",
       "photoCaption": "photo — regatta schmerikon"
     },
     "projects": {
@@ -234,8 +234,8 @@
     "navigation": "Navigation",
     "contact": "Contact",
     "social": "Social",
-    "role": "Software Engineer · Zurich",
-    "location": "Rapperswil-Jona, CH",
+    "role": "Software Engineer · Zurich Oberland",
+    "location": "Zurich Oberland",
     "imprint": "Imprint",
     "privacy": "Privacy"
   },

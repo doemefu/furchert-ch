@@ -20,7 +20,8 @@ export const PAGE_LAST_MODIFIED = {
   '/rowing': SITE_LAUNCH_DATE,
   // The homelab summary in the project list was corrected on 2026-11-03 (#132).
   '/projects': '2026-11-03',
-  '/contact': SITE_LAUNCH_DATE,
+  // Location shown on the page changed to the Zürcher Oberland (owner decision, #136).
+  '/contact': '2026-11-03',
   '/projects/iot-platform': SITE_LAUNCH_DATE,
   // The page shows this date itself ("Stand der Beschreibung").
   '/projects/homelab': LAB_CONTENT_UPDATED,

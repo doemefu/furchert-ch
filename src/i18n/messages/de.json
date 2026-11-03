@@ -8,7 +8,7 @@
     "contact": "Kontakt"
   },
   "hero": {
-    "label": "Software Engineer · Zürich",
+    "label": "Software Engineer · Zürcher\u00a0Oberland",
     "title1": "Technologie,",
     "title2": " die Wirkung erzeugt.",
     "sub": "Ich bin Dominic Furchert. Ich helfe KMU im Zürcher Oberland, wiederkehrende Abläufe mit KI zu vereinfachen — und baue Systeme von der ESP32-Firmware bis zum Kubernetes-Cluster.",
@@ -80,7 +80,7 @@
       "headerTitle": "200 Mitglieder. Eine nationale Regatta. Ein CHF-5M-Projekt.",
       "headerSub": "Ehrenamtlich — und mindestens so lehrreich wie jedes Informatik-Modul.",
       "metaTitle": "Präsident Ruderclub Rapperswil-Jona — Dominic Furchert",
-      "metaDescription": "Dominic Furchert präsidiert den Ruderclub Rapperswil-Jona (rund 200 Mitglieder) und war 2026 Chef Sicherheit der Regatta Schmerikon mit rund 1'500 Athleten.",
+      "metaDescription": "Dominic Furchert präsidiert den Ruderclub Rapperswil-Jona (rund 200 Mitglieder) und ist Chef Sicherheit der Regatta Schmerikon mit rund 1'500 Athleten.",
       "photoCaption": "foto — regatta schmerikon"
     },
     "projects": {
@@ -234,8 +234,8 @@
     "navigation": "Navigation",
     "contact": "Kontakt",
     "social": "Social",
-    "role": "Software Engineer · Zürich",
-    "location": "Rapperswil-Jona, CH",
+    "role": "Software Engineer · Zürcher Oberland",
+    "location": "Zürcher Oberland",
     "imprint": "Impressum",
     "privacy": "Datenschutz"
   },
