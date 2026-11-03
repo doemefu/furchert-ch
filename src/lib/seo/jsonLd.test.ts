@@ -72,7 +72,7 @@ describe('buildAutomationJsonLd', () => {
     ]);
   });
 
-  it('never carries contact data, prices or offers', () => {
+  it('never carries contact data or price/offer markup', () => {
     const keys = keysDeep(buildAutomationJsonLd(input));
     for (const forbidden of [
       'email',
@@ -82,12 +82,30 @@ describe('buildAutomationJsonLd', () => {
       'offers',
       'priceRange',
       'price',
+      'priceSpecification',
+      'priceCurrency',
+      'hasOfferCatalog',
+      'makesOffer',
       'aggregateRating',
       'review',
     ]) {
       expect(keys.has(forbidden)).toBe(false);
     }
     expect(JSON.stringify(buildAutomationJsonLd(input))).not.toMatch(/\bCHF\b|@furchert\.ch/);
+  });
+
+  it('keeps a price in a visible FAQ answer as plain answer text only', () => {
+    const priced = [{ q: 'Was kostet das?', a: 'Der KI-Kurzcheck kostet CHF 600.' }];
+    const [page, service] = buildAutomationJsonLd({ ...input, faq: priced })['@graph'] as Node[];
+    expect(page.mainEntity).toEqual([
+      {
+        '@type': 'Question',
+        name: 'Was kostet das?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Der KI-Kurzcheck kostet CHF 600.' },
+      },
+    ]);
+    expect(JSON.stringify({ ...page, mainEntity: null })).not.toMatch(/CHF/);
+    expect(JSON.stringify(service)).not.toMatch(/CHF/);
   });
 
   it('names the served region and the page language and date', () => {
