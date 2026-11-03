@@ -80,9 +80,13 @@ export async function Footer() {
           <div>
             <div style={colTitle}>{t('footer.contact')}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+              {/* Cloudflare Email Obfuscation rewrites this text and href in the
+                  SSR HTML until its decoder runs; a leaf element with
+                  suppressHydrationWarning lets React hydrate anyway (#125). */}
               <a
                 href="mailto:dominic@furchert.ch"
                 style={{ ...linkStyle, textTransform: 'none' }}
+                suppressHydrationWarning
               >
                 dominic@furchert.ch
               </a>
