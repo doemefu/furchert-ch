@@ -27,6 +27,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
         const buttonId = `faq-button-${i}`;
         return (
           <div key={i} style={{ borderTop: '1px solid rgba(162,167,176,.22)' }}>
+            <h3 style={{ margin: 0, font: 'inherit' }}>
             <button
               type="button"
               id={buttonId}
@@ -69,6 +70,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 +
               </span>
             </button>
+            </h3>
             <div
               id={panelId}
               role="region"
