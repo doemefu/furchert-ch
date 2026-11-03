@@ -1,6 +1,7 @@
-// FAQ catalogue for /automation. DE = prototype verbatim
-// (pages.jsx:452-456). EN = faithful translation. Per-record locale map
-// (worklog F-Q2; Phase-2 D1 shape).
+// FAQ catalogue for /automation. Reworked for the SME offer (Zürcher
+// Oberland); DE is the target-audience copy, EN a faithful translation.
+// No prices or rates here (guarded by src/i18n/automationCopy.test.ts).
+// Per-record locale map (worklog F-Q2; Phase-2 D1 shape).
 import type { Locale } from '@/i18n/routing';
 
 export interface AutomationFaq {
@@ -11,48 +12,48 @@ export const FAQS: AutomationFaq[] = [
   {
     i18n: {
       de: {
+        q: 'Für welche Betriebe ist das gedacht?',
+        a: 'Für kleine und mittlere Betriebe im Zürcher Oberland aus Dienstleistung, Handwerk und Produktion. Typisch sind Abläufe rund um Anfragen, Aufträge, Rapporte und Dokumentation. Buchhaltung und Treuhand sind nicht mein Gebiet.',
+      },
+      en: {
+        q: 'Who is this for?',
+        a: 'Small and medium-sized businesses in the Zürcher Oberland from services, trades and production. Typical examples are processes around enquiries, orders, reports and documentation. Accounting and bookkeeping are not my field.',
+      },
+    },
+  },
+  {
+    i18n: {
+      de: {
         q: 'Was kostet das?',
-        a: "Ein Prozess-Scan (Halbtag bei Ihnen) kostet CHF 1'500–2'500. Eine Workflow-Automation liegt bei CHF 5'000–15'000, je nach Komplexität. Laufende Betreuung ab CHF 500/Monat.",
+        a: 'Das hängt vom Ablauf ab. Das Erstgespräch ist kostenlos und unverbindlich. Danach erhalten Sie eine schriftliche Offerte mit Aufwand und Kosten, bevor etwas beginnt.',
       },
       en: {
         q: 'What does it cost?',
-        a: 'A process scan (half a day on site) costs CHF 1,500–2,500. A workflow automation runs CHF 5,000–15,000 depending on complexity. Ongoing support starts at CHF 500/month.',
+        a: 'That depends on the process. The first conversation is free and without obligation. After that you receive a written quote with effort and cost before anything starts.',
       },
     },
   },
   {
     i18n: {
       de: {
-        q: 'Muss ich mein ERP ersetzen?',
-        a: 'Nein. Ich ergänze Ihre bestehenden Systeme — egal ob Abacus, SAP Business One oder Excel. Die Automation arbeitet mit dem was da ist.',
+        q: 'Muss ich meine Software ersetzen?',
+        a: 'In der Regel nicht. Ich baue auf dem auf, was Sie schon nutzen — Branchensoftware, ERP, Excel oder E-Mail.',
       },
       en: {
-        q: 'Do I have to replace my ERP?',
-        a: 'No. I extend your existing systems — whether Abacus, SAP Business One or Excel. The automation works with what you already have.',
+        q: 'Do I have to replace my software?',
+        a: 'Usually not. I build on what you already use — industry software, ERP, Excel or email.',
       },
     },
   },
   {
     i18n: {
       de: {
-        q: 'Wie sicher sind meine Daten?',
-        a: 'Alle Tools laufen auf Schweizer Servern oder in Ihrer eigenen Infrastruktur. Keine Daten gehen in eine US-Cloud, es sei denn Sie wollen das explizit.',
+        q: 'Was passiert mit meinen Daten?',
+        a: 'Ich arbeite nach den Grundsätzen des nDSG: Verarbeitung wo immer möglich in der Schweiz oder der EU, sensible Daten nur bei Schweizer Anbietern oder bei Ihnen im Betrieb. Ob und wo ein externer KI-Dienst zum Einsatz kommt, legen wir vorab schriftlich fest — nie ohne Ihr Einverständnis.',
       },
       en: {
-        q: 'How secure is my data?',
-        a: 'All tools run on Swiss servers or in your own infrastructure. No data leaves for a US cloud unless you explicitly want that.',
-      },
-    },
-  },
-  {
-    i18n: {
-      de: {
-        q: 'Was passiert wenn es nicht funktioniert?',
-        a: 'Nach dem Prototyp (Woche 2) entscheiden Sie: Weiter oder Stopp. Wenn der Prototyp nicht überzeugt, zahlen Sie nur den Analyseaufwand.',
-      },
-      en: {
-        q: "What happens if it doesn't work?",
-        a: "After the prototype (week 2) you decide: continue or stop. If the prototype doesn't convince you, you only pay for the analysis effort.",
+        q: 'What happens to my data?',
+        a: 'I work according to the principles of the Swiss Federal Act on Data Protection (FADP, German: nDSG): processing in Switzerland or the EU wherever possible, sensitive data only with Swiss providers or on your own premises. Whether and where an external AI service is used is agreed in writing beforehand — never without your consent.',
       },
     },
   },
@@ -60,11 +61,23 @@ export const FAQS: AutomationFaq[] = [
     i18n: {
       de: {
         q: 'Brauche ich technisches Wissen?',
-        a: 'Nein. Sie erklären mir Ihren Prozess. Ich kümmere mich um die Technik.',
+        a: 'Nein. Sie erklären mir Ihren Ablauf. Ich kümmere mich um die Technik.',
       },
       en: {
         q: 'Do I need technical knowledge?',
         a: 'No. You explain your process. I take care of the technology.',
+      },
+    },
+  },
+  {
+    i18n: {
+      de: {
+        q: 'Was, wenn es nicht funktioniert?',
+        a: 'Wir starten klein, mit einem einzigen Ablauf. Nach dem Testlauf entscheiden Sie, ob es weitergeht. Was der Testlauf kostet und was danach gilt, steht vorab in der Offerte.',
+      },
+      en: {
+        q: "What if it doesn't work?",
+        a: 'We start small, with a single process. After the trial run you decide whether to continue. What it costs and what happens next is set out in the quote beforehand.',
       },
     },
   },
