@@ -1,12 +1,10 @@
-// Ported pixel-faithfully from the prototype (pages.jsx PageAutomation,
-// lines 459-592). RSC; only the FAQ block is a client island. The
-// prototype's hero secondary `<a href="#scan">` becomes a real
-// next-intl Link to /automation/scan (worklog F1: the prototype's
-// `id="scan"` placeholder on the FAQ block is intentionally dropped —
-// a real route replaces it).
-// Copy was reworked for the SME offer (Zürcher Oberland): the "problem"
-// block is now everyday use cases and the "comparison" block is the data
-// protection block; layout and styles are unchanged. No prices on this page.
+// Ported from the prototype (pages.jsx PageAutomation, lines 459-592) and
+// reworked for the SME offer (Zürcher Oberland). RSC; only the FAQ block
+// is a client island. The "problem" block is now everyday use cases and
+// the "comparison" block is the data protection block; the section
+// styles are the prototype's, only the two grids became responsive
+// (single column on narrow phones). No prices on this page.
+// The prototype's `id="scan"` FAQ placeholder stays dropped (worklog F1).
 // The hero no longer links to the /automation/scan demo (its sample report
 // still shows prices and ROI figures); the route itself is unchanged.
 import type { Metadata } from 'next';
@@ -157,7 +155,7 @@ export default async function AutomationPage({
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(280px, 30%)), 1fr))',
               gap: '0',
             }}
           >
@@ -283,7 +281,7 @@ export default async function AutomationPage({
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
               gap: '0',
               border: '1px solid rgba(162,167,176,.22)',
               borderRadius: '2px',

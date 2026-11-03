@@ -47,7 +47,8 @@ describe('automation page copy', () => {
 
   it('does not publish prices or rates', () => {
     for (const text of allCopy) {
-      expect(text).not.toMatch(/\bCHF\b|\bFr\.\s*\d|\bEUR\b|€|\$/i);
+      expect(text).not.toMatch(/\bCHF\b|\bFr\.\s*\d|\bEUR\b|€|\$|franken/i);
+      expect(text).not.toMatch(/\d['’]\d{3}|\d\.[–-]/);
       expect(text).not.toMatch(/\d\s*(\/|pro|per)\s*(h|std|stunde|hour|monat|month)\b/i);
     }
   });
@@ -59,13 +60,12 @@ describe('automation page copy', () => {
     }
   });
 
-  it('has the same number of FAQ entries with both locales filled', () => {
+  it('has FAQ entries with both locales filled', () => {
     expect(FAQS.length).toBeGreaterThan(0);
     for (const faq of FAQS) {
-      expect(faq.i18n.de.q).not.toBe('');
-      expect(faq.i18n.de.a).not.toBe('');
-      expect(faq.i18n.en.q).not.toBe('');
-      expect(faq.i18n.en.a).not.toBe('');
+      for (const text of [faq.i18n.de.q, faq.i18n.de.a, faq.i18n.en.q, faq.i18n.en.a]) {
+        expect(text.trim()).not.toBe('');
+      }
     }
   });
 });
