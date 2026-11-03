@@ -6,7 +6,9 @@
 // Accessibility additions vs the prototype (worklog F11):
 //   - aria-expanded on each disclosure button
 //   - aria-controls / id on the panel
-//   - aria-hidden on the collapsed panel (rendered as null already)
+//   - every panel is always in the server-rendered HTML and only hidden
+//     with the `hidden` attribute while collapsed, so crawlers and AI
+//     search read the answers without running any script
 import { useState } from 'react';
 
 export interface FAQItem {
@@ -67,22 +69,21 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 +
               </span>
             </button>
-            {isOpen && (
-              <div
-                id={panelId}
-                role="region"
-                aria-labelledby={buttonId}
-                style={{
-                  paddingBottom: '1.25rem',
-                  fontSize: '.9375rem',
-                  color: 'var(--n-60)',
-                  lineHeight: 1.55,
-                  maxWidth: '64ch',
-                }}
-              >
-                {faq.a}
-              </div>
-            )}
+            <div
+              id={panelId}
+              role="region"
+              aria-labelledby={buttonId}
+              hidden={!isOpen}
+              style={{
+                paddingBottom: '1.25rem',
+                fontSize: '.9375rem',
+                color: 'var(--n-60)',
+                lineHeight: 1.55,
+                maxWidth: '64ch',
+              }}
+            >
+              {faq.a}
+            </div>
           </div>
         );
       })}

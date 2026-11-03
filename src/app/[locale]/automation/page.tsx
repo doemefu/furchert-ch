@@ -15,11 +15,27 @@ import { Link, getPathname } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { FAQS } from '@/data/automation-faqs';
+import { buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { FAQAccordion } from './FAQAccordion';
 
 const HOST = 'https://furchert.ch';
 const DOTS_LIGHT =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.08'/%3E%3C/svg%3E\")";
+
+// Date of the last content change; shown on the page and used as
+// `dateModified` in the JSON-LD. Update it whenever the copy changes.
+const LAST_UPDATED = '2026-11-03';
+
+const OG_LOCALE = { de: 'de_CH', en: 'en_GB' } as const;
+
+// Short direct answer under a question heading (GEO: quotable by AI search).
+const leadStyle = {
+  fontSize: '1rem',
+  color: 'var(--n-70)',
+  lineHeight: 1.55,
+  maxWidth: '62ch',
+  marginBottom: '2.5rem',
+};
 
 const labelMono = {
   fontFamily: 'var(--mono)',
@@ -38,10 +54,24 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
+  const title = `${t('pages.automation.heroLabel')} — furchert.ch`;
+  const description = t('pages.automation.metaDescription');
+  const url = HOST + getPathname({ locale, href: '/automation' });
   return {
-    title: `${t('pages.automation.heroLabel')} — furchert.ch`,
-    description: t('pages.automation.heroSub'),
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      siteName: 'furchert.ch',
+      title,
+      description,
+      url,
+      locale: OG_LOCALE[locale],
+      alternateLocale: OG_LOCALE[locale === 'de' ? 'en' : 'de'],
+    },
+    twitter: { card: 'summary', title, description },
     alternates: {
+      canonical: url,
       languages: {
         de: HOST + getPathname({ locale: 'de', href: '/automation' }),
         en: HOST + getPathname({ locale: 'en', href: '/automation' }),
@@ -63,9 +93,27 @@ export default async function AutomationPage({
 
   const faqItems = FAQS.map((f) => f.i18n[locale]);
   const mailHref = `mailto:dominic@furchert.ch?subject=${encodeURIComponent(t('pages.automation.mailSubject'))}`;
+  const jsonLd = buildAutomationJsonLd({
+    locale,
+    pageUrl: HOST + getPathname({ locale, href: '/automation' }),
+    name: t('pages.automation.heroLabel'),
+    description: t('pages.automation.heroSub'),
+    areaServed: 'Zürcher Oberland',
+    faq: faqItems,
+    dateModified: LAST_UPDATED,
+  });
+  const updatedText = `${t('pages.automation.updatedLabel')}: ${new Intl.DateTimeFormat(locale, {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(LAST_UPDATED))}`;
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       {/* HERO (dark) */}
       <div
         style={{
@@ -147,11 +195,12 @@ export default async function AutomationPage({
               fontWeight: 500,
               letterSpacing: '-.03em',
               color: 'var(--n-100)',
-              marginBottom: '2.5rem',
+              marginBottom: '1rem',
             }}
           >
             {t('pages.automation.useCaseHeading')}
           </h2>
+          <p style={leadStyle}>{t('pages.automation.useCaseLead')}</p>
           <div
             style={{
               display: 'grid',
@@ -201,11 +250,12 @@ export default async function AutomationPage({
               fontWeight: 500,
               letterSpacing: '-.03em',
               color: 'var(--n-100)',
-              marginBottom: '2.5rem',
+              marginBottom: '1rem',
             }}
           >
             {t('pages.automation.processHeading')}
           </h2>
+          <p style={leadStyle}>{t('pages.automation.processLead')}</p>
           <div
             style={{
               display: 'grid',
@@ -273,11 +323,12 @@ export default async function AutomationPage({
               fontWeight: 500,
               letterSpacing: '-.03em',
               color: 'var(--n-100)',
-              marginBottom: '2.5rem',
+              marginBottom: '1rem',
             }}
           >
             {t('pages.automation.privacyHeading')}
           </h2>
+          <p style={leadStyle}>{t('pages.automation.privacyLead')}</p>
           <div
             style={{
               display: 'grid',
@@ -497,10 +548,11 @@ export default async function AutomationPage({
 
         {/* FAQ — id="scan" from prototype intentionally dropped (F1). */}
         <div style={{ padding: '3rem 0' }}>
-          <p
+          <h2
             style={{
               fontFamily: 'var(--mono)',
               fontSize: '.8125rem',
+              fontWeight: 400,
               letterSpacing: '.06em',
               textTransform: 'uppercase',
               color: 'var(--n-50)',
@@ -508,8 +560,19 @@ export default async function AutomationPage({
             }}
           >
             {t('pages.automation.faqLabel')}
-          </p>
+          </h2>
           <FAQAccordion items={faqItems} />
+          <p
+            style={{
+              marginTop: '2rem',
+              fontFamily: 'var(--mono)',
+              fontSize: '.75rem',
+              letterSpacing: '.04em',
+              color: 'var(--n-60)',
+            }}
+          >
+            <time dateTime={LAST_UPDATED}>{updatedText}</time>
+          </p>
         </div>
       </div>
     </div>
