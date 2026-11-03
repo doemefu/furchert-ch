@@ -57,7 +57,7 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale,
     href: '/automation',
-    title: `${t('pages.automation.heroLabel')} — furchert.ch`,
+    title: t('pages.automation.metaTitle'),
     description: t('pages.automation.metaDescription'),
   });
 }

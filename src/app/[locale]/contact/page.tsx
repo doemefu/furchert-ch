@@ -17,8 +17,8 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale,
     href: '/contact',
-    title: `${t('contact.title')} — furchert.ch`,
-    description: t('contact.sub'),
+    title: t('contact.metaTitle'),
+    description: t('contact.metaDescription'),
   });
 }
 
