@@ -10,7 +10,7 @@ import { Providers } from '@/components/Providers';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'furchert.ch — Dominic Furchert',
+  title: 'furchert.ch | Dominic Furchert',
   description:
     'Dominic Furchert, Software Engineer: KI für KMU im Zürcher Oberland, IoT-Plattform, Homelab.',
 };

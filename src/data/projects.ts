@@ -18,7 +18,7 @@ export interface Project {
 export const PROJECTS: Project[] = [
   {
     slug: 'iot-platform',
-    title: 'IoT Platform — Terra1',
+    title: 'IoT Platform: Terra1',
     status: 'live',
     tags: ['ESP32', 'Spring Boot', 'React', 'MQTT', 'OAuth 2.1', 'PostgreSQL', 'InfluxDB', 'Kubernetes'],
     github: 'https://github.com/doemefu/iotApp',
@@ -84,7 +84,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: 'karaokee',
-    title: 'Karaokee — SoPra FS26',
+    title: 'Karaokee: SoPra FS26',
     status: 'wip',
     tags: ['Spring Boot 3', 'REST', 'OpenAPI', 'React', 'TypeScript'],
     github: 'https://github.com/doemefu/very-cool-karaoke-client',

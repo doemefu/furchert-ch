@@ -13,20 +13,18 @@ import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 export const SITE_LAUNCH_DATE = '2026-06-25';
 
 export const PAGE_LAST_MODIFIED = {
-  '/': '2026-11-03',
-  '/about': '2026-11-03',
-  '/it': SITE_LAUNCH_DATE,
+  '/': '2026-11-04',
+  '/about': '2026-11-04',
+  '/it': '2026-11-04',
   '/automation': '2026-11-03',
-  '/rowing': SITE_LAUNCH_DATE,
-  // The homelab summary in the project list was corrected on 2026-11-03 (#132).
-  '/projects': '2026-11-03',
-  // Location shown on the page changed to the Zürcher Oberland (owner decision, #136).
-  '/contact': '2026-11-03',
-  '/projects/iot-platform': SITE_LAUNCH_DATE,
+  '/rowing': '2026-11-04',
+  '/projects': '2026-11-04',
+  '/contact': '2026-11-04',
+  '/projects/iot-platform': '2026-11-04',
   // The page shows this date itself ("Stand der Beschreibung").
   '/projects/homelab': LAB_CONTENT_UPDATED,
   '/projects/club-assist': SITE_LAUNCH_DATE,
-  '/projects/karaokee': SITE_LAUNCH_DATE,
+  '/projects/karaokee': '2026-11-04',
   '/projects/auth-service': SITE_LAUNCH_DATE,
   '/projects/aemtlifyer': SITE_LAUNCH_DATE,
 } as const satisfies Record<string, `${number}-${number}-${number}`>;

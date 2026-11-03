@@ -41,15 +41,14 @@ export async function generateMetadata({
     return buildPageMetadata({
       locale,
       href,
-      title: `${t('metaTitle')} — Dominic Furchert`,
+      title: `${t('metaTitle')} | Dominic Furchert`,
       description: t('metaDescription'),
     });
   }
   return buildPageMetadata({
     locale,
     href,
-    // "IoT Platform — Terra1" → "IoT Platform: Terra1", so the title has one dash.
-    title: `${project.title.replace(' — ', ': ')} — Dominic Furchert`,
+    title: `${project.title} | Dominic Furchert`,
     description: project.i18n[locale].summary,
   });
 }
