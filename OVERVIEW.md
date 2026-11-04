@@ -59,17 +59,17 @@ mailer.
 ### Private (real, OIDC-gated via auth.furchert.ch)
 | Route | Page | Status |
 |-------|------|--------|
-| `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — the Auth Service subnav tab and its tile's "Manage" link open `/dashboard/auth` (#44); the Device Service tab and the IoT Platform "Manage" button stay visibly disabled until #45 |
+| `/[locale]/dashboard` | Homelab overview: Dev Area subnav, k3s cluster strip, filterable app/service tile grid, infra shortcuts | **live (Phase 5)** — the Auth Service subnav tab and its tile's "Manage" link open `/dashboard/auth` (#44); the Device Service tab and the IoT Platform "Manage" link open `/dashboard/devices` (#45) |
 | `/[locale]/dashboard/network` | Network monitoring (ADMIN only): collector status strip, inbound Cloudflare traffic (totals, timeline, top client IPs, countries, ASNs, hosts, paths, status codes), firewall events, IP detail via `?ip=`, LAN section (connections per port by source, UFW blocks as a lower bound, SSH auth outcomes), egress section (top external destinations per workload with FQDN or IP, bytes sent/received, connects, "new" badge), logins section (outcome totals, stacked timeline, top source IPs by failed and locked attempts, accounts, login events filterable by outcome with paging); window `?window=24h\|7d\|30d` | **live (NM-1, #61; LAN NM-3, #62; egress NM-2, #63; logins NM-4, #64)** — data from data-service (`INTERFACES.md` §2); non-ADMIN users see a "no access" state |
 | `/[locale]/dashboard/services` | Service utilization and availability (ADMIN only): one row per Deployment/StatefulSet in `apps` and `homeassistant` (minus an exclude list), CPU and MEM as a share of the highest container's limit (request as marked fallback), a 14-day availability strip (13 full Europe/Zurich days + today; colour = availability and restarts) whose today bar expands a last-24-hours hourly strip, availability and restart totals for 24 h and 14 d | **live (#47)** — live Prometheus (`INTERFACES.md` §2 "Prometheus"); non-ADMIN users see a "no access" state |
 | `/[locale]/dashboard/auth` | auth-service admin GUI (ADMIN only): tabs `?tab=overview\|users\|clients\|sessions\|jwks\|audit`; UP/DOWN health pill; users list (50/page) with search/filters, create, edit, delete and admin password reset; device clients list/register/revoke with the generated secret shown exactly once; JWKS keys; Sessions & tokens and Audit log are labelled "not available" placeholders (no auth-service API) | **live (#44)** — real auth-service REST API with the admin's own access token (`INTERFACES.md` §2 "auth-service"); the Users tab shows "not available yet" until doemefu/homelab-auth-service#115; sessions from before #44 get a "sign in again" notice; non-ADMIN users see "no access" |
-| `/[locale]/dashboard/devices` | device-service admin GUI (real REST API) | Phase 6 (#45) |
+| `/[locale]/dashboard/devices` | device-service admin GUI (ADMIN only): tabs `?tab=overview\|devices\|schedules`; UP/DOWN health pill; overview tiles (devices live, last message, active schedules, next run) and a plain "no device is reporting" notice; one card per device with its last known state, its age ("live" only when the last message is under 10 minutes old) and switch on/off for light, night light and rain — locked with the reason shown unless the device is live, because commands are not stored by the broker; schedules list with create, edit, delete and an active switch, cron presets (daily at a Zurich time, every n minutes) plus a raw field, device-service's own validation messages under the field and its `nextRun` as the confirmation after saving. Registering and deleting devices are not part of this slice | **live (#45 slice 1)** — real device-service REST API with the admin's own access token (`INTERFACES.md` §2 "device-service"); a stale session gets a "sign in again" notice; non-ADMIN users see "no access" |
 
 `/dashboard` is gated by **real OIDC** (Auth.js v5 → auth.furchert.ch, Auth Code +
 PKCE). The authoritative gate is a server-side `auth()` check in the page (and in
 every admin Server Action, which repeats the session + `role === 'ADMIN'` +
 access-token checks). ADMIN-only pages
-(`/dashboard/network`, `/dashboard/services`, `/dashboard/auth`) additionally check `asRole(session.user?.role) ===
+(`/dashboard/network`, `/dashboard/services`, `/dashboard/auth`, `/dashboard/devices`) additionally check `asRole(session.user?.role) ===
 'ADMIN'` in the page and render the shared `NoAccess` state otherwise. OIDC access/refresh/ID
 tokens live only on the encrypted httpOnly session JWT and never reach the browser; sign-out ends the IdP session. See `INTERFACES.md`
 §1 and `DEPLOYMENT.md` for the client contract and required secrets.
@@ -91,7 +91,7 @@ automated tests" half of #42 is tracked on that issue.
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) is real; the device-service admin GUI (#45) is not wired yet.
+- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) and the device-service admin GUI `/dashboard/devices` (#45 slice 1) are real.
 - **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus
@@ -113,6 +113,7 @@ automated tests" half of #42 is tracked on that issue.
   and "no login data yet" while the `login-events` collector has no source
   data (e.g. auth-service's outbox not enabled); attempted usernames are never shown, only an 8-character hash tag.
 - **Live (#44):** `/dashboard/auth` calls auth-service's admin REST API server-side with the signed-in admin's own access token (refreshed in memory). Every failure renders an honest state ("sign in again", "ADMIN role required", "not available yet", "auth-service unavailable", "unexpected response"); Sessions & tokens and the audit log are labelled "not available" placeholders, never fabricated data.
+- **Live (#45 slice 1):** `/dashboard/devices` calls device-service's REST API server-side with the same admin access token. Device values are labelled "last reported" unless the device is live; a successful command says "sent", not "done". Failures render honest states ("sign in again", "ADMIN role required", "device-service unavailable", "unexpected response"). Device registration and deletion follow in a later slice.
 - **Placeholder:** footer **Impressum** / **Datenschutz** render as
   non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** AI scan backend, lead dashboard,

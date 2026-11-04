@@ -8,37 +8,37 @@
     "contact": "Contact"
   },
   "hero": {
-    "label": "Software Engineer · Zurich\u00a0Oberland",
+    "label": "Software Engineer · Zurich",
     "title1": "Technology",
     "title2": " that creates impact.",
-    "sub": "I'm Dominic Furchert. I help SMEs in the Zürcher Oberland simplify recurring work with AI — and build systems from ESP32 firmware to Kubernetes clusters.",
+    "sub": "I'm Dominic Furchert. I help SMEs around Zurich simplify their work with AI, and I build systems from ESP32 firmware to Kubernetes clusters.",
     "cta1": "About me",
     "cta2": "AI Automation",
     "seeProjects": "See projects"
   },
   "teasers": {
-    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing — from mainframe to Kubernetes." },
+    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing: from mainframe to Kubernetes." },
     "rowing": { "title": "Rowing", "text": "President RCRJ. Safety Chief, National Rowing Regatta Schmerikon." },
     "projects": { "title": "Projects", "text": "IoT platform, homelab k3s cluster, AI-powered club assistant." },
-    "automation": { "title": "AI Automation", "text": "AI and automation for small and medium-sized businesses in the Zürcher Oberland." },
+    "automation": { "title": "AI Automation", "text": "AI and automation for small and medium-sized businesses around Zurich." },
     "more": "→ More"
   },
   "about": {
     "label": "About me",
     "exp": "Experience",
     "eng": "Engagement & Roles",
-    "p1": "I combine technical depth with organisational leadership — equally at home in a Kubernetes cluster and a board meeting.",
+    "p1": "I combine technical depth with organisational leadership and feel as much at home in a Kubernetes cluster as in a board meeting.",
     "p2": "Currently: BSc Software Systems at UZH, SoPra FS26 (Karaokee), homelab infrastructure with Ansible + k3s, club management tool for RCRJ."
   },
   "cta": {
     "together": "Work together?",
-    "togsub": "I welcome interesting projects — from infrastructure to fullstack."
+    "togsub": "I'm glad to hear about projects from infrastructure to full stack."
   },
   "contact": {
     "label": "Contact",
     "title": "Write to me",
     "sub": "I usually reply within 24 hours.",
-    "metaTitle": "Contact — Dominic Furchert",
+    "metaTitle": "Contact | Dominic Furchert",
     "metaDescription": "Message Dominic Furchert via the form or by email, e.g. to request a free first conversation about AI in your business. He usually replies within 24 hours.",
     "send": "Send message",
     "name": "Name",
@@ -55,14 +55,14 @@
     "home": {
       "areas": "Areas",
       "areasTitle": "What defines me.",
-      "metaTitle": "Dominic Furchert — Software Engineer · AI for SMEs",
-      "metaDescription": "Dominic Furchert, a software engineer, helps SMEs in the Zürcher Oberland simplify recurring work with AI. Plus projects, a homelab and rowing."
+      "metaTitle": "Dominic Furchert | Software Engineer · AI for SMEs",
+      "metaDescription": "Dominic Furchert, a software engineer, helps SMEs in the Zurich area simplify their work with AI. Plus projects, a homelab and rowing."
     },
     "about": {
       "headerLabel": "About me",
       "headerTitle": "Software Engineer. Club President. Firefighter.",
       "headerSub": "Three roles, one common thread: building systems that work in real life.",
-      "metaTitle": "About — Dominic Furchert, software engineer",
+      "metaTitle": "About me: background and roles | Dominic Furchert",
       "metaDescription": "Dominic Furchert's background: application developer apprenticeship at UBS, Software Systems studies at UZH, president of the Rapperswil-Jona Rowing Club.",
       "timeline": "Timeline",
       "interests": "Interests"
@@ -71,23 +71,23 @@
       "headerLabel": "IT & Tech",
       "headerTitle": "From mainframe to microservice architecture.",
       "headerSub": "Professional experience in major banks, consulting, Formula Student and my own studies.",
-      "metaTitle": "IT experience: UBS, KPMG, AMZ Racing, UZH — Dominic Furchert",
+      "metaTitle": "IT experience: UBS, KPMG, AMZ Racing, UZH | Dominic Furchert",
       "metaDescription": "Dominic Furchert's experience and tech stack: COBOL batch systems at UBS, IT audits at KPMG, embedded systems at AMZ Racing, studies at UZH.",
       "techStack": "Tech Stack"
     },
     "rowing": {
       "headerLabel": "Rowing",
       "headerTitle": "200 members. A national regatta. A CHF 5M project.",
-      "headerSub": "Voluntary — and at least as instructive as any computer-science module.",
-      "metaTitle": "President, Rapperswil-Jona Rowing Club — Dominic Furchert",
+      "headerSub": "Voluntary, and at least as instructive as any computer-science module.",
+      "metaTitle": "President, Rapperswil-Jona Rowing Club | Dominic Furchert",
       "metaDescription": "Dominic Furchert, president of the Rapperswil-Jona Rowing Club (about 200 members), is safety chief of the Schmerikon regatta (about 1,500 athletes).",
-      "photoCaption": "photo — regatta schmerikon"
+      "photoCaption": "photo · regatta schmerikon"
     },
     "projects": {
       "headerLabel": "Projects",
-      "headerTitle": "What I build — from sensors to servers.",
+      "headerTitle": "What I build: from sensors to servers.",
       "headerSub": "Open-source where possible. Infrastructure as Code. End-to-end.",
-      "metaTitle": "Projects: IoT, homelab and AI — Dominic Furchert",
+      "metaTitle": "Projects: IoT, homelab and AI | Dominic Furchert",
       "metaDescription": "Dominic Furchert's own projects: an IoT platform with ESP32 and MQTT, a k3s homelab built with Ansible, an AI assistant for the rowing club, a login service.",
       "techStack": "Tech Stack",
       "details": "Details →",
@@ -226,8 +226,8 @@
     "navigation": "Navigation",
     "contact": "Contact",
     "social": "Social",
-    "role": "Software Engineer · Zurich Oberland",
-    "location": "Zurich Oberland",
+    "role": "Software Engineer · Zurich",
+    "location": "Zurich",
     "imprint": "Imprint",
     "privacy": "Privacy"
   },
@@ -690,6 +690,187 @@
           "id": "Invalid id.",
           "clientId": "Use [a-z0-9-], 3–32 characters.",
           "description": "Max 200 characters."
+        }
+      }
+    },
+    "deviceAdmin": {
+      "title": "Device Service · Admin",
+      "meta": "homelab-device-service · ch.furchert.homelab.device · device.furchert.ch",
+      "repo": "Repo",
+      "health": "Health",
+      "statusUp": "UP",
+      "statusDown": "DOWN",
+      "statusUnknown": "Status unknown",
+      "tabs": {
+        "overview": "Overview",
+        "devices": "Devices",
+        "schedules": "Schedules"
+      },
+      "reauth": {
+        "kicker": "Session refresh needed",
+        "title": "Sign in again",
+        "body": "Your session has no valid access token for device-service (it has expired or predates this console). Sign in again. If this message comes back afterwards, device-service is rejecting furchert.ch tokens — that is a token configuration problem, not your session.",
+        "button": "Sign in again",
+        "error": "Sign-in failed — please retry."
+      },
+      "states": {
+        "disabled": "device-service is not configured in this environment (DEVICE_SERVICE_URL is missing).",
+        "unavailable": "device-service is unreachable — please try again in a moment.",
+        "unauthorized": "device-service rejected the access token — please sign in again.",
+        "forbidden": "device-service denies access: your token lacks the ADMIN role.",
+        "not_found": "Not found — this device-service version does not offer the endpoint.",
+        "bad_request": "device-service rejected the request.",
+        "unexpected": "Unexpected response from device-service — showing nothing instead of guessing."
+      },
+      "fields": {
+        "light": "Light",
+        "nightLight": "Night light",
+        "rain": "Rain"
+      },
+      "switch": {
+        "on": "on",
+        "off": "off",
+        "unknown": "unknown"
+      },
+      "freshness": {
+        "live": "live",
+        "stale": "not reporting",
+        "offline": "offline",
+        "never": "never seen"
+      },
+      "overview": {
+        "service": "Terrarium control over MQTT",
+        "sub": "device.furchert.ch · port 8081 · K3s/apps · schedules in UTC",
+        "swagger": "Swagger",
+        "devicesLive": "Devices · live",
+        "devicesLiveSub": "{offline} offline · {stale} not reporting",
+        "lastMessage": "Last message",
+        "lastMessageSub": "{device} · {when}",
+        "schedulesActive": "Schedules · active",
+        "schedulesActiveSub": "{total} in total",
+        "nextRun": "Next run",
+        "nextRunNone": "none",
+        "nextRunNoneSub": "no active schedule",
+        "na": "n/a",
+        "noLiveTitle": "No device is reporting",
+        "noLiveBody": "The last message came on {when} from {device}. The values shown are the last reported ones and control is locked. device-service still sends active schedules — nobody receives them.",
+        "noLiveBodyNever": "No device has ever reported. Control is locked.",
+        "upcoming": "Next runs",
+        "upcomingNone": "No active schedule has a next run.",
+        "upcomingAll": "All schedules →",
+        "quickActions": "Quick actions",
+        "controlDevices": "Control devices",
+        "newSchedule": "Create schedule",
+        "endpoints": "Endpoints"
+      },
+      "devices": {
+        "count": "Devices · {count}",
+        "source": "GET /devices · POST /devices/‹id›/control",
+        "later": "Registering and deleting devices comes in a later version of this page.",
+        "none": "device-service knows no devices yet. A device appears here after its first MQTT message.",
+        "lastSeen": "last seen {abs} ({rel})",
+        "neverSeen": "no message received yet",
+        "temperature": "Temperature",
+        "humidity": "Humidity",
+        "lastReported": "last reported",
+        "now": "current",
+        "switchOn": "Switch on",
+        "switchOff": "Switch off",
+        "sending": "sending…",
+        "actionLabel": "{field}: {action} ({device})",
+        "lockedOffline": "Control locked: {device} is offline. Commands are not stored and would be lost.",
+        "lockedStale": "Control locked: the last message from {device} came {rel}. Commands are not stored and would be lost.",
+        "lockedNever": "Control locked: {device} has never reported.",
+        "sent": "{field} → {state} sent to {device}. The state shown changes only once {device} reports it.",
+        "reload": "Reload"
+      },
+      "schedules": {
+        "count": "Schedules · {count}",
+        "source": "GET/POST/PUT/DELETE /schedules",
+        "new": "+ New schedule",
+        "fanout": "A schedule applies to every terrarium: device-service sends it to terraGeneral/‹function›/schedule, which every terrarium receives. The device is only a grouping label.",
+        "twoSchedules": "A schedule sets one state. \"On in the morning, off in the evening\" takes two schedules.",
+        "colId": "ID",
+        "colDevice": "Device",
+        "colAction": "Action",
+        "colSchedule": "Schedule",
+        "colNextRun": "Next run",
+        "colActive": "Active",
+        "edit": "edit",
+        "none": "No schedules yet. Create the first one with \"+ New schedule\".",
+        "customPayload": "custom payload",
+        "noNextRunInactive": "— inactive",
+        "noNextRunInvalid": "— cannot be evaluated",
+        "activeOn": "active",
+        "activeOff": "inactive",
+        "switchLabel": "Schedule #{id} active",
+        "toggleLocked": "change it via \"edit\"",
+        "rowError": "Schedule #{id}: {error}",
+        "savedActive": "Schedule #{id} saved. Next run according to device-service: {abs} ({rel}).",
+        "savedInactive": "Schedule #{id} saved — inactive, it does not run.",
+        "savedNoRun": "Schedule #{id} saved. device-service cannot work out a next run for this expression.",
+        "deleted": "Schedule #{id} deleted.",
+        "dismiss": "Dismiss message"
+      },
+      "cron": {
+        "legend": "When",
+        "daily": "Daily at",
+        "dailyTime": "Time (Zurich time)",
+        "interval": "Every",
+        "intervalMinutes": "{minutes} minutes",
+        "intervalLabel": "Interval in minutes",
+        "custom": "Custom cron expression",
+        "customLabel": "Cron expression",
+        "customHint": "Spring cron with 6 fields, seconds first, in UTC — or a macro such as @daily. Example: 0 30 6 * * MON-FRI = Monday to Friday 06:30 UTC. device-service shows the next run after saving.",
+        "stored": "Stored as: {expr} (UTC)",
+        "dailyMeans": "Runs daily at {local} Zurich time ({utc} UTC).",
+        "dailyShift": "From {date} it runs at {shifted}, because device-service works in UTC. To keep {intended}: after the switch, open the schedule, set {intended} again and save.",
+        "intervalMeans": "Runs every {minutes} minutes, counted from the full hour.",
+        "hourly": "Runs every full hour.",
+        "describeDaily": "daily {time}",
+        "describeInterval": "every {minutes} min",
+        "describeHourly": "hourly",
+        "describeCustom": "custom expression"
+      },
+      "drawer": {
+        "newTitle": "New schedule",
+        "editTitle": "Schedule #{id}",
+        "close": "Close",
+        "device": "Device",
+        "deviceHint": "Grouping only — the schedule reaches every terrarium.",
+        "deviceMissing": "{name} (no longer registered)",
+        "deviceFallbackHint": "Device list unavailable — type the name ([a-z0-9-], 3–32 characters).",
+        "field": "Function",
+        "target": "Target state",
+        "targetOn": "switch on",
+        "targetOff": "switch off",
+        "active": "Active — device-service runs the schedule",
+        "legacyPayload": "The stored payload {payload} is not in the standard format. Saving replaces it with the chosen target state.",
+        "delete": "delete",
+        "confirmDelete": "Delete schedule #{id}? It will not run any more.",
+        "cancel": "cancel",
+        "create": "Create schedule",
+        "save": "Save changes",
+        "saving": "saving…"
+      },
+      "errors": {
+        "session": "Your session has expired — please sign in again.",
+        "forbidden": "Not allowed — ADMIN role required.",
+        "validation": "device-service rejected the input.",
+        "invalid": "The input is not valid.",
+        "payload": "This schedule has no standard payload; activating or deactivating it would overwrite it. Open \"edit\" to change it.",
+        "notFound": "Not found — it may have been deleted meanwhile. Reload the page.",
+        "unavailable": "device-service is unreachable or failed — nothing was confirmed. Check the state and try again.",
+        "unexpected": "Unexpected response from device-service.",
+        "fields": {
+          "id": "Invalid ID.",
+          "deviceName": "Choose a device ([a-z0-9-], 3–32 characters).",
+          "field": "Choose light, night light or rain.",
+          "state": "Choose switch on or switch off.",
+          "active": "Invalid state.",
+          "cronExpression": "Enter an expression (at most 100 characters).",
+          "cronFields": "Spring cron needs exactly 6 fields, seconds first (e.g. 0 0 7 * * *), or a macro such as @daily.",
+          "cronSeconds": "The seconds field must be a single number (0–59). Otherwise the schedule would switch every terrarium several times a minute."
         }
       }
     }

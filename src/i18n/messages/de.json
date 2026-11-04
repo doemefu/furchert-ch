@@ -11,13 +11,13 @@
     "label": "Software Engineer · Zürcher\u00a0Oberland",
     "title1": "Technologie,",
     "title2": " die Wirkung erzeugt.",
-    "sub": "Ich bin Dominic Furchert. Ich helfe KMU im Zürcher Oberland, wiederkehrende Abläufe mit KI zu vereinfachen — und baue Systeme von der ESP32-Firmware bis zum Kubernetes-Cluster.",
+    "sub": "Ich bin Dominic Furchert. Ich helfe KMU im Zürcher Oberland, Abläufe mit KI zu vereinfachen, und baue Systeme von der ESP32-Firmware bis zum Kubernetes-Cluster.",
     "cta1": "Mehr über mich",
     "cta2": "KI-Automation entdecken",
     "seeProjects": "Projekte ansehen"
   },
   "teasers": {
-    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing — vom Mainframe bis zum Kubernetes-Cluster." },
+    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing: vom Mainframe bis zum Kubernetes-Cluster." },
     "rowing": { "title": "Rudern", "text": "Präsident RCRJ. OK-Chef Sicherheit Nationale Regatta Schmerikon." },
     "projects": { "title": "Projekte", "text": "IoT-Plattform, Homelab k3s Cluster, Club Assist mit AI." },
     "automation": { "title": "KI-Automation", "text": "KI und Automation für kleine und mittlere Betriebe im Zürcher Oberland." },
@@ -27,18 +27,18 @@
     "label": "Über mich",
     "exp": "Erfahrung",
     "eng": "Engagement & Rollen",
-    "p1": "Ich kombiniere technische Tiefe mit organisatorischer Führung — und bewege mich genauso souverän in einem Kubernetes-Cluster wie in einer Vorstandssitzung.",
+    "p1": "Ich kombiniere technische Tiefe mit organisatorischer Führung und bewege mich genauso souverän in einem Kubernetes-Cluster wie in einer Vorstandssitzung.",
     "p2": "Aktuell: BSc Software Systems an der UZH, SoPra FS26 (Karaokee), Homelab-Infrastruktur mit Ansible + k3s, Club-Management-Tool für den RCRJ."
   },
   "cta": {
     "together": "Zusammenarbeiten?",
-    "togsub": "Ich freue mich über spannende Projekte — von Infrastruktur bis Fullstack."
+    "togsub": "Ich freue mich über Projekte von Infrastruktur bis Full-Stack."
   },
   "contact": {
     "label": "Kontakt",
     "title": "Schreib mir",
     "sub": "Ich antworte in der Regel innerhalb von 24 Stunden.",
-    "metaTitle": "Kontakt — Dominic Furchert",
+    "metaTitle": "Kontakt | Dominic Furchert",
     "metaDescription": "Nachricht an Dominic Furchert per Formular oder E-Mail, etwa für ein kostenloses Erstgespräch zu KI im eigenen Betrieb. Antwort meist innerhalb von 24 Stunden.",
     "send": "Nachricht senden",
     "name": "Name",
@@ -55,14 +55,14 @@
     "home": {
       "areas": "Bereiche",
       "areasTitle": "Was mich ausmacht.",
-      "metaTitle": "Dominic Furchert — Software Engineer · KI für KMU",
-      "metaDescription": "Dominic Furchert, Software Engineer, hilft KMU im Zürcher Oberland, wiederkehrende Abläufe mit KI zu vereinfachen. Dazu: Projekte, Homelab, Rudern."
+      "metaTitle": "Dominic Furchert | Software Engineer · KI für KMU",
+      "metaDescription": "Dominic Furchert, Software Engineer, hilft KMU im Zürcher Oberland, Abläufe mit KI zu vereinfachen. Dazu: Projekte, Homelab, Rudern."
     },
     "about": {
       "headerLabel": "Über mich",
       "headerTitle": "Software Engineer. Vereinspräsident. Feuerwehrmann.",
       "headerSub": "Drei Rollen, ein roter Faden: Systeme bauen, die im echten Leben funktionieren.",
-      "metaTitle": "Über mich — Dominic Furchert, Software Engineer",
+      "metaTitle": "Über mich: Werdegang und Rollen | Dominic Furchert",
       "metaDescription": "Werdegang von Dominic Furchert: Applikationsentwickler EFZ bei der UBS, Studium Software Systems an der UZH, Präsident des Ruderclubs Rapperswil-Jona.",
       "timeline": "Timeline",
       "interests": "Interessen"
@@ -71,23 +71,23 @@
       "headerLabel": "IT & Tech",
       "headerTitle": "Vom Mainframe zur Microservice-Architektur.",
       "headerSub": "Professionelle Erfahrung in Grossbanken, Beratung, Formula Student und eigenem Studium.",
-      "metaTitle": "IT-Erfahrung: UBS, KPMG, AMZ Racing, UZH — Dominic Furchert",
+      "metaTitle": "IT-Erfahrung: UBS, KPMG, AMZ Racing, UZH | Dominic Furchert",
       "metaDescription": "Erfahrung und Tech-Stack von Dominic Furchert: COBOL-Batch-Systeme bei der UBS, IT-Audits bei KPMG, Embedded Systems bei AMZ Racing, Studium an der UZH.",
       "techStack": "Tech Stack"
     },
     "rowing": {
       "headerLabel": "Rudern",
       "headerTitle": "200 Mitglieder. Eine nationale Regatta. Ein CHF-5M-Projekt.",
-      "headerSub": "Ehrenamtlich — und mindestens so lehrreich wie jedes Informatik-Modul.",
-      "metaTitle": "Präsident Ruderclub Rapperswil-Jona — Dominic Furchert",
+      "headerSub": "Ehrenamtlich und mindestens so lehrreich wie jedes Informatik-Modul.",
+      "metaTitle": "Präsident Ruderclub Rapperswil-Jona | Dominic Furchert",
       "metaDescription": "Dominic Furchert präsidiert den Ruderclub Rapperswil-Jona (rund 200 Mitglieder) und ist Chef Sicherheit der Regatta Schmerikon mit rund 1'500 Athleten.",
-      "photoCaption": "foto — regatta schmerikon"
+      "photoCaption": "foto · regatta schmerikon"
     },
     "projects": {
       "headerLabel": "Projekte",
-      "headerTitle": "Was ich baue — von Sensoren bis Servern.",
+      "headerTitle": "Was ich baue: von Sensoren bis Servern.",
       "headerSub": "Open-source wo möglich. Infrastructure as Code. End-to-end.",
-      "metaTitle": "Projekte: IoT, Homelab und KI — Dominic Furchert",
+      "metaTitle": "Projekte: IoT, Homelab und KI | Dominic Furchert",
       "metaDescription": "Projekte von Dominic Furchert: IoT-Plattform mit ESP32 und MQTT, k3s-Homelab mit Ansible, KI-Assistent für den Ruderclub, eigener Login-Dienst.",
       "techStack": "Tech Stack",
       "details": "Details →",
@@ -690,6 +690,187 @@
           "id": "Ungültige ID.",
           "clientId": "[a-z0-9-] verwenden, 3–32 Zeichen.",
           "description": "Max. 200 Zeichen."
+        }
+      }
+    },
+    "deviceAdmin": {
+      "title": "Device Service · Admin",
+      "meta": "homelab-device-service · ch.furchert.homelab.device · device.furchert.ch",
+      "repo": "Repo",
+      "health": "Health",
+      "statusUp": "UP",
+      "statusDown": "DOWN",
+      "statusUnknown": "Status unbekannt",
+      "tabs": {
+        "overview": "Übersicht",
+        "devices": "Geräte",
+        "schedules": "Zeitpläne"
+      },
+      "reauth": {
+        "kicker": "Session-Erneuerung nötig",
+        "title": "Erneut anmelden",
+        "body": "Deine Session hat kein gültiges Access-Token für device-service (sie ist abgelaufen oder älter als die Admin-Konsole). Melde dich erneut an. Erscheint diese Meldung danach wieder, lehnt device-service die Tokens von furchert.ch ab — dann liegt es an der Token-Konfiguration, nicht an deiner Session.",
+        "button": "Erneut anmelden",
+        "error": "Anmeldung fehlgeschlagen — bitte erneut versuchen."
+      },
+      "states": {
+        "disabled": "device-service ist in dieser Umgebung nicht konfiguriert (DEVICE_SERVICE_URL fehlt).",
+        "unavailable": "device-service nicht erreichbar — bitte gleich nochmals versuchen.",
+        "unauthorized": "device-service hat das Access-Token abgelehnt — bitte erneut anmelden.",
+        "forbidden": "device-service verweigert den Zugriff: deinem Token fehlt die ADMIN-Rolle.",
+        "not_found": "Nicht gefunden — diese device-service-Version bietet den Endpunkt nicht an.",
+        "bad_request": "device-service hat die Anfrage abgelehnt.",
+        "unexpected": "Unerwartete Antwort vom device-service — es wird nichts angezeigt statt zu raten."
+      },
+      "fields": {
+        "light": "Licht",
+        "nightLight": "Nachtlicht",
+        "rain": "Regen"
+      },
+      "switch": {
+        "on": "ein",
+        "off": "aus",
+        "unknown": "unbekannt"
+      },
+      "freshness": {
+        "live": "live",
+        "stale": "keine Meldung",
+        "offline": "offline",
+        "never": "nie gesehen"
+      },
+      "overview": {
+        "service": "Terrarien über MQTT steuern",
+        "sub": "device.furchert.ch · Port 8081 · K3s/apps · Zeitpläne in UTC",
+        "swagger": "Swagger",
+        "devicesLive": "Geräte · live",
+        "devicesLiveSub": "{offline} offline · {stale} ohne Meldung",
+        "lastMessage": "Letzte Meldung",
+        "lastMessageSub": "{device} · {when}",
+        "schedulesActive": "Zeitpläne · aktiv",
+        "schedulesActiveSub": "{total} insgesamt",
+        "nextRun": "Nächster Lauf",
+        "nextRunNone": "keiner",
+        "nextRunNoneSub": "kein aktiver Zeitplan",
+        "na": "n/a",
+        "noLiveTitle": "Kein Gerät meldet sich",
+        "noLiveBody": "Die letzte Meldung kam am {when} von {device}. Angezeigte Werte sind die zuletzt gemeldeten, die Steuerung ist gesperrt. Aktive Zeitpläne sendet device-service trotzdem — es empfängt sie nur niemand.",
+        "noLiveBodyNever": "Noch kein Gerät hat sich je gemeldet. Die Steuerung ist gesperrt.",
+        "upcoming": "Nächste Läufe",
+        "upcomingNone": "Kein aktiver Zeitplan hat einen nächsten Lauf.",
+        "upcomingAll": "Alle Zeitpläne →",
+        "quickActions": "Schnellaktionen",
+        "controlDevices": "Geräte steuern",
+        "newSchedule": "Zeitplan anlegen",
+        "endpoints": "Endpunkte"
+      },
+      "devices": {
+        "count": "Geräte · {count}",
+        "source": "GET /devices · POST /devices/‹id›/control",
+        "later": "Geräte registrieren und löschen kommt in einem späteren Ausbau dieser Seite.",
+        "none": "device-service kennt noch keine Geräte. Ein Gerät erscheint hier nach seiner ersten MQTT-Meldung.",
+        "lastSeen": "zuletzt gesehen {abs} ({rel})",
+        "neverSeen": "noch nie eine Meldung empfangen",
+        "temperature": "Temperatur",
+        "humidity": "Luftfeuchte",
+        "lastReported": "zuletzt gemeldet",
+        "now": "aktuell",
+        "switchOn": "Einschalten",
+        "switchOff": "Ausschalten",
+        "sending": "sendet…",
+        "actionLabel": "{field}: {action} ({device})",
+        "lockedOffline": "Steuerung gesperrt: {device} ist offline. Befehle werden nicht zwischengespeichert und gingen verloren.",
+        "lockedStale": "Steuerung gesperrt: die letzte Meldung von {device} kam {rel}. Befehle werden nicht zwischengespeichert und gingen verloren.",
+        "lockedNever": "Steuerung gesperrt: von {device} kam noch nie eine Meldung.",
+        "sent": "{field} → {state} an {device} gesendet. Der angezeigte Zustand ändert sich erst, wenn {device} ihn meldet.",
+        "reload": "Neu laden"
+      },
+      "schedules": {
+        "count": "Zeitpläne · {count}",
+        "source": "GET/POST/PUT/DELETE /schedules",
+        "new": "+ Neuer Zeitplan",
+        "fanout": "Ein Zeitplan gilt für alle Terrarien: device-service sendet ihn an terraGeneral/‹Funktion›/schedule, und jedes Terrarium empfängt diese Meldung. Das Gerät dient nur zur Gruppierung.",
+        "twoSchedules": "Ein Zeitplan setzt einen Zustand. Für «morgens ein, abends aus» braucht es zwei Zeitpläne.",
+        "colId": "ID",
+        "colDevice": "Gerät",
+        "colAction": "Aktion",
+        "colSchedule": "Zeitplan",
+        "colNextRun": "Nächster Lauf",
+        "colActive": "Aktiv",
+        "edit": "bearbeiten",
+        "none": "Noch keine Zeitpläne. Lege mit «+ Neuer Zeitplan» den ersten an.",
+        "customPayload": "eigener Payload",
+        "noNextRunInactive": "— inaktiv",
+        "noNextRunInvalid": "— nicht berechenbar",
+        "activeOn": "aktiv",
+        "activeOff": "inaktiv",
+        "switchLabel": "Zeitplan #{id} aktiv",
+        "toggleLocked": "nur über «bearbeiten» änderbar",
+        "rowError": "Zeitplan #{id}: {error}",
+        "savedActive": "Zeitplan #{id} gespeichert. Nächster Lauf laut device-service: {abs} ({rel}).",
+        "savedInactive": "Zeitplan #{id} gespeichert — inaktiv, er läuft nicht.",
+        "savedNoRun": "Zeitplan #{id} gespeichert. device-service kann für diesen Ausdruck keinen nächsten Lauf berechnen.",
+        "deleted": "Zeitplan #{id} gelöscht.",
+        "dismiss": "Meldung schliessen"
+      },
+      "cron": {
+        "legend": "Wann",
+        "daily": "Täglich um",
+        "dailyTime": "Uhrzeit (Zürcher Zeit)",
+        "interval": "Alle",
+        "intervalMinutes": "{minutes} Minuten",
+        "intervalLabel": "Abstand in Minuten",
+        "custom": "Eigener Cron-Ausdruck",
+        "customLabel": "Cron-Ausdruck",
+        "customHint": "Spring-Cron mit 6 Feldern, Sekunde zuerst, in UTC — oder ein Makro wie @daily. Beispiel: 0 30 6 * * MON-FRI = Montag bis Freitag 06:30 UTC. Den nächsten Lauf zeigt device-service nach dem Speichern.",
+        "stored": "Gespeichert wird: {expr} (UTC)",
+        "dailyMeans": "Läuft täglich um {local} Zürcher Zeit ({utc} UTC).",
+        "dailyShift": "Ab {date} läuft er um {shifted}, weil device-service in UTC rechnet. Soll er weiterhin um {intended} laufen: nach der Umstellung den Zeitplan öffnen, wieder {intended} einstellen und speichern.",
+        "intervalMeans": "Läuft alle {minutes} Minuten, jeweils ab der vollen Stunde.",
+        "hourly": "Läuft jede volle Stunde.",
+        "describeDaily": "täglich {time}",
+        "describeInterval": "alle {minutes} min",
+        "describeHourly": "stündlich",
+        "describeCustom": "eigener Ausdruck"
+      },
+      "drawer": {
+        "newTitle": "Neuer Zeitplan",
+        "editTitle": "Zeitplan #{id}",
+        "close": "Schliessen",
+        "device": "Gerät",
+        "deviceHint": "Nur zur Gruppierung — der Zeitplan erreicht alle Terrarien.",
+        "deviceMissing": "{name} (nicht mehr registriert)",
+        "deviceFallbackHint": "Geräteliste nicht verfügbar — Namen von Hand eingeben ([a-z0-9-], 3–32 Zeichen).",
+        "field": "Funktion",
+        "target": "Zielzustand",
+        "targetOn": "einschalten",
+        "targetOff": "ausschalten",
+        "active": "Aktiv — device-service führt den Zeitplan aus",
+        "legacyPayload": "Gespeicherter Payload {payload} ist nicht im Standardformat. Speichern ersetzt ihn durch den gewählten Zielzustand.",
+        "delete": "löschen",
+        "confirmDelete": "Zeitplan #{id} löschen? Er läuft danach nicht mehr.",
+        "cancel": "abbrechen",
+        "create": "Zeitplan anlegen",
+        "save": "Änderungen speichern",
+        "saving": "speichern…"
+      },
+      "errors": {
+        "session": "Deine Session ist abgelaufen — bitte erneut anmelden.",
+        "forbidden": "Nicht erlaubt — ADMIN-Rolle nötig.",
+        "validation": "device-service hat die Eingabe abgelehnt.",
+        "invalid": "Die Eingabe ist ungültig.",
+        "payload": "Dieser Zeitplan hat keinen Standard-Payload; Aktivieren oder Deaktivieren würde ihn überschreiben. Zum Ändern «bearbeiten» öffnen.",
+        "notFound": "Nicht gefunden — evtl. inzwischen gelöscht. Seite neu laden.",
+        "unavailable": "device-service nicht erreichbar oder fehlerhaft — nichts wurde bestätigt. Zustand prüfen und erneut versuchen.",
+        "unexpected": "Unerwartete Antwort vom device-service.",
+        "fields": {
+          "id": "Ungültige ID.",
+          "deviceName": "Gerät wählen ([a-z0-9-], 3–32 Zeichen).",
+          "field": "Licht, Nachtlicht oder Regen wählen.",
+          "state": "Einschalten oder ausschalten wählen.",
+          "active": "Ungültiger Zustand.",
+          "cronExpression": "Ausdruck angeben (höchstens 100 Zeichen).",
+          "cronFields": "Spring-Cron braucht genau 6 Felder, die Sekunde zuerst (z. B. 0 0 7 * * *), oder ein Makro wie @daily.",
+          "cronSeconds": "Das Sekundenfeld muss eine einzelne Zahl sein (0–59). Sonst würde der Zeitplan alle Terrarien mehrmals pro Minute schalten."
         }
       }
     }

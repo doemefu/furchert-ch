@@ -8,6 +8,11 @@ import { SITE_URL } from './jsonLd';
 
 export const SITE_NAME = 'furchert.ch';
 
+/** Document title with the owner's name: "Kontakt | Dominic Furchert" (no em dash, owner rule). */
+export function ownerTitle(title: string): string {
+  return `${title} | Dominic Furchert`;
+}
+
 // Regional OpenGraph locales: the site is written for Switzerland.
 export const OG_LOCALE: Record<Locale, string> = { de: 'de_CH', en: 'en_GB' };
 

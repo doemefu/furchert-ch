@@ -41,6 +41,10 @@ describe('llms.txt', () => {
     }
   });
 
+  it('has no em dash (owner, 2026-11-03)', () => {
+    expect(text).not.toContain('\u2014');
+  });
+
   it('publishes no e-mail address (the contact page is linked instead)', () => {
     expect(text).not.toMatch(/[\w.+-]+@[\w-]+\.[a-z]{2,}/i);
   });

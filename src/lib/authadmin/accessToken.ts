@@ -1,5 +1,6 @@
 // Server-only access to the signed-in admin's own OIDC access token for the
-// /dashboard/auth proxy (#44; ../auth-service/INTERFACES.md §4). The token
+// /dashboard/auth proxy (#44; ../auth-service/INTERFACES.md §4) and the
+// /dashboard/devices proxy (#45; device-service accepts the same token). The token
 // pair was persisted on the encrypted session JWT at sign-in
 // (`auth.config.ts`); this module reads it with `getToken` and never hands it
 // to the browser — only Server Components and Server Actions import it.

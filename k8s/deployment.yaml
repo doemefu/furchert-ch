@@ -30,7 +30,7 @@ spec:
       containers:
         - name: furchert-ch
           # Image tag is managed by Flux CD image automation.
-          image: ghcr.io/doemefu/furchert-ch:main-20261103T201727 # {"$imagepolicy": "flux-system:furchert-ch"}
+          image: ghcr.io/doemefu/furchert-ch:main-20261103T233439 # {"$imagepolicy": "flux-system:furchert-ch"}
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
@@ -67,6 +67,10 @@ spec:
               value: "http://auth-service.apps.svc.cluster.local:8080/oauth2/token"
             - name: AUTH_SERVICE_URL
               value: "http://auth-service.apps.svc.cluster.local:8080"
+            # /dashboard/devices (#45): device-service REST API, called with the
+            # signed-in admin's own access token. Plain value, no new secret.
+            - name: DEVICE_SERVICE_URL
+              value: "http://device-service.apps.svc.cluster.local:8081"
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

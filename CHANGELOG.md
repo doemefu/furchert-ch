@@ -6,6 +6,20 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Device-service admin GUI, slice 1** (#45): ADMIN-only `/dashboard/devices`
+  with the same gate, token handling and look as `/dashboard/auth`. Overview
+  tiles (devices live, last message, active schedules, next run); one card per
+  device with its last known state and age and switch on/off for light, night
+  light and rain (`POST /devices/{id}/control`) — enabled only while the device
+  reports, since commands are not stored by the broker; schedules list, create,
+  edit, delete and activate/deactivate (`/schedules`) with cron presets in
+  Zurich time (stored as UTC, the daylight-saving shift is shown) plus a raw
+  field that rejects per-second expressions, device-service's validation
+  messages under the field, and its `nextRun` shown after saving. Subnav tab
+  and the IoT Platform tile's "Manage" link are live. New env
+  `DEVICE_SERVICE_URL` (plain value, no new secret). Device registration and
+  deletion follow in a later slice. No new dependency.
+
 - **Site-wide SEO and GEO baseline** (#134): every public page builds its
   metadata with `buildPageMetadata` (`src/lib/seo/metadata.ts`): a
   self-referencing canonical, `de`/`en`/`x-default` alternates, OpenGraph
@@ -198,6 +212,21 @@ All notable changes per milestone. Newest first.
   Zurich instead of the Oberland. No em dashes in the automation and scan copy;
   the photo placeholder in the about box is gone. `automationCopy.test.ts`
   now allows only the approved price phrases. No new dependency.
+- **No em dashes in the public copy; titles use "|"** (owner, 2026-11-03):
+  visible text and page titles outside `/automation` (rewritten separately)
+  and the private dashboard use a full stop, comma, colon or "·" instead of
+  "—". Every title reads "X | Dominic Furchert" (the home page "Dominic
+  Furchert | …"); titles built in code use `ownerTitle`
+  (`src/lib/seo/metadata.ts`). The home hero drops the filler
+  "wiederkehrende", and the about, rowing and home texts lose phrases that
+  read like filler. English says "Zurich" ("around Zurich", "the Zurich area")
+  and never names the Oberland; German keeps "Zürcher Oberland". Project names
+  read "IoT Platform: Terra1" and "Karaokee (SoPra FS26)".
+  `src/i18n/seoCopy.test.ts` rejects "—" in titles, descriptions, public
+  messages and page data, and "Oberland" in English copy (the `/automation`
+  copy joins with its rewrite), and `llmsTxt.test.ts` in llms.txt; page dates
+  in `src/lib/seo/pages.ts` follow the changed pages, and the date test uses
+  the Swiss calendar day.
 - **Search-result copy and a clearer introduction** (#134): every public page
   has its own title and meta description in both languages (`metaTitle` /
   `metaDescription` in the messages); every title names Dominic Furchert and
@@ -205,7 +234,7 @@ All notable changes per milestone. Newest first.
   him by name and leads with the AI offer for SMEs in the Zürcher Oberland;
   the about text and the 2026 timeline entry describe that offer instead of
   "Industrie-KMU". The site names one place for him, the Zürcher Oberland (EN
-  "Zurich Oberland"), in the hero label, the footer and on `/contact`; the
+  "Zurich", see above), in the hero label, the footer and on `/contact`; the
   rowing club keeps its name. `src/i18n/seoCopy.test.ts` keeps titles at most
   60 and descriptions 70-160 characters, name-bearing and free of "ß".
 - **Sign in again once after this release**: the session now also stores the

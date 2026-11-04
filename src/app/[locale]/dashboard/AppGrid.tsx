@@ -2,8 +2,8 @@
 
 // Client island for the dashboard's app/service tiles. Owns one piece of
 // state — the active category filter. Tile layout ported from prototype
-// `dashboard.jsx:198-269`. Manage links to the in-app admin GUI where one
-// exists (Auth Service, #44); IoT Platform stays disabled until #45.
+// `dashboard.jsx:198-269`. Manage links to the in-app admin GUIs (Auth
+// Service, #44; IoT Platform → device-service, #45).
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon, type IconName } from '@/components/ui/Icon';
@@ -26,7 +26,7 @@ const ICON_MAP: Record<string, IconName> = {
 // Apps with in-app admin GUIs (Phase 6). An app without a route yet renders
 // a disabled Manage button — a link would 404.
 const INTERNAL_APPS = new Set<string>(['Auth Service', 'IoT Platform']);
-const ADMIN_ROUTES: Record<string, string> = { 'Auth Service': '/dashboard/auth' };
+const ADMIN_ROUTES: Record<string, string> = { 'Auth Service': '/dashboard/auth', 'IoT Platform': '/dashboard/devices' };
 
 const sectionLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
@@ -269,7 +269,6 @@ export function AppGrid({
                       {t('manage')} <Icon name="arrow" size={10} />
                     </Link>
                   ) : isInternal ? (
-                    // TODO(phase6): replace with <Link href="/dashboard/devices"> once #45 ships.
                     <button type="button" disabled style={disabledAction}>
                       {t('manage')} <span style={{ color: 'var(--n-40)' }}>· {t('soon')}</span>
                     </button>
