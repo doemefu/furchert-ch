@@ -33,7 +33,7 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
       tag: 'Beispiel, erfunden',
       inputTitle: 'Sprachnotiz des Monteurs, als Text',
       input:
-        'Rapport Familie Muster, Bubikon, Musterweg zwölf. Heute von halb acht bis zehn. In der Küche neue Dreifachsteckdose über der Arbeitsfläche montiert, Leitung ab Abzweigdose gezogen, etwa vier Meter. Material: eine Dreifachsteckdose Aufputz weiss, vier Meter Kabel drei mal eins Komma fünf, zwei Verbindungsklemmen. Sicherung geprüft, alles in Ordnung. Kunde will noch eine Offerte für eine Aussenlampe.',
+        'Also, Rapport Familie Muster in Bubikon, Musterweg zwölf. Heute von halb acht bis zehn. In der Küche eine neue Dreifachsteckdose über der Arbeitsfläche montiert, Leitung ab der Abzweigdose gezogen, etwa drei, nein, vier Meter. Material: eine Dreifachsteckdose Aufputz weiss, vier Meter Kabel drei mal eins Komma fünf, zwei Verbindungsklemmen. Sicherung geprüft, alles in Ordnung. Ah, und der Kunde will noch eine Offerte für eine Aussenlampe.',
       outputTitle: 'Rapport-Entwurf',
       fields: [
         {
@@ -45,13 +45,13 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
             },
           ],
         },
-        { label: 'Zeit', lines: [{ text: 'Heute, 07:30 bis 10:00, 2,5 Std.' }] },
+        { label: 'Zeit', lines: [{ text: 'Di, 10.11., 07:30 bis 10:00, 2,5 Std.' }] },
         {
           label: 'Arbeiten',
           lines: [
             { text: 'Steckdose 3-fach Aufputz über der Arbeitsfläche in der Küche montiert' },
             { text: 'Zuleitung ab Abzweigdose, ca. 4 m' },
-            { text: 'Funktionskontrolle' },
+            { text: 'Sicherung geprüft, in Ordnung' },
           ],
         },
         {
@@ -65,7 +65,7 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
             { text: '2 × Verbindungsklemme' },
           ],
         },
-        { label: 'Pendenz', lines: [{ text: 'Offerte Aussenleuchte: Aufgabe fürs Büro erstellt' }] },
+        { label: 'Pendenz', lines: [{ text: 'Offerte Aussenleuchte, als Aufgabe fürs Büro erfasst' }] },
         {
           label: 'Hinweis',
           lines: [{ text: 'Keine Messwerte diktiert. Das Prüfprotokoll bitte wie gewohnt erstellen.' }],
@@ -78,7 +78,7 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
       tag: 'Invented example',
       inputTitle: "Electrician's voice memo, as text",
       input:
-        'Report for the Muster family, Bubikon, Musterweg twelve. Today from half past seven to ten. In the kitchen, fitted a new triple socket above the worktop, ran the cable from the junction box, about four metres. Materials: one surface-mounted triple socket, white, four metres of cable three by one point five, two connector terminals. Checked the fuse, all fine. Customer also wants a quote for an outdoor light.',
+        'Right, report for the Muster family in Bubikon, Musterweg twelve. Today from half past seven to ten. In the kitchen, fitted a new triple socket above the worktop, ran the cable from the junction box, about three, no, four metres. Materials: one surface-mounted triple socket, white, four metres of cable three by one point five, two connector terminals. Checked the fuse, all fine. Oh, and the customer wants a quote for an outdoor light.',
       outputTitle: 'Draft job report',
       fields: [
         {
@@ -90,13 +90,13 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
             },
           ],
         },
-        { label: 'Time', lines: [{ text: 'Today, 07:30 to 10:00, 2.5 h' }] },
+        { label: 'Time', lines: [{ text: 'Tue 10 Nov, 07:30 to 10:00, 2.5 h' }] },
         {
           label: 'Work',
           lines: [
             { text: 'Surface-mounted triple socket fitted above the kitchen worktop' },
             { text: 'Supply cable from the junction box, approx. 4 m' },
-            { text: 'Function check' },
+            { text: 'Fuse checked, OK' },
           ],
         },
         {
@@ -110,14 +110,14 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
             { text: '2 × connector terminal' },
           ],
         },
-        { label: 'Follow-up', lines: [{ text: 'Quote for outdoor light: task created for the office' }] },
+        { label: 'Follow-up', lines: [{ text: 'Quote for outdoor light, added as a task for the office' }] },
         {
           label: 'Note',
           lines: [{ text: 'No measured values dictated. Please complete the test record as usual.' }],
         },
       ],
       after:
-        'Then the electrician confirms the draft on the phone. The office picks the right item and takes the report over. Invoices still come from your trade software.',
+        'Then the electrician confirms the draft on the phone. The office picks the right item and enters the report. Invoices still come from your trade software.',
     },
   },
 };
