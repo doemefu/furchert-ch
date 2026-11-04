@@ -183,6 +183,21 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **`/automation` made concrete, with prices** (#139): four invented trade
+  stories (electrician, carpentry, bakery, hair salon) replace the six abstract
+  use-case cards, each with estimated hours per week before and with AI, what
+  the owner still decides, where the data goes and the fitting package. One
+  labelled before/after example shows an electrician's voice memo and the report
+  draft made from it. The process block became "Ablauf und Preise" with the
+  owner-approved prices (initial consultation free, AI quick check CHF 600,
+  first trial run from CHF 2'500 or from CHF 6'000 with a connection, AI care
+  from CHF 190 a month, team workshop CHF 1'500, no VAT as not VAT-registered);
+  the FAQ answers "Was kostet das?" with them and gains two entries. The
+  FAQPage JSON-LD still mirrors the visible FAQ, so a price can now appear as
+  answer text; Offer and price markup stay forbidden. The English page names
+  Zurich instead of the Oberland. No em dashes in the automation and scan copy;
+  the photo placeholder in the about box is gone. `automationCopy.test.ts`
+  now allows only the approved price phrases. No new dependency.
 - **Search-result copy and a clearer introduction** (#134): every public page
   has its own title and meta description in both languages (`metaTitle` /
   `metaDescription` in the messages); every title names Dominic Furchert and

@@ -16,7 +16,8 @@ export const PAGE_LAST_MODIFIED = {
   '/': '2026-11-03',
   '/about': '2026-11-03',
   '/it': SITE_LAUNCH_DATE,
-  '/automation': '2026-11-03',
+  // Concrete trade stories, an example and the prices (#139).
+  '/automation': '2026-11-04',
   '/rowing': SITE_LAUNCH_DATE,
   // The homelab summary in the project list was corrected on 2026-11-03 (#132).
   '/projects': '2026-11-03',
