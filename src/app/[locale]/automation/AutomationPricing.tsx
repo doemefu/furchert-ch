@@ -49,7 +49,7 @@ function Details({ c }: { c: PackageCopy }) {
   return (
     <>
       {c.includes.length > 0 && (
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        <ul role="list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {c.includes.map((item) => (
             <li
               key={item}

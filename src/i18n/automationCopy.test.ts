@@ -86,8 +86,21 @@ describe('automation page copy', () => {
     for (const text of allCopy) expect(text.trim()).not.toBe('');
   });
 
+  it('rejects malformed or unapproved prices (guard self-check)', () => {
+    const tokensOf = (text: string) => [...text.matchAll(MONEY)].map((m) => m[0].trim());
+    for (const bad of ['ab CHF 6000', 'ab CHF 1900 pro Monat', 'CHF 2,500', '500 Franken', '120.–']) {
+      const tokens = tokensOf(bad);
+      expect(tokens.length, bad).toBeGreaterThan(0);
+      expect(tokens.every((t) => APPROVED_AMOUNTS.includes(t)), bad).toBe(false);
+    }
+    for (const good of ["ab CHF 2'500,", 'kostet CHF 600;']) {
+      expect(tokensOf(good).every((t) => APPROVED_AMOUNTS.includes(t)), good).toBe(true);
+    }
+  });
+
   it('publishes only the approved prices, in one format', () => {
     for (const text of allCopy) {
+      expect(text, text).not.toMatch(/CHF\s?[\d'’]+\.[–-]/);
       for (const [token] of text.matchAll(MONEY)) {
         expect(APPROVED_AMOUNTS, `${token} in: ${text}`).toContain(token.trim());
       }
@@ -119,7 +132,7 @@ describe('automation page copy', () => {
   it('publishes no hourly or daily rate', () => {
     for (const text of allCopy) {
       expect(text).not.toMatch(/CHF\s?[\d']+\s*(?:\/|pro|per|an|a)\s*(?:h\b|Std|Stunde|hour|Tag|day)/i);
-      expect(text).not.toMatch(/Stundenansatz|Stundensatz|Tagessatz|Tagesansatz|hourly rate|day rate|daily rate/i);
+      expect(text).not.toMatch(/Stundenansatz|Stundensatz|Stundenlohn|Tagessatz|Tagesansatz|hourly rate|day rate|daily rate/i);
     }
   });
 
