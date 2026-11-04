@@ -56,8 +56,9 @@ const faqCost = (locale: Locale) =>
   FAQS.map((f) => f.i18n[locale]).find((f) => /kostet|cost/i.test(f.q))?.a ?? '';
 
 // Owner decision 2026-11-03 ("Vorschlag so zeigen"). Swiss number format in
-// both languages. CHF 500 is the workshop credit towards a trial run.
-const APPROVED_AMOUNTS = ["CHF 190", "CHF 500", "CHF 600", "CHF 1'500", "CHF 2'500", "CHF 6'000"];
+// both languages. CHF 500 is the workshop credit towards a trial run; CHF 40
+// is the server cost cap included in the care (owner, 2026-11-04).
+const APPROVED_AMOUNTS = ["CHF 40", "CHF 190", "CHF 500", "CHF 600", "CHF 1'500", "CHF 2'500", "CHF 6'000"];
 // "ab"/"from" prices: never shown without the word in front.
 const FROM_AMOUNTS = ["CHF 190", "CHF 2'500", "CHF 6'000"];
 // An amount next to a currency word (either side, any thousands separator,
@@ -119,6 +120,17 @@ describe('automation page copy', () => {
         }
       }
     }
+  });
+
+  it('mentions CHF 40 only as the included server cost cap', () => {
+    for (const text of allCopy) {
+      if (text.includes('CHF 40')) {
+        expect(text).toMatch(/bis CHF 40 pro Monat inbegriffen|up to CHF 40 a month included/);
+      }
+    }
+    const care = PRICE_STEPS.find((p) => p.id === 'care');
+    expect(strings(care?.i18n.de).join(' ')).toContain('CHF 40');
+    expect(strings(care?.i18n.en).join(' ')).toContain('CHF 40');
   });
 
   it('mentions CHF 500 only as a credit', () => {

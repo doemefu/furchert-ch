@@ -1,6 +1,7 @@
 // Packages and prices for /automation. Prices are the owner's decision of
 // 2026-11-03 ("Vorschlag so zeigen"); inclusions and exclusions follow the
-// package cards of his business case. Deliberately not shown: durations or
+// package cards of his business case, including the server cost cap of the
+// care (owner, 2026-11-04). Deliberately not shown: durations or
 // deadlines (the schedule goes into each quote), hourly rates, a second care
 // tier and any price not listed below. Guarded by
 // src/i18n/automationCopy.test.ts. Prices without VAT: the owner is not
@@ -132,7 +133,7 @@ export const PRICE_STEPS: AutomationPackage[] = [
         summary:
           'Damit der Ablauf weiterläuft, wenn sich Software oder KI-Dienste ändern. Sie beginnt erst nach dem Testbetrieb und kostet keine Einrichtungsgebühr.',
         includes: [
-          'Server in der Schweiz für diesen Ablauf inbegriffen, oder Überwachung in Ihrer Umgebung.',
+          'Server in der Schweiz für diesen Ablauf, Kosten bis CHF 40 pro Monat inbegriffen, oder Überwachung in Ihrer Umgebung.',
           'Überwachung mit Alarm bei Fehlern, Updates und eine tägliche Sicherung.',
           'Anpassung an Änderungen der Anbieter, bis 1 Stunde pro Monat.',
           'Kontrolle der Kosten für den KI-Dienst und ein Vertrag zur Auftragsbearbeitung.',
@@ -149,7 +150,7 @@ export const PRICE_STEPS: AutomationPackage[] = [
         summary:
           'So the process keeps running when software or AI services change. It starts only after the trial period and has no set-up fee.',
         includes: [
-          'A server in Switzerland for this process is included, or monitoring on your own systems.',
+          'A server in Switzerland for this process, with costs up to CHF 40 a month included, or monitoring on your own systems.',
           'Monitoring with alerts on errors, updates and a daily backup.',
           'Adjustments to changes by the providers, up to 1 hour a month.',
           'Cost control for the AI service and a data processing agreement.',
