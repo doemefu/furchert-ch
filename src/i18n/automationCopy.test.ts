@@ -192,9 +192,14 @@ describe('automation stories', () => {
     expect(en.pages.automation.storyHoursNote).toMatch(/estimate/i);
   });
 
-  it('keeps prices out of the stories (the price block has them)', () => {
+  it('names prices only in the package line, and none for the salon', () => {
     for (const story of STORIES) {
-      for (const text of strings(story.i18n)) expect(text, text).not.toMatch(/CHF/);
+      for (const locale of LOCALES) {
+        const { fit, ...rest } = story.i18n[locale];
+        for (const text of strings(rest)) expect(text, text).not.toMatch(/CHF/);
+        // No package fits the salon (a custom build does not pay off there).
+        if (story.id === 'salon') expect(fit).not.toMatch(/CHF/);
+      }
     }
   });
 

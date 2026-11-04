@@ -28,11 +28,11 @@ export const FAQS: AutomationFaq[] = [
     i18n: {
       de: {
         q: 'Was kostet das?',
-        a: "Das Erstgespräch ist kostenlos. Der KI-Kurzcheck vor Ort kostet CHF 600; bestellen Sie innert 3 Monaten einen Testlauf, wird der Betrag voll angerechnet. Ein erster Testlauf mit einem Ablauf kostet ab CHF 2'500, mit Anbindung an Ihre Branchensoftware ab CHF 6'000. Die Betreuung im Alltag kostet ab CHF 190 pro Monat und ist monatlich kündbar. Die KI-Werkstatt für Ihr Team kostet CHF 1'500. Keine Mehrwertsteuer, da nicht mehrwertsteuerpflichtig. Den genauen Preis erhalten Sie vorab schriftlich in der Offerte.",
+        a: "Das Erstgespräch ist kostenlos. Der KI-Kurzcheck vor Ort kostet CHF 600; bestellen Sie innert 3 Monaten einen Testlauf, wird der Betrag voll angerechnet. Ein erster Testlauf mit einem Ablauf kostet ab CHF 2'500, mit Anbindung an Ihre Branchensoftware ab CHF 6'000. Die KI-Betreuung kostet ab CHF 190 pro Monat und ist monatlich kündbar. Die KI-Werkstatt fürs Team kostet CHF 1'500. Keine Mehrwertsteuer, da nicht mehrwertsteuerpflichtig. Den genauen Preis erhalten Sie vorab schriftlich in der Offerte.",
       },
       en: {
         q: 'What does it cost?',
-        a: "The first conversation is free. The on-site AI quick check costs CHF 600; if you order a trial run within 3 months, the full amount is credited. A first trial run with one process costs from CHF 2'500, or from CHF 6'000 with a connection to your trade software. Ongoing care costs from CHF 190 a month and can be cancelled monthly. The AI workshop for your team costs CHF 1'500. No VAT is charged, as I am not registered for VAT. You receive the exact price in writing in the quote beforehand.",
+        a: "The initial consultation is free. The on-site AI quick check costs CHF 600; if you order a trial run within 3 months, the full amount is credited. A first trial run with one process costs from CHF 2'500, or from CHF 6'000 with a connection to your trade software. Ongoing AI care costs from CHF 190 a month and can be cancelled monthly. The AI workshop for your team costs CHF 1'500. No VAT is charged, as I am not registered for VAT. You receive the exact price in writing in the quote beforehand.",
       },
     },
   },
@@ -40,11 +40,11 @@ export const FAQS: AutomationFaq[] = [
     i18n: {
       de: {
         q: 'Lohnt sich das für einen kleinen Betrieb?',
-        a: 'Nicht immer. Spart ein Ablauf weniger als etwa eine Stunde pro Woche, deckt der Nutzen die Kosten der Betreuung kaum. Für Betriebe mit ein bis vier Personen reicht oft eine gute Vorlage im KI-Werkzeug, das Sie schon haben. Das sage ich Ihnen im Erstgespräch offen.',
+        a: 'Nicht immer. Spart ein Ablauf weniger als etwa eine Stunde pro Woche, deckt der Nutzen die Kosten der Betreuung kaum. Damit sich im ersten Jahr auch der Testlauf bezahlt macht, braucht es eher zwei Stunden pro Woche (Schätzung). Für Betriebe mit ein bis vier Personen reicht oft eine Vorlage im KI-Werkzeug, das Sie schon haben. Das sage ich Ihnen im Erstgespräch offen.',
       },
       en: {
         q: 'Is it worth it for a small business?',
-        a: 'Not always. If a process saves less than about one hour a week, the benefit barely covers the cost of ongoing care. For businesses of one to four people, a good template in the AI tool you already have is often enough. I will tell you that plainly in the first conversation.',
+        a: 'Not always. If a process saves less than about one hour a week, the benefit barely covers the cost of ongoing care. For the trial run to pay for itself within the first year as well, it takes closer to two hours a week (estimate). For businesses of one to four people, a template in the AI tool you already have is often enough. I will tell you that plainly in the initial consultation.',
       },
     },
   },
@@ -56,7 +56,7 @@ export const FAQS: AutomationFaq[] = [
       },
       en: {
         q: 'Do I have to replace my software?',
-        a: 'Usually not. I build on what you already use: industry software, ERP, Excel or email.',
+        a: 'Usually not. I build on what you already use: trade software, ERP, Excel or email.',
       },
     },
   },
@@ -88,11 +88,11 @@ export const FAQS: AutomationFaq[] = [
     i18n: {
       de: {
         q: 'Brauche ich technisches Wissen?',
-        a: 'Nein. Sie erklären mir Ihren Ablauf. Ich kümmere mich um die Technik.',
+        a: 'Nein. Sie erklären mir Ihren Ablauf, ich kümmere mich um die Technik. Für einen Testlauf brauchen Sie aber etwas eigene Zeit, geschätzt 3 bis 6 Stunden: für Beispiele aus Ihrem Alltag, die Einführung und den Test.',
       },
       en: {
         q: 'Do I need technical knowledge?',
-        a: 'No. You explain your process. I take care of the technology.',
+        a: 'No. You explain your process; I take care of the technology. A trial run does need some of your own time, an estimated 3 to 6 hours: for examples from your day-to-day work, the introduction and the test.',
       },
     },
   },
@@ -100,11 +100,11 @@ export const FAQS: AutomationFaq[] = [
     i18n: {
       de: {
         q: 'Was, wenn es nicht funktioniert?',
-        a: 'Wir starten klein, mit einem einzigen Ablauf. Die letzte Zahlung wird erst fällig, wenn die vorab schriftlich vereinbarten Testfälle erfüllt sind. Mit Anbindung an Ihre Branchensoftware prüfen wir zuerst die Schnittstelle, und Sie können nach diesem Schritt aussteigen. Die Zahlungsschritte stehen in der Offerte. Nach dem Test entscheiden Sie, ob die Lösung bleibt; eine Betreuung müssen Sie nicht bestellen.',
+        a: 'Wir starten klein, mit einem einzigen Ablauf. Besteht er die vorab schriftlich vereinbarten Testfälle auch nach zwei Anpassungsrunden nicht, entfällt die letzte Zahlung. Mit Anbindung an Ihre Branchensoftware prüfen wir zuerst die Schnittstelle; danach können Sie aussteigen und bezahlen nur diesen ersten Schritt. Die Zahlungsschritte stehen in der Offerte. Nach dem Test entscheiden Sie, ob die Lösung bleibt; eine Betreuung müssen Sie nicht bestellen.',
       },
       en: {
         q: "What if it doesn't work?",
-        a: 'We start small, with a single process. The last payment is due only when the test cases agreed in writing beforehand are met. With a connection to your trade software, we first test the interface, and you can stop after that step. The payment steps are set out in the quote. After the test you decide whether the solution stays; you do not have to order ongoing care.',
+        a: 'We start small, with a single process. If it still fails the test cases agreed in writing beforehand after two rounds of adjustments, you do not pay the last instalment. With a connection to your trade software, we first test the interface; after that you can stop and pay only for that first step. The payment steps are set out in the quote. After the test you decide whether the solution stays; you do not have to order ongoing care.',
       },
     },
   },
