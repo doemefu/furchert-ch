@@ -210,8 +210,12 @@ All notable changes per milestone. Newest first.
   FAQPage JSON-LD still mirrors the visible FAQ, so a price can now appear as
   answer text; Offer and price markup stay forbidden. The English page names
   Zurich instead of the Oberland. No em dashes in the automation and scan copy;
-  the photo placeholder in the about box is gone. `automationCopy.test.ts`
-  now allows only the approved price phrases. No new dependency.
+  the photo placeholder in the about box is gone. The hero shows a price line
+  under the call to action, the about box no longer claims a finished degree
+  in English, and `public/llms.txt` names the packages with their prices.
+  `automationCopy.test.ts` now allows only the approved price phrases (page
+  copy and llms.txt), and `seoCopy.test.ts` covers the `/automation` and scan
+  copy as well. No new dependency.
 - **No em dashes in the public copy; titles use "|"** (owner, 2026-11-03):
   visible text and page titles outside `/automation` (rewritten separately)
   and the private dashboard use a full stop, comma, colon or "·" instead of

@@ -98,6 +98,7 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
       </h2>
       <p style={leadStyle}>{t('processLead')}</p>
       <ol
+        role="list"
         style={{
           listStyle: 'none',
           padding: 0,

@@ -123,6 +123,17 @@ export interface AutomationJsonLdInput {
   dateModified: string;
 }
 
+// The page copy the automation JSON-LD names, in one place so the page and
+// its tests build the same input: the visible label, the hero sentence and
+// the region (locale-specific: the English page names Zurich).
+export function automationJsonLdText(copy: {
+  heroLabel: string;
+  heroSub: string;
+  areaServed: string;
+}): Pick<AutomationJsonLdInput, 'name' | 'description' | 'areaServed'> {
+  return { name: copy.heroLabel, description: copy.heroSub, areaServed: copy.areaServed };
+}
+
 export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
   const { pageUrl } = input;
   return {

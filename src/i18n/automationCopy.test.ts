@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import de from './messages/de.json';
 import en from './messages/en.json';
@@ -7,7 +9,7 @@ import { EXAMPLE } from '@/data/automation-example';
 import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
 import { SCAN_QUESTIONS, SCAN_ROLES } from '@/data/scan';
 import { DEMO_REPORT } from '@/app/[locale]/automation/scan/_demo-report';
-import { buildAutomationJsonLd } from '@/lib/seo/jsonLd';
+import { automationJsonLdText, buildAutomationJsonLd } from '@/lib/seo/jsonLd';
 import type { Locale } from './routing';
 
 // Copy guardrails for the public /automation page (SME offer). The owner
@@ -46,6 +48,7 @@ const pageCopy = (locale: Locale): string[] => [
   ...strings(EXAMPLE.i18n[locale]),
   ...strings(PRICE_STEPS.map((p) => p.i18n[locale])),
   ...strings(PRICE_ADDON.i18n[locale]),
+  messages[locale].teasers.automation.text,
 ];
 const allCopy = [...pageCopy('de'), ...pageCopy('en')];
 
@@ -60,7 +63,7 @@ const FROM_AMOUNTS = ["CHF 190", "CHF 2'500", "CHF 6'000"];
 // An amount next to a currency word (either side, any thousands separator,
 // optional cents), a Swiss "120.–" price, or a bare number with a
 // thousands separator.
-const AMOUNT = String.raw`\d{1,3}(?:['’,.]\d{3})*(?:[.,]\d{1,2})?`;
+const AMOUNT = String.raw`\d+(?:['’,.]\d{3})*(?:[.,]\d{1,2})?(?!\d)`;
 const CURRENCY = String.raw`(?:CHF|SFr\.?|Fr\.|Franken|francs?)`;
 const MONEY = new RegExp(
   `${CURRENCY}\\s*${AMOUNT}|${AMOUNT}\\s*${CURRENCY}|\\d+\\.[–-]|\\d{1,3}(?:['’,]\\d{3})+`,
@@ -113,9 +116,10 @@ describe('automation page copy', () => {
     }
   });
 
-  it('publishes no hourly rate', () => {
+  it('publishes no hourly or daily rate', () => {
     for (const text of allCopy) {
-      expect(text).not.toMatch(/CHF\s?[\d']+\s*(?:\/|pro|per|an)\s*(?:h\b|Std|Stunde|hour)/i);
+      expect(text).not.toMatch(/CHF\s?[\d']+\s*(?:\/|pro|per|an|a)\s*(?:h\b|Std|Stunde|hour|Tag|day)/i);
+      expect(text).not.toMatch(/Stundenansatz|Stundensatz|Tagessatz|Tagesansatz|hourly rate|day rate|daily rate/i);
     }
   });
 
@@ -167,10 +171,28 @@ describe('automation page copy', () => {
   });
 });
 
+describe('automation offer in llms.txt', () => {
+  const llms = readFileSync(join(process.cwd(), 'public', 'llms.txt'), 'utf8');
+
+  it('names only approved prices, "from" prices with "from"', () => {
+    const tokens = [...llms.matchAll(MONEY)].map((m) => m[0].trim());
+    expect(tokens.length).toBeGreaterThan(0);
+    for (const token of tokens) expect(APPROVED_AMOUNTS, token).toContain(token);
+    for (const amount of FROM_AMOUNTS) {
+      let at = llms.indexOf(amount);
+      while (at !== -1) {
+        expect(llms.slice(0, at), amount).toMatch(/(?:\bab|\bfrom) $/);
+        at = llms.indexOf(amount, at + amount.length);
+      }
+    }
+  });
+});
+
 describe('automation stories', () => {
-  it('tells three or four stories with unique ids', () => {
-    expect(STORIES.length).toBeGreaterThanOrEqual(3);
-    expect(STORIES.length).toBeLessThanOrEqual(4);
+  it('tells four stories with unique ids (the lead says "Vier"/"Four")', () => {
+    expect(STORIES.length).toBe(4);
+    expect(de.pages.automation.useCaseLead).toMatch(/^Vier /);
+    expect(en.pages.automation.useCaseLead).toMatch(/^Four /);
     expect(new Set(STORIES.map((s) => s.id)).size).toBe(STORIES.length);
   });
 
@@ -335,9 +357,7 @@ describe('automation JSON-LD from the real page copy', () => {
     const data = buildAutomationJsonLd({
       locale,
       pageUrl: `https://furchert.ch/${locale}/automation`,
-      name: m.heroLabel,
-      description: m.heroSub,
-      areaServed: m.areaServed,
+      ...automationJsonLdText(m),
       faq: FAQS.map((f) => f.i18n[locale]),
       dateModified: '2026-11-04',
     });

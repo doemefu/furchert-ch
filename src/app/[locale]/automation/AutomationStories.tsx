@@ -123,6 +123,7 @@ export async function AutomationStories({ locale }: { locale: Locale }) {
                 <dt style={fieldLabel}>{t('storyData')}</dt>
                 <dd style={ddStyle}>
                   <ol
+                    role="list"
                     style={{
                       listStyle: 'none',
                       display: 'flex',

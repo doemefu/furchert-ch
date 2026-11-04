@@ -20,7 +20,7 @@ import { AutomationStories } from './AutomationStories';
 import { AutomationExample } from './AutomationExample';
 import { AutomationPricing } from './AutomationPricing';
 import { labelMono, leadStyle } from './sectionStyles';
-import { buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { automationJsonLdText, buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { FAQAccordion } from './FAQAccordion';
@@ -64,9 +64,11 @@ export default async function AutomationPage({
   const jsonLd = buildAutomationJsonLd({
     locale,
     pageUrl: localizedUrl(locale, '/automation'),
-    name: t('pages.automation.heroLabel'),
-    description: t('pages.automation.heroSub'),
-    areaServed: t('pages.automation.areaServed'),
+    ...automationJsonLdText({
+      heroLabel: t('pages.automation.heroLabel'),
+      heroSub: t('pages.automation.heroSub'),
+      areaServed: t('pages.automation.areaServed'),
+    }),
     faq: faqItems,
     dateModified: LAST_UPDATED,
   });
