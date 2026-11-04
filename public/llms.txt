@@ -2,7 +2,7 @@
 
 > Personal website of Dominic Furchert, a software engineer in Zurich, Switzerland. He helps small and medium-sized businesses (SMEs, German: KMU) around Zurich use AI in their everyday work, and he shows his software and homelab projects. The site is in German (default) and English.
 
-- Offer: AI for SMEs in the Zürcher Oberland (services, trades and production). Free first conversation on site or by video, then one trial run with a written quote. Accounting and bookkeeping are not part of the offer.
+- Offer: AI for SMEs around Zurich (services, trades and production), with worked examples from trades on the offer page. Free initial consultation on site or by video; optional on-site AI quick check CHF 600 (credited towards a trial run within 3 months); first trial run of one process from CHF 2'500, from CHF 6'000 with a connection to the trade software; ongoing AI care from CHF 190 a month; AI workshop for teams CHF 1'500. No VAT is charged (not registered for VAT). Accounting and bookkeeping are not part of the offer.
 - Data protection: processing in Switzerland or the EU wherever possible; sensitive data only with Swiss providers or on the customer's own premises.
 - Background: trained as an application developer (EFZ) at UBS; studies Software Systems (BSc) at the University of Zurich.
 - Volunteer roles: president of the Ruderclub Rapperswil-Jona (about 200 members), safety chief of the national rowing regatta in Schmerikon, firefighter, J+S coach.
@@ -10,7 +10,7 @@
 
 ## Pages
 
-- [KI für KMU im Zürcher Oberland](https://furchert.ch/de/automation): the AI offer for SMEs, with examples, process, data protection and FAQ. English: [AI for SMEs in the Zürcher Oberland](https://furchert.ch/en/automation)
+- [KI für KMU im Zürcher Oberland](https://furchert.ch/de/automation): the AI offer for SMEs, with trade examples, a before/after example, process and prices, data protection and FAQ. English: [AI for SMEs around Zurich](https://furchert.ch/en/automation)
 - [Über mich](https://furchert.ch/de/about): background, timeline and roles. English: [About](https://furchert.ch/en/about)
 - [Projekte](https://furchert.ch/de/projects): software and homelab projects. English: [Projects](https://furchert.ch/en/projects)
 - [IT & Tech](https://furchert.ch/de/it): professional experience and tech stack. English: [IT & Tech](https://furchert.ch/en/it)

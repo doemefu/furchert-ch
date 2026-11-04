@@ -197,6 +197,25 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **`/automation` made concrete, with prices** (#139): four invented trade
+  stories (electrician, carpentry, bakery, hair salon) replace the six abstract
+  use-case cards, each with estimated hours per week before and with AI, what
+  the owner still decides, where the data goes and the fitting package. One
+  labelled before/after example shows an electrician's voice memo and the report
+  draft made from it. The process block became "Ablauf und Preise" with the
+  owner-approved prices (initial consultation free, AI quick check CHF 600,
+  first trial run from CHF 2'500 or from CHF 6'000 with a connection, AI care
+  from CHF 190 a month, team workshop CHF 1'500, no VAT as not VAT-registered);
+  the FAQ answers "Was kostet das?" with them and gains two entries. The
+  FAQPage JSON-LD still mirrors the visible FAQ, so a price can now appear as
+  answer text; Offer and price markup stay forbidden. The English page names
+  Zurich instead of the Oberland. No em dashes in the automation and scan copy;
+  the photo placeholder in the about box is gone. The hero shows a price line
+  under the call to action, the about box no longer claims a finished degree
+  in English, and `public/llms.txt` names the packages with their prices.
+  `automationCopy.test.ts` now allows only the approved price phrases (page
+  copy and llms.txt), and `seoCopy.test.ts` covers the `/automation` and scan
+  copy as well. No new dependency.
 - **No em dashes in the public copy; titles use "|"** (owner, 2026-11-03):
   visible text and page titles outside `/automation` (rewritten separately)
   and the private dashboard use a full stop, comma, colon or "·" instead of

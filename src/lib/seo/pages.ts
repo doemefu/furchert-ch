@@ -16,7 +16,8 @@ export const PAGE_LAST_MODIFIED = {
   '/': '2026-11-04',
   '/about': '2026-11-04',
   '/it': '2026-11-04',
-  '/automation': '2026-11-03',
+  // Concrete trade stories, an example and the prices (#139).
+  '/automation': '2026-11-04',
   '/rowing': '2026-11-04',
   '/projects': '2026-11-04',
   '/contact': '2026-11-04',

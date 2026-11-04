@@ -10,6 +10,11 @@ import { IT_CARDS, TECH_STACK } from '@/data/it';
 import { PROJECTS } from '@/data/projects';
 import { ROWING_CARDS } from '@/data/rowing';
 import { TICKER_ITEMS } from '@/data/ticker';
+import { FAQS } from '@/data/automation-faqs';
+import { STORIES } from '@/data/automation-stories';
+import { EXAMPLE } from '@/data/automation-example';
+import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
+import { SCAN_QUESTIONS, SCAN_ROLES } from '@/data/scan';
 import { ownerTitle } from '@/lib/seo/metadata';
 
 // Search-result copy: every public page has its own title and description in
@@ -44,12 +49,10 @@ describe('search-result copy', () => {
     }
   }
 
-  // Owner (2026-11-03): no em dashes, titles use "|". The automation page's
-  // copy is rewritten separately and joins this check with that rewrite.
+  // Owner (2026-11-03): no em dashes, titles use "|".
   it('has no em dash in any title or description', () => {
     for (const pages of Object.values(locales)) {
       for (const [page, meta] of Object.entries(pages)) {
-        if (page === 'automation') continue;
         expect(`${meta.metaTitle} ${meta.metaDescription}`, page).not.toContain('\u2014');
       }
     }
@@ -58,7 +61,6 @@ describe('search-result copy', () => {
   it('separates the name in titles with "|"', () => {
     for (const pages of Object.values(locales)) {
       for (const [page, meta] of Object.entries(pages)) {
-        if (page === 'automation') continue;
         expect(meta.metaTitle, page).toMatch(/(^Dominic Furchert \| )|( \| Dominic Furchert$)/);
       }
     }
@@ -96,21 +98,20 @@ describe('search-result copy', () => {
   });
 });
 
-// Visible copy of the public pages outside /automation (its copy is rewritten
-// separately) and the private dashboard: no em dashes (owner, 2026-11-03).
+// Visible copy of the public pages (the private dashboard is excluded): no em
+// dashes (owner, 2026-11-03).
 describe('public copy', () => {
   const publicMessages = (m: typeof de) => {
     const copy = structuredClone(m) as unknown as Record<string, unknown> & {
       pages: Record<string, unknown>;
     };
     delete copy.dashboard;
-    delete copy.pages.automation;
-    delete copy.pages.scan;
     return copy;
   };
   const data = {
     BIO, FACTS, TIMELINE, INTERESTS, ENGAGEMENT, EXPERIENCE, HOME_STATS, LAB_SERVICES, LAB_SHOWCASE,
     IT_CARDS, TECH_STACK, PROJECTS, ROWING_CARDS, TICKER_ITEMS,
+    FAQS, STORIES, EXAMPLE, PRICE_STEPS, PRICE_ADDON, SCAN_QUESTIONS, SCAN_ROLES,
   };
 
   it('has no em dash in the messages', () => {
