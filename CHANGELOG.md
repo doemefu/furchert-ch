@@ -47,12 +47,12 @@ All notable changes per milestone. Newest first.
 - **Impressum and Datenschutz pages** (#16): `/[locale]/imprint` and
   `/[locale]/privacy` (DE + EN) replace the footer placeholders and are in the
   sitemap. The imprint names the owner and the published e-mail address (no
-  postal address, owner decision). The privacy notice describes the actual
-  processing: Cloudflare delivery, the self-hosted security monitoring
-  (retention periods, local blocklists, AbuseIPDB lookups), the contact form via
-  iCloud Mail, sign-in records, the `NEXT_LOCALE` cookie and the recipients
-  abroad. Copy lives in `src/data/legal.ts`; `src/data/legal.test.ts` guards
-  it (no e-mail in text, no postal address, required facts).
+  postal address, owner decision). The privacy notice is limited to what Swiss
+  law requires (purposes, data categories, recipients with their countries,
+  cookies) and promises nothing beyond what the system verifiably does: no
+  retention periods, hosting-location, backup or Sentry statements. Copy lives
+  in `src/data/legal.ts`; `src/data/legal.test.ts` guards it (no e-mail in text,
+  no postal address, no dashes, required recipients, removed topics stay out).
 
 ### Security
 

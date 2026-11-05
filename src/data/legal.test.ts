@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LEGAL_CONTACT, LEGAL_PAGES, RETENTION, type LegalPageCopy } from './legal';
+import { LEGAL_CONTACT, LEGAL_PAGES, type LegalPageCopy } from './legal';
 
 const PAGES = ['imprint', 'privacy'] as const;
 const LOCALES = ['de', 'en'] as const;
@@ -26,7 +26,7 @@ describe('legal pages copy', () => {
   it.each(PAGES)('%s has DE and EN with the same structure and no empty text', (page) => {
     const de = LEGAL_PAGES[page].de;
     const en = LEGAL_PAGES[page].en;
-    expect(de.sections.length).toBeGreaterThan(0);
+    if (page === 'privacy') expect(de.sections.length).toBeGreaterThan(0);
     expect(en.sections.map((s) => s.paragraphs.length)).toEqual(de.sections.map((s) => s.paragraphs.length));
     expect(en.updated.length).toBeGreaterThan(0);
     for (const s of [...strings(de), ...strings(en)]) expect(s.trim().length).toBeGreaterThan(0);
@@ -59,13 +59,20 @@ describe('legal pages copy', () => {
     }
   });
 
-  it.each(LOCALES)('privacy (%s) names every recipient, the hosting country and the retention periods', (locale) => {
+  it.each(LOCALES)('privacy (%s) names every recipient with its country and the cookie', (locale) => {
     const text = strings(LEGAL_PAGES.privacy[locale]).join('\n');
-    for (const needle of ['Cloudflare', 'Apple', 'iCloud', 'AbuseIPDB', 'Sentry', 'USA']) expect(text).toContain(needle);
-    expect(text).toContain(locale === 'de' ? 'Schweiz' : 'Switzerland');
-    expect(text).toContain(`${RETENTION.requestDays}`);
-    expect(text).toContain(`${RETENTION.securityDays}`);
-    expect(text).toContain(`${RETENTION.loginOutboxHours}`);
-    expect(text).toContain('NEXT_LOCALE');
+    for (const needle of ['Cloudflare', 'Apple', 'iCloud', 'AbuseIPDB', 'USA', 'NEXT_LOCALE']) expect(text).toContain(needle);
+  });
+
+  // Owner rule (2026-11-05): promise nothing the system does not do. These
+  // topics were removed on purpose; re-adding one needs a fact check first.
+  it.each(PAGES)('%s makes no retention, hosting, backup, Sentry, Anthropic or licence statement', (page) => {
+    for (const locale of LOCALES) {
+      const text = strings(LEGAL_PAGES[page][locale]).join('\n');
+      expect(text).not.toMatch(/Sentry|Anthropic|Backup|Sicherungskopie|Haftung|Liability|Copyright|Urheberrecht/i);
+      expect(text).not.toMatch(/\bMIT\b/);
+      expect(text).not.toMatch(/\b(?:90|180|72)\b/);
+      expect(text).not.toMatch(/in der Schweiz|in Switzerland|eigenen Servern|own servers|no tracking|keine Tracking/i);
+    }
   });
 });
