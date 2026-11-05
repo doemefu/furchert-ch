@@ -62,7 +62,7 @@ describe('parseCreateDeviceClient', () => {
 
 describe('hasFieldError', () => {
   it('is true only for an error state with a message for a known field', () => {
-    const err = { status: 'error', code: 'invalid', fieldErrors: { username: 'taken', bogus: 'x' } } as const;
+    const err = { status: 'error', code: 'validation', fieldErrors: { username: 'taken', bogus: 'x' } } as const;
     expect(hasFieldError(err, 'username')).toBe(true);
     expect(hasFieldError(err, 'email')).toBe(false);
     expect(hasFieldError(err, 'bogus')).toBe(false);

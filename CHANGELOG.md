@@ -307,6 +307,19 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **Admin drawers** (#140, follow-up of #138): the user and schedule drawers
+  keep Tab inside while open (also when focus falls to the page after a save
+  disables the button), and `/dashboard/auth` returns focus to the opener on
+  close, like `/dashboard/devices` (also after a delete, falling back to the
+  "new" button). A field error is now tied to its input (`aria-invalid` plus
+  `aria-describedby`), so screen readers announce both together. A rejected
+  save in the user drawer no longer snaps the role and status selects back to
+  their first option on screen (submitted through `onSubmit`, as in the
+  schedule drawer). The device-client form already kept what was typed (its
+  fields are controlled text inputs), so it only gets the field-error
+  attributes. The reset-password field still clears after a rejected reset, on
+  purpose. No new dependency.
+
 - **Hydration error #418 behind Cloudflare Email Obfuscation** (#125):
   Cloudflare rewrites the contact address in the SSR HTML until its decoder
   script runs, so React's hydration failed on every public page and re-rendered
