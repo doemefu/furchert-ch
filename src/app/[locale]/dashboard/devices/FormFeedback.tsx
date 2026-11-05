@@ -7,7 +7,8 @@
 // action-level error plus any message that names no form field.
 import { signIn } from 'next-auth/react';
 import { useLocale, useTranslations } from 'next-intl';
-import type { DeviceActionState } from '@/lib/deviceadmin/forms';
+import { hasFieldError, type DeviceActionState } from '@/lib/deviceadmin/forms';
+import { fieldAria, fieldErrorId } from '@/lib/a11y/drawer';
 import { btnSmall, errorTextStyle } from '../auth/ui';
 
 /** Fields the schedule and control forms render; anything else is shown by FormError. */
@@ -21,12 +22,17 @@ export function FieldError({ state, field }: { state: DeviceActionState; field: 
   const server = state.details?.[field];
   if (!code && !server) return null;
   return (
-    <p id={`err-${field}`} style={errorTextStyle}>
+    <p id={fieldErrorId(field)} style={errorTextStyle}>
       {code && LOCAL_CODES.has(code) ? t(code) : null}
       {code && server ? ' ' : null}
       {server ? <span>device-service: {server}</span> : null}
     </p>
   );
+}
+
+/** ARIA attributes for the input of `field`: invalid + described by its FieldError (#140). */
+export function inputAria(state: DeviceActionState, field: string) {
+  return fieldAria(hasFieldError(state, field), field);
 }
 
 /** Text of an error state without the sign-in affordance (for compact row messages). */

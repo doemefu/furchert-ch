@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseActive, parseControl, parseSchedule, parseScheduleId } from './forms';
+import { hasFieldError, parseActive, parseControl, parseSchedule, parseScheduleId } from './forms';
 
 const fd = (o: Record<string, string>) => {
   const f = new FormData();
@@ -90,5 +90,17 @@ describe('parseScheduleId', () => {
     expect(parseScheduleId(fd({ id: '7' }))).toBe(7);
     expect(parseScheduleId(fd({ id: '7?x=1' }))).toBeNull();
     expect(parseScheduleId(fd({}))).toBeNull();
+  });
+});
+
+describe('hasFieldError', () => {
+  it('matches what FieldError renders: a local code or device-service details', () => {
+    const local = { status: 'error', code: 'invalid', fieldErrors: { deviceName: 'deviceName' } } as const;
+    const server = { status: 'error', code: 'invalid', details: { field: 'must not be blank' } } as const;
+    expect(hasFieldError(local, 'deviceName')).toBe(true);
+    expect(hasFieldError(local, 'field')).toBe(false);
+    expect(hasFieldError(server, 'field')).toBe(true);
+    expect(hasFieldError(server, 'deviceName')).toBe(false);
+    expect(hasFieldError({ status: 'idle' }, 'field')).toBe(false);
   });
 });

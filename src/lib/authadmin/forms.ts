@@ -23,6 +23,24 @@ export type ActionState =
 
 export const IDLE: ActionState = { status: 'idle' };
 
+/** Fields the auth-admin forms render an error for (anything else is shown by FormError only). */
+export const KNOWN_FIELDS = new Set([
+  'username',
+  'email',
+  'password',
+  'newPassword',
+  'role',
+  'status',
+  'id',
+  'clientId',
+  'description',
+]);
+
+/** True when `FieldError` shows an error for `field`. */
+export function hasFieldError(state: ActionState, field: string): boolean {
+  return state.status === 'error' && !!state.fieldErrors?.[field] && KNOWN_FIELDS.has(field);
+}
+
 // A pragmatic email check — auth-service's @Email is authoritative.
 const EMAIL = /^[^\s@]+@[^\s@]+$/;
 const CLIENT_ID = /^[a-z0-9-]{3,32}$/;

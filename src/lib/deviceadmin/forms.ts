@@ -40,6 +40,11 @@ export type DeviceActionState =
 
 export const IDLE: DeviceActionState = { status: 'idle' };
 
+/** True when `FieldError` shows a local hint or device-service's message for `field`. */
+export function hasFieldError(state: DeviceActionState, field: string): boolean {
+  return state.status === 'error' && !!(state.fieldErrors?.[field] || state.details?.[field]);
+}
+
 const DEVICE_NAME = /^[a-z0-9-]{3,32}$/;
 const MAX_CRON = 100;
 

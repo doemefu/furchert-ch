@@ -4,29 +4,23 @@
 // auth-service's own message (e.g. "Username already taken: …").
 import { signIn } from 'next-auth/react';
 import { useLocale, useTranslations } from 'next-intl';
-import type { ActionState } from '@/lib/authadmin/forms';
+import { hasFieldError, type ActionState } from '@/lib/authadmin/forms';
+import { fieldAria, fieldErrorId } from '@/lib/a11y/drawer';
 import { btnSmall, errorTextStyle } from './ui';
-
-const KNOWN_FIELDS = new Set([
-  'username',
-  'email',
-  'password',
-  'newPassword',
-  'role',
-  'status',
-  'id',
-  'clientId',
-  'description',
-]);
 
 export function FieldError({ state, field }: { state: ActionState; field: string }) {
   const t = useTranslations('dashboard.authAdmin.errors.fields');
-  if (state.status !== 'error' || !state.fieldErrors?.[field] || !KNOWN_FIELDS.has(field)) return null;
+  if (!hasFieldError(state, field)) return null;
   return (
-    <p id={`err-${field}`} style={errorTextStyle}>
+    <p id={fieldErrorId(field)} style={errorTextStyle}>
       {t(field)}
     </p>
   );
+}
+
+/** ARIA attributes for the input of `field`: invalid + described by its FieldError (#140). */
+export function inputAria(state: ActionState, field: string) {
+  return fieldAria(hasFieldError(state, field), field);
 }
 
 export function FormError({ state }: { state: ActionState }) {
