@@ -71,27 +71,27 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Sicherheitsüberwachung',
         paragraphs: [
-          'Zum Erkennen und Abwehren von Angriffen speichert der Verantwortliche aus den Zugriffsstatistiken und Sicherheitsereignissen von Cloudflare folgende Angaben: IP-Adresse, Land, aufgerufene Adresse (Host und Pfad), HTTP-Methode, Statuscode sowie bei Sicherheitsereignissen zusätzlich Zeitpunkt, Browserangabe (User-Agent), Netzbetreiber und Angaben zur ausgelösten Schutzregel.',
+          'Zum Erkennen und Abwehren von Angriffen speichert der Verantwortliche aus den Zugriffsstatistiken und Sicherheitsereignissen von Cloudflare folgende Angaben: IP-Adresse, Land, aufgerufene Adresse (Host und Pfad), HTTP-Methode, Statuscode, Zeitraum (bei Zugriffsstatistiken stundenweise) und Anzahl der Anfragen sowie bei Sicherheitsereignissen zusätzlich den genauen Zeitpunkt, die Anfragekennung von Cloudflare (Ray ID), die Browserangabe (User-Agent), den Netzbetreiber und Angaben zur ausgelösten Schutzregel. Zu jeder IP-Adresse speichert der Verantwortliche zudem, wann sie zuerst und zuletzt auftrat, Treffer auf öffentlichen Sperrlisten und die Bewertung durch AbuseIPDB (Missbrauchswert und Anzahl Meldungen).',
           'Einzelne IP-Adressen werden zur Beurteilung ihres Missbrauchsrisikos an AbuseIPDB LLC (USA) übermittelt. Übermittelt wird dabei nur die IP-Adresse.',
         ],
       },
       {
         heading: 'Kontaktformular und E-Mail',
         paragraphs: [
-          'Wenn Sie das Kontaktformular verwenden, werden Name, E-Mail-Adresse und Nachricht per E-Mail an den Verantwortlichen gesendet. Das Postfach und der Versand laufen über iCloud Mail von Apple (Apple Distribution International Ltd., Irland; die Daten können auch bei Apple Inc., USA, bearbeitet werden). Gemäss Apples Angaben stützen sich Übermittlungen aus der Schweiz auf Standardvertragsklauseln. Dasselbe gilt für E-Mails, die Sie direkt senden.',
+          'Wenn Sie das Kontaktformular verwenden, werden Name, E-Mail-Adresse und Nachricht zur Beantwortung Ihrer Anfrage per E-Mail an den Verantwortlichen gesendet. Das Postfach und der Versand laufen über iCloud Mail von Apple (Apple Distribution International Ltd., Irland; die Daten können auch bei Apple Inc., USA, bearbeitet werden). Gemäss Apples Angaben stützen sich Übermittlungen aus der Schweiz auf Standardvertragsklauseln. Dasselbe gilt für E-Mails, die Sie direkt senden.',
           'Zum Schutz vor Missbrauch wird beim Absenden zusätzlich Ihre IP-Adresse im Arbeitsspeicher der Website verarbeitet.',
         ],
       },
       {
         heading: 'Anmeldung',
         paragraphs: [
-          'Bei jedem Anmeldeversuch über auth.furchert.ch werden zur Erkennung von Angriffen Zeitpunkt, Ergebnis, IP-Adresse, Browserangabe und eine pseudonymisierte Form des eingegebenen Benutzernamens (HMAC-Hashwert) erfasst, bei erfolgreicher Anmeldung zusätzlich die Benutzerkennung. IP-Adressen fehlgeschlagener Anmeldungen können wie oben beschrieben an AbuseIPDB übermittelt werden.',
+          'Bei Anmeldeversuchen mit Benutzername und Passwort über auth.furchert.ch werden zur Erkennung von Angriffen Zeitpunkt, Ergebnis, IP-Adresse, Browserangabe und eine pseudonymisierte Form des eingegebenen Benutzernamens (HMAC-Hashwert) erfasst, bei erfolgreicher Anmeldung zusätzlich der Benutzername. IP-Adressen von Anmeldeversuchen können wie oben beschrieben an AbuseIPDB übermittelt werden.',
         ],
       },
       {
         heading: 'Cookies',
         paragraphs: [
-          'Die öffentlichen Seiten setzen das Cookie NEXT_LOCALE, das die gewählte Sprache speichert. Bei einer Anmeldung setzen die Website und auth.furchert.ch technisch notwendige Cookies. Cloudflare kann für Sicherheitsprüfungen technisch notwendige Cookies setzen. Sie können Cookies in den Einstellungen Ihres Browsers ablehnen.',
+          'Die Website kann das Cookie NEXT_LOCALE setzen, das die gewählte Sprache speichert. Bei einer Anmeldung setzen die Website und auth.furchert.ch technisch notwendige Cookies. Cloudflare kann für Sicherheitsprüfungen technisch notwendige Cookies setzen. Sie können Cookies in den Einstellungen Ihres Browsers ablehnen.',
         ],
       },
       {
@@ -121,27 +121,27 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Security monitoring',
         paragraphs: [
-          "To detect and defend against attacks, the controller stores the following details taken from Cloudflare's access statistics and security events: IP address, country, requested address (host and path), HTTP method, status code and, for security events, also the time, browser details (user agent), network operator and details of the protection rule that was triggered.",
+          "To detect and defend against attacks, the controller stores the following details taken from Cloudflare's access statistics and security events: IP address, country, requested address (host and path), HTTP method, status code, time window (hourly for access statistics) and number of requests and, for security events, also the exact time, Cloudflare's request ID (Ray ID), browser details (user agent), network operator and details of the protection rule that was triggered. For each IP address the controller also stores when it was first and last seen, matches on public blocklists and AbuseIPDB's assessment (abuse score and number of reports).",
           'Individual IP addresses are sent to AbuseIPDB LLC (USA) to assess their abuse risk. Only the IP address is sent.',
         ],
       },
       {
         heading: 'Contact form and e-mail',
         paragraphs: [
-          "If you use the contact form, your name, e-mail address and message are sent to the controller by e-mail. Both the mailbox and the sending are provided by Apple's iCloud Mail (Apple Distribution International Ltd., Ireland; the data may also be processed by Apple Inc., USA). According to Apple, transfers from Switzerland rely on standard contractual clauses. The same applies to e-mails you send directly.",
+          "If you use the contact form, your name, e-mail address and message are sent to the controller by e-mail so that your enquiry can be answered. Both the mailbox and the sending are provided by Apple's iCloud Mail (Apple Distribution International Ltd., Ireland; the data may also be processed by Apple Inc., USA). According to Apple, transfers from Switzerland rely on standard contractual clauses. The same applies to e-mails you send directly.",
           "To protect against abuse, your IP address is also processed in the website's memory when you submit the form.",
         ],
       },
       {
         heading: 'Sign-in',
         paragraphs: [
-          'For every sign-in attempt via auth.furchert.ch, the time, outcome, IP address, browser details and a pseudonymised form of the username entered (HMAC hash) are recorded to detect attacks, plus the user ID if the sign-in succeeds. IP addresses of failed sign-ins may be sent to AbuseIPDB as described above.',
+          'For sign-in attempts with username and password via auth.furchert.ch, the time, outcome, IP address, browser details and a pseudonymised form of the username entered (HMAC hash) are recorded to detect attacks, plus the username if the sign-in succeeds. IP addresses of sign-in attempts may be sent to AbuseIPDB as described above.',
         ],
       },
       {
         heading: 'Cookies',
         paragraphs: [
-          'The public pages set the NEXT_LOCALE cookie, which stores the chosen language. When signing in, the website and auth.furchert.ch set technically necessary cookies. Cloudflare may set technically necessary cookies for security checks. You can refuse cookies in your browser settings.',
+          'The website may set the NEXT_LOCALE cookie, which stores the chosen language. When signing in, the website and auth.furchert.ch set technically necessary cookies. Cloudflare may set technically necessary cookies for security checks. You can refuse cookies in your browser settings.',
         ],
       },
       {
