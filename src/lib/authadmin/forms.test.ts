@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseCreateDeviceClient, parseCreateUser, parseId, parseResetPassword, parseUpdateUser } from './forms';
+import { hasFieldError, parseCreateDeviceClient, parseCreateUser, parseId, parseResetPassword, parseUpdateUser } from './forms';
 
 const fd = (o: Record<string, string>) => {
   const f = new FormData();
@@ -57,5 +57,16 @@ describe('parseCreateDeviceClient', () => {
     expect(parseCreateDeviceClient(fd({ clientId: 'terra-1', description: '' }))).toEqual({ ok: true, value: { clientId: 'terra-1' } });
     expect(parseCreateDeviceClient(fd({ clientId: 'Terra_1', description: 'x' })).ok).toBe(false);
     expect(parseCreateDeviceClient(fd({ clientId: 'terra1', description: 'x'.repeat(201) })).ok).toBe(false);
+  });
+});
+
+describe('hasFieldError', () => {
+  it('is true only for an error state with a message for a known field', () => {
+    const err = { status: 'error', code: 'validation', fieldErrors: { username: 'taken', bogus: 'x' } } as const;
+    expect(hasFieldError(err, 'username')).toBe(true);
+    expect(hasFieldError(err, 'email')).toBe(false);
+    expect(hasFieldError(err, 'bogus')).toBe(false);
+    expect(hasFieldError({ status: 'idle' }, 'username')).toBe(false);
+    expect(hasFieldError({ status: 'ok' }, 'username')).toBe(false);
   });
 });

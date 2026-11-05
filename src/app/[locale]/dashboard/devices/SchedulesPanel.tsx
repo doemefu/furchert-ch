@@ -17,7 +17,8 @@ import { DEVICE_FIELDS, isDeviceField, parseServiceTime, type DeviceField } from
 import { IDLE, type DeviceActionState } from '@/lib/deviceadmin/forms';
 import { deleteScheduleAction, saveScheduleAction, setScheduleActiveAction } from './actions';
 import { CronField } from './CronField';
-import { FieldError, FormError, useErrorText } from './FormFeedback';
+import { FieldError, FormError, inputAria, useErrorText } from './FormFeedback';
+import { useFocusTrap, useReturnFocus } from '../useDrawerFocus';
 import { makeFormatters } from './format';
 import { BORDER, MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle } from '../auth/ui';
 
@@ -55,19 +56,16 @@ export function SchedulesPanel({
   const errorText = useErrorText();
   // null = closed, 'new' = create form, number = edit that schedule id.
   const [drawer, setDrawer] = useState<null | 'new' | number>(null);
-  // The button that opened the drawer, captured on click (before the drawer's
-  // autoFocus moves focus), so closing the drawer can return focus to it.
-  const opener = useRef<HTMLElement | null>(null);
+  // Focus returns to the button that opened the drawer when it closes.
+  const { remember, restore } = useReturnFocus();
   const newButton = useRef<HTMLButtonElement | null>(null);
   const openDrawer = (target: 'new' | number, el: HTMLElement) => {
-    opener.current = el;
+    remember(el);
     setDrawer(target);
   };
   const closeDrawer = () => {
     setDrawer(null);
-    const el = opener.current;
-    opener.current = null;
-    if (el?.isConnected) el.focus();
+    restore();
   };
   const [banner, setBanner] = useState<string | null>(null);
   const [rowError, setRowError] = useState<{ id: number; text: string } | null>(null);
@@ -266,7 +264,7 @@ export function SchedulesPanel({
           }}
           onDeleted={(id) => {
             // The deleted row's edit button disappears with the refreshed list.
-            opener.current = newButton.current;
+            if (newButton.current) remember(newButton.current);
             setRowError(null);
             setBanner(t('schedules.deleted', { id }));
           }}
@@ -358,6 +356,7 @@ function ScheduleDrawer({
   onDeleted?: (id: number) => void;
 }) {
   const t = useTranslations('dashboard.deviceAdmin');
+  const trap = useFocusTrap<HTMLDivElement>();
   const isNew = !row;
   // Controlled fields, and the form is submitted through onSubmit instead of
   // the `action` prop: React resets a form after an `action` completes, and
@@ -408,6 +407,7 @@ function ScheduleDrawer({
     if (!row || !window.confirm(t('drawer.confirmDelete', { id: row.id }))) e.preventDefault();
   };
 
+  const stateAria = inputAria(saveState, 'state');
   const radioLabel = { display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)' };
 
   // Portalled to <body>: the page's layout wrappers form a stacking context
@@ -418,11 +418,12 @@ function ScheduleDrawer({
       style={{ position: 'fixed', inset: 0, background: 'rgba(8,24,61,.35)', zIndex: 300, display: 'flex', justifyContent: 'flex-end' }}
     >
       <div
+        {...trap}
         role="dialog"
         aria-modal="true"
         aria-labelledby="schedule-drawer-title"
         onClick={(e) => e.stopPropagation()}
-        style={{ width: 'min(480px, 94vw)', height: '100%', background: 'var(--n-10)', borderLeft: '1px solid rgba(162,167,176,.35)', overflowY: 'auto' }}
+        style={{ width: 'min(480px, 94vw)', height: '100%', outline: 'none', background: 'var(--n-10)', borderLeft: '1px solid rgba(162,167,176,.35)', overflowY: 'auto' }}
       >
         <div style={{ padding: '1.5rem', borderBottom: BORDER, background: 'var(--white)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
@@ -449,7 +450,7 @@ function ScheduleDrawer({
           <label>
             <MonoLabel mb=".3rem">{t('drawer.device')}</MonoLabel>
             {options ? (
-              <select name="deviceName" required value={deviceName} onChange={(e) => setDeviceName(e.target.value)} autoFocus style={fieldStyle}>
+              <select name="deviceName" required value={deviceName} onChange={(e) => setDeviceName(e.target.value)} autoFocus style={fieldStyle} {...inputAria(saveState, 'deviceName')}>
                 {deviceName === '' && <option value="">—</option>}
                 {missing && <option value={missing}>{t('drawer.deviceMissing', { name: missing })}</option>}
                 {options.map((n) => (
@@ -468,6 +469,7 @@ function ScheduleDrawer({
                 onChange={(e) => setDeviceName(e.target.value)}
                 autoComplete="off"
                 autoFocus
+                {...inputAria(saveState, 'deviceName')}
                 style={fieldStyle}
               />
             )}
@@ -477,7 +479,7 @@ function ScheduleDrawer({
 
           <label>
             <MonoLabel mb=".3rem">{t('drawer.field')}</MonoLabel>
-            <select name="field" required value={field} onChange={(e) => setField(e.target.value as DeviceField)} style={fieldStyle}>
+            <select name="field" required value={field} onChange={(e) => setField(e.target.value as DeviceField)} style={fieldStyle} {...inputAria(saveState, 'field')}>
               {field === '' && <option value="">—</option>}
               {DEVICE_FIELDS.map((f) => (
                 <option key={f} value={f}>
@@ -488,17 +490,17 @@ function ScheduleDrawer({
             <FieldError state={saveState} field="field" />
           </label>
 
-          <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <fieldset style={{ border: 'none', padding: 0, margin: 0 }} role="radiogroup" aria-invalid={stateAria['aria-invalid']}>
             <legend style={{ padding: 0 }}>
               <MonoLabel mb=".4rem">{t('drawer.target')}</MonoLabel>
             </legend>
             <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
               <label style={radioLabel}>
-                <input type="radio" name="state" value="1" required checked={target === '1'} onChange={() => setTarget('1')} />
+                <input type="radio" name="state" value="1" required checked={target === '1'} onChange={() => setTarget('1')} aria-describedby={stateAria['aria-describedby']} />
                 {t('drawer.targetOn')}
               </label>
               <label style={radioLabel}>
-                <input type="radio" name="state" value="0" checked={target === '0'} onChange={() => setTarget('0')} />
+                <input type="radio" name="state" value="0" checked={target === '0'} onChange={() => setTarget('0')} aria-describedby={stateAria['aria-describedby']} />
                 {t('drawer.targetOff')}
               </label>
             </div>
