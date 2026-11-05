@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BIO, FACTS, TIMELINE, INTERESTS } from '@/data/about';
-
-const HOST = 'https://furchert.ch';
+import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
+import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
+import { buildProfilePageJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 
 export async function generateMetadata({
   params,
@@ -19,17 +19,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
-    title: `${t('pages.about.headerTitle')} — furchert.ch`,
-    description: t('pages.about.headerSub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/about' }),
-        en: HOST + getPathname({ locale: 'en', href: '/about' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/about' }),
-      },
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/about',
+    title: t('pages.about.metaTitle'),
+    description: t('pages.about.metaDescription'),
+  });
 }
 
 const labelMono = {
@@ -49,9 +44,19 @@ export default async function AboutPage({
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations();
+  const jsonLd = buildProfilePageJsonLd({
+    locale,
+    pageUrl: localizedUrl(locale, '/about'),
+    name: t('pages.about.headerTitle'),
+    dateModified: PAGE_LAST_MODIFIED['/about'],
+  });
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <div className="container border-x">
         <PageHeader
           label={t('pages.about.headerLabel')}

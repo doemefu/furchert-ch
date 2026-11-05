@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { Link, getPathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { CTAStrip } from '@/components/ui/CTAStrip';
@@ -10,8 +10,10 @@ import { Ticker } from '@/components/layout/Ticker';
 import { EXPERIENCE } from '@/data/experience';
 import { ENGAGEMENT } from '@/data/engagement';
 import { HOME_STATS } from '@/data/home-stats';
+import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
+import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
+import { buildHomeJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 
-const HOST = 'https://furchert.ch';
 const DOTS =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.3'/%3E%3C/svg%3E\")";
 
@@ -31,24 +33,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
-    title: 'furchert.ch — Dominic Furchert',
-    description: t('hero.sub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/' }),
-        en: HOST + getPathname({ locale: 'en', href: '/' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/' }),
-      },
-    },
-    openGraph: {
-      title: 'furchert.ch — Dominic Furchert',
-      description: t('hero.sub'),
-      url: HOST + getPathname({ locale, href: '/' }),
-      locale,
-      type: 'website',
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/',
+    title: t('pages.home.metaTitle'),
+    description: t('pages.home.metaDescription'),
+  });
 }
 
 const iconMap: Record<string, string> = {
@@ -69,9 +59,20 @@ export default async function HomePage({
   const t = await getTranslations();
 
   const teaserKeys = ['it', 'rowing', 'projects', 'automation'] as const;
+  const jsonLd = buildHomeJsonLd({
+    locale,
+    pageUrl: localizedUrl(locale, '/'),
+    name: t('pages.home.metaTitle'),
+    description: t('pages.home.metaDescription'),
+    dateModified: PAGE_LAST_MODIFIED['/'],
+  });
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       {/* HERO — note: layout <main> already supplies paddingTop:var(--header-h),
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
       <section style={{ minHeight: '100svh', background: 'var(--n-10)' }}>

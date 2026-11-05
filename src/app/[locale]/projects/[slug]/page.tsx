@@ -2,13 +2,15 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { routing, isLocale } from '@/i18n/routing';
-import { Link, getPathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { Btn } from '@/components/ui/Btn';
 import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
-
-const HOST = 'https://furchert.ch';
+import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
+import { buildHomelabJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { buildPageMetadata, localizedUrl, ownerTitle } from '@/lib/seo/metadata';
+import { HomelabSections } from './HomelabSections';
 
 // Static params: locale × slug (the parent [locale] layout composes locales).
 // `dynamicParams = false`: an unknown slug is a plain 404, never rendered on
@@ -31,17 +33,24 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const project = PROJECTS.find((p) => p.slug === slug);
   if (!project || !isLocale(locale)) return {};
-  return {
-    title: `${project.title} — furchert.ch`,
+  const href = `/projects/${slug}`;
+  // The homelab page is also the public showcase + live status: own title and
+  // description (search intent). Other projects use their name and summary.
+  if (slug === 'homelab') {
+    const t = await getTranslations({ locale, namespace: 'pages.lab' });
+    return buildPageMetadata({
+      locale,
+      href,
+      title: ownerTitle(t('metaTitle')),
+      description: t('metaDescription'),
+    });
+  }
+  return buildPageMetadata({
+    locale,
+    href,
+    title: ownerTitle(project.title),
     description: project.i18n[locale].summary,
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: `/projects/${slug}` }),
-        en: HOST + getPathname({ locale: 'en', href: `/projects/${slug}` }),
-        'x-default': HOST + getPathname({ locale: 'de', href: `/projects/${slug}` }),
-      },
-    },
-  };
+  });
 }
 
 export default async function ProjectDetailPage({
@@ -59,6 +68,22 @@ export default async function ProjectDetailPage({
 
   return (
     <div>
+      {p.slug === 'homelab' && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(
+              buildHomelabJsonLd({
+                locale,
+                pageUrl: localizedUrl(locale, `/projects/${p.slug}`),
+                name: p.title,
+                description: p.i18n[locale].detail,
+                dateModified: LAB_CONTENT_UPDATED,
+              }),
+            ),
+          }}
+        />
+      )}
       <div className="container border-x">
         <div
           style={{
@@ -157,6 +182,8 @@ export default async function ProjectDetailPage({
             ))}
           </div>
         </div>
+
+        {p.slug === 'homelab' && <HomelabSections locale={locale} />}
 
         <div style={{ padding: '2rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {p.github && (

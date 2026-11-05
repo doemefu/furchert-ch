@@ -2,11 +2,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
+import { buildPageMetadata } from '@/lib/seo/metadata';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ContactForm } from './ContactForm';
-
-const HOST = 'https://furchert.ch';
 
 export async function generateMetadata({
   params,
@@ -16,17 +14,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
-    title: `${t('contact.title')} — furchert.ch`,
-    description: t('contact.sub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/contact' }),
-        en: HOST + getPathname({ locale: 'en', href: '/contact' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/contact' }),
-      },
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/contact',
+    title: t('contact.metaTitle'),
+    description: t('contact.metaDescription'),
+  });
 }
 
 const CONTACTS: { label: string; value: string; href: string | null }[] = [
@@ -37,7 +30,6 @@ const CONTACTS: { label: string; value: string; href: string | null }[] = [
     value: 'linkedin.com/in/dominic-furchert',
     href: 'https://linkedin.com/in/dominic-furchert',
   },
-  { label: 'Location', value: 'Rapperswil-Jona, CH', href: null },
 ];
 
 export default async function ContactPage({
@@ -49,6 +41,8 @@ export default async function ContactPage({
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations();
+  // The location is the same message the footer shows.
+  const contacts = [...CONTACTS, { label: 'Location', value: t('footer.location'), href: null }];
 
   return (
     <div>
@@ -88,7 +82,7 @@ export default async function ContactPage({
               {t('contact.ref')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {CONTACTS.map((c) => (
+              {contacts.map((c) => (
                 <div key={c.label}>
                   <div
                     style={{

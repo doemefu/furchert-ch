@@ -1,18 +1,19 @@
-// Bilingual content for /about. DE = prototype verbatim (pages.jsx PageAbout),
-// EN = faithful translation of the same content (no invented claims).
+// Bilingual content for /about. DE = prototype (pages.jsx PageAbout); the
+// full name, the offer sentence and the 2026 timeline entry follow the live
+// /automation page (#134). EN = faithful translation (no invented claims).
 // Per-record locale maps so DE/EN cannot drift in length (worklog F-Q2).
 import type { Locale } from '@/i18n/routing';
 
 export const BIO: Record<Locale, string[]> = {
   de: [
-    'Ich bin Dominic — Softwareentwickler, Vereinspräsident und jemand der gerne Systeme baut, die im echten Leben funktionieren. Aufgewachsen in der Region Zürichsee/Obersee, ausgebildet als Applikationsentwickler bei der UBS, jetzt kurz vor dem Bachelor-Abschluss in Software Systems an der UZH.',
-    'Neben dem Studium führe ich den Ruderclub Rapperswil-Jona mit rund 200 Mitgliedern als Präsident — inklusive einem Infrastrukturprojekt im Millionenbereich und der Organisation einer nationalen Regatta. Das hat mich mindestens so viel gelehrt wie jedes Informatik-Modul.',
-    'Daneben bin ich Feuerwehrmann und J+S-Sportcoach. Aktuell beschäftigt mich die Frage, wie man mit KI und Automatisierung Prozesse in Industriebetrieben vereinfachen kann — ohne Grossprojekte, ohne Risiko, Schritt für Schritt.',
+    'Ich bin Dominic Furchert, Software Engineer und Vereinspräsident. Aufgewachsen in der Region Zürichsee/Obersee, ausgebildet als Applikationsentwickler bei der UBS, jetzt kurz vor dem Bachelor-Abschluss in Software Systems an der UZH.',
+    'Neben dem Studium führe ich den Ruderclub Rapperswil-Jona mit rund 200 Mitgliedern als Präsident. Dazu gehören ein Infrastrukturprojekt im Millionenbereich und die Organisation einer nationalen Regatta. Das hat mich mindestens so viel gelehrt wie jedes Informatik-Modul.',
+    'Daneben bin ich Feuerwehrmann und J+S-Sportcoach. Beruflich helfe ich KMU im Zürcher Oberland aus Dienstleistung, Handwerk und Produktion, Abläufe mit KI zu vereinfachen: ohne Grossprojekt, Schritt für Schritt.',
   ],
   en: [
-    "I'm Dominic — software developer, club president, and someone who likes building systems that work in real life. Raised in the Lake Zurich / Obersee region, trained as an application developer at UBS, and now close to finishing my Bachelor's in Software Systems at UZH.",
-    'Alongside my studies I lead the Rapperswil-Jona Rowing Club and its roughly 200 members as president — including a multi-million-franc infrastructure project and the organisation of a national regatta. That has taught me at least as much as any computer-science module.',
-    "I'm also a firefighter and a J+S sports coach. Right now I'm focused on how AI and automation can simplify processes in industrial companies — without large projects, without risk, step by step.",
+    "I'm Dominic Furchert, a software engineer and club president. Raised in the Lake Zurich / Obersee region, trained as an application developer at UBS, and now close to finishing my Bachelor's in Software Systems at UZH.",
+    'Alongside my studies I lead the Rapperswil-Jona Rowing Club and its roughly 200 members as president. The role includes a multi-million-franc infrastructure project and the organisation of a national regatta. That has taught me at least as much as any computer-science module.',
+    "I'm also a firefighter and a J+S sports coach. Professionally, I help SMEs in the Zurich area (services, trades and production) simplify their work with AI, one step at a time and without a big project.",
   ],
 };
 
@@ -37,8 +38,8 @@ export const TIMELINE: TimelineRow[] = [
   {
     year: '2026',
     i18n: {
-      de: { items: ['B.Sc. Software Systems — Universität Zürich (Minor BWL)', 'Freelancer — AI-Automation für Industrie-KMU'] },
-      en: { items: ['B.Sc. Software Systems — University of Zurich (Minor in Business Administration)', 'Freelancer — AI automation for industrial SMEs'] },
+      de: { items: ['B.Sc. Software Systems, Universität Zürich (Minor BWL)', 'Freelancer: KI für KMU im Zürcher Oberland'] },
+      en: { items: ['B.Sc. Software Systems, University of Zurich (Minor in Business Administration)', 'Freelancer: AI for SMEs in the Zurich area'] },
     },
   },
   {
@@ -51,22 +52,22 @@ export const TIMELINE: TimelineRow[] = [
   {
     year: '2024',
     i18n: {
-      de: { items: ['IT-Audit Praktikum — KPMG Assurance Technology Group'] },
-      en: { items: ['IT audit internship — KPMG Assurance Technology Group'] },
+      de: { items: ['IT-Audit-Praktikum, KPMG Assurance Technology Group'] },
+      en: { items: ['IT audit internship, KPMG Assurance Technology Group'] },
     },
   },
   {
     year: '2022',
     i18n: {
-      de: { items: ['AMZ Racing — ETH Formula Student (Pedal Box Integration)'] },
-      en: { items: ['AMZ Racing — ETH Formula Student (pedal box integration)'] },
+      de: { items: ['AMZ Racing, ETH Formula Student (Pedal Box Integration)'] },
+      en: { items: ['AMZ Racing, ETH Formula Student (pedal box integration)'] },
     },
   },
   {
     year: '2019',
     i18n: {
-      de: { items: ['Applikationsentwickler EFZ — UBS (Core Cash Accounting)'] },
-      en: { items: ['Application Developer (EFZ) — UBS (Core Cash Accounting)'] },
+      de: { items: ['Applikationsentwickler EFZ, UBS (Core Cash Accounting)'] },
+      en: { items: ['Application Developer (EFZ), UBS (Core Cash Accounting)'] },
     },
   },
 ];

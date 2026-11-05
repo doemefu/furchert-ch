@@ -7,12 +7,13 @@ import { dmSans, dmMono } from '@/lib/fonts';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Providers } from '@/components/Providers';
+import { ownerTitle } from '@/lib/seo/metadata';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'furchert.ch — Dominic Furchert',
+  title: ownerTitle('furchert.ch'),
   description:
-    'Software Engineer · Zürich. IoT-Plattformen, Homelab-Infrastruktur, AI-Automation.',
+    'Dominic Furchert, Software Engineer: KI für KMU im Zürcher Oberland, IoT-Plattform, Homelab.',
 };
 
 // Unknown locales are a plain 404, never rendered on demand. Paths with a

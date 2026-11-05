@@ -72,6 +72,15 @@ shows a "not configured" state. If you signed in before pulling #44, sign out
 and in again — older sessions carry no access token. The Users tab needs
 doemefu/homelab-auth-service#115 deployed.
 
+Optional — `/dashboard/devices` locally (device-service admin GUI, #45; needs an
+ADMIN account): `kubectl -n apps port-forward svc/device-service 18081:8081` and
+set `DEVICE_SERVICE_URL=http://localhost:18081` in `.env.local`. Keep
+`AUTH_SERVICE_URL` set as well: the admin access token is refreshed through
+auth-service, and without it the page asks you to sign in again after 15
+minutes. Unset, the page shows a "not configured" state. Schedules created
+locally are real and reach every terrarium when they fire — delete test
+schedules afterwards.
+
 Local contact-form testing requires the commented `SMTP_*`/`CONTACT_*` block
 in `.env.local.example` filled in with a real iCloud app-specific
 password to actually deliver mail. Left unset, submitting the form locally

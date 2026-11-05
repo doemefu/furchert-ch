@@ -1,12 +1,12 @@
 // Dev Area subnav — ported from prototype `projects-board.jsx:65-93`.
-// "Overview", "Network" (NM-1, #61), "Services" (#47) and "Auth Service" (#44)
-// are live; the Device tab stays visibly disabled until #45 ships
-// (TODO(phase6) below). Network, Services and Auth Service are shown to every
-// signed-in user — each page decides access itself (ADMIN only).
+// "Overview", "Network" (NM-1, #61), "Services" (#47), "Auth Service" (#44)
+// and "Device Service" (#45) are live. Network, Services, Auth Service and
+// Device Service are shown to every signed-in user — each page decides
+// access itself (ADMIN only).
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
-type DevSubnavActive = 'overview' | 'network' | 'services' | 'auth';
+type DevSubnavActive = 'overview' | 'network' | 'services' | 'auth' | 'devices';
 
 const containerStyle = {
   borderBottom: '1px solid rgba(162,167,176,.22)',
@@ -55,12 +55,6 @@ const tabInactive = {
   borderBottom: '2px solid transparent',
 };
 
-const tabDisabled = {
-  color: 'var(--n-40)',
-  borderBottom: '2px solid transparent',
-  cursor: 'not-allowed' as const,
-};
-
 export async function DevSubnav({ active }: { active: DevSubnavActive }) {
   const t = await getTranslations('dashboard.subnav');
 
@@ -101,11 +95,13 @@ export async function DevSubnav({ active }: { active: DevSubnavActive }) {
           {t('authService')}
         </Link>
 
-        {/* TODO(phase6): swap this <button disabled> for <Link href="/dashboard/devices">
-            once the device admin GUI ships (#45). */}
-        <button type="button" disabled style={{ ...tabBase, ...tabDisabled }}>
-          {t('deviceService')} <span style={{ color: 'var(--n-30)' }}>· {t('soon')}</span>
-        </button>
+        <Link
+          href="/dashboard/devices"
+          aria-current={active === 'devices' ? 'page' : undefined}
+          style={{ ...tabBase, ...(active === 'devices' ? tabActive : tabInactive) }}
+        >
+          {t('deviceService')}
+        </Link>
       </div>
     </div>
   );

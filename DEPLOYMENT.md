@@ -22,7 +22,7 @@ If a future Next upgrade or a new dependency logs `EROFS`/`EACCES`, add an `empt
 
 ### Replicas (#83)
 
-**Keep `replicas: 1`.** The contact-form rate limiter (`src/lib/contact/rateLimit.ts`) holds its state in process memory. With more than one replica each pod enforces its own independent limits, so a sender could get N× the intended quota (traffic is not sticky). Before raising `replicas`, move the limiter to a shared store (e.g. Redis) — tracked as a precondition, not a config change. The authadmin token-refresh cache (`src/lib/authadmin/accessToken.ts`) is also per-process, but that is only an optimisation and stays correct at any replica count.
+**Keep `replicas: 1`.** The contact-form rate limiter (`src/lib/contact/rateLimit.ts`) holds its state in process memory. With more than one replica each pod enforces its own independent limits, so a sender could get N× the intended quota (traffic is not sticky). Before raising `replicas`, move the limiter to a shared store (e.g. Redis) — tracked as a precondition, not a config change. The authadmin token-refresh cache (`src/lib/authadmin/accessToken.ts`) is also per-process, but that is only an optimisation and stays correct at any replica count. The same holds for the public homelab status cache (`src/lib/metrics/labStatus.ts`): with N replicas each pod refreshes on its own, so Prometheus sees N evaluations per window instead of one.
 
 ## Security headers (#42)
 
@@ -96,7 +96,7 @@ deployment maps each secret key to an env var via `secretKeyRef`:
 Plain env (non-secret): `OIDC_CLIENT_ID=furchert-ch`; `OIDC_ISSUER`
 (bare issuer base URL, **no trailing slash**; defaults to
 `https://auth.furchert.ch`); cluster-internal upstream URLs for auth-service (`AUTH_SERVICE_URL`, #44, see
-below) / device-service (#45); `PROMETHEUS_URL` — base URL of
+below) / device-service (`DEVICE_SERVICE_URL`, #45, see below); `PROMETHEUS_URL` — base URL of
 `kube-prometheus-stack-prometheus` (issue #17), read server-side only for the
 `/dashboard` live cluster/app metrics and the ADMIN-only
 `/dashboard/services` page (#47; no additional env, secret or manifest change). Defaults to
@@ -126,6 +126,12 @@ auth-service admin REST API behind `/dashboard/auth` (#44; `INTERFACES.md` §2
 `k8s/deployment.yaml`. Calls carry the signed-in admin's own access token; the
 refresh grant reuses `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET` — **no new secret**.
 Left unset in dev, the page shows a "not configured" state.
+`DEVICE_SERVICE_URL` (`http://device-service.apps.svc.cluster.local:8081`) — the
+device-service REST API behind `/dashboard/devices` (#45; `INTERFACES.md` §2
+"device-service"). Defaults to this value if unset and is set explicitly in
+`k8s/deployment.yaml`. Calls carry the same admin access token as
+`/dashboard/auth` — **no new secret**. Left unset in dev, the page shows a
+"not configured" state.
 
 **`/dashboard/auth` rollout (#44):** the user list needs
 doemefu/homelab-auth-service#115 (`GET /api/v1/users`); until it is live the
@@ -240,6 +246,28 @@ From address differs briefly; this is expected and not an error. Since
 `replicas: 1` with the default `RollingUpdate` strategy (`maxUnavailable: 0`),
 the old pod keeps serving traffic throughout.
 
+## Search engines and AI crawlers (#134)
+
+- **robots.txt is two layers.** Cloudflare's managed robots.txt (Bot
+  Preference Sync, set in the Cloudflare dashboard) is prepended to the app's
+  `/robots.txt`. It disallows known AI-training crawlers and states its own
+  Content-Signal line (for example `search=yes,ai-train=no,use=reference`; Cloudflare
+  maintains it). The app adds its own rules and
+  `Content-Signal: search=yes, ai-input=yes, ai-train=no`, because the managed
+  block never sets `ai-input`. Keep the managed robots.txt on: without it the
+  training-crawler disallows are gone.
+- **HTTP → HTTPS** is a Cloudflare zone setting (SSL/TLS → Edge Certificates →
+  Always Use HTTPS), not an app setting. Verify: `curl -sI http://furchert.ch/de`
+  answers with a 301 to `https://`.
+- **After a deploy that changes SEO metadata:**
+
+```bash
+curl -s https://furchert.ch/robots.txt | grep -i '^content-signal:'   # managed line + the app's ai-input line
+curl -s https://furchert.ch/sitemap.xml | grep -c '<lastmod>'      # one per public page
+curl -sI https://furchert.ch/llms.txt | head -1                    # 200
+curl -sI https://furchert.ch/de/about | grep -i '^link:' | grep -ci hreflang   # 0
+```
+
 ## Validation
 
 ```bash
@@ -313,6 +341,14 @@ clients and JWKS tabs load; the Users tab loads (or shows "not available yet"
 until doemefu/homelab-auth-service#115 is live); a USER account sees "no
 access".
 
+Then smoke `/dashboard/devices` as an ADMIN: the health pill shows UP; the
+Devices tab lists the devices with their last known state (control stays locked
+while no device reports); on the Schedules tab create a test schedule with a
+far-future custom expression such as `0 0 3 1 1 *` (every schedule is sent to
+all terrariums when it fires), check that the saved message shows device-service's
+next run (1 January, 04:00 Zurich time), switch it inactive and back, then
+delete it. A USER account sees "no access".
+
 **Security headers (#42) — verify after this milestone's first deploy:**
 
 ```bash
@@ -338,6 +374,16 @@ If any of the three is missing headers, see Troubleshooting below.
 - **`/dashboard/auth` "auth-service unavailable"** — `AUTH_SERVICE_URL` is wrong
   or auth-service is down; check the `[authadmin] <endpoint>: unreachable|HTTP 5xx`
   log lines and `kubectl -n apps get svc auth-service`.
+- **`/dashboard/devices` says "sign in again" right after signing in** —
+  device-service rejects the furchert-ch access token. Check
+  `kubectl -n apps logs deploy/furchert-ch | grep '\[deviceadmin\]'` for
+  `HTTP 401`. Expected once device-service enforces an audience
+  (doemefu/homelab-auth-service#101, doemefu/homelab-device-service#81) before
+  furchert-ch's token carries it — `INTERFACES.md` §2 "device-service", Known gaps.
+- **`/dashboard/devices` "device-service unavailable"** — `DEVICE_SERVICE_URL`
+  is wrong or device-service is down; check the
+  `[deviceadmin] <endpoint>: unreachable|HTTP 5xx` log lines and
+  `kubectl -n apps get svc device-service`.
 - **Pod CrashLoopBackOff on boot, `[auth] required env var … missing`** — a
   `furchert-ch-secrets` key is absent; re-run `59_app_services.yml`.
 - **Login fails with `invalid_client` / redirect mismatch** — `oidc-client-secret`

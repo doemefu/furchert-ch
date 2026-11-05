@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
+import { buildPageMetadata } from '@/lib/seo/metadata';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ExpCard } from '@/components/ui/ExpCard';
 import { IT_CARDS, TECH_STACK } from '@/data/it';
-
-const HOST = 'https://furchert.ch';
 
 export async function generateMetadata({
   params,
@@ -19,17 +17,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
-    title: `${t('pages.it.headerTitle')} — furchert.ch`,
-    description: t('pages.it.headerSub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/it' }),
-        en: HOST + getPathname({ locale: 'en', href: '/it' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/it' }),
-      },
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/it',
+    title: t('pages.it.metaTitle'),
+    description: t('pages.it.metaDescription'),
+  });
 }
 
 export default async function ITPage({

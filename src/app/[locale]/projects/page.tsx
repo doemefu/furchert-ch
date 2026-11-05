@@ -2,13 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { Link, getPathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
+import { buildPageMetadata } from '@/lib/seo/metadata';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
-
-const HOST = 'https://furchert.ch';
 
 export async function generateMetadata({
   params,
@@ -18,17 +17,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
-    title: `${t('pages.projects.headerTitle')} — furchert.ch`,
-    description: t('pages.projects.headerSub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/projects' }),
-        en: HOST + getPathname({ locale: 'en', href: '/projects' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/projects' }),
-      },
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/projects',
+    title: t('pages.projects.metaTitle'),
+    description: t('pages.projects.metaDescription'),
+  });
 }
 
 export default async function ProjectsPage({

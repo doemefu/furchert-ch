@@ -1,31 +1,37 @@
-// Ported pixel-faithfully from the prototype (pages.jsx PageAutomation,
-// lines 459-592). RSC; only the FAQ block is a client island. The
-// prototype's hero secondary `<a href="#scan">` becomes a real
-// next-intl Link to /automation/scan (worklog F1: the prototype's
-// `id="scan"` placeholder on the FAQ block is intentionally dropped —
-// a real route replaces it).
+// Ported from the prototype (pages.jsx PageAutomation, lines 459-592) and
+// reworked for the SME offer (Zürcher Oberland). RSC; only the FAQ block is
+// a client island. Sections: hero, trade stories, one before/after example,
+// process and prices (owner-approved prices, 2026-11-03), data protection,
+// about, call to action, FAQ. The new sections are server components next to
+// this file and reuse the page's existing section styles (sectionStyles.ts);
+// the grids are responsive (single column on narrow phones).
+// The prototype's `id="scan"` FAQ placeholder stays dropped (worklog F1).
+// The /automation/scan demo is not linked from here: its sample report does
+// not match the published packages.
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { Link, getPathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { FAQS } from '@/data/automation-faqs';
+import { AutomationStories } from './AutomationStories';
+import { AutomationExample } from './AutomationExample';
+import { AutomationPricing } from './AutomationPricing';
+import { labelMono, leadStyle } from './sectionStyles';
+import { automationJsonLdText, buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
+import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { FAQAccordion } from './FAQAccordion';
 
-const HOST = 'https://furchert.ch';
 const DOTS_LIGHT =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.08'/%3E%3C/svg%3E\")";
 
-const labelMono = {
-  fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
-  textTransform: 'uppercase' as const,
-  color: 'var(--n-50)',
-  marginBottom: '1rem',
-};
+// Date of the last content change; shown on the page, used as
+// `dateModified` in the JSON-LD and as the sitemap's lastmod. Update it in
+// src/lib/seo/pages.ts whenever the copy changes.
+const LAST_UPDATED = PAGE_LAST_MODIFIED['/automation'];
 
 export async function generateMetadata({
   params,
@@ -35,17 +41,12 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale });
-  return {
-    title: `${t('pages.automation.heroLabel')} — furchert.ch`,
-    description: t('pages.automation.heroSub'),
-    alternates: {
-      languages: {
-        de: HOST + getPathname({ locale: 'de', href: '/automation' }),
-        en: HOST + getPathname({ locale: 'en', href: '/automation' }),
-        'x-default': HOST + getPathname({ locale: 'de', href: '/automation' }),
-      },
-    },
-  };
+  return buildPageMetadata({
+    locale,
+    href: '/automation',
+    title: t('pages.automation.metaTitle'),
+    description: t('pages.automation.metaDescription'),
+  });
 }
 
 export default async function AutomationPage({
@@ -60,9 +61,30 @@ export default async function AutomationPage({
 
   const faqItems = FAQS.map((f) => f.i18n[locale]);
   const mailHref = `mailto:dominic@furchert.ch?subject=${encodeURIComponent(t('pages.automation.mailSubject'))}`;
+  const jsonLd = buildAutomationJsonLd({
+    locale,
+    pageUrl: localizedUrl(locale, '/automation'),
+    ...automationJsonLdText({
+      heroLabel: t('pages.automation.heroLabel'),
+      heroSub: t('pages.automation.heroSub'),
+      areaServed: t('pages.automation.areaServed'),
+    }),
+    faq: faqItems,
+    dateModified: LAST_UPDATED,
+  });
+  const updatedLabel = t('pages.automation.updatedLabel');
+  const updatedDate = new Intl.DateTimeFormat(locale, {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(LAST_UPDATED));
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       {/* HERO (dark) */}
       <div
         style={{
@@ -129,33 +151,29 @@ export default async function AutomationPage({
             <Btn href="/contact" dark>
               {t('pages.automation.heroCtaContact')} <Icon name="arrow" size={12} />
             </Btn>
-            <Link
-              href="/automation/scan"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '.45rem',
-                fontFamily: 'var(--mono)',
-                fontSize: '.8125rem',
-                letterSpacing: '.02em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                border: '1px solid rgba(255,255,255,.2)',
-                borderRadius: '2px',
-                padding: '.875rem 1.375rem',
-                color: 'var(--n-40)',
-              }}
-            >
-              {t('pages.automation.heroCtaScan')}
-            </Link>
           </div>
+          <p
+            style={{
+              marginTop: '1.5rem',
+              fontFamily: 'var(--mono)',
+              fontSize: '.8125rem',
+              letterSpacing: '.04em',
+              color: 'var(--n-40)',
+            }}
+          >
+            {t('pages.automation.heroPriceLine')}
+          </p>
         </div>
       </div>
 
       <div className="container border-x">
-        {/* PROBLEM */}
+        <AutomationStories locale={locale} />
+        <AutomationExample locale={locale} />
+        <AutomationPricing locale={locale} />
+
+        {/* DATA PROTECTION (two-column) */}
         <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={labelMono}>{t('pages.automation.problemLabel')}</p>
+          <p style={labelMono}>{t('pages.automation.privacyLabel')}</p>
           <h2
             style={{
               fontFamily: 'var(--sans)',
@@ -163,131 +181,16 @@ export default async function AutomationPage({
               fontWeight: 500,
               letterSpacing: '-.03em',
               color: 'var(--n-100)',
-              marginBottom: '2.5rem',
+              marginBottom: '1rem',
             }}
           >
-            {t('pages.automation.problemHeading')}
+            {t('pages.automation.privacyHeading')}
           </h2>
+          <p style={leadStyle}>{t('pages.automation.privacyLead')}</p>
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '0',
-            }}
-          >
-            {([1, 2, 3] as const).map((n) => (
-              <div
-                key={n}
-                style={{
-                  padding: '2rem',
-                  borderRight: '1px solid rgba(162,167,176,.22)',
-                  borderBottom: '1px solid rgba(162,167,176,.22)',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    letterSpacing: '-.02em',
-                    color: 'var(--n-100)',
-                    marginBottom: '.5rem',
-                  }}
-                >
-                  {t(`pages.automation.problem${n}Title`)}
-                </div>
-                <p style={{ fontSize: '.9375rem', color: 'var(--n-60)', lineHeight: 1.55 }}>
-                  {t(`pages.automation.problem${n}Text`)}
-                </p>
-              </div>
-            ))}
-          </div>
-          <p style={{ marginTop: '2rem', fontSize: '1rem', color: 'var(--n-70)', fontStyle: 'italic' }}>
-            {t('pages.automation.problemFooter')}
-          </p>
-        </div>
-
-        {/* PROCESS STEPS */}
-        <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={labelMono}>{t('pages.automation.processLabel')}</p>
-          <h2
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'clamp(1.5rem,3vw,2.25rem)',
-              fontWeight: 500,
-              letterSpacing: '-.03em',
-              color: 'var(--n-100)',
-              marginBottom: '2.5rem',
-            }}
-          >
-            {t('pages.automation.processHeading')}
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '0',
-            }}
-          >
-            {([1, 2, 3] as const).map((n) => (
-              <div
-                key={n}
-                style={{ padding: '2rem', borderRight: '1px solid rgba(162,167,176,.22)' }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: '2rem',
-                    fontWeight: 400,
-                    letterSpacing: '-.02em',
-                    color: 'var(--n-20)',
-                    lineHeight: 1,
-                    marginBottom: '1rem',
-                  }}
-                >
-                  0{n}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontSize: '1.125rem',
-                    fontWeight: 500,
-                    letterSpacing: '-.02em',
-                    color: 'var(--n-100)',
-                    marginBottom: '.25rem',
-                  }}
-                >
-                  {t(`pages.automation.step${n}Title`)}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: '.72rem',
-                    letterSpacing: '.04em',
-                    textTransform: 'uppercase',
-                    color: 'var(--blue-base)',
-                    marginBottom: '.75rem',
-                  }}
-                >
-                  {t(`pages.automation.step${n}Sub`)}
-                </div>
-                <p style={{ fontSize: '.9375rem', color: 'var(--n-60)', lineHeight: 1.55 }}>
-                  {t(`pages.automation.step${n}Desc`)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* COMPARISON */}
-        <div style={{ padding: '4rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={{ ...labelMono, marginBottom: '2rem' }}>
-            {t('pages.automation.comparisonLabel')}
-          </p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
               gap: '0',
               border: '1px solid rgba(162,167,176,.22)',
               borderRadius: '2px',
@@ -310,7 +213,7 @@ export default async function AutomationPage({
                   marginBottom: '1rem',
                 }}
               >
-                {t('pages.automation.comparisonLeftTitle')}
+                {t('pages.automation.privacyLeftTitle')}
               </div>
               {([1, 2, 3, 4, 5] as const).map((n) => (
                 <div
@@ -325,10 +228,13 @@ export default async function AutomationPage({
                     color: 'var(--n-60)',
                   }}
                 >
-                  <span style={{ width: 16, height: 16, flexShrink: 0, color: 'var(--n-40)' }}>
-                    —
+                  <span
+                    aria-hidden="true"
+                    style={{ width: 16, flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                  >
+                    <span style={{ display: 'block', width: 10, height: 1, background: 'var(--n-40)' }} />
                   </span>
-                  {t(`pages.automation.comparisonLeft${n}`)}
+                  {t(`pages.automation.privacyLeft${n}`)}
                 </div>
               ))}
             </div>
@@ -343,7 +249,7 @@ export default async function AutomationPage({
                   marginBottom: '1rem',
                 }}
               >
-                {t('pages.automation.comparisonRightTitle')}
+                {t('pages.automation.privacyRightTitle')}
               </div>
               {([1, 2, 3, 4, 5] as const).map((n) => (
                 <div
@@ -361,11 +267,22 @@ export default async function AutomationPage({
                   <span style={{ color: 'var(--blue-base)', flexShrink: 0 }}>
                     <Icon name="check" size={16} />
                   </span>
-                  {t(`pages.automation.comparisonRight${n}`)}
+                  {t(`pages.automation.privacyRight${n}`)}
                 </div>
               ))}
             </div>
           </div>
+          <p
+            style={{
+              marginTop: '1.5rem',
+              fontSize: '.875rem',
+              color: 'var(--n-60)',
+              lineHeight: 1.55,
+              maxWidth: '68ch',
+            }}
+          >
+            {t('pages.automation.privacyFootnote')}
+          </p>
         </div>
 
         {/* ABOUT MINI */}
@@ -379,31 +296,6 @@ export default async function AutomationPage({
             flexWrap: 'wrap',
           }}
         >
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              background: 'var(--n-20)',
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'var(--mono)',
-                fontSize: '.65rem',
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
-                color: 'var(--n-50)',
-                textAlign: 'center',
-                padding: '.25rem',
-              }}
-            >
-              {t('pages.automation.aboutMiniPhotoCaption')}
-            </div>
-          </div>
           <div style={{ flex: 1, minWidth: 220 }}>
             <div
               style={{
@@ -492,10 +384,11 @@ export default async function AutomationPage({
 
         {/* FAQ — id="scan" from prototype intentionally dropped (F1). */}
         <div style={{ padding: '3rem 0' }}>
-          <p
+          <h2
             style={{
               fontFamily: 'var(--mono)',
               fontSize: '.8125rem',
+              fontWeight: 400,
               letterSpacing: '.06em',
               textTransform: 'uppercase',
               color: 'var(--n-50)',
@@ -503,8 +396,19 @@ export default async function AutomationPage({
             }}
           >
             {t('pages.automation.faqLabel')}
-          </p>
+          </h2>
           <FAQAccordion items={faqItems} />
+          <p
+            style={{
+              marginTop: '2rem',
+              fontFamily: 'var(--mono)',
+              fontSize: '.75rem',
+              letterSpacing: '.04em',
+              color: 'var(--n-60)',
+            }}
+          >
+            {updatedLabel}: <time dateTime={LAST_UPDATED}>{updatedDate}</time>
+          </p>
         </div>
       </div>
     </div>

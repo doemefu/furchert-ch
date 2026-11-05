@@ -54,14 +54,14 @@ export const ROWING_CARDS: RowingCard[] = [
     tags: ['Event Mgmt', 'Safety', 'Permits', '~1500 Athleten'],
     i18n: {
       de: {
-        title: 'Chef Sicherheit — Nationale Regatta',
+        title: 'Chef Sicherheit: Nationale Regatta',
         org: 'Ruderregatta Schmerikon',
         since: 'Mai 2026',
         text: "Organisation der nationalen Ruderregatta mit ~1'500 Athleten. Verantwortlich für das Sicherheitskonzept (nautisch + Land), Permits, Koordination mit Behörden und Rettungsdiensten.",
         learning: '"1\'500 Athleten auf dem Wasser sicher betreuen verlangt Planung, Redundanz und die Fähigkeit, unter Druck Entscheidungen zu treffen."',
       },
       en: {
-        title: 'Safety Chief — National Regatta',
+        title: 'Safety Chief: National Regatta',
         org: 'Schmerikon Rowing Regatta',
         since: 'May 2026',
         text: 'Organising the national rowing regatta with ~1,500 athletes. Responsible for the safety concept (nautical + land), permits, and coordination with authorities and emergency services.',
@@ -77,13 +77,13 @@ export const ROWING_CARDS: RowingCard[] = [
         title: 'Weiteres Engagement',
         org: 'Feuerwehr & J+S',
         since: null,
-        text: 'Feuerwehrmann (AdF) und J+S-Sportcoach. Ob beim Löschangriff oder auf dem Trainingsplatz — gemeinsam unter Druck handeln ist ein roter Faden in allem was ich tue.',
+        text: 'Feuerwehrmann (AdF) und J+S-Sportcoach. Beim Löschangriff wie auf dem Trainingsplatz geht es darum, unter Druck gemeinsam zu handeln.',
       },
       en: {
         title: 'Further Engagement',
         org: 'Fire brigade & J+S',
         since: null,
-        text: 'Firefighter (AdF) and J+S sports coach. Whether on a firefighting attack or on the training ground — acting together under pressure is a common thread in everything I do.',
+        text: 'Firefighter (AdF) and J+S sports coach. At a fire and on the training ground alike, it comes down to acting together under pressure.',
       },
     },
   },
