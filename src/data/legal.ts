@@ -55,7 +55,7 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
   de: {
     label: 'Rechtliches',
     title: 'Datenschutz',
-    sub: 'Welche Personendaten beim Besuch dieser Website bearbeitet werden, wozu und von wem.',
+    sub: 'Welche Personendaten beim Besuch dieser Website bearbeitet werden.',
     contactLabel: 'Verantwortlich',
     nameLabel: 'Name',
     emailLabel: 'E-Mail',
@@ -71,8 +71,8 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Sicherheitsüberwachung',
         paragraphs: [
-          'Zum Erkennen und Abwehren von Angriffen speichert der Verantwortliche aus den Zugriffsstatistiken und Sicherheitsereignissen von Cloudflare folgende Angaben: IP-Adresse, Land, aufgerufene Adresse (Host und Pfad), HTTP-Methode, Statuscode, Zeitraum (bei Zugriffsstatistiken stundenweise) und Anzahl der Anfragen sowie bei Sicherheitsereignissen zusätzlich den genauen Zeitpunkt, die Anfragekennung von Cloudflare (Ray ID), die Browserangabe (User-Agent), den Netzbetreiber und Angaben zur ausgelösten Schutzregel. Zu jeder IP-Adresse speichert der Verantwortliche zudem, wann sie zuerst und zuletzt auftrat, Treffer auf öffentlichen Sperrlisten und die Bewertung durch AbuseIPDB (Missbrauchswert und Anzahl Meldungen).',
-          'Einzelne IP-Adressen werden zur Beurteilung ihres Missbrauchsrisikos an AbuseIPDB LLC (USA) übermittelt. Übermittelt wird dabei nur die IP-Adresse.',
+          'Zum Erkennen und Abwehren von Angriffen speichert der Verantwortliche aus den Zugriffsstatistiken und Sicherheitsereignissen von Cloudflare folgende Angaben: IP-Adresse, Land, aufgerufene Adresse (Host und Pfad) und HTTP-Methode, bei Zugriffsstatistiken zudem Statuscode, Stunde und Anzahl der Anfragen, bei Sicherheitsereignissen zudem den genauen Zeitpunkt, die Anfragekennung von Cloudflare (Ray ID), die Browserangabe (User-Agent), den Netzbetreiber und Angaben zur ausgelösten Schutzregel. Zu jeder IP-Adresse speichert der Verantwortliche zudem, wann sie zuerst und zuletzt auftrat, und Treffer auf öffentlichen Sperrlisten.',
+          'Einzelne IP-Adressen werden zur Beurteilung ihres Missbrauchsrisikos an AbuseIPDB LLC (USA) übermittelt; der Verantwortliche speichert deren Bewertung (Missbrauchswert und Anzahl Meldungen). Übermittelt wird dabei nur die IP-Adresse.',
         ],
       },
       {
@@ -105,7 +105,7 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
   en: {
     label: 'Legal',
     title: 'Privacy',
-    sub: 'Which personal data is processed when you visit this website, why, and by whom.',
+    sub: 'Which personal data is processed when you visit this website.',
     contactLabel: 'Controller',
     nameLabel: 'Name',
     emailLabel: 'E-mail',
@@ -121,8 +121,8 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
       {
         heading: 'Security monitoring',
         paragraphs: [
-          "To detect and defend against attacks, the controller stores the following details taken from Cloudflare's access statistics and security events: IP address, country, requested address (host and path), HTTP method, status code, time window (hourly for access statistics) and number of requests and, for security events, also the exact time, Cloudflare's request ID (Ray ID), browser details (user agent), network operator and details of the protection rule that was triggered. For each IP address the controller also stores when it was first and last seen, matches on public blocklists and AbuseIPDB's assessment (abuse score and number of reports).",
-          'Individual IP addresses are sent to AbuseIPDB LLC (USA) to assess their abuse risk. Only the IP address is sent.',
+          "To detect and defend against attacks, the controller stores the following details taken from Cloudflare's access statistics and security events: IP address, country, requested address (host and path) and HTTP method; for access statistics also the status code, the hour and the number of requests; for security events also the exact time, Cloudflare's request ID (Ray ID), browser details (user agent), network operator and details of the protection rule that was triggered. For each IP address the controller also stores when it was first and last seen and any matches on public blocklists.",
+          'Selected IP addresses are sent to AbuseIPDB LLC (USA) to assess their abuse risk, and the controller stores the result (abuse score and number of reports). Only the IP address is sent.',
         ],
       },
       {
