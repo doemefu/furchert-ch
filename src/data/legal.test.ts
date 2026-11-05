@@ -32,6 +32,13 @@ describe('legal pages copy', () => {
     for (const s of [...strings(de), ...strings(en)]) expect(s.trim().length).toBeGreaterThan(0);
   });
 
+  // Owner copy rule (#141): no dashes used as punctuation in public copy.
+  it.each(PAGES)('%s has no em or en dashes in any text', (page) => {
+    for (const locale of LOCALES) {
+      for (const s of strings(LEGAL_PAGES[page][locale])) expect(s).not.toMatch(/[\u2013\u2014]/);
+    }
+  });
+
   // Cloudflare Email Obfuscation rewrites addresses in the SSR HTML; the page
   // renders the address only in its own leaf element (#125), never in text.
   it.each(PAGES)('%s has no e-mail address or mailto: in any text', (page) => {

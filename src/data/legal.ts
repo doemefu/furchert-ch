@@ -127,7 +127,7 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
         heading: 'Sicherheitsüberwachung',
         paragraphs: [
           `Zum Erkennen und Abwehren von Angriffen holt der Verantwortliche die Zugriffsstatistiken und Sicherheitsereignisse von Cloudflare laufend ab und speichert sie in einer eigenen Datenbank in der Schweiz: IP-Adresse, Land, aufgerufener Host und Pfad (ohne Parameter), HTTP-Methode, Statuscode und Anzahl Anfragen pro Stunde, bei Sicherheitsereignissen zusätzlich Zeitpunkt, Browserangaben (User-Agent) und Netzbetreiber. Zugriffsstatistiken werden nach ${requestDays} Tagen gelöscht, Sicherheitsereignisse nach ${securityDays} Tagen und Angaben zum Ruf einer IP-Adresse ${securityDays} Tage, nachdem die Adresse zuletzt aufgetreten ist.`,
-          'IP-Adressen werden lokal mit öffentlichen Sperrlisten (Spamhaus, FireHOL) abgeglichen. Auffällige IP-Adressen – mit fehlgeschlagenen Anmeldungen, blockierten Anfragen oder vielen Fehlerantworten – sowie die aktivsten Adressen eines Tages werden zudem bei AbuseIPDB (Marathon Studios, Inc., USA) abgefragt. Dabei wird nur die IP-Adresse übermittelt; zurückgeliefert wird eine Bewertung, wie oft die Adresse wegen Missbrauchs gemeldet wurde.',
+          'IP-Adressen werden lokal mit öffentlichen Sperrlisten (Spamhaus, FireHOL) abgeglichen. Auffällige IP-Adressen (mit fehlgeschlagenen Anmeldungen, blockierten Anfragen oder vielen Fehlerantworten) sowie die aktivsten Adressen eines Tages werden zudem bei AbuseIPDB (Marathon Studios, Inc., USA) abgefragt. Dabei wird nur die IP-Adresse übermittelt; zurückgeliefert wird eine Bewertung, wie oft die Adresse wegen Missbrauchs gemeldet wurde.',
           'Grundlage ist das überwiegende Interesse an der Sicherheit der Website und der Dienste des Verantwortlichen.',
         ],
       },
@@ -203,7 +203,7 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
         heading: 'Security monitoring',
         paragraphs: [
           `To detect and defend against attacks, the controller continuously fetches Cloudflare's access statistics and security events and stores them in the controller's own database in Switzerland: IP address, country, requested host and path (without parameters), HTTP method, status code and number of requests per hour; for security events also the time, browser details (user agent) and network operator. Access statistics are deleted after ${requestDays} days, security events after ${securityDays} days, and IP reputation data ${securityDays} days after the address was last seen.`,
-          'IP addresses are matched locally against public blocklists (Spamhaus, FireHOL). Suspicious IP addresses – with failed sign-ins, blocked requests or many error responses – and the most active addresses of a day are also looked up at AbuseIPDB (Marathon Studios, Inc., USA). Only the IP address is transmitted; what comes back is a score of how often the address has been reported for abuse.',
+          'IP addresses are matched locally against public blocklists (Spamhaus, FireHOL). Suspicious IP addresses (with failed sign-ins, blocked requests or many error responses) and the most active addresses of a day are also looked up at AbuseIPDB (Marathon Studios, Inc., USA). Only the IP address is transmitted; what comes back is a score of how often the address has been reported for abuse.',
           "The basis is the overriding interest in the security of the website and the controller's services.",
         ],
       },
