@@ -48,9 +48,12 @@ export function useFocusTrap<T extends HTMLElement>() {
       (target === -1 ? root : items[target]).focus();
     };
     const onFocusIn = (e: FocusEvent) => {
-      if (!browserTab || !root || root.contains(e.target as Node)) return;
+      // The first focusin after the keydown is that Tab's own destination.
+      const tab = browserTab;
+      browserTab = null;
+      if (!tab || !root || root.contains(e.target as Node)) return;
       const items = focusables(root);
-      (items.length ? items[browserTab.shift ? items.length - 1 : 0] : root).focus();
+      (items.length ? items[tab.shift ? items.length - 1 : 0] : root).focus();
     };
     document.addEventListener('keydown', onKeyDown, true);
     document.addEventListener('focusin', onFocusIn, true);
