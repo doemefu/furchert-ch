@@ -24,7 +24,7 @@ export type ActionState =
 export const IDLE: ActionState = { status: 'idle' };
 
 /** Fields the auth-admin forms render an error for (anything else is shown by FormError only). */
-export const KNOWN_FIELDS = new Set([
+const KNOWN_FIELDS = new Set([
   'username',
   'email',
   'password',

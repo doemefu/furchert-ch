@@ -17,10 +17,9 @@ const LOCAL_CODES = new Set([...FORM_FIELDS, 'cronFields', 'cronSeconds']);
 
 export function FieldError({ state, field }: { state: DeviceActionState; field: string }) {
   const t = useTranslations('dashboard.deviceAdmin.errors.fields');
-  if (state.status !== 'error') return null;
+  if (state.status !== 'error' || !hasFieldError(state, field)) return null;
   const code = state.fieldErrors?.[field];
   const server = state.details?.[field];
-  if (!code && !server) return null;
   return (
     <p id={fieldErrorId(field)} style={errorTextStyle}>
       {code && LOCAL_CODES.has(code) ? t(code) : null}

@@ -407,6 +407,7 @@ function ScheduleDrawer({
     if (!row || !window.confirm(t('drawer.confirmDelete', { id: row.id }))) e.preventDefault();
   };
 
+  const stateAria = inputAria(saveState, 'state');
   const radioLabel = { display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)' };
 
   // Portalled to <body>: the page's layout wrappers form a stacking context
@@ -489,17 +490,17 @@ function ScheduleDrawer({
             <FieldError state={saveState} field="field" />
           </label>
 
-          <fieldset style={{ border: 'none', padding: 0, margin: 0 }} role="radiogroup" {...inputAria(saveState, 'state')}>
+          <fieldset style={{ border: 'none', padding: 0, margin: 0 }} role="radiogroup" aria-invalid={stateAria['aria-invalid']}>
             <legend style={{ padding: 0 }}>
               <MonoLabel mb=".4rem">{t('drawer.target')}</MonoLabel>
             </legend>
             <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
               <label style={radioLabel}>
-                <input type="radio" name="state" value="1" required checked={target === '1'} onChange={() => setTarget('1')} aria-describedby={inputAria(saveState, 'state')['aria-describedby']} />
+                <input type="radio" name="state" value="1" required checked={target === '1'} onChange={() => setTarget('1')} aria-describedby={stateAria['aria-describedby']} />
                 {t('drawer.targetOn')}
               </label>
               <label style={radioLabel}>
-                <input type="radio" name="state" value="0" checked={target === '0'} onChange={() => setTarget('0')} aria-describedby={inputAria(saveState, 'state')['aria-describedby']} />
+                <input type="radio" name="state" value="0" checked={target === '0'} onChange={() => setTarget('0')} aria-describedby={stateAria['aria-describedby']} />
                 {t('drawer.targetOff')}
               </label>
             </div>

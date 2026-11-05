@@ -15,7 +15,10 @@ export function nextTrapTarget(count: number, activeIndex: number, shift: boolea
   return activeIndex === -1 || activeIndex === count - 1 ? 0 : null;
 }
 
-/** Id of the element `FieldError` renders for `field`. */
+/**
+ * Id of the element `FieldError` renders for `field`. Assumes one error element
+ * per field name on a page (true today: no field name repeats across forms).
+ */
 export function fieldErrorId(field: string): string {
   return `err-${field}`;
 }

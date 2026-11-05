@@ -28,16 +28,36 @@ export function useFocusTrap<T extends HTMLElement>() {
   useEffect(() => {
     const root = ref.current;
     if (root && !root.contains(document.activeElement)) root.focus();
+    // Direction of a Tab the browser moves itself. Safari and Firefox on macOS
+    // skip buttons and radios by default, so the first/last focusable element
+    // need not be a stop and a Tab can still step out of the dialog; if focus
+    // lands outside during such a Tab, pull it back.
+    let browserTab: { shift: boolean } | null = null;
     const onKeyDown = (e: globalThis.KeyboardEvent) => {
       if (e.key !== 'Tab' || !root) return;
       const items = focusables(root);
       const target = nextTrapTarget(items.length, items.indexOf(document.activeElement as HTMLElement), e.shiftKey);
-      if (target === null) return;
+      if (target === null) {
+        browserTab = { shift: e.shiftKey };
+        setTimeout(() => {
+          browserTab = null;
+        });
+        return;
+      }
       e.preventDefault();
       (target === -1 ? root : items[target]).focus();
     };
+    const onFocusIn = (e: FocusEvent) => {
+      if (!browserTab || !root || root.contains(e.target as Node)) return;
+      const items = focusables(root);
+      (items.length ? items[browserTab.shift ? items.length - 1 : 0] : root).focus();
+    };
     document.addEventListener('keydown', onKeyDown, true);
-    return () => document.removeEventListener('keydown', onKeyDown, true);
+    document.addEventListener('focusin', onFocusIn, true);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+      document.removeEventListener('focusin', onFocusIn, true);
+    };
   }, []);
 
   return { ref, tabIndex: -1 };
