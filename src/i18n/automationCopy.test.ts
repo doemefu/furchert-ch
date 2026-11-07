@@ -354,26 +354,53 @@ describe('automation sample calculation', () => {
     expect(shape(CALC.i18n.en)).toEqual(shape(CALC.i18n.de));
   });
 
-  it('adds up', () => {
-    // Minutes a week: 15 daily reports and 4 Regie reports.
-    const today = 15 * 15 + 4 * 25;
-    const byVoice = 15 * 6 + 4 * 10;
-    expect([today, byVoice]).toEqual([325, 130]);
-    const hours = Math.floor((today - byVoice) / 60);
-    expect(hours).toBe(3);
+  // Every input comes from the data: the table, the assumptions stated in
+  // the results, and the published prices of the steps. A price change in
+  // PRICE_STEPS therefore fails here until the calculation follows.
+  it('adds up, from the table, its stated assumptions and the step prices', () => {
+    const int = (text: string, re: RegExp) => {
+      const m = re.exec(text);
+      expect(m, `${re} in: ${text}`).not.toBeNull();
+      return Number(m![1].replace(/'/g, ''));
+    };
+    const swiss = (n: number) => `CHF ${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'")}`;
+    const price = (id: string) =>
+      int(PRICE_STEPS.find((p) => p.id === id)?.i18n.de.price ?? '', /CHF ([\d']+)/);
+
+    const d = CALC.i18n.de;
+    // Minutes a week: reports a week × minutes per report, summed over rows.
+    const minutes = (column: 'today' | 'byVoice') =>
+      d.rows.reduce((sum, row) => sum + int(row.label, /(\d+) pro Woche/) * int(row[column], /(\d+)/), 0);
+    const hours = Math.floor((minutes('today') - minutes('byVoice')) / 60);
+    const weeks = int(d.results[1], /(\d+) Wochen/);
+    const rate = int(d.results[1], /× CHF (\d+)/);
+    const months = int(d.results[2], /(\d+) × CHF/);
+    const licences = int(d.results[2], /(\d+) App-Lizenzen/);
+    const licencePerMonth = int(d.results[2], /angenommen CHF (\d+) pro Person und Monat/);
+    // "rund": the time value is rounded to CHF 500.
+    const timeValue = Math.round((hours * weeks * rate) / 500) * 500;
+    const abo = months * price('subscription');
+    const licenceYear = licences * months * licencePerMonth;
+    const year1 = price('assessment') + price('rollout') + abo + licenceYear;
+    const year2 = abo + licenceYear;
+
     expect(CALC.i18n.de.results[0]).toContain(`rund ${hours} Stunden`);
     expect(CALC.i18n.en.results[0]).toContain(`about ${hours} hours`);
-    // Time value, rounded to the nearest CHF 500: 3 × 44 × 57 = 7'524.
-    expect(Math.round((hours * 44 * 57) / 500) * 500).toBe(7500);
-    // Year one: assessment, rollout, 12 months of the Abo, 4 licences.
-    expect(750 + 3900 + 12 * 200 + 4 * 12 * 25).toBe(8250);
-    expect(12 * 200 + 4 * 12 * 25).toBe(3600);
     for (const locale of LOCALES) {
-      const text = calcCopy(locale).join(' ');
-      for (const amount of ["CHF 7'500", "CHF 2'400", "CHF 1'200", "CHF 8'250", "CHF 3'600"]) {
-        expect(text, amount).toContain(amount);
+      const [, value, costYear1, costYear2] = CALC.i18n[locale].results;
+      const about = locale === 'de' ? 'rund' : 'about';
+      expect(value).toContain(`${about} ${swiss(timeValue)}`);
+      for (const amount of [price('assessment'), price('rollout'), price('subscription'), abo]) {
+        expect(costYear1, swiss(amount)).toContain(swiss(amount));
       }
+      expect(costYear1).toContain(`${about} ${swiss(licenceYear)}`);
+      expect(costYear1).toContain(`${about} ${swiss(year1)}`);
+      expect(costYear2).toContain(`${about} ${swiss(year2)}`);
+      expect(costYear2).toContain(`${about} ${swiss(timeValue)}`);
     }
+    // Year one costs a little more than the time value, and the copy says so.
+    expect(year1).toBeGreaterThan(timeValue);
+    expect(d.results[2]).toContain('etwas über dem Zeitwert');
   });
 });
 
