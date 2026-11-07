@@ -10,7 +10,7 @@ When making changes, update the relevant file(s) — the `homelab-workflow:doc-a
 | File              | Audience      | Covers |
 |-------------------|---------------|--------|
 | `README.md`       | Everyone      | Landing page — documentation index, quick start, quick reference |
-| `OVERVIEW.md`     | Everyone      | What the site is, public + private surfaces, routes, deferred/out-of-scope (incl. automation = mock) |
+| `OVERVIEW.md`     | Everyone      | What the site is, public + private surfaces, routes, deferred/out-of-scope (incl. automation = static offer page, no AI backend) |
 | `INTERFACES.md`   | Integrators   | Which backend endpoints this frontend consumes (auth-service OIDC + REST, device-service REST), and the OIDC client contract |
 | `DEPLOYMENT.md`   | App devs      | Docker build, k8s manifests, Flux wiring, Cloudflare Tunnel, required secrets/env, troubleshooting |
 | `CONTRIBUTING.md` | Contributors  | Local dev setup (pnpm, local OIDC, port-forwards), lint/build, PR process |
