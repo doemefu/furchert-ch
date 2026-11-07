@@ -51,8 +51,8 @@ delivery failure each surface a distinct visible error.
 The offer page is static: no Claude API, no AI endpoint, no persistence. Its
 three example tiles (native `<details>`, no client JS), the before/after
 example and the sample calculation are illustrative and labelled as invented.
-Client JS on the page is limited to the FAQ accordion and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
-Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a plain `mailto:` link; the contact page does not read the parameter
+Client JS on the page is limited to the FAQ accordion, the e-mail button (`ContactEmail`, below) and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
+Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a `mailto:` button whose address exists only in the browser (`ContactEmail`, #147; without JS it links to the contact page); the contact page does not read the parameter
 yet. The price FAQ is visible but left out of the FAQPage JSON-LD. The
 redirects live in `next.config.mjs` (pinned by `src/redirects.test.ts`).
 Nothing under `/automation` imports the mailer.

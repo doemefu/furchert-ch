@@ -47,6 +47,21 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **Contact e-mail kept out of the server HTML and the RSC payload** (#147):
+  Cloudflare's Email Obfuscation (#125) only rewrote the HTML; the RSC payload
+  still carried the owner's address in plain text on every page. The footer,
+  the home CTA strip, the contact page and the automation page's e-mail button
+  now render it through the client component `ContactEmail`, which assembles
+  it from reversed segments in the browser after hydration
+  (`src/data/contact-email.ts`). Server HTML, no-JS visitors and the first
+  client render get a neutral "E-Mail"/"E-mail" label (or the button label)
+  as a link to the contact page; no "[at]" form, which harvesters decode.
+  The contact form's server-error message gets the address interpolated in
+  the browser. The `suppressHydrationWarning` workarounds on those elements
+  are gone. `src/contactEmailGuard.test.ts` fails if the address appears in
+  `src/` or `public/` or a non-client module imports the helpers; CI greps
+  the build output (`.next/server`, `.next/static`) for it after
+  `pnpm build`. No new dependency.
 - **Security headers tightened** (#42): HSTS raised from 1 day to 1 year
   (`max-age=31536000`, still no `includeSubDomains`/`preload`); the CSP
   directives that do not depend on inline scripts or styles are now enforced

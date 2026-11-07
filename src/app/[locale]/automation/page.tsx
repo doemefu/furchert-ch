@@ -2,11 +2,12 @@
 // reworked as the offer page for construction and civil engineering firms
 // (Gate 0, #145). A static offer page with no AI backend: no Claude API, no
 // AI endpoint, no persistence; the tiles and the example are illustrative and
-// labelled as invented. RSC; the only client islands are the FAQ accordion
-// and the sticky call to action for phones. Sections: light hero with three
-// example tiles, "So arbeite ich", the before/after example with a sample
-// calculation, process and prices, "Ihre Daten", "Wer ich bin", FAQ, closing
-// call to action. Every call to action links to /contact?from=<id>
+// labelled as invented. RSC; the only client islands are the FAQ accordion,
+// the sticky call to action for phones and the e-mail button (ContactEmail,
+// which renders the address only in the browser, #147). Sections: light hero
+// with three example tiles, "So arbeite ich", the before/after example with a
+// sample calculation, process and prices, "Ihre Daten", "Wer ich bin", FAQ,
+// closing call to action. Every call to action links to /contact?from=<id>
 // (src/data/contact-sources.ts) inside a `data-cta` wrapper.
 // The prototype's `id="scan"` FAQ placeholder stays dropped (worklog F1).
 // The /automation/scan demo is retired; next.config.mjs redirects it here.
@@ -17,6 +18,7 @@ import { isLocale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
+import { ContactEmail } from '@/components/ui/ContactEmail';
 import { FAQS, faqsForMarkup } from '@/data/automation-faqs';
 import { contactHref } from '@/data/contact-sources';
 import { WowTiles } from './WowTiles';
@@ -67,7 +69,6 @@ export default async function AutomationPage({
   const t = await getTranslations({ locale, namespace: 'pages.automation' });
 
   const faqItems = FAQS.map((f) => f.i18n[locale]);
-  const mailHref = `mailto:dominic@furchert.ch?subject=${encodeURIComponent(t('mailSubject'))}`;
   const jsonLd = buildAutomationJsonLd({
     locale,
     pageUrl: localizedUrl(locale, '/automation'),
@@ -351,7 +352,8 @@ export default async function AutomationPage({
             <Btn href={contactHref('automation-final')} dark>
               {t('bottomCtaPrimary')} <Icon name="arrow" size={12} />
             </Btn>
-            <Btn href={mailHref}>{t('bottomCtaSecondary')}</Btn>
+            {/* The address is rendered only in the browser (#147). */}
+            <ContactEmail btn label={t('bottomCtaSecondary')} subject={t('mailSubject')} />
           </div>
         </section>
       </div>
