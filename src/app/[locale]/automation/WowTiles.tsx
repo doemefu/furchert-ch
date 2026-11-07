@@ -66,7 +66,7 @@ function RapportBody({ p }: { p: RapportPanel }) {
         </p>
       </Step>
       <Step i={1} style={{ ...fieldLabel, color: 'var(--blue-base)', margin: '1rem 0 .25rem' }}>
-<span aria-hidden="true">↓</span> {p.divider}
+        <span aria-hidden="true">↓</span> {p.divider}
       </Step>
       <dl style={{ margin: 0 }}>
         {p.rows.map((row, r) => (
@@ -312,6 +312,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                 <span
                   style={{
                     display: 'flex',
+                    flexWrap: 'wrap',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     gap: '.5rem',
@@ -327,6 +328,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                       letterSpacing: '.04em',
                       textTransform: 'uppercase',
                       color: 'var(--blue-base)',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     <span className="wow-when-closed">
