@@ -55,6 +55,10 @@ export type ContactResult =
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EMAIL_REJECTED_CHARS_RE = /[<>,;"]/;
+// Name and e-mail each become one line of the mail (and the name part of the
+// subject): a line break or other control character could forge lines such
+// as «Quelle:», so such values are rejected, not cleaned.
+const CONTROL_CHARS_RE = /[\x00-\x1f\x7f\u0085\u2028\u2029]/;
 
 const NAME_MAX_LENGTH = 200;
 const EMAIL_MAX_LENGTH = 254;
@@ -80,13 +84,18 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
     return { ok: false, error: 'invalid' };
   }
 
-  if (!name || name.length > NAME_MAX_LENGTH || message.length > MESSAGE_MAX_LENGTH) {
+  if (!name || name.length > NAME_MAX_LENGTH || CONTROL_CHARS_RE.test(name) || message.length > MESSAGE_MAX_LENGTH) {
     return { ok: false, error: 'invalid' };
   }
 
   // E-mail: required unless a call back is requested; when given, always valid.
   if (email) {
-    if (email.length > EMAIL_MAX_LENGTH || !EMAIL_RE.test(email) || EMAIL_REJECTED_CHARS_RE.test(email)) {
+    if (
+      email.length > EMAIL_MAX_LENGTH ||
+      !EMAIL_RE.test(email) ||
+      EMAIL_REJECTED_CHARS_RE.test(email) ||
+      CONTROL_CHARS_RE.test(email)
+    ) {
       return { ok: false, error: 'invalid' };
     }
   } else if (!callback) {

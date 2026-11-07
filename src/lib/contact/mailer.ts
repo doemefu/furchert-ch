@@ -54,6 +54,11 @@ export interface ContactMail {
 
 const TOPIC_LABELS = { demo: 'Live-Demo', other: 'Etwas anderes' } as const;
 
+// One line, whatever the caller passes: the action already rejects names and
+// e-mail addresses with control characters; this keeps the subject and the
+// body lines single-line even if a caller does not.
+const singleLine = (value: string) => value.replace(/[\x00-\x1f\x7f\u0085\u2028\u2029]/g, '');
+
 function phoneLines(raw: string | undefined): string[] {
   const phone = raw ? parsePhone(raw) : null;
   if (!phone) return [];
@@ -64,13 +69,14 @@ function phoneLines(raw: string | undefined): string[] {
 }
 
 export async function sendContactMail(input: ContactMail): Promise<void> {
-  const strippedName = input.name.replace(/[\r\n\x00-\x1f\x7f]/g, '').slice(0, 80);
+  const name = singleLine(input.name);
+  const email = input.email ? singleLine(input.email) : '';
   const callback = input.callback === true;
   const prefix = callback ? 'Rückruf: ' : input.topic === 'demo' ? 'Live-Demo: ' : '';
-  const subject = `${prefix}Contact form: ${strippedName}`;
+  const subject = `${prefix}Contact form: ${name.slice(0, 80)}`;
 
-  const lines = [`Name: ${input.name}`];
-  if (input.email) lines.push(`Email: ${input.email}`);
+  const lines = [`Name: ${name}`];
+  if (email) lines.push(`Email: ${email}`);
   lines.push(...phoneLines(input.phone));
   if (callback) lines.push('Rückruf gewünscht: ja');
   if (input.topic === 'demo' || input.topic === 'other') lines.push(`Anliegen: ${TOPIC_LABELS[input.topic]}`);
@@ -89,7 +95,7 @@ export async function sendContactMail(input: ContactMail): Promise<void> {
   const info = await getTransporter().sendMail({
     from: { name: 'furchert.ch contact form', address: CONTACT_ENV.CONTACT_FROM },
     to: CONTACT_ENV.CONTACT_TO,
-    ...(input.email ? { replyTo: { name: input.name, address: input.email } } : {}),
+    ...(email ? { replyTo: { name, address: email } } : {}),
     subject,
     text,
   });

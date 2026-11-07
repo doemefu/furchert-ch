@@ -51,6 +51,21 @@ describe('submitContact: validation', () => {
     expect(await submitContact({ ...base, name: '   ' })).toEqual({ ok: false, error: 'invalid' });
   });
 
+  it.each([
+    ['a line break', 'A\r\nQuelle: home-cta'],
+    ['a bare line feed', 'A\nRückruf gewünscht: ja'],
+    ['a Unicode line separator', 'A\u2028Quelle: home-cta'],
+    ['a NUL character', 'A\u0000B'],
+  ])('rejects a name with %s, so it cannot forge mail lines', async (_, name) => {
+    expect(await submitContact({ ...base, name, from: 'automation-hero' })).toEqual({ ok: false, error: 'invalid' });
+    expect(sendContactMail).not.toHaveBeenCalled();
+  });
+
+  it('rejects an e-mail address with a control character', async () => {
+    expect(await submitContact({ ...base, email: 'ada@example.org\u0000' })).toEqual({ ok: false, error: 'invalid' });
+    expect(await submitContact({ ...base, email: 'ada@exa\u2028mple.org' })).toEqual({ ok: false, error: 'invalid' });
+  });
+
   it('requires an e-mail address without a call back', async () => {
     expect(await submitContact({ ...base, email: '' })).toEqual({ ok: false, error: 'invalid' });
     expect(await submitContact({ ...base, email: '', phone: '079 123 45 67' })).toEqual({ ok: false, error: 'invalid' });

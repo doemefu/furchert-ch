@@ -81,6 +81,17 @@ describe('sendContactMail: callback and attribution (#145)', () => {
     expect(sent().subject).not.toMatch(/[\r\n\x00-\x1f\x7f]/);
   });
 
+  it('keeps a name with line breaks on its own line: no forged «Quelle:» or other lines', async () => {
+    const { sendContactMail } = await loadMailer();
+    await sendContactMail({ ...input, name: 'A\r\nQuelle: home-cta\u2028Rückruf gewünscht: ja', email: 'a@x.ch\nTelefon: 0900 1' });
+
+    const lines = sent().text.split('\n');
+    expect(lines.filter((l) => /^(Quelle|Rückruf|Telefon|Anliegen|Aufmerksam)/.test(l))).toEqual([]);
+    expect(lines[0]).toBe('Name: AQuelle: home-ctaRückruf gewünscht: ja');
+    expect(lines[1]).toBe('Email: a@x.chTelefon: 0900 1');
+    expect(sent().subject).toBe('Contact form: AQuelle: home-ctaRückruf gewünscht: ja');
+  });
+
   it('prefixes the subject with «Rückruf: » for a call back, else «Live-Demo: » for the demo topic', async () => {
     const { sendContactMail } = await loadMailer();
     await sendContactMail(full);
