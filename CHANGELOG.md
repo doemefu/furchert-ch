@@ -263,7 +263,7 @@ All notable changes per milestone. Newest first.
   action after the FAQ. A sticky call to action appears on phones once the
   hero has scrolled out. Every contact button links to `/contact?from=<id>`
   (new `src/data/contact-sources.ts`, `contactHref`/`FromId`); the closing
-  section keeps a mailto link; the contact form is unchanged until part 2.
+  section keeps a mailto link; the contact form changes followed in part 2 (#149).
   Labels and the new `Tag` `contrast` prop use `--n-60` instead of `--n-50` on
   /automation (AA contrast); new `mail` and `cloud` icons. The price FAQ is visible but left
   out of the FAQPage JSON-LD (`faqsForMarkup`): no CHF amount in structured
