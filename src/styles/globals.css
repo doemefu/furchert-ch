@@ -99,6 +99,16 @@ input:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(14,60,166,.08);
 }
 
+/* ── CONTACT FORM (#145) ──
+   The source select gets the same focus look as the inputs, and the
+   placeholder meets 4.5:1 (spec v2 c5 S5). Scoped to the contact form so
+   dashboard fields keep their look. */
+.contact-form select:focus {
+  border-color: var(--blue-base) !important;
+  box-shadow: 0 0 0 3px rgba(14,60,166,.08);
+}
+.contact-form ::placeholder { color: var(--n-60); opacity: 1; }
+
 /* ── LINK HOVER HELPER ── */
 a[href]:hover { opacity: .85; }
 

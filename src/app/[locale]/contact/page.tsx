@@ -22,8 +22,8 @@ export async function generateMetadata({
   });
 }
 
+// GitHub and LinkedIn are names; the e-mail and location labels are copy.
 const CONTACTS: { label: string; value: string; href: string | null }[] = [
-  { label: 'Email', value: 'dominic@furchert.ch', href: 'mailto:dominic@furchert.ch' },
   { label: 'GitHub', value: 'github.com/doemefu', href: 'https://github.com/doemefu' },
   {
     label: 'LinkedIn',
@@ -42,7 +42,11 @@ export default async function ContactPage({
   setRequestLocale(locale);
   const t = await getTranslations();
   // The location is the same message the footer shows.
-  const contacts = [...CONTACTS, { label: 'Location', value: t('footer.location'), href: null }];
+  const contacts = [
+    { label: t('contact.labelEmail'), value: 'dominic@furchert.ch', href: 'mailto:dominic@furchert.ch' },
+    ...CONTACTS,
+    { label: t('contact.labelLocation'), value: t('footer.location'), href: null },
+  ];
 
   return (
     <div>
@@ -55,7 +59,7 @@ export default async function ContactPage({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
             gap: '0',
             borderTop: '1px solid rgba(162,167,176,.22)',
           }}
@@ -75,7 +79,7 @@ export default async function ContactPage({
                 fontSize: '.8125rem',
                 letterSpacing: '.06em',
                 textTransform: 'uppercase',
-                color: 'var(--n-50)',
+                color: 'var(--n-60)',
                 marginBottom: '1.5rem',
               }}
             >
@@ -90,7 +94,7 @@ export default async function ContactPage({
                       fontSize: '.72rem',
                       letterSpacing: '.05em',
                       textTransform: 'uppercase',
-                      color: 'var(--n-40)',
+                      color: 'var(--n-60)',
                       marginBottom: '.25rem',
                     }}
                   >

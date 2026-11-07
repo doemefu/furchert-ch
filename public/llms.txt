@@ -17,7 +17,7 @@
 - [Projekte](https://furchert.ch/de/projects): software and homelab projects. English: [Projects](https://furchert.ch/en/projects)
 - [IT & Tech](https://furchert.ch/de/it): professional experience and tech stack. English: [IT & Tech](https://furchert.ch/en/it)
 - [Rudern](https://furchert.ch/de/rowing): rowing club presidency and regatta safety. English: [Rowing](https://furchert.ch/en/rowing)
-- [Kontakt](https://furchert.ch/de/contact): contact form, for example for a free live demo, and public profiles. English: [Contact](https://furchert.ch/en/contact)
+- [Kontakt](https://furchert.ch/de/contact): contact form for a free live demo or a call back, and public profiles. English: [Contact](https://furchert.ch/en/contact)
 
 ## Projects
 
