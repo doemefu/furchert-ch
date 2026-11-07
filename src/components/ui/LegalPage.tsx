@@ -2,6 +2,7 @@
 // with the owner's name and e-mail, then the text sections. Typography follows
 // the about page (mono uppercase labels, --n-60 body text).
 import { PageHeader } from '@/components/ui/PageHeader';
+import { ContactEmail } from '@/components/ui/ContactEmail';
 import { LEGAL_CONTACT, type LegalPageCopy } from '@/data/legal';
 
 const BORDER = '1px solid rgba(162,167,176,.22)';
@@ -42,15 +43,8 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
             <div>
               <div style={labelMono}>{copy.emailLabel}</div>
               <div style={valueText}>
-                {/* Leaf link with the address as its only child: Cloudflare
-                    Email Obfuscation rewrites it in the SSR HTML (#125). */}
-                <a
-                  href={`mailto:${LEGAL_CONTACT.email}`}
-                  style={{ color: 'var(--blue-base)', textDecoration: 'none' }}
-                  suppressHydrationWarning
-                >
-                  {LEGAL_CONTACT.email}
-                </a>
+                {/* The address is rendered only in the browser (#147). */}
+                <ContactEmail style={{ color: 'var(--blue-base)', textDecoration: 'none' }} />
               </div>
             </div>
           </div>

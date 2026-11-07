@@ -46,13 +46,17 @@ All notable changes per milestone. Newest first.
   manifest change.
 - **Impressum and Datenschutz pages** (#16): `/[locale]/imprint` and
   `/[locale]/privacy` (DE + EN) replace the footer placeholders and are in the
-  sitemap. The imprint names the owner and the published e-mail address (no
-  postal address, owner decision). The privacy notice is limited to what Swiss
-  law requires (purposes, data categories, recipients with their countries,
-  cookies) and promises nothing beyond what the system verifiably does: no
-  retention periods, hosting-location, backup or Sentry statements. Copy lives
-  in `src/data/legal.ts`; `src/data/legal.test.ts` guards it (no e-mail in text,
-  no postal address, no dashes, required recipients, removed topics stay out).
+  sitemap. The imprint names the owner and the e-mail address, which
+  `ContactEmail` renders in the browser only (#147; no postal address, owner
+  decision). The privacy notice is limited to what Swiss law requires
+  (purposes, data categories, recipients with their countries, cookies) and
+  promises nothing beyond what the system verifiably does: no retention
+  periods, hosting-location, backup, Sentry or training statements. Its
+  contact section names the contact form's fields and discloses that the
+  owner may handle e-mails with Claude (Anthropic Ireland, Limited; possible
+  US processing). Copy lives in `src/data/legal.ts`; `src/data/legal.test.ts`
+  guards it (no e-mail in text, no postal address, no dashes, required
+  recipients incl. Anthropic Ireland, removed topics stay out).
 
 ### Security
 

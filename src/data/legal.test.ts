@@ -19,8 +19,9 @@ function strings(copy: LegalPageCopy): string[] {
 }
 
 describe('legal pages copy', () => {
-  it('names only the owner and the published e-mail address (owner decision, no postal address)', () => {
-    expect(LEGAL_CONTACT).toEqual({ name: 'Dominic Furchert', email: 'dominic@furchert.ch' });
+  // The e-mail address is rendered by <ContactEmail> in the browser (#147).
+  it('names only the owner (owner decision, no postal address)', () => {
+    expect(LEGAL_CONTACT).toEqual({ name: 'Dominic Furchert' });
   });
 
   it.each(PAGES)('%s has DE and EN with the same structure and no empty text', (page) => {
@@ -40,7 +41,8 @@ describe('legal pages copy', () => {
   });
 
   // Cloudflare Email Obfuscation rewrites addresses in the SSR HTML; the page
-  // renders the address only in its own leaf element (#125), never in text.
+  // renders the address only in its own leaf element, in the browser (#125,
+  // #147), never in text.
   it.each(PAGES)('%s has no e-mail address or mailto: in any text', (page) => {
     for (const locale of LOCALES) {
       for (const s of strings(LEGAL_PAGES[page][locale])) {
@@ -64,12 +66,24 @@ describe('legal pages copy', () => {
     for (const needle of ['Cloudflare', 'Apple', 'iCloud', 'AbuseIPDB', 'USA', 'NEXT_LOCALE']) expect(text).toContain(needle);
   });
 
+  // Owner decision (2026-11-07): the inbox AI is disclosed (variant A, private
+  // Claude account), so the contact section names Anthropic's Irish entity.
+  it.each(LOCALES)('privacy (%s) names Anthropic Ireland, Limited in the contact section', (locale) => {
+    const heading = { de: 'Kontaktformular und E-Mail', en: 'Contact form and e-mail' }[locale];
+    const section = LEGAL_PAGES.privacy[locale].sections.find((s) => s.heading === heading);
+    expect(section).toBeDefined();
+    expect(section!.paragraphs.join('\n')).toContain('Anthropic Ireland, Limited');
+  });
+
   // Owner rule (2026-11-05): promise nothing the system does not do. These
   // topics were removed on purpose; re-adding one needs a fact check first.
-  it.each(PAGES)('%s makes no retention, hosting, backup, Sentry, Anthropic or licence statement', (page) => {
+  // No training statement either (2026-11-07): whether Anthropic trains on the
+  // data depends on the plan.
+  it.each(PAGES)('%s makes no retention, hosting, backup, Sentry, training or licence statement', (page) => {
     for (const locale of LOCALES) {
       const text = strings(LEGAL_PAGES[page][locale]).join('\n');
-      expect(text).not.toMatch(/Sentry|Anthropic|Backup|Sicherungskopie|Haftung|Liability|Copyright|Urheberrecht/i);
+      expect(text).not.toMatch(/Sentry|Backup|Sicherungskopie|Haftung|Liability|Copyright|Urheberrecht/i);
+      expect(text).not.toMatch(/training|trainiert/i);
       expect(text).not.toMatch(/\bMIT\b/);
       expect(text).not.toMatch(/\b(?:90|180|72)\b/);
       expect(text).not.toMatch(/in der Schweiz|in Switzerland|eigenen Servern|own servers|no tracking|keine Tracking/i);

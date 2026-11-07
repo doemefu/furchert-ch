@@ -5,12 +5,22 @@
 // periods, no hosting-location or "no tracking" promises, no backups, no
 // security measures. When a recipient, data category or cookie changes, change
 // it here; docs: .claude/worklogs and the PR #128 fact-check.
-// E-mail addresses must never appear in this text: Cloudflare Email Obfuscation
-// rewrites them in the SSR HTML (#125); the page renders the address once, in
-// its own leaf element.
+// Owner decisions 2026-11-07, privacy section "Kontaktformular und E-Mail":
+// - Inbox AI disclosed (variant A): the owner may use Claude on a private
+//   (consumer) account to handle e-mails, so the recipient is Anthropic
+//   Ireland, Limited, with possible US processing and SCCs per Anthropic.
+//   Contact-form mails go to iCloud only. No training statement: whether
+//   Anthropic trains on the data depends on the plan (test guards it).
+// - Form fields paragraph: optional phone number and call-back request, the
+//   topic, the button that led to the form and the optional referral, sent
+//   with the message by e-mail. Deliberately no sentence on any evaluation.
+// E-mail addresses must never appear in this text (#125, #147): the page
+// renders the owner's address once, in its own leaf element, through
+// <ContactEmail>, which assembles it only in the browser (without JavaScript
+// a neutral "E-Mail" link to /contact).
 import type { Locale } from '@/i18n/routing';
 
-export const LEGAL_CONTACT = { name: 'Dominic Furchert', email: 'dominic@furchert.ch' } as const;
+export const LEGAL_CONTACT = { name: 'Dominic Furchert' } as const;
 
 export type LegalSection = { heading: string; paragraphs: string[] };
 
@@ -79,6 +89,8 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
         heading: 'Kontaktformular und E-Mail',
         paragraphs: [
           'Wenn Sie das Kontaktformular verwenden, werden Name, E-Mail-Adresse und Nachricht zur Beantwortung Ihrer Anfrage per E-Mail an den Verantwortlichen gesendet. Das Postfach und der Versand laufen über iCloud Mail von Apple (Apple Distribution International Ltd., Irland; die Daten können auch bei Apple Inc., USA, bearbeitet werden). Gemäss Apples Angaben stützen sich Übermittlungen aus der Schweiz auf Standardvertragsklauseln. Dasselbe gilt für E-Mails, die Sie direkt senden.',
+          'Freiwillig können Sie eine Telefonnummer angeben und einen Rückruf wünschen; für einen Rückruf genügt die Telefonnummer. Zusätzlich wird übermittelt, worum es geht (zum Beispiel Live-Demo), über welche Schaltfläche der Website Sie zum Formular gekommen sind (zum Beispiel ‹automation-hero›) und, falls Sie es angeben, wie Sie auf das Angebot aufmerksam geworden sind. Diese Angaben erhält der Verantwortliche mit Ihrer Nachricht per E-Mail.',
+          'Zur Bearbeitung von E-Mails kann der Verantwortliche den KI-Assistenten Claude einsetzen. Dabei können Daten aus E-Mails (z. B. Absender, Betreff und Text) an Anthropic übermittelt werden (Anthropic Ireland, Limited, Irland; die Daten können auch in den USA bearbeitet werden). Gemäss Anthropics Angaben stützen sich Übermittlungen in Länder ohne angemessenes Datenschutzniveau auf Standardvertragsklauseln.',
           'Zum Schutz vor Missbrauch wird beim Absenden zusätzlich Ihre IP-Adresse im Arbeitsspeicher der Website verarbeitet.',
         ],
       },
@@ -129,6 +141,8 @@ const PRIVACY: Record<Locale, LegalPageCopy> = {
         heading: 'Contact form and e-mail',
         paragraphs: [
           "If you use the contact form, your name, e-mail address and message are sent to the controller by e-mail so that your enquiry can be answered. Both the mailbox and the sending are provided by Apple's iCloud Mail (Apple Distribution International Ltd., Ireland; the data may also be processed by Apple Inc., USA). According to Apple, transfers from Switzerland rely on standard contractual clauses. The same applies to e-mails you send directly.",
+          'You may give a phone number and ask for a call back; for a call back the phone number is enough. In addition, the form sends what your enquiry is about (for example a live demo), which button on the website brought you to the form (for example “automation-hero”) and, if you choose to say, how you heard about the offer. The controller receives these details with your message by e-mail.',
+          'The controller may use the AI assistant Claude to handle e-mails. In doing so, data from e-mails (e.g. sender, subject and text) may be sent to Anthropic (Anthropic Ireland, Limited, Ireland; the data may also be processed in the USA). According to Anthropic, transfers to countries without an adequate level of data protection rely on standard contractual clauses.',
           "To protect against abuse, your IP address is also processed in the website's memory when you submit the form.",
         ],
       },
