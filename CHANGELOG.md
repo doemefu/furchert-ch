@@ -246,7 +246,7 @@ All notable changes per milestone. Newest first.
   no line above «Message:» can be forged. A phone error marks and focuses the
   field; the success text (demo or general, with the number for a call back)
   is announced and focused. A privacy note under the button says that the
-  details arrive by e-mail together with the page that led to the form, and
+  details arrive by e-mail together with the button that led to the form, and
   links to the privacy page `/privacy` (#128). No cookie, no storage, no new
   env var or dependency. Tests: `submitContact` cases, mailer lines and header
   safety, phone rules, the allowlists, the call-to-action ids in use and the

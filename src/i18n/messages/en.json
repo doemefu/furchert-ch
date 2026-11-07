@@ -67,7 +67,7 @@
     "send": "Send message",
     "sendDemo": "Request a live demo",
     "noPressure": "After the meeting I follow up once. If you don't want to go further, that's fine.",
-    "privacyNote": "Your details reach me by email, together with the page that brought you to the form (see <link>privacy policy</link>).",
+    "privacyNote": "Your details reach me by email, together with the button that brought you to the form (see <link>privacy policy</link>).",
     "ref": "Or directly:",
     "emailFallback": "E-mail",
     "labelEmail": "Email",
