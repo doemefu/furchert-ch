@@ -21,7 +21,12 @@ Unit tests use vitest (node environment, no DOM; config `vitest.config.mts`,
 the `@/` alias mirrors tsconfig); put them next to the code as `*.test.ts`
 under `src/`.
 
-CI (`ci.yml`) runs this same lint/typecheck/test/build `verify` job on every PR,
+Copy guards:
+- `src/i18n/messageKeys.test.ts` checks DE/EN key parity across the public message tree, that every key used by the /automation, home, header and footer components exists, and that no `pages.automation` key is unused. Register a new template key (``t(`x${n}`)``) in that test, and delete retired copy from both message files.
+- `src/i18n/automationCopy.test.ts` allows only the approved prices (page data and `public/llms.txt`) and pins the tiles, the sample calculation, the steps and the FAQ markup. A price change updates its approved list, the data module and `llms.txt` together.
+- `src/redirects.test.ts` pins the `next.config.mjs` redirects.
+
+CI (`ci.yml`) runs the lint/typecheck/test/build commands above as its `verify` job on every PR,
 capped at a 15-minute `timeout-minutes` guard (normal runtime ~1–2 min). If
 your PR's `verify` job is cancelled at 15 minutes, treat that as a genuine
 hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §
@@ -92,7 +97,7 @@ for UI-only work on the contact page.
 - Follow the 6-phase workflow in `CLAUDE.md` / `.claude/rules/workflow.md`. One
   worklog per milestone; update `.claude/memory/MEMORY.md` (newest on top) when done.
 - Recreate the design pixel-faithfully from the prototype source. `/automation`
-  stays a mockup.
+  stays a static offer page without any AI backend (illustrative examples).
 - No secrets in git. Pin dependency versions. Commit, push and open PRs on feature branches without asking (standing permission, 2026-08-28); merging, force-pushes and cluster mutations need an explicit go.
 - **Code review tooling:** CodeRabbit is not installed on this repository
   (confirmed 2026-08-28: no response to a manual `@coderabbitai review`

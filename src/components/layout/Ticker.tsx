@@ -1,4 +1,6 @@
 // Ported verbatim from the prototype (shared.jsx Ticker). Presentational only.
+// The scroll animation lives in globals.css (.ticker-track) so it can stop
+// under prefers-reduced-motion (#145).
 import { TICKER_ITEMS } from '@/data/ticker';
 
 export function Ticker() {
@@ -16,11 +18,11 @@ export function Ticker() {
       }}
     >
       <div
+        className="ticker-track"
         style={{
           display: 'flex',
           gap: '3rem',
           whiteSpace: 'nowrap',
-          animation: 'ticker 22s linear infinite',
         }}
       >
         {items.map((item, i) => (

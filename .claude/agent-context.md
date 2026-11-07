@@ -10,7 +10,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 - Per area the contract must define: route(s) (App Router path, locale handling) and which are public vs. OIDC-gated; component tree (props, data source `src/data/*` / i18n / backend, client vs. server component); i18n keys added (de/en) and static data modules touched.
 - For backend-connected surfaces: exact upstream endpoints (method, path, auth, request/response shape), the Next route handler that proxies them (so the OIDC access token stays server-side), and the role gating (`role=ADMIN` for admin writes).
 - Surfaces with no real endpoint must be explicit labelled placeholders.
-- Confirm explicitly that `/automation` and `/automation/scan` stay non-functional mockups when in scope.
+- Confirm explicitly that `/automation` stays a static offer page without any AI backend (no Claude API, no AI endpoint, no persistence) when in scope; `/automation/scan` is retired and redirects.
 
 ## implementer
 
@@ -19,7 +19,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 - Styling: ETHON tokens from `src/styles/globals.css` via CSS variables (`var(--blue-base)`, `var(--n-60)`, ...). No UI kit, no second styling system.
 - Copy via next-intl (`src/i18n/messages/{de,en}.json`), static content typed in `src/data/`; no hardcoded UI strings. Both locales must work; `/` redirects to `/de`.
 - Backend calls only from server route handlers (`src/app/api/...`) or server components, using cluster-internal FQDNs. Never expose the OIDC access token to the browser. Gate OIDC routes server-side (session + role check), not only in the UI.
-- `/automation` and `/automation/scan` stay non-functional mockups: no Claude API, no `/api/scan/*`, no persistence, no outbound calls; mark it in UI and code comments.
+- `/automation` is a static offer page without any AI backend: no Claude API, no AI endpoint, no `/api/scan/*`, no persistence, no outbound calls; its examples are illustrative and labelled in UI and code comments. `/automation/scan` is retired and redirects.
 - Verification: `pnpm lint && pnpm typecheck && pnpm test && pnpm build`. Record results in the worklog.
 - Each milestone ends buildable and shippable.
 - Tell the reviewer "[area] is ready for review"; after approval, tell devops if Dockerfile/k8s/Flux wiring is affected.
@@ -30,7 +30,7 @@ Review in addition to the generic checklist:
 - OIDC access tokens never reach the browser; OIDC-gated routes enforced server-side; admin write actions gated on `role=ADMIN` per the service `INTERFACES.md` files.
 - Pixel fidelity: the UI matches the prototype source for the touched page (tokens, spacing, `.border-x` grid) in DE and EN.
 - Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules"); surfaces without a real endpoint are labelled placeholders, never fabricated "live" data.
-- `/automation` stays a mockup: no outbound network calls, no scan API routes, no fake success.
+- `/automation` stays a static offer page: no outbound network calls, no AI or scan API routes, no fake success; its examples are labelled as illustrative.
 - Server vs. client components used appropriately; data fetched server-side.
 - No `.env*` with values committed; k8s uses `secretKeyRef`.
 - Dependency versions pinned (no `^`/`~`), Docker base image pinned.
@@ -56,7 +56,7 @@ Review in addition to the generic checklist:
 
 Additional checks:
 - Secrets and auth: OIDC access token stays server-side; OIDC-gated routes enforced server-side; admin writes require `role=ADMIN`; no `.env` committed, k8s env via `secretKeyRef`.
-- Automation = mockup: plan keeps `/automation` and `/automation/scan` non-functional (no Claude API, no `/api/scan/*`, no persistence, no accidental backend wiring).
+- Automation = static offer page: plan keeps `/automation` without any AI backend (no Claude API, no AI endpoint, no persistence, no accidental backend wiring); `/automation/scan` stays retired.
 - Backend integration: consumed endpoints exist in `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules") (not invented); shapes correct; failure handled (backend down, 401/403); surfaces without an endpoint are explicit placeholders.
 - Design fidelity: pixel-faithful recreation of the prototype (tokens, `.border-x` grid, DE+EN), not a redesign; the superseded `furchert-ch-website-spec.md` is not followed by mistake.
 - Next.js: server/client split correct, data fetched server-side, both locales handled, `/` to `/de` redirect intact, no required in-memory state across pod restarts.
@@ -72,4 +72,4 @@ Additional checks:
 - `DEPLOYMENT.md`: new env var or secret key; Dockerfile/k8s/Flux/Cloudflare Tunnel change; new troubleshooting case.
 - `CONTRIBUTING.md`: new local-dev step (pnpm script, local OIDC, port-forward), new test type/command, new CI workflow.
 - `CHANGELOG.md`: one entry per shipped milestone (this repo logs milestones; check its heading convention rather than assuming `[Unreleased]`).
-- Project context: public personal site + OIDC-gated `/dashboard` (homelab overview) and ADMIN-only `/dashboard/network` (data-service), `/dashboard/services` (Prometheus) and `/dashboard/auth`; device admin GUIs planned; `/automation` is a mockup.
+- Project context: public personal site + OIDC-gated `/dashboard` (homelab overview) and ADMIN-only `/dashboard/network` (data-service), `/dashboard/services` (Prometheus) and `/dashboard/auth`; device admin GUIs planned; `/automation` is a static offer page without an AI backend (illustrative examples).

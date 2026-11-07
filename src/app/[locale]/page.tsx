@@ -10,6 +10,7 @@ import { Ticker } from '@/components/layout/Ticker';
 import { EXPERIENCE } from '@/data/experience';
 import { ENGAGEMENT } from '@/data/engagement';
 import { HOME_STATS } from '@/data/home-stats';
+import { contactHref } from '@/data/contact-sources';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { buildHomeJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
@@ -58,7 +59,7 @@ export default async function HomePage({
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const teaserKeys = ['it', 'rowing', 'projects', 'automation'] as const;
+  const teaserKeys = ['automation', 'it', 'rowing', 'projects'] as const;
   const jsonLd = buildHomeJsonLd({
     locale,
     pageUrl: localizedUrl(locale, '/'),
@@ -405,7 +406,12 @@ export default async function HomePage({
         </div>
       </section>
 
-      <CTAStrip together={t('cta.together')} togsub={t('cta.togsub')} />
+      <CTAStrip
+        together={t('cta.together')}
+        togsub={t('cta.togsub')}
+        primary={{ href: contactHref('home-cta'), label: t('cta.primary') }}
+        examples={{ href: '/automation', label: t('cta.examples') }}
+      />
     </div>
   );
 }

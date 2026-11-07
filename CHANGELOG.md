@@ -197,6 +197,32 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **`/automation` rebuilt for the Gate-0 offer, construction first** (#145,
+  part 1): a light hero «Drei Dinge, die KI im Bau heute schon kann.» with three
+  CSS-only example tiles (native `<details>`: a site report spoken into the
+  phone, a quote draft from an enquiry, the 5:30 am overview as a later own
+  automation), «So arbeite ich», a Regie example with a sample calculation,
+  four steps with fixed prices (live demo free, assessment CHF 750, rollout
+  CHF 3'900 under 20 people or from CHF 7'500, subscription CHF 200 a month or
+  CHF 500 to 900) and the risk reversal, the own automation once as «Später
+  möglich», «Ihre Daten», a short about section, ten FAQs and the closing call to
+  action after the FAQ. A sticky call to action appears on phones once the
+  hero has scrolled out. Every contact button links to `/contact?from=<id>`
+  (new `src/data/contact-sources.ts`, `contactHref`/`FromId`); the closing
+  section keeps a mailto link; the contact form is unchanged until part 2.
+  Labels and the new `Tag` `contrast` prop use `--n-60` instead of `--n-50` on
+  /automation (AA contrast); new `mail` and `cloud` icons. The price FAQ is visible but left
+  out of the FAQPage JSON-LD (`faqsForMarkup`): no CHF amount in structured
+  data. The trade stories are gone. Home: «KI für KMU» first in the nav, hero
+  and teaser name the construction focus, the bottom CTA strip addresses
+  businesses (new optional `CTAStrip` props). `/automation/scan` is retired:
+  `/automation/scan` and `/{de,en}/automation/scan` redirect (308) to the
+  locale's `/automation`, and the vanity URLs `/ki` and `/bau` redirect (307)
+  to `/de/automation`. The home ticker stops under reduced motion. `llms.txt`
+  describes the new offer. Tests: copy guards rewritten (approved amounts,
+  sample-calculation amounts, bans, tags, FAQ markup), redirects pinned, DE/EN
+  key parity over the whole public tree and a used-keys check. No new
+  dependency.
 - **`/automation` made concrete, with prices** (#139): four invented trade
   stories (electrician, carpentry, bakery, hair salon) replace the six abstract
   use-case cards, each with estimated hours per week before and with AI, what

@@ -12,7 +12,8 @@ The single web frontend for the doemefu homelab — Dominic Furchert's personal 
   `/dashboard/auth` (users, device clients, JWKS from `homelab-auth-service`'s REST
   API, #44); ADMIN-only `/dashboard/devices` (device state and manual control,
   schedules from `homelab-device-service`'s REST API, #45 slice 1).
-- **`/automation` (incl. `/automation/scan`) is a visual mockup only** — no backend.
+- **`/automation` is a static offer page** without any AI backend; its examples are
+  illustrative. `/automation/scan` is retired and redirects there.
 
 Stack: Next.js (App Router, TypeScript), next-intl, Auth.js (OIDC). Deployed to k3s
 `apps` namespace via Flux CD behind Cloudflare Tunnel.
@@ -29,7 +30,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 0 | Claude scaffold + repo conventions | done |
 | 1 | Next.js skeleton + ETHON design system | done |
 | 2 | Public pages | done |
-| 3 | Automation section (mockup) | done |
+| 3 | Automation section (static offer page; scan retired in #145) | done |
 | 4 | Real OIDC dashboard auth | done |
 | 5 | Dashboard shell | done |
 | 6 | Integrated admin GUIs | in progress (auth-service #44 done; device-service #45 slice 1 done — device registration/deletion pending) |
