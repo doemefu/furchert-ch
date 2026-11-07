@@ -51,8 +51,8 @@ delivery failure each surface a distinct visible error.
 The offer page is static: no Claude API, no AI endpoint, no persistence. Its
 three example tiles (native `<details>`, no client JS), the before/after
 example and the sample calculation are illustrative and labelled as invented.
-Every call to action links to `/contact?from=<id>`
-(`src/data/contact-sources.ts`); the contact page does not read the parameter
+Client JS on the page is limited to the FAQ accordion and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
+Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a plain `mailto:` link; the contact page does not read the parameter
 yet. The price FAQ is visible but left out of the FAQPage JSON-LD. The
 redirects live in `next.config.mjs` (pinned by `src/redirects.test.ts`).
 Nothing under `/automation` imports the mailer.
@@ -92,7 +92,7 @@ automated tests" half of #42 is tracked on that issue.
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) and the device-service admin GUI `/dashboard/devices` (#45 slice 1) are real.
+- **Real:** public site (incl. the `/automation` offer page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) and the device-service admin GUI `/dashboard/devices` (#45 slice 1) are real.
 - **Mock:** the example tiles, the before/after example and the sample calculation on `/automation` (labelled as invented; no AI backend). The `/automation/scan` wizard is retired and redirects (#145).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus

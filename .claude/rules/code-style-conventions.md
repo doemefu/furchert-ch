@@ -28,6 +28,8 @@ paths:
 - Every public page builds `generateMetadata` with `buildPageMetadata` (`src/lib/seo/metadata.ts`): canonical, hreflang, OpenGraph and Twitter come from there, never by hand.
 - A new public page also gets a path in `src/app/sitemap.ts` and a date in `src/lib/seo/pages.ts`. Bump a page's date when its main content, its structured data or the links in its content change; header/footer changes do not count.
 - JSON-LD (`src/lib/seo/jsonLd.ts`) states only what the page shows and never e-mail, phone or address, and never Offer or price markup (`offers`, `price`, `priceRange`, ...). No amount in CHF appears anywhere in JSON-LD: a FAQ entry that names prices stays visible, carries `markup: false` and is left out of the FAQPage (`faqsForMarkup`, /automation, #145). Reuse the `WEBSITE_ID` / `PERSON_ID` ids.
+- `public/llms.txt` repeats the /automation offer: its prices are the English price phrases of the page, word for word, and its "Prices as of <Month YYYY>" matches the month of `PAGE_LAST_MODIFIED['/automation']`. `src/i18n/automationCopy.test.ts` checks both, so changing a price or moving the /automation date into a new month means editing `llms.txt` in the same PR.
+- A call to action that leads to `/contact` uses `contactHref(<id>)` from `src/data/contact-sources.ts`; a new button gets its own id in `FROM_IDS`. `/automation` and the home page never import `src/app/[locale]/contact/*`, `src/lib/contact/*` or `src/contact.env.ts`.
 
-### Automation = mockup
+### Automation = static offer page
 - `/automation` is a static offer page without any AI backend: no Claude API, no AI endpoint, no persistence; its examples are illustrative. `/automation/scan` is retired and redirects.

@@ -21,6 +21,11 @@ Unit tests use vitest (node environment, no DOM; config `vitest.config.mts`,
 the `@/` alias mirrors tsconfig); put them next to the code as `*.test.ts`
 under `src/`.
 
+Copy guards:
+- `src/i18n/messageKeys.test.ts` checks DE/EN key parity across the public message tree, that every key used by the /automation, home, header and footer components exists, and that no `pages.automation` key is unused. Register a new template key (``t(`x${n}`)``) in that test, and delete retired copy from both message files.
+- `src/i18n/automationCopy.test.ts` allows only the approved prices (page data and `public/llms.txt`) and pins the tiles, the sample calculation, the steps and the FAQ markup. A price change updates its approved list, the data module and `llms.txt` together.
+- `src/redirects.test.ts` pins the `next.config.mjs` redirects.
+
 CI (`ci.yml`) runs this same lint/typecheck/test/build `verify` job on every PR,
 capped at a 15-minute `timeout-minutes` guard (normal runtime ~1–2 min). If
 your PR's `verify` job is cancelled at 15 minutes, treat that as a genuine

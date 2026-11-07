@@ -30,7 +30,7 @@ under `.claude/worklogs/` and `docs/INDEX.md`.
 | 0 | Claude scaffold + repo conventions | done |
 | 1 | Next.js skeleton + ETHON design system | done |
 | 2 | Public pages | done |
-| 3 | Automation section (mockup) | done |
+| 3 | Automation section (static offer page; scan retired in #145) | done |
 | 4 | Real OIDC dashboard auth | done |
 | 5 | Dashboard shell | done |
 | 6 | Integrated admin GUIs | in progress (auth-service #44 done; device-service #45 slice 1 done — device registration/deletion pending) |

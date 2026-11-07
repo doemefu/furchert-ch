@@ -268,6 +268,22 @@ curl -sI https://furchert.ch/llms.txt | head -1                    # 200
 curl -sI https://furchert.ch/de/about | grep -i '^link:' | grep -ci hreflang   # 0
 ```
 
+### Redirects (#145)
+
+- `/ki` and `/bau` redirect to `/de/automation` with 307. Temporary: the target moves after Gate 0, and these URLs are printed on flyers. The Cloudflare "Always Use HTTPS" owner step above must be done before `/ki` or `/bau` are printed.
+- `/automation/scan` redirects to `/de/automation` with 308.
+- `/{de,en}/automation/scan` redirects to the same locale's `/automation` with 308.
+- Redirects run before the next-intl proxy, match case-insensitively and pass the query string through.
+- A 308 is cached by browsers, so never reuse `/automation/scan`. Change `next.config.mjs` and `src/redirects.test.ts` together.
+- Verify after deploy:
+
+```bash
+curl -sI https://furchert.ch/ki | grep -iE '^(HTTP|location)'                  # 307, /de/automation
+curl -sI https://furchert.ch/bau | grep -iE '^(HTTP|location)'                 # 307, /de/automation
+curl -sI https://furchert.ch/automation/scan | grep -iE '^(HTTP|location)'     # 308, /de/automation
+curl -sI https://furchert.ch/en/automation/scan | grep -iE '^(HTTP|location)'  # 308, /en/automation
+```
+
 ## Validation
 
 ```bash
