@@ -26,7 +26,7 @@ Copy guards:
 - `src/i18n/automationCopy.test.ts` allows only the approved prices (page data and `public/llms.txt`) and pins the tiles, the sample calculation, the steps and the FAQ markup. A price change updates its approved list, the data module and `llms.txt` together.
 - `src/redirects.test.ts` pins the `next.config.mjs` redirects.
 
-CI (`ci.yml`) runs this same lint/typecheck/test/build `verify` job on every PR,
+CI (`ci.yml`) runs the lint/typecheck/test/build commands above as its `verify` job on every PR,
 capped at a 15-minute `timeout-minutes` guard (normal runtime ~1–2 min). If
 your PR's `verify` job is cancelled at 15 minutes, treat that as a genuine
 hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §

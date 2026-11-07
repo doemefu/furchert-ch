@@ -32,7 +32,7 @@
 - Do **not** touch secrets, credentials, age keys, `.sops.*`, or any `*_secret`/`*_token`/`*_key` files — ever. Secrets are provisioned by the user.
 - Do **not** use `latest` for any container image or dependency — pin exact versions (no `^`/`~` ranges).
 - Do **not** introduce new dependencies without explicit user approval.
-- Do **not** give `/automation` an AI backend (no Claude API, no AI endpoint, no persistence): it is a static offer page with illustrative, labelled examples by design. No silent fake success anywhere else either.
+- Do **not** make the `/automation` section functional — it is a mockup by design. No silent fake success anywhere else either.
 - Commit, push and open PRs on feature branches without asking (standing permission, 2026-08-28). Merging PRs is always the user's. Rolling out changes the user has already merged needs no extra go (2026-10-09); force-pushes, playbook runs, other cluster mutations and anything touching secrets need an explicit go. SOPS files are never read or edited by Claude — the user edits them.
 - Before any merge, wait for the Copilot review and fix or answer every comment (CodeRabbit is not installed here).
 - All code, comments, and documentation in **English**.
