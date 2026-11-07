@@ -6,8 +6,6 @@ import en from './messages/en.json';
 import { FAQS } from '@/data/automation-faqs';
 import { EXAMPLE } from '@/data/automation-example';
 import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
-import { SCAN_QUESTIONS, SCAN_ROLES } from '@/data/scan';
-import { DEMO_REPORT } from '@/app/[locale]/automation/scan/_demo-report';
 import { automationJsonLdText, buildAutomationJsonLd } from '@/lib/seo/jsonLd';
 import type { Locale } from './routing';
 
@@ -359,17 +357,4 @@ describe('automation JSON-LD from the real page copy', () => {
       });
     }
   }
-});
-
-describe('automation scan demo strings', () => {
-  it('use no em dash (owner rule 2026-11-03)', () => {
-    const scanCopy = [
-      ...strings(de.pages.scan),
-      ...strings(en.pages.scan),
-      ...strings(DEMO_REPORT),
-      ...strings(SCAN_QUESTIONS),
-      ...strings(SCAN_ROLES),
-    ];
-    for (const text of scanCopy) expect(text, text).not.toContain('—');
-  });
 });

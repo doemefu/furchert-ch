@@ -6,8 +6,7 @@
 // this file and reuse the page's existing section styles (sectionStyles.ts);
 // the grids are responsive (single column on narrow phones).
 // The prototype's `id="scan"` FAQ placeholder stays dropped (worklog F1).
-// The /automation/scan demo is not linked from here: its sample report does
-// not match the published packages.
+// The /automation/scan demo is retired; next.config.mjs redirects it here.
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
