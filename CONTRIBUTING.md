@@ -92,7 +92,7 @@ for UI-only work on the contact page.
 - Follow the 6-phase workflow in `CLAUDE.md` / `.claude/rules/workflow.md`. One
   worklog per milestone; update `.claude/memory/MEMORY.md` (newest on top) when done.
 - Recreate the design pixel-faithfully from the prototype source. `/automation`
-  stays a mockup.
+  stays a static offer page without any AI backend (illustrative examples).
 - No secrets in git. Pin dependency versions. Commit, push and open PRs on feature branches without asking (standing permission, 2026-08-28); merging, force-pushes and cluster mutations need an explicit go.
 - **Code review tooling:** CodeRabbit is not installed on this repository
   (confirmed 2026-08-28: no response to a manual `@coderabbitai review`
