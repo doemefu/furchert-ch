@@ -11,7 +11,6 @@ import { PROJECTS } from '@/data/projects';
 import { ROWING_CARDS } from '@/data/rowing';
 import { TICKER_ITEMS } from '@/data/ticker';
 import { FAQS } from '@/data/automation-faqs';
-import { STORIES } from '@/data/automation-stories';
 import { EXAMPLE } from '@/data/automation-example';
 import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
 import { SCAN_QUESTIONS, SCAN_ROLES } from '@/data/scan';
@@ -111,7 +110,7 @@ describe('public copy', () => {
   const data = {
     BIO, FACTS, TIMELINE, INTERESTS, ENGAGEMENT, EXPERIENCE, HOME_STATS, LAB_SERVICES, LAB_SHOWCASE,
     IT_CARDS, TECH_STACK, PROJECTS, ROWING_CARDS, TICKER_ITEMS,
-    FAQS, STORIES, EXAMPLE, PRICE_STEPS, PRICE_ADDON, SCAN_QUESTIONS, SCAN_ROLES,
+    FAQS, EXAMPLE, PRICE_STEPS, PRICE_ADDON, SCAN_QUESTIONS, SCAN_ROLES,
   };
 
   it('has no em dash in the messages', () => {

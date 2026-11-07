@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 import de from './messages/de.json';
 import en from './messages/en.json';
 import { FAQS } from '@/data/automation-faqs';
-import { STORIES } from '@/data/automation-stories';
 import { EXAMPLE } from '@/data/automation-example';
 import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
 import { SCAN_QUESTIONS, SCAN_ROLES } from '@/data/scan';
@@ -44,7 +43,6 @@ const LOCALES: Locale[] = ['de', 'en'];
 const pageCopy = (locale: Locale): string[] => [
   ...strings(messages[locale].pages.automation),
   ...strings(FAQS.map((f) => f.i18n[locale])),
-  ...strings(STORIES.map((s) => s.i18n[locale])),
   ...strings(EXAMPLE.i18n[locale]),
   ...strings(PRICE_STEPS.map((p) => p.i18n[locale])),
   ...strings(PRICE_ADDON.i18n[locale]),
@@ -209,52 +207,6 @@ describe('automation offer in llms.txt', () => {
         expect(llms.slice(0, at), amount).toMatch(/(?:\bab|\bfrom) $/);
         at = llms.indexOf(amount, at + amount.length);
       }
-    }
-  });
-});
-
-describe('automation stories', () => {
-  it('tells four stories with unique ids (the lead says "Vier"/"Four")', () => {
-    expect(STORIES.length).toBe(4);
-    expect(de.pages.automation.useCaseLead).toMatch(/^Vier /);
-    expect(en.pages.automation.useCaseLead).toMatch(/^Four /);
-    expect(new Set(STORIES.map((s) => s.id)).size).toBe(STORIES.length);
-  });
-
-  it('shows estimated hours that go down, rounded to half hours', () => {
-    for (const story of STORIES) {
-      expect(story.hoursAfter).toBeGreaterThan(0);
-      expect(story.hoursBefore).toBeGreaterThan(story.hoursAfter);
-      expect((story.hoursBefore * 2) % 1).toBe(0);
-      expect((story.hoursAfter * 2) % 1).toBe(0);
-    }
-  });
-
-  it('labels every story as an example', () => {
-    for (const story of STORIES) {
-      expect(story.i18n.de.tag).toMatch(/^Beispiel/);
-      expect(story.i18n.en.tag).toMatch(/^Example/);
-    }
-    expect(de.pages.automation.storyHoursNote).toMatch(/geschätzt/i);
-    expect(en.pages.automation.storyHoursNote).toMatch(/estimate/i);
-  });
-
-  it('names prices only in the package line, and none for the salon', () => {
-    for (const story of STORIES) {
-      for (const locale of LOCALES) {
-        const { fit, ...rest } = story.i18n[locale];
-        for (const text of strings(rest)) expect(text, text).not.toMatch(/CHF/);
-        // No package fits the salon (a custom build does not pay off there).
-        if (story.id === 'salon') expect(fit).not.toMatch(/CHF/);
-      }
-    }
-  });
-
-  it('has the same data path in both languages', () => {
-    for (const story of STORIES) {
-      expect(story.i18n.de.dataPath.length).toBeGreaterThanOrEqual(3);
-      expect(story.i18n.en.dataPath.length).toBe(story.i18n.de.dataPath.length);
-      expect(Boolean(story.i18n.en.dataNote)).toBe(Boolean(story.i18n.de.dataNote));
     }
   });
 });

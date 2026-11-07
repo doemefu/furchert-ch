@@ -1,6 +1,6 @@
 // Ported from the prototype (pages.jsx PageAutomation, lines 459-592) and
 // reworked for the SME offer (Zürcher Oberland). RSC; only the FAQ block is
-// a client island. Sections: hero, trade stories, one before/after example,
+// a client island. Sections: hero, one before/after example,
 // process and prices (owner-approved prices, 2026-11-03), data protection,
 // about, call to action, FAQ. The new sections are server components next to
 // this file and reuse the page's existing section styles (sectionStyles.ts);
@@ -16,7 +16,6 @@ import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { FAQS } from '@/data/automation-faqs';
-import { AutomationStories } from './AutomationStories';
 import { AutomationExample } from './AutomationExample';
 import { AutomationPricing } from './AutomationPricing';
 import { labelMono, leadStyle } from './sectionStyles';
@@ -167,7 +166,6 @@ export default async function AutomationPage({
       </div>
 
       <div className="container border-x">
-        <AutomationStories locale={locale} />
         <AutomationExample locale={locale} />
         <AutomationPricing locale={locale} />
 
