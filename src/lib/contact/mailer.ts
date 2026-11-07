@@ -55,9 +55,11 @@ export interface ContactMail {
 const TOPIC_LABELS = { demo: 'Live-Demo', other: 'Etwas anderes' } as const;
 
 // One line, whatever the caller passes: the action already rejects names and
-// e-mail addresses with control characters; this keeps the subject and the
-// body lines single-line even if a caller does not.
-const singleLine = (value: string) => value.replace(/[\x00-\x1f\x7f\u0085\u2028\u2029]/g, '');
+// e-mail addresses with control, bidi or invisible format characters; this
+// keeps the subject and the body lines single-line and in reading order even
+// if a caller does not.
+const singleLine = (value: string) =>
+  value.replace(/[\x00-\x1f\x7f\u0085\u2028\u2029\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g, '');
 
 function phoneLines(raw: string | undefined): string[] {
   const phone = raw ? parsePhone(raw) : null;

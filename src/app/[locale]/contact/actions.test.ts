@@ -56,7 +56,15 @@ describe('submitContact: validation', () => {
     ['a bare line feed', 'A\nRückruf gewünscht: ja'],
     ['a Unicode line separator', 'A\u2028Quelle: home-cta'],
     ['a NUL character', 'A\u0000B'],
-  ])('rejects a name with %s, so it cannot forge mail lines', async (_, name) => {
+    ['a right-to-left override', 'Ada \u202Eetsiws'],
+    ['a left-to-right mark', 'Ada\u200EMuster'],
+    ['a right-to-left mark', 'Ada\u200FMuster'],
+    ['a left-to-right embedding', 'Ada\u202AMuster'],
+    ['a pop directional formatting', 'Ada\u202CMuster'],
+    ['a first-strong isolate', 'Ada\u2068Muster'],
+    ['a pop directional isolate', 'Ada\u2069Muster'],
+    ['a zero-width no-break space', 'Ada\uFEFFMuster'],
+  ])('rejects a name with %s, so it cannot forge or reorder mail lines', async (_, name) => {
     expect(await submitContact({ ...base, name, from: 'automation-hero' })).toEqual({ ok: false, error: 'invalid' });
     expect(sendContactMail).not.toHaveBeenCalled();
   });
@@ -175,6 +183,13 @@ describe('submitContact: attribution', () => {
 });
 
 describe('submitContact: delivery', () => {
+  it('rate-limits the phone-only call back like any other submission', async () => {
+    checkContactRateLimit.mockReturnValue(false);
+    expect(await submitContact(callbackOnly)).toEqual({ ok: false, error: 'rate_limited' });
+    expect(checkContactRateLimit).toHaveBeenCalledWith('203.0.113.7');
+    expect(sendContactMail).not.toHaveBeenCalled();
+  });
+
   it('keys the rate limit on the client IP and returns rate_limited without sending', async () => {
     checkContactRateLimit.mockReturnValue(false);
     expect(await submitContact(base)).toEqual({ ok: false, error: 'rate_limited' });

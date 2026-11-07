@@ -92,6 +92,14 @@ describe('sendContactMail: callback and attribution (#145)', () => {
     expect(sent().subject).toBe('Contact form: AQuelle: home-ctaRückruf gewünscht: ja');
   });
 
+  it('drops bidi and invisible format characters from the name in the subject and the body', async () => {
+    const { sendContactMail } = await loadMailer();
+    await sendContactMail({ ...input, name: 'Ada \u202Eetsiws\u202C\u2066x\u2069\u200E\u200F\uFEFF' });
+
+    expect(sent().subject).toBe('Contact form: Ada etsiwsx');
+    expect(sent().text.split('\n')[0]).toBe('Name: Ada etsiwsx');
+  });
+
   it('prefixes the subject with «Rückruf: » for a call back, else «Live-Demo: » for the demo topic', async () => {
     const { sendContactMail } = await loadMailer();
     await sendContactMail(full);
