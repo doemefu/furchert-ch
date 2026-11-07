@@ -2,13 +2,15 @@
 // and only for the locale that misses it. These tests catch it earlier:
 // - DE and EN carry the same keys across the whole public message tree
 //   (the private dashboard has its own copy tests);
-// - every key the /automation, home, header, footer and ContactEmail
-//   components ask for exists in both locales, read from the source files
-//   as text;
-// - every /automation key is used, so retired copy does not linger.
+// - every key the /automation, contact, home, header, footer and
+//   ContactEmail components ask for exists in both locales, read from the
+//   source files as text;
+// - every /automation and `contact.*` key is used, so retired copy does not
+//   linger.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { HEARD_VIA_IDS, heardViaMessageKey } from '@/data/contact-sources';
 import de from './messages/de.json';
 import en from './messages/en.json';
 
@@ -34,6 +36,8 @@ const FILES: Record<string, string> = {
   'src/app/[locale]/automation/WowTiles.tsx': 'pages.automation',
   'src/app/[locale]/automation/AutomationPricing.tsx': 'pages.automation',
   'src/app/[locale]/automation/AutomationExample.tsx': 'pages.automation',
+  'src/app/[locale]/contact/ContactForm.tsx': 'contact',
+  'src/app/[locale]/contact/page.tsx': '',
   'src/app/[locale]/page.tsx': '',
   'src/components/layout/Header.tsx': '',
   'src/components/layout/Footer.tsx': '',
@@ -64,7 +68,7 @@ const templateValues = (template: string, src: string): string[] | undefined => 
 const usedKeys = (file: string): string[] => {
   const src = read(file);
   const keys: string[] = [];
-  for (const m of src.matchAll(/\bt\(\s*(['`])((?:(?!\1).)+)\1/g)) {
+  for (const m of src.matchAll(/\bt(?:\.rich)?\(\s*(['`])((?:(?!\1).)+)\1/g)) {
     const key = m[2];
     if (!key.includes('${')) {
       keys.push(key);
@@ -105,5 +109,27 @@ describe('message keys', () => {
         .map((key) => (key.startsWith('pages.automation.') ? key.slice('pages.automation.'.length) : key)),
     );
     for (const key of flatten(de.pages.automation)) expect(used.has(key), key).toBe(true);
+  });
+
+  // The source options take their keys from heardViaMessageKey(), not from
+  // a literal t('...') call.
+  const heardViaKeys = HEARD_VIA_IDS.map(heardViaMessageKey);
+
+  it('have a label for every source option in both locales', () => {
+    for (const locale of [de, en]) {
+      for (const key of heardViaKeys) expect(locale.contact, key).toHaveProperty([key]);
+    }
+  });
+
+  it('are all used on /contact or by ContactEmail (no retired copy left behind)', () => {
+    const used = new Set([
+      ...usedKeys('src/app/[locale]/contact/ContactForm.tsx'),
+      ...usedKeys('src/components/ui/ContactEmail.tsx'),
+      ...usedKeys('src/app/[locale]/contact/page.tsx')
+        .filter((key) => key.startsWith('contact.'))
+        .map((key) => key.slice('contact.'.length)),
+      ...heardViaKeys,
+    ]);
+    for (const key of flatten(de.contact)) expect(used.has(key), key).toBe(true);
   });
 });

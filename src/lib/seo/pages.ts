@@ -20,7 +20,8 @@ export const PAGE_LAST_MODIFIED = {
   '/automation': '2026-11-07',
   '/rowing': '2026-11-04',
   '/projects': '2026-11-04',
-  '/contact': '2026-11-04',
+  // Sie form, call back and source fields (#145, part 2).
+  '/contact': '2026-11-07',
   // Legal pages (#16); bump when the copy in src/data/legal.ts changes.
   '/imprint': '2026-11-05',
   '/privacy': '2026-11-07',

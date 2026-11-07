@@ -34,13 +34,24 @@ from `src/lib/seo/pages.ts`; robots disallows `/dashboard` including the
 locale-prefixed variants and states the Content Signals). `/llms.txt` is a
 static summary for AI tools (`public/llms.txt`).
 
-The contact form posts to a typed `'use server'` action that validates the
-input, applies a honeypot and an in-process rate limiter, then delivers the
-message by authenticated SMTP (iCloud, `smtp.mail.me.com:587`) to
-`info@furchert.ch` with the submitter set as Reply-To. The success state
-still renders only on a real `{ok:true}` response (returned only once the
-mail server accepts the message), and invalid input / rate limiting / a
-delivery failure each surface a distinct visible error.
+The contact form (Sie form, #145) asks for a topic (live demo or something
+else), name, e-mail, «Rückruf gewünscht» with a phone number, an optional
+message and an optional «Wie sind Sie auf mich aufmerksam geworden?». The call
+back starts unchecked; the «Rückruf anfordern» link on `/automation`
+(`?from=automation-callback`) pre-ticks it; whenever it is ticked, the e-mail
+is optional and the phone required. The page stays static: the form reads
+`?from=<id>` in the browser, keeps it only if it is on `FROM_IDS` (`src/data/contact-sources.ts`),
+sends it with the enquiry and removes it from the address bar; no cookie, no
+storage. It posts to a typed `'use server'` action that validates the input
+(phone: 9 to 15 digits; unknown `from`/source values are dropped), applies a
+honeypot and an in-process rate limiter, then delivers the message by
+authenticated SMTP (iCloud, `smtp.mail.me.com:587`) to `info@furchert.ch`,
+with the submitter as Reply-To when an e-mail is given and «Quelle:» /
+«Aufmerksam geworden:» lines for counting enquiries per button
+(`INTERFACES.md` §3). The success state still renders only on a real
+`{ok:true}` response (returned only once the mail server accepts the
+message), and invalid input, an invalid phone, rate limiting and a delivery
+failure each surface a distinct visible error.
 
 ### Automation
 
@@ -54,8 +65,7 @@ The offer page is static: no Claude API, no AI endpoint, no persistence. Its
 three example tiles (native `<details>`, no client JS), the before/after
 example and the sample calculation are illustrative and labelled as invented.
 Client JS on the page is limited to the FAQ accordion, the e-mail button (`ContactEmail`, below) and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
-Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a `mailto:` button whose address exists only in the browser (`ContactEmail`, #147; without JS it links to the contact page); the contact page does not read the parameter
-yet. The price FAQ is visible but left out of the FAQPage JSON-LD. The
+Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a `mailto:` button whose address exists only in the browser (`ContactEmail`, #147; without JS it links to the contact page). The hero and the closing section also link «Rückruf anfordern» (`automation-callback`), which ticks «Rückruf gewünscht» on the contact form. The price FAQ is visible but left out of the FAQPage JSON-LD. The
 redirects live in `next.config.mjs` (pinned by `src/redirects.test.ts`).
 Nothing under `/automation` imports the mailer.
 
