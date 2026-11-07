@@ -7,7 +7,9 @@
 // example tiles, "So arbeite ich", the before/after example with a sample
 // calculation, process and prices, "Ihre Daten", "Wer ich bin", FAQ, closing
 // call to action. Every call to action links to /contact?from=<id>
-// (src/data/contact-sources.ts) inside a `data-cta` wrapper.
+// (src/data/contact-sources.ts) inside a `data-cta` wrapper; the hero and the
+// closing call to action also link «Rückruf anfordern» (automation-callback),
+// which ticks «Rückruf gewünscht» on the contact form.
 // The prototype's `id="scan"` FAQ placeholder stays dropped (worklog F1).
 // The /automation/scan demo is retired; next.config.mjs redirects it here.
 import type { Metadata } from 'next';
@@ -153,9 +155,15 @@ export default async function AutomationPage({
           >
             {t('heroCtaMicro')}
           </p>
+          <Link
+            href={contactHref('automation-callback')}
+            style={{ ...textLink, display: 'flex', width: 'fit-content' }}
+          >
+            {t('heroCallback')}
+          </Link>
           <p
             style={{
-              marginTop: '1.25rem',
+              marginTop: '.5rem',
               fontSize: '1rem',
               color: 'var(--n-70)',
               lineHeight: 1.55,
@@ -353,6 +361,12 @@ export default async function AutomationPage({
             </Btn>
             <Btn href={mailHref}>{t('bottomCtaSecondary')}</Btn>
           </div>
+          <Link
+            href={contactHref('automation-callback')}
+            style={{ ...textLink, display: 'flex', width: 'fit-content', margin: '1rem auto 0' }}
+          >
+            {t('heroCallback')}
+          </Link>
         </section>
       </div>
       <StickyCta

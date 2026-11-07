@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { WOW_TILES } from './automation-wow';
 import {
   FROM_IDS,
   HEARD_VIA_IDS,
@@ -36,6 +37,34 @@ describe('contact sources', () => {
     expect(heardViaMessageKey('ai')).toBe('heardViaAi');
     for (const id of HEARD_VIA_IDS) expect(isHeardVia(id)).toBe(true);
     for (const value of ['', 'Empfehlung', 'Search', 'none', null, 3]) expect(isHeardVia(value), String(value)).toBe(false);
+  });
+});
+
+// TypeScript already rejects an unknown id in contactHref(); this catches the
+// other direction, an id no button uses any more.
+describe('call-to-action ids in use', () => {
+  const CTA_FILES = [
+    'src/app/[locale]/automation/page.tsx',
+    'src/app/[locale]/automation/WowTiles.tsx',
+    'src/app/[locale]/automation/ExampleCalc.tsx',
+    'src/app/[locale]/automation/AutomationPricing.tsx',
+    'src/app/[locale]/page.tsx',
+  ];
+  const sources = CTA_FILES.map(read).join('\n');
+  const literalIds = [...sources.matchAll(/contactHref\('([^']+)'\)/g)].map((m) => m[1]);
+  // WowTiles builds `automation-tile-${tile.id}` from the tile data.
+  const tileIds = /contactHref\(`automation-tile-\$\{tile\.id\}`\)/.test(sources)
+    ? WOW_TILES.map((tile) => `automation-tile-${tile.id}`)
+    : [];
+
+  it('links every listed id from /automation or the home page', () => {
+    const used = new Set([...literalIds, ...tileIds]);
+    for (const id of FROM_IDS) expect(used.has(id), id).toBe(true);
+  });
+
+  it('links «Rückruf anfordern» from the hero and the closing call to action', () => {
+    const page = read('src/app/[locale]/automation/page.tsx');
+    expect(page.match(/contactHref\('automation-callback'\)/g)).toHaveLength(2);
   });
 });
 
