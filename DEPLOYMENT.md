@@ -63,7 +63,7 @@ and replayed afterwards, so `form-action` never sees them.
 
 Checked 2026-09-05 (before this graduation, as a baseline sanity check): `curl -s https://furchert.ch/de | grep -i cloudflareinsights` found nothing — Cloudflare Web Analytics/Rocket Loader is not injecting a beacon on this zone today, so `script-src`/`connect-src` need no `*.cloudflareinsights.com` addition. Re-check this if that Cloudflare zone feature is ever turned on, since it would otherwise report (or, once enforcing, break) on every page load.
 
-Cloudflare **Email Address Obfuscation** is on for this zone (#125): it rewrites addresses in the HTML and injects the same-origin `/cdn-cgi/scripts/…/email-decode.min.js`, which restores them; the components that render addresses tolerate the rewrite during hydration (`suppressHydrationWarning` on leaf elements). If `script-src` moves to nonces or `'strict-dynamic'`, that injected script carries no nonce and would be blocked, leaving visitors with "[email protected]" — turn the obfuscation off first (it protects nothing: the RSC payload carries the plain address).
+Cloudflare **Email Address Obfuscation** is on for this zone (#125): it rewrites addresses in the HTML and injects the same-origin `/cdn-cgi/scripts/…/email-decode.min.js`, which restores them. It never reached the RSC payload, which carried the plain address, so since #147 the public pages render the owner's contact address only in the browser (`ContactEmail`, `src/data/contact-email.ts`; without JavaScript a neutral "E-Mail" link to the contact page, which spells no address); `src/contactEmailGuard.test.ts` keeps the literal out of `src/` and `public/` and the helpers out of server components, and a CI step after `pnpm build` fails if the address appears in `.next/server` or `.next/static`. The dashboard still server-renders user addresses (admin user list, signed-in name); those leaf elements tolerate the rewrite during hydration (`suppressHydrationWarning`). If `script-src` moves to nonces or `'strict-dynamic'`, that injected script carries no nonce and would be blocked, leaving dashboard visitors with "[email protected]" — turn the obfuscation off first (it protects nothing there: the RSC payload carries those addresses in plain text).
 
 ## Federated logout — id_token exposure (#79)
 
@@ -266,6 +266,22 @@ curl -s https://furchert.ch/robots.txt | grep -i '^content-signal:'   # managed 
 curl -s https://furchert.ch/sitemap.xml | grep -c '<lastmod>'      # one per public page
 curl -sI https://furchert.ch/llms.txt | head -1                    # 200
 curl -sI https://furchert.ch/de/about | grep -i '^link:' | grep -ci hreflang   # 0
+```
+
+### Redirects (#145)
+
+- `/ki` and `/bau` redirect to `/de/automation` with 307. Temporary: the target moves after Gate 0, and these URLs are printed on flyers. The Cloudflare "Always Use HTTPS" owner step above must be done before `/ki` or `/bau` are printed.
+- `/automation/scan` redirects to `/de/automation` with 308.
+- `/{de,en}/automation/scan` redirects to the same locale's `/automation` with 308.
+- Redirects run before the next-intl proxy, match case-insensitively and pass the query string through.
+- A 308 is cached by browsers, so never reuse `/automation/scan`. Change `next.config.mjs` and `src/redirects.test.ts` together.
+- Verify after deploy:
+
+```bash
+curl -sI https://furchert.ch/ki | grep -iE '^(HTTP|location)'                  # 307, /de/automation
+curl -sI https://furchert.ch/bau | grep -iE '^(HTTP|location)'                 # 307, /de/automation
+curl -sI https://furchert.ch/automation/scan | grep -iE '^(HTTP|location)'     # 308, /de/automation
+curl -sI https://furchert.ch/en/automation/scan | grep -iE '^(HTTP|location)'  # 308, /en/automation
 ```
 
 ## Validation

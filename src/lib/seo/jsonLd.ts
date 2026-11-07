@@ -11,7 +11,7 @@ export type JsonLd = Record<string, unknown>;
 const OWNER_NAME = 'Dominic Furchert';
 // The same profile links the footer shows.
 const OWNER_PROFILES = ['https://github.com/doemefu', 'https://linkedin.com/in/dominic-furchert'];
-// Shown on the home page ("Software Engineer · Zürcher Oberland") and the about page.
+// Shown in the home hero label and on the about page.
 const OWNER_JOB_TITLE = 'Software Engineer';
 
 // Stable `@id`s: every page refers to the same site and the same person, so
@@ -111,13 +111,13 @@ export interface AutomationJsonLdInput {
   locale: Locale;
   /** Canonical absolute URL of the localized page. */
   pageUrl: string;
-  /** Visible page label, e.g. "KI für KMU im Zürcher Oberland". */
+  /** Visible page label, e.g. "KI für Bau und Tiefbau · Zürcher Oberland". */
   name: string;
   /** Visible hero sentence. */
   description: string;
   /** Region named on the page. */
   areaServed: string;
-  /** The FAQ exactly as the page renders it. */
+  /** The FAQ entries the page marks up: visible on the page, without the price FAQ (`faqsForMarkup`). */
   faq: ReadonlyArray<{ q: string; a: string }>;
   /** ISO date of the last content update, shown on the page too. */
   dateModified: string;

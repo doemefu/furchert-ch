@@ -32,6 +32,19 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      # The contact address must reach visitors only through the browser
+      # (#147), never the server HTML, the RSC payload or the client chunks.
+      # The patterns keep the literal out of the repo. grep exits 1 when
+      # nothing matches; a match (0) or an error (2) fails the step.
+      - name: Contact address absent from build output (#147)
+        run: |
+          rc=0
+          grep -rIil --exclude-dir=cache -e 'dominic[@]furchert' -e 'dominic \[at\] furchert' \
+            .next/server .next/static || rc=$?
+          if [ "$rc" -ne 1 ]; then
+            echo "::error::contact address in the build output, or grep failed (exit $rc)"
+            exit 1
+          fi
 
   # Builds the container image (amd64 only, never pushed) and smoke-tests
   # /api/health, so Dockerfile and base-image bumps fail on the PR instead of

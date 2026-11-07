@@ -46,17 +46,18 @@ delivery failure each surface a distinct visible error.
 
 | Route | Page | Status |
 |-------|------|--------|
-| `/[locale]/automation` | Business landing (real product) | real, indexable |
-| `/[locale]/automation/scan` | 4-step scan wizard (visual preview) | **mockup**, `robots:noindex`, sitemap-excluded |
+| `/[locale]/automation` | Offer page for construction and civil engineering firms (Gate 0, #145) | real, indexable; static, no AI backend |
+| `/automation/scan`, `/[locale]/automation/scan` | retired (#143, #145) | 308 redirect to the locale's `/automation` |
+| `/ki`, `/bau` | vanity URLs for print and talks | 307 redirect to `/de/automation` |
 
-The landing page is real product. The scan wizard is a **clearly-labelled
-visual preview** — every step carries a persistent "Demo / Mockup" banner
-and Step 4 is marked as a "Beispiel-Report / Sample report". The wizard
-performs no network calls, runs no Claude API, has no `/api/scan/*` route,
-and stores nothing. Step-3 contact fields are not transmitted; copy says
-so explicitly. The contact form now delivers real mail (see above); the scan
-wizard remains intentionally out of that scope and must never import the
-mailer.
+The offer page is static: no Claude API, no AI endpoint, no persistence. Its
+three example tiles (native `<details>`, no client JS), the before/after
+example and the sample calculation are illustrative and labelled as invented.
+Client JS on the page is limited to the FAQ accordion, the e-mail button (`ContactEmail`, below) and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
+Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a `mailto:` button whose address exists only in the browser (`ContactEmail`, #147; without JS it links to the contact page); the contact page does not read the parameter
+yet. The price FAQ is visible but left out of the FAQPage JSON-LD. The
+redirects live in `next.config.mjs` (pinned by `src/redirects.test.ts`).
+Nothing under `/automation` imports the mailer.
 
 ### Private (real, OIDC-gated via auth.furchert.ch)
 | Route | Page | Status |
@@ -93,8 +94,8 @@ automated tests" half of #42 is tracked on that issue.
 
 ## Real vs. mock vs. deferred
 
-- **Real:** public site (incl. the `/automation` landing page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) and the device-service admin GUI `/dashboard/devices` (#45 slice 1) are real.
-- **Mock:** the `/automation/scan` wizard only (clearly-labelled visual preview, `robots:noindex`, sitemap-excluded).
+- **Real:** public site (incl. the `/automation` offer page), OIDC dashboard auth, dashboard overview with live cluster/app metrics and the `/dashboard/services` utilization page (see the "Live" bullets below); the contact form delivers real mail by SMTP (iCloud). The auth-service admin GUI `/dashboard/auth` (#44) and the device-service admin GUI `/dashboard/devices` (#45 slice 1) are real.
+- **Mock:** the example tiles, the before/after example and the sample calculation on `/automation` (labelled as invented; no AI backend). The `/automation/scan` wizard is retired and redirects (#145).
 - **Live (issue #17):** the dashboard cluster strip (per-node CPU/MEM/status)
   and workload-backed app/service status badges are fetched from Prometheus
   server-side at request time (see `INTERFACES.md` §2). When Prometheus is
@@ -116,7 +117,7 @@ automated tests" half of #42 is tracked on that issue.
   data (e.g. auth-service's outbox not enabled); attempted usernames are never shown, only an 8-character hash tag.
 - **Live (#44):** `/dashboard/auth` calls auth-service's admin REST API server-side with the signed-in admin's own access token (refreshed in memory). Every failure renders an honest state ("sign in again", "ADMIN role required", "not available yet", "auth-service unavailable", "unexpected response"); Sessions & tokens and the audit log are labelled "not available" placeholders, never fabricated data.
 - **Live (#45 slice 1):** `/dashboard/devices` calls device-service's REST API server-side with the same admin access token. Device values are labelled "last reported" unless the device is live; a successful command says "sent", not "done". Failures render honest states ("sign in again", "ADMIN role required", "device-service unavailable", "unexpected response"). Device registration and deletion follow in a later slice.
-- **Deferred (out of scope for now):** AI scan backend, lead dashboard,
+- **Deferred (out of scope for now):** any AI backend for `/automation`, lead dashboard,
   Turnstile / a shared (multi-replica-safe) rate limiter, n8n notifications,
   WebSocket device stream. Tracked here as work progresses.
 

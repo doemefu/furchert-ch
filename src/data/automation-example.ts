@@ -1,8 +1,11 @@
-// Before/after example for /automation: an electrician's voice memo and the
-// report draft made from it (the business case's story B2). Invented data,
-// labelled as such on the page. The customer and the items come from lists
-// the business exports (customer list, materials list), so the example works
-// without a connection to the trade software.
+// Before/after example for /automation: a site foreman's voice message after
+// extra work on a civil engineering site (Regie) and the draft
+// time-and-materials report a report app makes from it (#145). Invented data
+// (Bachstrasse is a made-up site), labelled as such on the page. The marks
+// show what a person checks before the report goes out: the role sets the
+// Regie rate, the client's oral instruction needs a written confirmation.
+// The last two fields sit behind "Alle Felder anzeigen" on the page.
+// 17.11.2026 is a Tuesday.
 import type { Locale } from '@/i18n/routing';
 
 export interface ExampleLine {
@@ -31,93 +34,125 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
   i18n: {
     de: {
       tag: 'Beispiel, erfunden',
-      inputTitle: 'Sprachnotiz des Monteurs, als Text',
+      inputTitle: 'Sprachnachricht des Poliers, als Text',
       input:
-        'Also, Rapport Familie Muster in Bubikon, Musterweg zwölf. Heute von halb acht bis zehn. In der Küche eine neue Dreifachsteckdose über der Arbeitsfläche montiert, Leitung ab der Abzweigdose gezogen, etwa drei, nein, vier Meter. Material: eine Dreifachsteckdose Aufputz weiss, vier Meter Kabel drei mal eins Komma fünf, zwei Verbindungsklemmen. Sicherung geprüft, alles in Ordnung. Ah, und der Kunde will noch eine Offerte für eine Aussenlampe.',
-      outputTitle: 'Rapport-Entwurf',
+        'Regie Bachstrasse, Werkleitungen, Abschnitt zwei. Die Bauleitung hat heute früh mündlich angeordnet, dass wir die alte Gasleitung freilegen und sichern. Die war nicht im Plan. Den Gasversorger habe ich angerufen. Zwei Mann haben sie von halb zehn bis zwölf von Hand freigelegt, der Bagger mit Maschinist hat daneben ausgehoben. Material: zwei Kanthölzer und ein Sack Sand. Fotos habe ich gemacht.',
+      outputTitle: 'Regierapport-Entwurf (vereinfacht)',
       fields: [
         {
-          label: 'Kunde',
+          label: 'Baustelle',
           lines: [
             {
-              text: 'Familie Muster, Musterweg 12, 8608 Bubikon',
-              check: 'In Ihrer Kundenliste gefunden, bitte bestätigen',
+              text: 'Werkleitungen Bachstrasse, Abschnitt 2',
+              check: 'In Ihrer Baustellenliste gefunden, bitte bestätigen',
             },
           ],
         },
-        { label: 'Zeit', lines: [{ text: 'Di, 10.11., 07:30 bis 10:00, 2,5 Std.' }] },
+        {
+          label: 'Anordnung',
+          lines: [
+            {
+              text: 'Mündlich durch die Bauleitung, vor Ort',
+              check: 'Schriftliche Bestätigung fehlt, bitte einholen',
+            },
+          ],
+        },
         {
           label: 'Arbeiten',
           lines: [
-            { text: 'Steckdose 3-fach Aufputz über der Arbeitsfläche in der Küche montiert' },
-            { text: 'Zuleitung ab Abzweigdose, ca. 4 m' },
-            { text: 'Sicherung geprüft, in Ordnung' },
+            { text: 'Bestehende Gasleitung, nicht im Plan, von Hand freigelegt und gesichert' },
+            { text: 'Gasversorger informiert' },
+            { text: '3 Fotos angehängt' },
+          ],
+        },
+        {
+          label: 'Personal und Maschinen',
+          lines: [
+            {
+              text: 'Di, 17.11., 09:30 bis 12:00: 2 Personen, je 2,5 Std.',
+              check: 'Funktion fehlt (Polier, Facharbeiter, Bauarbeiter …), sie bestimmt den Regieansatz',
+            },
+            {
+              text: 'Bagger mit Maschinist, 2,5 Std.',
+              check: 'Zwei Bagger in Ihrer Maschinenliste, bitte wählen',
+            },
           ],
         },
         {
           label: 'Material',
-          lines: [
-            {
-              text: '1 × Steckdose 3-fach AP weiss',
-              check: 'Zwei passende Artikel in Ihrer Materialliste, bitte wählen',
-            },
-            { text: '4 m Kabel 3 × 1,5 mm²' },
-            { text: '2 × Verbindungsklemme' },
-          ],
+          lines: [{ text: '2 Kanthölzer, 1 Sack Sand', check: 'Länge der Kanthölzer fehlt' }],
         },
-        { label: 'Pendenz', lines: [{ text: 'Offerte Aussenleuchte, als Aufgabe fürs Büro erfasst' }] },
         {
-          label: 'Hinweis',
-          lines: [{ text: 'Keine Messwerte diktiert. Das Prüfprotokoll bitte wie gewohnt erstellen.' }],
+          label: 'Pendenz',
+          lines: [
+            { text: 'Rapport der Bauleitung zur Unterschrift senden' },
+            { text: 'Regieansätze einsetzen (Büro)' },
+          ],
         },
       ],
       after:
-        'Danach bestätigt der Monteur den Entwurf auf dem Handy. Das Büro wählt den richtigen Artikel und übernimmt den Rapport. Die Rechnung erstellt weiterhin Ihre Branchensoftware.',
+        'Danach prüft der Bauführer den Entwurf und schickt ihn der Bauleitung zur Unterschrift. Das Büro bekommt den Rapport getippt und mit Fotos statt als Zettel am Freitag, setzt die Regieansätze ein, und die Rechnung erstellt weiterhin Ihre Bausoftware.',
     },
     en: {
-      tag: 'Invented example',
-      inputTitle: "Electrician's voice memo, as text",
+      tag: 'Example, invented',
+      inputTitle: "The site foreman's voice message, as text",
       input:
-        'Right, report for the Muster family in Bubikon, Musterweg twelve. Today from half past seven to ten. In the kitchen, fitted a new triple socket above the worktop, ran the cable from the junction box, about three, no, four metres. Materials: one surface-mounted triple socket, white, four metres of cable three by one point five, two connector terminals. Checked the fuse, all fine. Oh, and the customer wants a quote for an outdoor light.',
-      outputTitle: 'Draft job report',
+        "Regie, Bachstrasse, utility lines, section two. This morning the site supervisor told us verbally to expose and secure the old gas line. It wasn't on the plan. I called the gas utility. Two men exposed it by hand from half past nine to twelve, and the excavator with its operator dug alongside. Material: two timber beams and a bag of sand. I took photos.",
+      outputTitle: 'Draft time-and-materials report (simplified)',
       fields: [
         {
-          label: 'Customer',
+          label: 'Site',
           lines: [
             {
-              text: 'Muster family, Musterweg 12, 8608 Bubikon',
-              check: 'Found in your customer list, please confirm',
+              text: 'Utility lines Bachstrasse, section 2',
+              check: 'Found in your site list, please confirm',
             },
           ],
         },
-        { label: 'Time', lines: [{ text: 'Tue 10 Nov, 07:30 to 10:00, 2.5 h' }] },
+        {
+          label: 'Instruction',
+          lines: [
+            {
+              text: 'Verbal, by the site supervisor, on site',
+              check: 'Written confirmation missing, please obtain',
+            },
+          ],
+        },
         {
           label: 'Work',
           lines: [
-            { text: 'Surface-mounted triple socket fitted above the kitchen worktop' },
-            { text: 'Supply cable from the junction box, approx. 4 m' },
-            { text: 'Fuse checked, OK' },
+            { text: 'Existing gas line, not on the plan, exposed by hand and secured' },
+            { text: 'Gas utility informed' },
+            { text: '3 photos attached' },
           ],
         },
         {
-          label: 'Materials',
+          label: 'Crew and machines',
           lines: [
             {
-              text: '1 × triple socket, surface-mounted, white',
-              check: 'Two matching items in your materials list, please choose',
+              text: 'Tue 17.11., 09:30 to 12:00: 2 people, 2.5 h each',
+              check: 'Role missing (foreman, skilled worker, labourer …); it sets the Regie rate',
             },
-            { text: '4 m cable 3 × 1.5 mm²' },
-            { text: '2 × connector terminal' },
+            {
+              text: 'Excavator with operator, 2.5 h',
+              check: 'Two excavators in your machine list, please choose',
+            },
           ],
         },
-        { label: 'Follow-up', lines: [{ text: 'Quote for outdoor light, added as a task for the office' }] },
         {
-          label: 'Note',
-          lines: [{ text: 'No measured values dictated. Please complete the test record as usual.' }],
+          label: 'Material',
+          lines: [{ text: '2 timber beams, 1 bag of sand', check: 'Length of the beams missing' }],
+        },
+        {
+          label: 'Open items',
+          lines: [
+            { text: 'Send the report to the site supervisor for signature' },
+            { text: 'Fill in the Regie rates (office)' },
+          ],
         },
       ],
       after:
-        'Then the electrician confirms the draft on the phone. The office picks the right item and enters the report. Invoices still come from your trade software.',
+        'Then the site manager checks the draft and sends it to the site supervisor for signature. The office gets the report typed and with photos instead of a note on Friday, fills in the Regie rates, and your construction software still produces the invoice.',
     },
   },
 };

@@ -56,6 +56,21 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **Contact e-mail kept out of the server HTML and the RSC payload** (#147):
+  Cloudflare's Email Obfuscation (#125) only rewrote the HTML; the RSC payload
+  still carried the owner's address in plain text on every page. The footer,
+  the home CTA strip, the contact page and the automation page's e-mail button
+  now render it through the client component `ContactEmail`, which assembles
+  it from reversed segments in the browser after hydration
+  (`src/data/contact-email.ts`). Server HTML, no-JS visitors and the first
+  client render get a neutral "E-Mail"/"E-mail" label (or the button label)
+  as a link to the contact page; no "[at]" form, which harvesters decode.
+  The contact form's server-error message gets the address interpolated in
+  the browser. The `suppressHydrationWarning` workarounds on those elements
+  are gone. `src/contactEmailGuard.test.ts` fails if the address appears in
+  `src/` or `public/` or a non-client module imports the helpers; CI greps
+  the build output (`.next/server`, `.next/static`) for it after
+  `pnpm build`. No new dependency.
 - **Security headers tightened** (#42): HSTS raised from 1 day to 1 year
   (`max-age=31536000`, still no `includeSubDomains`/`preload`); the CSP
   directives that do not depend on inline scripts or styles are now enforced
@@ -206,6 +221,32 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **`/automation` rebuilt for the Gate-0 offer, construction first** (#145,
+  part 1): a light hero «Drei Dinge, die KI im Bau heute schon kann.» with three
+  CSS-only example tiles (native `<details>`: a site report spoken into the
+  phone, a quote draft from an enquiry, the 5:30 am overview as a later own
+  automation), «So arbeite ich», a Regie example with a sample calculation,
+  four steps with fixed prices (live demo free, assessment CHF 750, rollout
+  CHF 3'900 under 20 people or from CHF 7'500, subscription CHF 200 a month or
+  CHF 500 to 900) and the risk reversal, the own automation once as «Später
+  möglich», «Ihre Daten», a short about section, ten FAQs and the closing call to
+  action after the FAQ. A sticky call to action appears on phones once the
+  hero has scrolled out. Every contact button links to `/contact?from=<id>`
+  (new `src/data/contact-sources.ts`, `contactHref`/`FromId`); the closing
+  section keeps a mailto link; the contact form is unchanged until part 2.
+  Labels and the new `Tag` `contrast` prop use `--n-60` instead of `--n-50` on
+  /automation (AA contrast); new `mail` and `cloud` icons. The price FAQ is visible but left
+  out of the FAQPage JSON-LD (`faqsForMarkup`): no CHF amount in structured
+  data. The trade stories are gone. Home: «KI für KMU» first in the nav, hero
+  and teaser name the construction focus, the bottom CTA strip addresses
+  businesses (new optional `CTAStrip` props). `/automation/scan` is retired:
+  `/automation/scan` and `/{de,en}/automation/scan` redirect (308) to the
+  locale's `/automation`, and the vanity URLs `/ki` and `/bau` redirect (307)
+  to `/de/automation`. The home ticker stops under reduced motion. `llms.txt`
+  describes the new offer. Tests: copy guards rewritten (approved amounts,
+  sample-calculation amounts, bans, tags, FAQ markup), redirects pinned, DE/EN
+  key parity over the whole public tree and a used-keys check. No new
+  dependency.
 - **`/automation` made concrete, with prices** (#139): four invented trade
   stories (electrician, carpentry, bakery, hair salon) replace the six abstract
   use-case cards, each with estimated hours per week before and with AI, what
@@ -315,6 +356,19 @@ All notable changes per milestone. Newest first.
   Superseded by the flat `eslint.config.mjs` in #59.
 
 ### Fixed
+
+- **Admin drawers** (#140, follow-up of #138): the user and schedule drawers
+  keep Tab inside while open (also when focus falls to the page after a save
+  disables the button), and `/dashboard/auth` returns focus to the opener on
+  close, like `/dashboard/devices` (also after a delete, falling back to the
+  "new" button). A field error is now tied to its input (`aria-invalid` plus
+  `aria-describedby`), so screen readers announce both together. A rejected
+  save in the user drawer no longer snaps the role and status selects back to
+  their first option on screen (submitted through `onSubmit`, as in the
+  schedule drawer). The device-client form already kept what was typed (its
+  fields are controlled text inputs), so it only gets the field-error
+  attributes. The reset-password field still clears after a rejected reset, on
+  purpose. No new dependency.
 
 - **Hydration error #418 behind Cloudflare Email Obfuscation** (#125):
   Cloudflare rewrites the contact address in the SSR HTML until its decoder

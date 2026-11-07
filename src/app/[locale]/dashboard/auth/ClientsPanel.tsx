@@ -13,7 +13,7 @@ import { Icon } from '@/components/ui/Icon';
 import { IDLE, type ActionState } from '@/lib/authadmin/forms';
 import { createDeviceClientAction, deleteDeviceClientAction } from './actions';
 import { CopyButton } from './CopyButton';
-import { FieldError, FormError } from './FormFeedback';
+import { FieldError, FormError, inputAria } from './FormFeedback';
 import { MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle } from './ui';
 
 export interface ClientRow {
@@ -108,6 +108,7 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
               onChange={(e) => setClientId(e.target.value)}
               autoComplete="off"
               autoFocus
+              {...inputAria(createState, 'clientId')}
               style={fieldStyle}
             />
             <p style={hintStyle}>{t('clientIdHint')}</p>
@@ -121,6 +122,7 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               autoComplete="off"
+              {...inputAria(createState, 'description')}
               style={fieldStyle}
             />
             <p style={hintStyle}>{t('descriptionHint')}</p>

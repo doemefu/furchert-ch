@@ -1,21 +1,23 @@
 # furchert.ch | Dominic Furchert
 
-> Personal website of Dominic Furchert, a software engineer in Zurich, Switzerland. He helps small and medium-sized businesses (SMEs, German: KMU) around Zurich use AI in their everyday work, and he shows his software and homelab projects. The site is in German (default) and English.
+> Personal website of Dominic Furchert, Switzerland. He sets up ready-made AI tools in small and medium-sized businesses (SMEs, German: KMU), shows them to the team and measures after 6 weeks whether they are used. His first focus is construction and civil engineering firms (German: Bau und Tiefbau) with 10 to 50 people east of Zurich, around Hinwil, Wetzikon, Uster, Rüti, Bubikon and Pfäffikon ZH. He studies computer science at the University of Zurich. The site also shows his software and homelab projects and is in German (default) and English.
 
-- Offer: AI for SMEs around Zurich (services, trades and production), with worked examples from trades on the offer page. Free initial consultation on site or by video; optional on-site AI quick check CHF 600 (credited towards a trial run within 3 months); first trial run of one process from CHF 2'500, from CHF 6'000 with a connection to the trade software; ongoing AI care from CHF 190 a month; AI workshop for teams CHF 1'500. No VAT is charged (not registered for VAT). Accounting and bookkeeping are not part of the offer.
-- Data protection: processing in Switzerland or the EU wherever possible; sensitive data only with Swiss providers or on the customer's own premises.
-- Background: trained as an application developer (EFZ) at UBS; studies Software Systems (BSc) at the University of Zurich.
+- Offer, at fixed prices in Swiss francs: a free 30-minute live demo on site or by video; an assessment (Standortbestimmung) for CHF 750; the rollout of one tool (Einführung): CHF 3'900 under 20 people, or from CHF 7'500 for 20 people or more, with half paid on order and the second half due only when a measurement after 6 weeks shows the agreed usage; otherwise 4 more weeks of support follow at no charge, and if the usage is still not reached although the agreed training took place, the second half is waived; a subscription (Abo): CHF 200 a month under 20 people, or CHF 500 to 900 a month for 20 people or more. "People" means everyone at the firm. The firm buys its own licences. Prices as of November 2026; the offer page shows the date of its last update.
+- Examples of tools: Microsoft 365 Copilot for email and files, and voice-to-report apps for construction sites such as Benetics. Every example on the site is invented and labelled as such.
+- Not offered: own software products, licence resale, accounting and bookkeeping.
+- Data protection: the firm's data is kept in its own accounts with the tool vendors, not on his servers. According to Microsoft, Microsoft 365 Copilot processes prompts within the EU Data Boundary, which includes Switzerland; the boundary does not apply to web search queries sent to Bing when web search is on. Processing only in Switzerland is not assured. Before the start, a data sheet states which tool processes which data where, with all exceptions.
+- Background: trained as an application developer (EFZ) at UBS; IT audit internship at KPMG; studies Software Systems (BSc) at the University of Zurich.
 - Volunteer roles: president of the Ruderclub Rapperswil-Jona (about 200 members), safety chief of the national rowing regatta in Schmerikon, firefighter, J+S coach.
 - German pages are under /de, English pages under /en.
 
 ## Pages
 
-- [KI für KMU im Zürcher Oberland](https://furchert.ch/de/automation): the AI offer for SMEs, with trade examples, a before/after example, process and prices, data protection and FAQ. English: [AI for SMEs around Zurich](https://furchert.ch/en/automation)
+- [KI für Bau und KMU im Zürcher Oberland](https://furchert.ch/de/automation): examples (a site report spoken into the phone and an offer draft from an enquiry, both with ready-made tools, and a daily overview at 5:30 am, which is a later own automation), how he works, a worked example with a sample calculation, process and prices, data protection and FAQ. English: [AI for construction and SMEs near Zurich](https://furchert.ch/en/automation)
 - [Über mich](https://furchert.ch/de/about): background, timeline and roles. English: [About](https://furchert.ch/en/about)
 - [Projekte](https://furchert.ch/de/projects): software and homelab projects. English: [Projects](https://furchert.ch/en/projects)
 - [IT & Tech](https://furchert.ch/de/it): professional experience and tech stack. English: [IT & Tech](https://furchert.ch/en/it)
 - [Rudern](https://furchert.ch/de/rowing): rowing club presidency and regatta safety. English: [Rowing](https://furchert.ch/en/rowing)
-- [Kontakt](https://furchert.ch/de/contact): contact form and public profiles. English: [Contact](https://furchert.ch/en/contact)
+- [Kontakt](https://furchert.ch/de/contact): contact form, for example for a free live demo, and public profiles. English: [Contact](https://furchert.ch/en/contact)
 
 ## Projects
 

@@ -4,6 +4,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { ContactEmail } from '@/components/ui/ContactEmail';
 import { ContactForm } from './ContactForm';
 
 export async function generateMetadata({
@@ -22,8 +23,14 @@ export async function generateMetadata({
   });
 }
 
-const CONTACTS: { label: string; value: string; href: string | null }[] = [
-  { label: 'Email', value: 'dominic@furchert.ch', href: 'mailto:dominic@furchert.ch' },
+// The e-mail entry renders through <ContactEmail>: the address exists only
+// in the browser (#147).
+type ContactEntry =
+  | { label: string; email: true }
+  | { label: string; value: string; href: string | null };
+
+const CONTACTS: ContactEntry[] = [
+  { label: 'Email', email: true },
   { label: 'GitHub', value: 'github.com/doemefu', href: 'https://github.com/doemefu' },
   {
     label: 'LinkedIn',
@@ -42,7 +49,11 @@ export default async function ContactPage({
   setRequestLocale(locale);
   const t = await getTranslations();
   // The location is the same message the footer shows.
-  const contacts = [...CONTACTS, { label: 'Location', value: t('footer.location'), href: null }];
+  const contacts: ContactEntry[] = [
+    ...CONTACTS,
+    { label: 'Location', value: t('footer.location'), href: null },
+  ];
+  const linkStyle = { fontSize: '.9375rem', color: 'var(--blue-base)', textDecoration: 'none' };
 
   return (
     <div>
@@ -96,15 +107,14 @@ export default async function ContactPage({
                   >
                     {c.label}
                   </div>
-                  {c.href ? (
+                  {'email' in c ? (
+                    <ContactEmail style={linkStyle} />
+                  ) : c.href ? (
                     <a
                       href={c.href}
                       target={c.href.startsWith('http') ? '_blank' : undefined}
                       rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      style={{ fontSize: '.9375rem', color: 'var(--blue-base)', textDecoration: 'none' }}
-                      // Cloudflare Email Obfuscation rewrites the e-mail entry in the
-                      // SSR HTML until its decoder runs (#125).
-                      suppressHydrationWarning={c.href.startsWith('mailto:')}
+                      style={linkStyle}
                     >
                       {c.value}
                     </a>

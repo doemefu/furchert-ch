@@ -7,14 +7,15 @@
 // calls auth-service — no token or password ever round-trips through state.
 // Prototype deviation: status is ACTIVE/INACTIVE (auth-service's values; the
 // prototype's DISABLED does not exist).
-import { useActionState, useEffect, useState, type FormEvent } from 'react';
+import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { IDLE, type ActionState } from '@/lib/authadmin/forms';
 import type { UserRole, UserStatus } from '@/lib/authadmin/userFields';
 import { createUserAction, deleteUserAction, resetPasswordAction, updateUserAction } from './actions';
-import { FieldError, FormError } from './FormFeedback';
+import { useFocusTrap, useReturnFocus } from '../useDrawerFocus';
+import { FieldError, FormError, inputAria } from './FormFeedback';
 import { MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle, BORDER } from './ui';
 
 /** A user row as rendered — timestamps pre-formatted on the server (no hydration drift). */
@@ -51,6 +52,17 @@ export function UsersPanel({
   const [filter, setFilter] = useState<Filter>('all');
   // null = closed, 'new' = create form, number = edit that user id.
   const [drawer, setDrawer] = useState<null | 'new' | number>(null);
+  // Focus returns to the button that opened the drawer when it closes (#140).
+  const { remember, restore } = useReturnFocus();
+  const newButton = useRef<HTMLButtonElement | null>(null);
+  const openDrawer = (target: 'new' | number, el: HTMLElement) => {
+    remember(el);
+    setDrawer(target);
+  };
+  const closeDrawer = () => {
+    setDrawer(null);
+    restore();
+  };
 
   const needle = q.trim().toLowerCase();
   const filtered = users.filter((u) => {
@@ -109,7 +121,7 @@ export function UsersPanel({
             ))}
           </div>
         </div>
-        <button type="button" onClick={() => setDrawer('new')} style={btnPrimary}>
+        <button type="button" ref={newButton} onClick={(e) => openDrawer('new', e.currentTarget)} style={btnPrimary}>
           {t('new')}
         </button>
       </div>
@@ -173,7 +185,7 @@ export function UsersPanel({
               </span>
               <span style={{ color: 'var(--n-50)', fontSize: '.7rem' }}>{u.updatedLabel}</span>
               <span style={{ display: 'flex', gap: '.3rem', justifyContent: 'flex-end' }}>
-                <button type="button" onClick={() => setDrawer(u.id)} style={btnSmall}>
+                <button type="button" onClick={(e) => openDrawer(u.id, e.currentTarget)} style={btnSmall}>
                   {t('edit')}
                 </button>
               </span>
@@ -204,19 +216,36 @@ export function UsersPanel({
         </div>
       )}
 
-      {drawer === 'new' && <UserDrawer key="new" onClose={() => setDrawer(null)} />}
+      {drawer === 'new' && <UserDrawer key="new" onClose={closeDrawer} />}
       {editing && (
-        <UserDrawer key={editing.id} user={editing} isSelf={currentUsername === null || editing.username === currentUsername} onClose={() => setDrawer(null)} />
+        <UserDrawer key={editing.id} user={editing} isSelf={currentUsername === null || editing.username === currentUsername}
+          onClose={closeDrawer}
+          // The deleted row's edit button disappears with the refreshed list.
+          onDeleted={() => newButton.current && remember(newButton.current)}
+        />
       )}
     </div>
   );
 }
 
-function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?: boolean; onClose: () => void }) {
+function UserDrawer({
+  user,
+  isSelf = false,
+  onClose,
+  onDeleted,
+}: {
+  user?: UserRow;
+  isSelf?: boolean;
+  onClose: () => void;
+  onDeleted?: () => void;
+}) {
   const t = useTranslations('dashboard.authAdmin.drawer');
+  const trap = useFocusTrap<HTMLDivElement>();
   const isNew = !user;
-  // Controlled fields: React resets uncontrolled inputs after every action,
-  // which would wipe what the admin typed when auth-service rejects a save.
+  // Controlled fields, and the form is submitted through onSubmit instead of
+  // the `action` prop: React resets a form after an `action` completes, which
+  // would wipe what the admin typed and snap the role/status selects back to
+  // their first option on screen when auth-service rejects a save.
   const [username, setUsername] = useState(user?.username ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
   const [role, setRole] = useState<UserRole>(user?.role ?? 'USER');
@@ -239,10 +268,19 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
   }, IDLE);
   const [deleteState, deleteAction, deleting] = useActionState(async (prev: ActionState, fd: FormData) => {
     const r = await deleteUserAction(prev, fd);
-    if (r.status === 'ok') onClose();
+    if (r.status === 'ok') {
+      onDeleted?.();
+      onClose();
+    }
     return r;
   }, IDLE);
   const [resetState, resetAction, resetting] = useActionState(resetPasswordAction, IDLE);
+
+  const submitSave = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(() => saveAction(fd));
+  };
 
   const confirmDelete = (e: FormEvent<HTMLFormElement>) => {
     if (!user || !window.confirm(t('confirmDelete', { username: user.username }))) e.preventDefault();
@@ -256,11 +294,12 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
       style={{ position: 'fixed', inset: 0, background: 'rgba(8,24,61,.35)', zIndex: 300, display: 'flex', justifyContent: 'flex-end' }}
     >
       <div
+        {...trap}
         role="dialog"
         aria-modal="true"
         aria-labelledby="user-drawer-title"
         onClick={(e) => e.stopPropagation()}
-        style={{ width: 'min(440px, 92vw)', height: '100%', background: 'var(--n-10)', borderLeft: '1px solid rgba(162,167,176,.35)', overflowY: 'auto' }}
+        style={{ width: 'min(440px, 92vw)', height: '100%', outline: 'none', background: 'var(--n-10)', borderLeft: '1px solid rgba(162,167,176,.35)', overflowY: 'auto' }}
       >
         <div style={{ padding: '1.5rem', borderBottom: BORDER, background: 'var(--white)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
@@ -286,7 +325,7 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
           )}
         </div>
 
-        <form action={saveAction} id="user-form" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={submitSave} id="user-form" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {!isNew && <input type="hidden" name="id" value={user.id} />}
           <label>
             <MonoLabel mb=".3rem">{t('username')}</MonoLabel>
@@ -300,6 +339,7 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
               readOnly={isSelf}
               autoComplete="off"
               autoFocus
+              {...inputAria(saveState, 'username')}
               style={fieldStyle}
             />
             <FieldError state={saveState} field="username" />
@@ -314,6 +354,7 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="off"
+              {...inputAria(saveState, 'email')}
               style={fieldStyle}
             />
             <FieldError state={saveState} field="email" />
@@ -342,7 +383,7 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
           {isNew && (
             <label>
               <MonoLabel mb=".3rem">{t('password')}</MonoLabel>
-              <input name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" style={fieldStyle} />
+              <input name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" style={fieldStyle} {...inputAria(saveState, 'password')} />
               <p style={hintStyle}>{t('passwordHint')}</p>
               <FieldError state={saveState} field="password" />
             </label>
@@ -369,6 +410,7 @@ function UserDrawer({ user, isSelf = false, onClose }: { user?: UserRow; isSelf?
                     aria-label={t('newPassword')}
                     autoComplete="new-password"
                     style={fieldStyle}
+                    {...inputAria(resetState, 'newPassword')}
                   />
                   <p style={hintStyle}>{t('resetHint', { id: user.id })}</p>
                   <FieldError state={resetState} field="newPassword" />

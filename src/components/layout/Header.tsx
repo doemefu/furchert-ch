@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 
-const NAV_KEYS = ['about', 'it', 'rowing', 'projects', 'automation', 'contact'] as const;
+const NAV_KEYS = ['automation', 'about', 'it', 'rowing', 'projects', 'contact'] as const;
 
 export function Header() {
   const t = useTranslations();

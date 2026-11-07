@@ -19,7 +19,7 @@
 - `/dashboard` authenticates with the **real** `homelab-auth-service` via OIDC (Authorization Code + PKCE) at `https://auth.furchert.ch`.
 - `/dashboard/network` reads `homelab-data-service` server-side with a `client_credentials` token (scope `netmon:read`; `INTERFACES.md` §2 "data-service"; producer contract `../data-service/INTERFACES.md`, spec `../docs/060-network-monitoring.md`); the dashboard overview and the ADMIN-only `/dashboard/services` (#47) read Prometheus server-side (`INTERFACES.md` §2 "Prometheus").
 - `/dashboard/auth` calls the real REST API of `homelab-auth-service` (`../auth-service/INTERFACES.md`; `INTERFACES.md` §2 "auth-service") server-side with the signed-in admin's own access token (stored on the encrypted session JWT, refreshed in memory by `src/lib/authadmin/accessToken.ts`); mutations are Server Actions that re-check the ADMIN role. `/dashboard/devices` (#45) does the same against device-service (`INTERFACES.md` §2 "device-service"; producer contract: `../device-service/README.md` "REST Endpoints" and "Schedules").
-- **The `/automation` section (incl. `/automation/scan`) is a visual MOCKUP only** — no Claude API, no scan backend, no persistence. Everything else is real.
+- **`/automation` is a static offer page without any AI backend**: no Claude API, no AI endpoint, no persistence; its examples are illustrative. `/automation/scan` is retired and redirects. Everything else is real.
 
 **Full architecture spec:** `../docs/052-architecture-target.md`
 

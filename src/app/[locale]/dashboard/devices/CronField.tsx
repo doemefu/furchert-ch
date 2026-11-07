@@ -22,7 +22,7 @@ import {
   type IntervalMinutes,
 } from '@/lib/deviceadmin/cron';
 import type { DeviceActionState } from '@/lib/deviceadmin/forms';
-import { FieldError } from './FormFeedback';
+import { FieldError, inputAria } from './FormFeedback';
 import { makeFormatters } from './format';
 import { MonoLabel, fieldStyle, hintStyle } from '../auth/ui';
 
@@ -63,6 +63,9 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
       {label}
     </label>
   );
+  // The expression error belongs to whichever control is active (#140). The
+  // custom input also keeps its hint in aria-describedby.
+  const cronAria = inputAria(state, 'cronExpression');
   const row = { display: 'flex', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' as const };
 
   return (
@@ -81,6 +84,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
           disabled={mode !== 'daily'}
           required={mode === 'daily'}
           aria-label={t('dailyTime')}
+          {...(mode === 'daily' ? cronAria : {})}
           style={{ ...fieldStyle, width: 'auto' }}
         />
       </div>
@@ -92,6 +96,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
           onChange={(e) => setMinutes(Number(e.target.value) as IntervalMinutes)}
           disabled={mode !== 'interval'}
           aria-label={t('intervalLabel')}
+          {...(mode === 'interval' ? cronAria : {})}
           style={{ ...fieldStyle, width: 'auto' }}
         >
           {INTERVAL_MINUTES.map((n) => (
@@ -114,7 +119,8 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
               spellCheck={false}
               autoComplete="off"
               aria-label={t('customLabel')}
-              aria-describedby="cron-custom-hint"
+              {...cronAria}
+              aria-describedby={['cron-custom-hint', cronAria['aria-describedby']].filter(Boolean).join(' ')}
               placeholder="0 30 6 * * MON-FRI"
               style={fieldStyle}
             />

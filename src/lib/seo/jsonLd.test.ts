@@ -94,18 +94,19 @@ describe('buildAutomationJsonLd', () => {
     expect(JSON.stringify(buildAutomationJsonLd(input))).not.toMatch(/\bCHF\b|@furchert\.ch/);
   });
 
-  it('keeps a price in a visible FAQ answer as plain answer text only', () => {
-    const priced = [{ q: 'Was kostet das?', a: 'Der KI-Kurzcheck kostet CHF 600.' }];
-    const [page, service] = buildAutomationJsonLd({ ...input, faq: priced })['@graph'] as Node[];
-    expect(page.mainEntity).toEqual([
+  // The page passes the FAQ without the price question (faqsForMarkup), so no
+  // amount in CHF reaches the structured data.
+  it('mirrors the FAQ it is given', () => {
+    const given = [{ q: 'Versteht eine Rapport-App Schweizerdeutsch?', a: 'Einige Hersteller sagen ja.' }];
+    const graph = buildAutomationJsonLd({ ...input, faq: given })['@graph'] as Node[];
+    expect(graph[0].mainEntity).toEqual([
       {
         '@type': 'Question',
-        name: 'Was kostet das?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Der KI-Kurzcheck kostet CHF 600.' },
+        name: 'Versteht eine Rapport-App Schweizerdeutsch?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Einige Hersteller sagen ja.' },
       },
     ]);
-    expect(JSON.stringify({ ...page, mainEntity: null })).not.toMatch(/CHF/);
-    expect(JSON.stringify(service)).not.toMatch(/CHF/);
+    expect(JSON.stringify(graph)).not.toMatch(/CHF/);
   });
 
   it('names the served region and the page language and date', () => {

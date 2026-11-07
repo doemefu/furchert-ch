@@ -60,6 +60,20 @@ async function headers() {
   ];
 }
 
+// Redirects run before the next-intl proxy and the filesystem, pass the query
+// through and match case-insensitively (`src/redirects.test.ts` pins them).
+async function redirects() {
+  return [
+    // Vanity URLs for print and talks. Temporary: the target moves after
+    // Gate 0 (#145).
+    { source: '/ki', destination: '/de/automation', permanent: false },
+    { source: '/bau', destination: '/de/automation', permanent: false },
+    // The scan demo is retired (#143, #145).
+    { source: '/:locale(de|en)/automation/scan', destination: '/:locale/automation', permanent: true },
+    { source: '/automation/scan', destination: '/de/automation', permanent: true },
+  ];
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Standalone output for the container image (Phase 7 / Dockerfile).
@@ -73,6 +87,7 @@ const nextConfig = {
   // .next/standalone/node_modules (#46).
   serverExternalPackages: ['nodemailer'],
   headers,
+  redirects,
 };
 
 export default withNextIntl(nextConfig);
