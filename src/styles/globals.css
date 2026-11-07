@@ -67,6 +67,13 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── TICKER (home) ──
+   No motion for visitors who ask for reduced motion (#145). */
+.ticker-track { animation: ticker 22s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}
+
 /* ── PAGE ENTRY ── */
 .page-enter { animation: fadeIn .4s cubic-bezier(.22,1,.36,1) both; }
 
