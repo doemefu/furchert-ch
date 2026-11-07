@@ -13,11 +13,11 @@ import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 export const SITE_LAUNCH_DATE = '2026-06-25';
 
 export const PAGE_LAST_MODIFIED = {
-  '/': '2026-11-04',
+  '/': '2026-11-07',
   '/about': '2026-11-04',
   '/it': '2026-11-04',
-  // Concrete trade stories, an example and the prices (#139).
-  '/automation': '2026-11-04',
+  // Construction-first offer, Gate-0 prices, example tiles (#145).
+  '/automation': '2026-11-07',
   '/rowing': '2026-11-04',
   '/projects': '2026-11-04',
   '/contact': '2026-11-04',
