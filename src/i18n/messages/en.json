@@ -47,6 +47,7 @@
     "email": "Email",
     "msg": "Message",
     "ref": "Or directly:",
+    "emailFallback": "E-mail",
     "sent": "Message sent!",
     "sentSub": "I usually reply within 24 hours.",
     "errorInvalid": "Please fill in all fields with a valid email address.",

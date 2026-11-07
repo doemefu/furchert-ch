@@ -2,8 +2,9 @@
 // and only for the locale that misses it. These tests catch it earlier:
 // - DE and EN carry the same keys across the whole public message tree
 //   (the private dashboard has its own copy tests);
-// - every key the /automation, home, header and footer components ask for
-//   exists in both locales, read from the source files as text;
+// - every key the /automation, home, header, footer and ContactEmail
+//   components ask for exists in both locales, read from the source files
+//   as text;
 // - every /automation key is used, so retired copy does not linger.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -36,6 +37,7 @@ const FILES: Record<string, string> = {
   'src/app/[locale]/page.tsx': '',
   'src/components/layout/Header.tsx': '',
   'src/components/layout/Footer.tsx': '',
+  'src/components/ui/ContactEmail.tsx': 'contact',
 };
 
 // String array literal assigned to `name` in a source file.

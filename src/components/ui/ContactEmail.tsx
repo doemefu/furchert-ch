@@ -5,17 +5,14 @@
 // the HTML nor the RSC payload carries it (Cloudflare's Email Obfuscation,
 // #125, only rewrites the HTML). On the server, during hydration and for
 // visitors without JavaScript the element links to the contact page and
-// shows "dominic [at] furchert.ch" (or the given label). The first client
-// render equals the server render, so hydration matches; the render after
-// mount swaps in the address and the `mailto:` href.
+// shows a neutral label ("E-Mail", or the given label), which spells no
+// address. The first client render equals the server render, so hydration
+// matches; the render after mount swaps in the address and the `mailto:` href.
 import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Btn } from './Btn';
-import {
-  contactEmailAddress,
-  contactEmailPlaceholder,
-  contactMailtoHref,
-} from '@/data/contact-email';
+import { contactEmailAddress, contactMailtoHref } from '@/data/contact-email';
 
 const noSubscribe = () => () => {};
 
@@ -33,13 +30,14 @@ interface ContactEmailProps {
 }
 
 export function ContactEmail({ label, children, subject, btn, style, className }: ContactEmailProps) {
+  const t = useTranslations('contact');
   // false on the server and during hydration, true once mounted on the client.
   const mounted = useSyncExternalStore(
     noSubscribe,
     () => true,
     () => false,
   );
-  const text = label ?? (mounted ? contactEmailAddress() : contactEmailPlaceholder());
+  const text = label ?? (mounted ? contactEmailAddress() : t('emailFallback'));
   // Locale-free; Btn and Link from @/i18n/navigation add the locale.
   const href = mounted ? contactMailtoHref(subject) : '/contact';
 
@@ -59,8 +57,9 @@ export function ContactEmail({ label, children, subject, btn, style, className }
       </a>
     );
   }
+  // No prefetch: the link is swapped for the `mailto:` one right after hydration.
   return (
-    <Link href={href} style={style} className={className}>
+    <Link href={href} prefetch={false} style={style} className={className}>
       {text}
       {children}
     </Link>

@@ -47,6 +47,7 @@
     "email": "E-Mail",
     "msg": "Nachricht",
     "ref": "Oder direkt:",
+    "emailFallback": "E-Mail",
     "sent": "Nachricht gesendet!",
     "sentSub": "Ich melde mich in der Regel innerhalb von 24 Stunden.",
     "errorInvalid": "Bitte fülle alle Felder mit einer gültigen E-Mail-Adresse aus.",
