@@ -9,6 +9,8 @@ describe('parsePhone', () => {
     ['0041 79 123 45 67', '0041 79 123 45 67'],
     ['+41 (0)44 123-45-67', '+41 (0)44 123-45-67'],
     ['  079   123 45 67  ', '079 123 45 67'],
+    ['079\u00a0123\u00a045\u00a067', '079 123 45 67'],
+    ['+41\u202f79\u202f123\u202f45\u202f67', '+41 79 123 45 67'],
   ])('accepts the Swiss number %j', (raw, display) => {
     expect(parsePhone(raw)).toEqual({ display, premium: false, foreign: false });
   });

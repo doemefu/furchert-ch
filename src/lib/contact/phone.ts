@@ -2,7 +2,8 @@
 // used by the server action (validation) and the mailer (the «Telefon:» line
 // and its hint). A number is accepted when it is at most 40 characters long,
 // uses only digits, spaces and `( ) / . -` with an optional leading `+`, and
-// has 9 to 15 digits. Swiss premium-rate numbers (090x) and numbers that are
+// has 9 to 15 digits. No-break spaces (U+00A0, U+202F), common in numbers
+// copied from web pages and documents, count as spaces. Swiss premium-rate numbers (090x) and numbers that are
 // not recognisably Swiss are accepted too, but flagged so the mail can say so.
 
 export const PHONE_MAX_LENGTH = 40;
@@ -33,7 +34,7 @@ function swissNationalNumber(display: string, digits: string): string | null {
 
 /** The checked number, or null when `raw` is not an acceptable phone number. */
 export function parsePhone(raw: string): PhoneNumber | null {
-  const trimmed = raw.trim();
+  const trimmed = raw.replace(/[\u00a0\u202f]/g, ' ').trim();
   if (!trimmed || trimmed.length > PHONE_MAX_LENGTH || !PHONE_CHARS_RE.test(trimmed)) return null;
   const display = trimmed.replace(/ {2,}/g, ' ');
   const digits = display.replace(/\D/g, '');
