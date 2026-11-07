@@ -69,6 +69,7 @@
     "noPressure": "Nach dem Termin frage ich einmal nach. Wenn Sie nicht weiter wollen, ist das in Ordnung.",
     "privacyNote": "Ihre Angaben erhalte ich per E-Mail, zusammen mit der Seite, über die Sie zum Formular gekommen sind (siehe <link>Datenschutzerklärung</link>).",
     "ref": "Oder direkt:",
+    "emailFallback": "E-Mail",
     "labelEmail": "E-Mail",
     "labelLocation": "Ort",
     "sent": "Danke, Ihre Anfrage ist angekommen.",
@@ -78,7 +79,7 @@
     "sentBack": "Zurück zu den Beispielen →",
     "errorInvalid": "Bitte geben Sie Ihren Namen und eine gültige E-Mail-Adresse an. Für einen Rückruf genügt die Telefonnummer.",
     "errorPhone": "Bitte geben Sie eine gültige Telefonnummer an.",
-    "errorServer": "Das hat nicht geklappt. Bitte versuchen Sie es später noch einmal oder schreiben Sie direkt an dominic@furchert.ch.",
+    "errorServer": "Das hat nicht geklappt. Bitte versuchen Sie es später noch einmal oder schreiben Sie direkt an {email}.",
     "errorRateLimited": "Zu viele Anfragen in kurzer Zeit. Bitte versuchen Sie es in ein paar Minuten noch einmal."
   },
   "pages": {

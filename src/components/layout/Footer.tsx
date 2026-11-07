@@ -3,6 +3,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
+import { ContactEmail } from '@/components/ui/ContactEmail';
 
 const NAV_KEYS = ['about', 'it', 'rowing', 'projects', 'automation', 'contact'] as const;
 
@@ -80,16 +81,8 @@ export async function Footer() {
           <div>
             <div style={colTitle}>{t('footer.contact')}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
-              {/* Cloudflare Email Obfuscation rewrites this text and href in the
-                  SSR HTML until its decoder runs; a leaf element with
-                  suppressHydrationWarning lets React hydrate anyway (#125). */}
-              <a
-                href="mailto:dominic@furchert.ch"
-                style={{ ...linkStyle, textTransform: 'none' }}
-                suppressHydrationWarning
-              >
-                dominic@furchert.ch
-              </a>
+              {/* The address is rendered only in the browser (#147). */}
+              <ContactEmail style={{ ...linkStyle, textTransform: 'none' }} />
               <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
                 {t('footer.location')}
               </span>
@@ -133,15 +126,12 @@ export async function Footer() {
         >
           <span>{t('footer.copy')}</span>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            {/* Imprint/Privacy pages are not implemented yet (follow-up). Render
-                as non-interactive placeholders rather than `href="#"` so they
-                don't masquerade as real navigation. */}
-            <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
+            <Link href="/imprint" style={{ ...linkStyle, color: 'var(--n-60)' }}>
               {t('footer.imprint')}
-            </span>
-            <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
+            </Link>
+            <Link href="/privacy" style={{ ...linkStyle, color: 'var(--n-60)' }}>
               {t('footer.privacy')}
-            </span>
+            </Link>
           </div>
         </div>
       </div>

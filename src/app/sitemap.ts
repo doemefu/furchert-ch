@@ -17,6 +17,8 @@ const PUBLIC_PATHS: string[] = [
   '/rowing',
   '/projects',
   '/contact',
+  '/imprint',
+  '/privacy',
   ...PROJECTS.map((p) => `/projects/${p.slug}`),
 ];
 

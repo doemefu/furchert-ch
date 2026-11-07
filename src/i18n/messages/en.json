@@ -69,6 +69,7 @@
     "noPressure": "After the meeting I follow up once. If you don't want to go further, that's fine.",
     "privacyNote": "Your details reach me by e-mail, together with the page that brought you to the form (see <link>privacy policy</link>).",
     "ref": "Or directly:",
+    "emailFallback": "E-mail",
     "labelEmail": "Email",
     "labelLocation": "Location",
     "sent": "Thank you, your enquiry has arrived.",
@@ -78,7 +79,7 @@
     "sentBack": "Back to the examples →",
     "errorInvalid": "Please enter your name and a valid email address. For a call back, your phone number is enough.",
     "errorPhone": "Please enter a valid phone number.",
-    "errorServer": "That didn't work. Please try again later or email dominic@furchert.ch directly.",
+    "errorServer": "That didn't work. Please try again later or email {email} directly.",
     "errorRateLimited": "Too many requests in a short time. Please try again in a few minutes."
   },
   "pages": {

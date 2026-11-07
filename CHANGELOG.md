@@ -44,9 +44,37 @@ All notable changes per milestone. Newest first.
   `GET /api/homelab-status` (cached, allowlisted opaque ids, never an error
   text, `unknown` when Prometheus is unavailable). No new dependency, no
   manifest change.
+- **Impressum and Datenschutz pages** (#16): `/[locale]/imprint` and
+  `/[locale]/privacy` (DE + EN) replace the footer placeholders and are in the
+  sitemap. The imprint names the owner and the e-mail address, which
+  `ContactEmail` renders in the browser only (#147; no postal address, owner
+  decision). The privacy notice is limited to what Swiss law requires
+  (purposes, data categories, recipients with their countries, cookies) and
+  promises nothing beyond what the system verifiably does: no retention
+  periods, hosting-location, backup, Sentry or training statements. Its
+  contact section names the contact form's fields and discloses that the
+  owner may handle e-mails with Claude (Anthropic Ireland, Limited; possible
+  US processing). Copy lives in `src/data/legal.ts`; `src/data/legal.test.ts`
+  guards it (no e-mail in text, no postal address, no dashes, required
+  recipients incl. Anthropic Ireland, removed topics stay out).
 
 ### Security
 
+- **Contact e-mail kept out of the server HTML and the RSC payload** (#147):
+  Cloudflare's Email Obfuscation (#125) only rewrote the HTML; the RSC payload
+  still carried the owner's address in plain text on every page. The footer,
+  the home CTA strip, the contact page and the automation page's e-mail button
+  now render it through the client component `ContactEmail`, which assembles
+  it from reversed segments in the browser after hydration
+  (`src/data/contact-email.ts`). Server HTML, no-JS visitors and the first
+  client render get a neutral "E-Mail"/"E-mail" label (or the button label)
+  as a link to the contact page; no "[at]" form, which harvesters decode.
+  The contact form's server-error message gets the address interpolated in
+  the browser. The `suppressHydrationWarning` workarounds on those elements
+  are gone. `src/contactEmailGuard.test.ts` fails if the address appears in
+  `src/` or `public/` or a non-client module imports the helpers; CI greps
+  the build output (`.next/server`, `.next/static`) for it after
+  `pnpm build`. No new dependency.
 - **Security headers tightened** (#42): HSTS raised from 1 day to 1 year
   (`max-age=31536000`, still no `includeSubDomains`/`preload`); the CSP
   directives that do not depend on inline scripts or styles are now enforced

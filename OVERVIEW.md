@@ -17,6 +17,8 @@ whole cluster — there is no separate admin app.
 | `/[locale]/rowing` | Rowing |
 | `/[locale]/projects`, `/projects/[slug]` | Projects + detail. `/projects/homelab` also shows what runs in the homelab (static showcase, public repos only) and a live status of six public services (up/down, 14-day availability) from `GET /api/homelab-status`; unknown when Prometheus is unavailable (`INTERFACES.md` §2 "Prometheus") |
 | `/[locale]/contact` | Contact |
+| `/[locale]/imprint` | Impressum / Imprint (#16; name + e-mail, no postal address) |
+| `/[locale]/privacy` | Datenschutz / Privacy (#16; copy in `src/data/legal.ts`) |
 
 Locales: `de` (default) and `en`; `/` redirects to `/de`. Each public route
 emits locale-aware `<title>` / `<meta description>`, a self-referencing
@@ -62,8 +64,8 @@ failure each surface a distinct visible error.
 The offer page is static: no Claude API, no AI endpoint, no persistence. Its
 three example tiles (native `<details>`, no client JS), the before/after
 example and the sample calculation are illustrative and labelled as invented.
-Client JS on the page is limited to the FAQ accordion and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
-Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a plain `mailto:` link. The hero and the closing section also link «Rückruf anfordern» (`automation-callback`), which ticks «Rückruf gewünscht» on the contact form. The price FAQ is visible but left out of the FAQPage JSON-LD. The
+Client JS on the page is limited to the FAQ accordion, the e-mail button (`ContactEmail`, below) and, on phones (≤ 820 px), a sticky call to action (`StickyCta`, rendered through a portal after hydration). It appears once the hero has scrolled out and hides at the closing call to action and the footer; without JS there is no bar.
+Every contact button links to `/contact?from=<id>` (`src/data/contact-sources.ts`; the home page's CTA strip uses `home-cta`); the closing section also offers a `mailto:` button whose address exists only in the browser (`ContactEmail`, #147; without JS it links to the contact page). The hero and the closing section also link «Rückruf anfordern» (`automation-callback`), which ticks «Rückruf gewünscht» on the contact form. The price FAQ is visible but left out of the FAQPage JSON-LD. The
 redirects live in `next.config.mjs` (pinned by `src/redirects.test.ts`).
 Nothing under `/automation` imports the mailer.
 
@@ -125,8 +127,6 @@ automated tests" half of #42 is tracked on that issue.
   data (e.g. auth-service's outbox not enabled); attempted usernames are never shown, only an 8-character hash tag.
 - **Live (#44):** `/dashboard/auth` calls auth-service's admin REST API server-side with the signed-in admin's own access token (refreshed in memory). Every failure renders an honest state ("sign in again", "ADMIN role required", "not available yet", "auth-service unavailable", "unexpected response"); Sessions & tokens and the audit log are labelled "not available" placeholders, never fabricated data.
 - **Live (#45 slice 1):** `/dashboard/devices` calls device-service's REST API server-side with the same admin access token. Device values are labelled "last reported" unless the device is live; a successful command says "sent", not "done". Failures render honest states ("sign in again", "ADMIN role required", "device-service unavailable", "unexpected response"). Device registration and deletion follow in a later slice.
-- **Placeholder:** footer **Impressum** / **Datenschutz** render as
-  non-interactive placeholders until the real pages exist (issue #16).
 - **Deferred (out of scope for now):** any AI backend for `/automation`, lead dashboard,
   Turnstile / a shared (multi-replica-safe) rate limiter, n8n notifications,
   WebSocket device stream. Tracked here as work progresses.

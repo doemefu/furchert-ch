@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
+import { contactEmailAddress } from '@/data/contact-email';
 import { HEARD_VIA_IDS, heardViaMessageKey, isFromId, type FromId } from '@/data/contact-sources';
 import { submitContact, type ContactTopic } from './actions';
 
@@ -129,7 +130,9 @@ export function ContactForm() {
       case 'phone':
         return t('errorPhone');
       case 'server':
-        return t('errorServer');
+        // The message names the address, assembled in the browser only (#147);
+        // an error is only ever set after a submit, never on the server.
+        return t('errorServer', { email: contactEmailAddress() });
       case 'rate_limited':
         return t('errorRateLimited');
       default:
