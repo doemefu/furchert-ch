@@ -197,6 +197,28 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Contact form with call back and attribution** (#145, part 2): `/contact`
+  in the Sie form («Melden Sie sich», reply «spätestens am nächsten
+  Arbeitstag») with a topic choice (live demo or something else),
+  «Rückruf gewünscht» with a phone field (the e-mail is then optional), an
+  optional message and an optional «Wie sind Sie auf mich aufmerksam
+  geworden?» select; name, e-mail and phone carry `autocomplete`. The call
+  back starts unchecked; only the new «Rückruf anfordern» link in the
+  /automation hero and closing call to action (`?from=automation-callback`)
+  ticks it. The page stays static: the form reads `?from=<id>` after
+  hydration, keeps only ids on `FROM_IDS`, removes the parameter from the
+  address bar and sends it with the enquiry. Phone numbers need 9 to 15
+  digits; 090x and non-Swiss numbers are accepted and flagged in the mail.
+  The mail sets Reply-To only with an e-mail, prefixes the subject with
+  «Rückruf: » or «Live-Demo: » and adds «Telefon:», «Rückruf gewünscht: ja»,
+  «Anliegen:», «Quelle:» and «Aufmerksam geworden:» lines only for checked
+  values; names and e-mail addresses with control characters are rejected,
+  so no line can be forged. A phone error marks and focuses the field; the
+  success text (demo or general, with the number for a call back) is
+  announced and focused. A privacy note under the button names the counting
+  purpose. No cookie, no storage, no new env var or dependency. Tests:
+  `submitContact` cases, mailer lines and header safety, phone rules, the
+  allowlists, the call-to-action ids in use and the unchecked call back.
 - **`/automation` rebuilt for the Gate-0 offer, construction first** (#145,
   part 1): a light hero «Drei Dinge, die KI im Bau heute schon kann.» with three
   CSS-only example tiles (native `<details>`: a site report spoken into the
