@@ -39,8 +39,8 @@ else), name, e-mail, «Rückruf gewünscht» with a phone number, an optional
 message and an optional «Wie sind Sie auf mich aufmerksam geworden?». The call
 back starts unchecked; the «Rückruf anfordern» link on `/automation`
 (`?from=automation-callback`) pre-ticks it; whenever it is ticked, the e-mail
-is optional and the phone required. The page stays static: the form reads `?from=<id>` in the
-browser, keeps it only if it is on `FROM_IDS` (`src/data/contact-sources.ts`),
+is optional and the phone required. The page stays static: the form reads
+`?from=<id>` in the browser, keeps it only if it is on `FROM_IDS` (`src/data/contact-sources.ts`),
 sends it with the enquiry and removes it from the address bar; no cookie, no
 storage. It posts to a typed `'use server'` action that validates the input
 (phone: 9 to 15 digits; unknown `from`/source values are dropped), applies a

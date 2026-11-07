@@ -94,7 +94,7 @@ describe('sendContactMail: callback and attribution (#145)', () => {
 
   it('drops bidi and invisible format characters from the name in the subject and the body', async () => {
     const { sendContactMail } = await loadMailer();
-    await sendContactMail({ ...input, name: 'Ada \u202Eetsiws\u202C\u2066x\u2069\u200E\u200F\uFEFF' });
+    await sendContactMail({ ...input, name: 'Ada \u202Eetsiws\u202C\u2066x\u2069\u200E\u200F\uFEFF\u061C\u200B\u2060\u00AD' });
 
     expect(sent().subject).toBe('Contact form: Ada etsiwsx');
     expect(sent().text.split('\n')[0]).toBe('Name: Ada etsiwsx');

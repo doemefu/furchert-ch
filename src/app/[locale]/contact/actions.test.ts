@@ -64,6 +64,10 @@ describe('submitContact: validation', () => {
     ['a first-strong isolate', 'Ada\u2068Muster'],
     ['a pop directional isolate', 'Ada\u2069Muster'],
     ['a zero-width no-break space', 'Ada\uFEFFMuster'],
+    ['an Arabic letter mark', 'Ada\u061CMuster'],
+    ['a zero-width space', 'Ada\u200BMuster'],
+    ['a word joiner', 'Ada\u2060Muster'],
+    ['a soft hyphen', 'Ada\u00ADMuster'],
   ])('rejects a name with %s, so it cannot forge or reorder mail lines', async (_, name) => {
     expect(await submitContact({ ...base, name, from: 'automation-hero' })).toEqual({ ok: false, error: 'invalid' });
     expect(sendContactMail).not.toHaveBeenCalled();

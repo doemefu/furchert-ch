@@ -57,10 +57,12 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EMAIL_REJECTED_CHARS_RE = /[<>,;"]/;
 // Name and e-mail each become one line of the mail (and the name part of the
 // subject): a line break or other control character could forge lines such
-// as «Quelle:», and bidi or invisible format characters (U+200E, U+200F,
-// U+202A to U+202E, U+2066 to U+2069, U+FEFF) could reorder how the line
-// reads in a mail client, so such values are rejected, not cleaned.
-const CONTROL_CHARS_RE = /[\x00-\x1f\x7f\u0085\u2028\u2029\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/;
+// as «Quelle:», and bidi or invisible format characters (U+00AD, U+061C,
+// U+200B, U+200E, U+200F, U+202A to U+202E, U+2060 to U+2064, U+2066 to
+// U+2069, U+FEFF) could reorder or hide how the line reads in a mail client,
+// so such values are rejected, not cleaned. U+200C and U+200D stay allowed:
+// some names need them.
+const CONTROL_CHARS_RE = /[\x00-\x1f\x7f\u0085\u2028\u2029\u00ad\u061c\u200b\u200e\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff]/;
 
 const NAME_MAX_LENGTH = 200;
 const EMAIL_MAX_LENGTH = 254;
