@@ -67,7 +67,7 @@
     "send": "Nachricht senden",
     "sendDemo": "Live-Demo anfragen",
     "noPressure": "Nach dem Termin frage ich einmal nach. Wenn Sie nicht weiter wollen, ist das in Ordnung.",
-    "privacyNote": "Ich verwende Ihre Angaben, um Ihre Anfrage zu beantworten. Über welche Seite und welchen Weg Anfragen kommen, zähle ich ohne Namen (siehe <link>Datenschutzerklärung</link>).",
+    "privacyNote": "Ihre Angaben erhalte ich per E-Mail, zusammen mit der Seite, über die Sie zum Formular gekommen sind (siehe <link>Datenschutzerklärung</link>).",
     "ref": "Oder direkt:",
     "labelEmail": "E-Mail",
     "labelLocation": "Ort",

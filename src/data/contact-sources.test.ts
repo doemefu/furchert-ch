@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import de from '@/i18n/messages/de.json';
+import en from '@/i18n/messages/en.json';
 import { WOW_TILES } from './automation-wow';
 import {
   FROM_IDS,
@@ -84,5 +86,18 @@ describe('callback checkbox default', () => {
     expect(form).toContain("const callback = callbackChoice ?? from === 'automation-callback';");
     const setters = [...form.matchAll(/setCallbackChoice\(([^)]*)\)/g)].map((m) => m[1]);
     expect(setters).toEqual(['e.target.checked']);
+  });
+});
+
+// Owner rule (2026-11-07): promise nothing the site does not do. The privacy
+// text of #128 no longer says enquiries are counted without names, so the
+// note under the form does not say it either.
+describe('privacy note under the form', () => {
+  it.each([
+    ['de', de.contact.privacyNote, 'Datenschutzerklärung'],
+    ['en', en.contact.privacyNote, 'privacy policy'],
+  ])('%s: names what arrives by e-mail and links the policy, without a counting promise', (_, note, policy) => {
+    expect(note).toContain(`<link>${policy}</link>`);
+    expect(note).not.toMatch(/ohne Namen|zähle|without names|\bcount/i);
   });
 });
