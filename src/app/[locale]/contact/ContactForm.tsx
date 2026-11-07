@@ -75,16 +75,15 @@ const textLinkStyle: CSSProperties = {
 type ErrorCode = 'invalid' | 'phone' | 'server' | 'rate_limited';
 
 const noSubscribe = () => () => {};
-// The allowlisted `from` of the current address, or null.
-const readFrom = (): FromId | null => {
-  const raw = new URLSearchParams(window.location.search).get('from');
-  return isFromId(raw) ? raw : null;
-};
+// The raw `from` of the current address, or null (also on the server and
+// while hydrating). It is checked against FROM_IDS before it is used.
+const readFrom = () => new URLSearchParams(window.location.search).get('from');
 const noFrom = () => null;
 
 export function ContactForm() {
   const t = useTranslations('contact');
-  const urlFrom = useSyncExternalStore(noSubscribe, readFrom, noFrom);
+  const rawFrom = useSyncExternalStore(noSubscribe, readFrom, noFrom);
+  const urlFrom: FromId | null = isFromId(rawFrom) ? rawFrom : null;
   // The `from` of this visit, kept after the parameter leaves the address bar.
   const [from, setFrom] = useState<FromId | null>(null);
   if (urlFrom !== null && urlFrom !== from) {
@@ -107,16 +106,19 @@ export function ContactForm() {
   const phoneRef = useRef<HTMLInputElement>(null);
   const sentRef = useRef<HTMLHeadingElement>(null);
 
-  // Remove `?from=` from the address bar once it is kept in state, so a
-  // reload or a shared link does not count the button twice. The state
-  // Next.js keeps in history is passed on unchanged.
+  // Remove `?from=` from the address bar once it is kept in state (an id not
+  // on the list at once), so a reload or a shared link does not count the
+  // button twice. `null` as the state is the documented way (Next.js "Using
+  // the native History API"): Next copies its own history state into the
+  // entry and updates its router, so a later router update cannot write
+  // `?from=` back. `rawFrom` is null while hydrating and only set in the
+  // render after it, so this never runs before Next has patched history.
   useEffect(() => {
+    if (rawFrom === null || (isFromId(rawFrom) && rawFrom !== from)) return;
     const url = new URL(window.location.href);
-    const raw = url.searchParams.get('from');
-    if (raw === null || (isFromId(raw) && raw !== from)) return;
     url.searchParams.delete('from');
-    window.history.replaceState(window.history.state, '', url);
-  }, [from]);
+    window.history.replaceState(null, '', url);
+  }, [rawFrom, from]);
 
   useEffect(() => {
     if (sent) sentRef.current?.focus();
