@@ -13,6 +13,8 @@ import { TICKER_ITEMS } from '@/data/ticker';
 import { FAQS } from '@/data/automation-faqs';
 import { EXAMPLE } from '@/data/automation-example';
 import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
+import { WOW_TILES } from '@/data/automation-wow';
+import { CALC } from '@/data/automation-calc';
 import { ownerTitle } from '@/lib/seo/metadata';
 
 // Search-result copy: every public page has its own title and description in
@@ -109,7 +111,7 @@ describe('public copy', () => {
   const data = {
     BIO, FACTS, TIMELINE, INTERESTS, ENGAGEMENT, EXPERIENCE, HOME_STATS, LAB_SERVICES, LAB_SHOWCASE,
     IT_CARDS, TECH_STACK, PROJECTS, ROWING_CARDS, TICKER_ITEMS,
-    FAQS, EXAMPLE, PRICE_STEPS, PRICE_ADDON,
+    FAQS, EXAMPLE, PRICE_STEPS, PRICE_ADDON, WOW_TILES, CALC,
   };
 
   it('has no em dash in the messages', () => {

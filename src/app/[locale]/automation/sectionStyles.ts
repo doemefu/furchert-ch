@@ -5,17 +5,20 @@ import type { CSSProperties } from 'react';
 
 export const HAIRLINE = '1px solid rgba(162,167,176,.22)';
 
+// Phone spacing: the clamp() values equal the prototype's from about 800 px
+// wide and keep /automation within its screen budget on phones (#145).
 export const sectionStyle: CSSProperties = {
-  padding: '4rem 0',
+  padding: 'clamp(2.5rem, 8vw, 4rem) 0',
   borderBottom: HAIRLINE,
 };
 
+// n-60 instead of the prototype's label grey for AA contrast (#145).
 export const labelMono: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   marginBottom: '1rem',
 };
 
@@ -34,7 +37,7 @@ export const leadStyle: CSSProperties = {
   color: 'var(--n-70)',
   lineHeight: 1.55,
   maxWidth: '62ch',
-  marginBottom: '2.5rem',
+  marginBottom: 'clamp(1.5rem, 5vw, 2.5rem)',
 };
 
 // Card title (h3): the prototype's process-step title.
@@ -62,9 +65,24 @@ export const bodyText: CSSProperties = {
 };
 
 export const footnoteStyle: CSSProperties = {
-  marginTop: '1.5rem',
+  marginTop: 'clamp(1rem, 3vw, 1.5rem)',
   fontSize: '.875rem',
   color: 'var(--n-60)',
   lineHeight: 1.55,
   maxWidth: '68ch',
+};
+
+// Standalone mono text link with a 44 px target (tile links, calc link,
+// "Mehr über mich").
+export const textLink: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '.4rem',
+  minHeight: 44,
+  fontFamily: 'var(--mono)',
+  fontSize: '.75rem',
+  letterSpacing: '.04em',
+  textTransform: 'uppercase',
+  color: 'var(--blue-base)',
+  textDecoration: 'none',
 };

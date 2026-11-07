@@ -103,3 +103,55 @@ a[href]:hover { opacity: .85; }
    whole card does not dim (the prototype only changed the background). */
 a.hover-card { display: block; text-decoration: none; color: inherit; transition: background .2s; }
 a.hover-card:hover { opacity: 1; background: var(--n-10); }
+
+/* ── WOW TILES (/automation hero, #145) ──
+   Native <details> tiles (WowTiles.tsx). Base state = final state: motion
+   runs only when a tile opens (opacity/transform, plus the connector's dash),
+   ends within 2.5 s and is off with reduced motion. The .wow elements carry
+   no inline animation, transition or transform. */
+.wow > summary { list-style: none; cursor: pointer; }
+.wow > summary::-webkit-details-marker { display: none; }
+.wow .wow-when-open { display: none; }
+.wow[open] .wow-when-open { display: inline; }
+.wow[open] .wow-when-closed { display: none; }
+.wow > summary:focus-visible,
+.wow a:focus-visible { outline: 2px solid var(--blue-base); outline-offset: 2px; }
+.wow[open] .wow-step { animation: wow-in .45s cubic-bezier(.22,1,.36,1) calc(var(--i, 0) * 110ms) both; }
+.wow[open] .wow-bar { transform-origin: bottom; animation: wow-bar .45s ease-in-out calc(var(--b, 0) * 70ms) 3 alternate; }
+.wow[open] .wow-line path { stroke-dasharray: 1; animation: wow-draw .7s ease-out .15s both; }
+@keyframes wow-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes wow-bar { from { transform: scaleY(.3); } to { transform: scaleY(1); } }
+@keyframes wow-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .wow .wow-step, .wow .wow-bar, .wow .wow-line path { animation: none; }
+}
+
+/* ── AUTOMATION STICKY CTA (phones, #145) ──
+   StickyCta.tsx toggles `hidden`; this block sets the look (a twin of the
+   header) and keeps the bar off wider screens. No transition. */
+.sticky-cta {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .625rem 1.75rem calc(.625rem + env(safe-area-inset-bottom));
+  background: rgba(250,250,255,.92);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(162,167,176,.22);
+}
+.sticky-cta[hidden] { display: none; }
+.sticky-cta-micro {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .04em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--n-70);
+}
+@media (min-width: 821px) { .sticky-cta { display: none; } }

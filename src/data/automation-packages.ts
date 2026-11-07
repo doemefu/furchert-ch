@@ -1,197 +1,179 @@
-// Packages and prices for /automation. Prices are the owner's decision of
-// 2026-11-03 ("Vorschlag so zeigen"); inclusions and exclusions follow the
-// package cards of his business case, including the server cost cap of the
-// care (owner, 2026-11-04). Deliberately not shown: durations or
-// deadlines (the schedule goes into each quote), hourly rates, a second care
-// tier and any price not listed below. Guarded by
-// src/i18n/automationCopy.test.ts. Prices without VAT: the owner is not
-// registered for VAT, and the page says so in that wording.
+// Process and prices for /automation: the Gate-0 offer (owner decision
+// 2026-11-07, #145). Four steps in the order a customer goes through them,
+// both size tiers at equal weight (`price` and `priceAlt`), the risk reversal
+// as `terms` of the rollout, and the own automation once, as "possible
+// later". Prices are fixed and in Swiss francs; the VAT status is an open
+// owner item, so the page says "Fixpreise in Franken." and nothing about VAT.
+// Deliberately not shown: hourly rates, licence prices, a credit of the
+// assessment and any price not listed below. Guarded by
+// src/i18n/automationCopy.test.ts.
 import type { Locale } from '@/i18n/routing';
 
 export interface PackageCopy {
   name: string;
-  /** Approved price phrase, e.g. "ab CHF 2'500". */
+  /** Approved price phrase, e.g. "CHF 3'900 unter 20 Personen". */
   price: string;
+  /** Second size tier, shown in the same style as `price`. */
+  priceAlt?: string;
   priceNote?: string;
-  /** Set for steps a customer may skip. */
-  optional?: string;
   summary: string;
+  /** Conditions in body size, always visible (risk reversal, screening). */
+  terms?: string[];
   includes: string[];
   excludes?: string;
-  /** Credit towards a trial run, with its time window. */
-  credit?: string;
 }
 
 export interface AutomationPackage {
-  id: 'first-call' | 'quick-check' | 'trial' | 'care' | 'workshop';
+  id: 'demo' | 'assessment' | 'rollout' | 'subscription' | 'extension';
   i18n: Record<Locale, PackageCopy>;
 }
 
-// The steps in the order a customer goes through them.
+// The steps in the order a customer goes through them (numbered 01 to 04).
 export const PRICE_STEPS: AutomationPackage[] = [
   {
-    id: 'first-call',
+    id: 'demo',
     i18n: {
       de: {
-        name: 'Erstgespräch',
+        name: 'Live-Demo',
         price: 'kostenlos',
-        summary:
-          '30 bis 45 Minuten, vor Ort im Zürcher Oberland oder per Video. Sie erzählen, wo im Alltag Zeit verloren geht. Ich sage Ihnen offen, ob KI dort etwas bringt.',
+        summary: '30 Minuten, bei Ihnen oder per Video. Ich zeige, was heute geht.',
         includes: [],
       },
       en: {
-        name: 'Initial consultation',
+        name: 'Live demo',
         price: 'free',
-        summary:
-          '30 to 45 minutes, on site around Zurich or by video. You tell me where time gets lost in your day. I will tell you plainly whether AI helps there.',
+        summary: '30 minutes, at your firm or by video. I show you what works today.',
         includes: [],
       },
     },
   },
   {
-    id: 'quick-check',
+    id: 'assessment',
     i18n: {
       de: {
-        name: 'KI-Kurzcheck',
-        price: 'CHF 600',
-        optional: 'Optional',
-        summary:
-          'Für alle, die sich noch nichts Konkretes vorstellen können: Sie sehen an einem eigenen Dokument, was KI daraus macht. Ist nach dem Erstgespräch klar, was Sie brauchen, erhalten Sie direkt die Offerte.',
+        name: 'Standortbestimmung',
+        price: 'CHF 750',
+        summary: 'Ein halber Tag im Büro und auf der Baustelle. Danach wissen Sie, was passt.',
+        terms: ['Eine Einführung biete ich nur an, wenn ich glaube, dass sie bei Ihnen läuft.'],
         includes: [
-          '2 Stunden bei Ihnen vor Ort: Wir schauen ein bis zwei Abläufe am Arbeitsplatz an.',
-          'Ein Musterbeispiel: ein echtes Dokument Ihres Betriebs, mit KI bearbeitet, als Vorher-nachher.',
-          'Ein Kurzbericht von 2 bis 3 Seiten: geeignete Abläufe, grobe Zeitersparnis mit Ihren Zahlen und welche Daten wohin dürfen.',
-          'Eine Offerte mit Fixpreis für den Testlauf und 30 Minuten Besprechung per Video.',
+          'Rundgang und Gespräche vor Ort',
+          'Test mit Sprachnachrichten Ihrer Poliere, auf der Baustelle',
+          'Wo Offerten und Bauprogramm heute liegen',
+          'Wer heute auf welche Ordner zugreifen kann',
+          'Kurzbericht: Abläufe, passende Werkzeuge, Kosten der Lizenzen',
+          'Offerte für die Einführung, mit Fixpreis',
         ],
-        excludes: 'Nicht enthalten: eine laufende Lösung, Lizenzen, eine rechtliche Prüfung.',
-        credit: 'Bestellen Sie innert 3 Monaten einen Testlauf, wird der Betrag voll angerechnet.',
       },
       en: {
-        name: 'AI quick check',
-        price: 'CHF 600',
-        optional: 'Optional',
-        summary:
-          'For anyone who cannot yet picture it: you see what AI does with one of your own documents. If it is clear after the initial consultation what you need, you get the quote straight away.',
+        name: 'Assessment',
+        price: 'CHF 750',
+        summary: 'Half a day in the office and on site. Afterwards you know what fits.',
+        terms: ['I only offer a rollout if I believe it will work at your firm.'],
         includes: [
-          '2 hours on site: we look at one or two processes at the workplace.',
-          'A sample: a real document from your business, processed with AI, as before and after.',
-          'A short report of 2 to 3 pages: suitable processes, a rough time saving based on your figures and which data may go where.',
-          'A fixed-price quote for the trial run and a 30-minute video call to discuss it.',
+          'Walk-through and conversations on site',
+          "A test with your foremen's voice messages, on site",
+          'Where quotes and the schedule are kept today',
+          'Who can access which folders today',
+          'Short report: workflows, suitable tools, licence costs',
+          'A quote for the rollout, at a fixed price',
         ],
-        excludes: 'Not included: a running solution, licences, a legal review.',
-        credit: 'If you order a trial run within 3 months, the full amount is credited.',
       },
     },
   },
   {
-    id: 'trial',
+    id: 'rollout',
     i18n: {
       de: {
-        name: 'Erster Testlauf',
-        price: "ab CHF 2'500",
-        priceNote: "Mit Anbindung an Ihre Branchensoftware ab CHF 6'000.",
-        summary: 'Ein einziger Ablauf wird eingerichtet und im Alltag Ihres Betriebs getestet.',
-        includes: [
-          'Ziele und Testfälle schriftlich, bevor es losgeht: echte Beispiele, an denen wir messen, ob es funktioniert.',
-          'Aufbau bei Ihnen oder auf einem Server in der Schweiz.',
-          '1 Stunde Einführung, dann 4 Wochen Testbetrieb (mit Anbindung bis 6 Wochen) mit bis zu 2 Anpassungsrunden.',
-          'Messung vorher und nachher: Zeit pro Fall.',
-          'Ein Datenblatt: welche Dienste im Einsatz sind und wo die Daten verarbeitet werden.',
-          'Anleitung und Export der Lösung, damit Sie nicht an mich gebunden sind.',
-          'Mit Anbindung in zwei Stufen: Zuerst prüfen wir die Schnittstelle mit 20 echten Dokumenten aus Ihrem Alltag. Dann entscheiden Sie, ob angebunden wird.',
+        name: 'Einführung',
+        price: "CHF 3'900 unter 20 Personen",
+        priceAlt: "ab CHF 7'500 ab 20 Personen",
+        priceNote: 'Den genauen Betrag nennt die Offerte.',
+        summary: 'Ein Werkzeug, eingerichtet mit Ihren Vorlagen, damit es im Alltag läuft.',
+        terms: [
+          'Sie zahlen die Hälfte bei Auftrag. Die zweite Hälfte wird fällig, wenn die Messung nach 6 Wochen zeigt, dass das vereinbarte Ziel erreicht ist.',
+          'Das Ziel legen wir vorher gemeinsam auf einem Zielblatt fest, dazu die Schulungen. Beispiel: 10 von 15 Tagesrapporten pro Woche kommen per Sprache. Gezählt wird zusammengefasst, nie pro Person.',
+          'Wird das Ziel nicht erreicht, begleite ich Sie 4 Wochen weiter, ohne Aufpreis, und wir messen noch einmal. So lange wartet die zweite Hälfte.',
+          'Ist das Ziel dann erreicht, wird sie fällig. Wenn nicht und die vereinbarten Schulungen haben stattgefunden, entfällt die zweite Hälfte.',
         ],
-        excludes:
-          'Nicht enthalten: mehr als ein Ablauf, Lizenzen, die Nutzung des KI-Dienstes, das Bereinigen Ihrer Daten, allfällige Gebühren Ihres Softwareherstellers für die Schnittstelle, Rechtsberatung und der Betrieb nach dem Test.',
+        includes: [
+          'Einrichtung, Vorlagen und Schulung, auf der Baustelle und im Büro',
+          'Regeln für Ihre Daten, auf 1 bis 2 Seiten',
+          'Messung nach 6 Wochen, zusammengefasst und ohne Namen',
+          'Ab 20 Personen: Schulung pro Equipe und fürs Büro',
+        ],
       },
       en: {
-        name: 'First trial run',
-        price: "from CHF 2'500",
-        priceNote: "With a connection to your trade software from CHF 6'000.",
-        summary: 'One single process is set up and tested in your day-to-day work.',
-        includes: [
-          'Goals and test cases in writing before we start: real examples we use to check that it works.',
-          'Set up on your systems or on a server in Switzerland.',
-          'A 1-hour introduction, then a 4-week trial period (up to 6 weeks with a connection) with up to 2 rounds of adjustments.',
-          'Measured before and after: time per case.',
-          'A data sheet: which services are used and where the data is processed.',
-          'Instructions and an export of the solution, so you are not tied to me.',
-          'With a connection, in two stages: first we test the interface with 20 real documents from your day-to-day work. Then you decide whether we connect it.',
+        name: 'Rollout',
+        price: "CHF 3'900 under 20 people",
+        priceAlt: "from CHF 7'500 for 20 people or more",
+        priceNote: 'The quote states the exact amount.',
+        summary: 'One tool, set up with your templates so that it works day to day.',
+        terms: [
+          'You pay half on order. The second half falls due when the measurement after 6 weeks shows that the agreed target has been reached.',
+          'We set the target together beforehand on a target sheet (Zielblatt), along with the training sessions. Example: 10 of 15 daily site reports a week come in by voice. Counts are aggregated, never per person.',
+          'If the target is not reached, I support you for 4 more weeks at no extra charge, and we measure again. Until then, the second half waits.',
+          'If the target is then reached, it falls due. If not, and the agreed training took place, the second half is waived.',
         ],
-        excludes:
-          'Not included: more than one process, licences, use of the AI service, cleaning up your data, any fees your software vendor charges for the interface, legal advice and operation after the trial.',
+        includes: [
+          'Set-up, templates and training, on site and in the office',
+          'Rules for your data, on 1 to 2 pages',
+          'Measurement after 6 weeks, aggregated and without names',
+          'From 20 people: training per crew and for the office',
+        ],
       },
     },
   },
   {
-    id: 'care',
+    id: 'subscription',
     i18n: {
       de: {
-        name: 'KI-Betreuung',
-        price: 'ab CHF 190 pro Monat',
-        priceNote: 'Monatlich kündbar.',
-        optional: 'Optional',
-        summary:
-          'Damit der Ablauf weiterläuft, wenn sich Software oder KI-Dienste ändern. Sie beginnt erst nach dem Testbetrieb und kostet keine Einrichtungsgebühr.',
+        name: 'Abo',
+        price: 'CHF 200 pro Monat unter 20 Personen',
+        priceAlt: 'CHF 500 bis 900 pro Monat ab 20 Personen',
+        priceNote: 'Je nach Umfang. Den genauen Betrag nennt die Offerte.',
+        summary: 'Damit das Werkzeug nach der Einführung gebraucht wird.',
         includes: [
-          'Server in der Schweiz für diesen Ablauf, Kosten bis CHF 40 pro Monat inbegriffen, oder Überwachung in Ihrer Umgebung.',
-          'Überwachung mit Alarm bei Fehlern, Updates und eine tägliche Sicherung.',
-          'Anpassung an Änderungen der Anbieter, bis 1 Stunde pro Monat.',
-          'Kontrolle der Kosten für den KI-Dienst und ein Vertrag zur Auftragsbearbeitung.',
-          'Reaktion am nächsten Arbeitstag: eine Reaktionszeit, keine Zusage, wann ein Fehler behoben ist.',
+          'Fragen per E-Mail, Antwort spätestens am nächsten Arbeitstag',
+          'Neue Leute einführen, etwa zum Saisonstart',
+          'Hinweise, wenn Hersteller etwas ändern',
+          'Ab 20 Personen: ein fester Termin im Monat',
         ],
-        excludes:
-          'Nicht enthalten: neue Funktionen, die Nutzung des KI-Dienstes, Lizenzen, allgemeiner IT-Support, Bereitschaft rund um die Uhr.',
       },
       en: {
-        name: 'Ongoing AI care',
-        price: 'from CHF 190 a month',
-        priceNote: 'Cancellable monthly.',
-        optional: 'Optional',
-        summary:
-          'So the process keeps running when software or AI services change. It starts only after the trial period and has no set-up fee.',
+        name: 'Subscription',
+        price: 'CHF 200 a month under 20 people',
+        priceAlt: 'CHF 500 to 900 a month for 20 people or more',
+        priceNote: 'Depending on scope. The quote states the exact amount.',
+        summary: 'So that the tool stays in use after the rollout.',
         includes: [
-          'A server in Switzerland for this process, with costs up to CHF 40 a month included, or monitoring on your own systems.',
-          'Monitoring with alerts on errors, updates and a daily backup.',
-          'Adjustments to changes by the providers, up to 1 hour a month.',
-          'Cost control for the AI service and a data processing agreement.',
-          'A response by the next working day: a response time, not a promise of when a fault will be fixed.',
+          'Questions by email, a reply by the next working day at the latest',
+          'Introducing new people, for example at the start of the season',
+          'Notices when vendors change something',
+          'From 20 people: a fixed appointment each month',
         ],
-        excludes:
-          'Not included: new features, use of the AI service, licences, general IT support, round-the-clock standby.',
       },
     },
   },
 ];
 
-// Offered on request next to the steps.
+// The own automation ("Ausbau" in the strategy, never in visible copy): one
+// box after the steps, its price shown only here.
 export const PRICE_ADDON: AutomationPackage = {
-  id: 'workshop',
+  id: 'extension',
   i18n: {
     de: {
-      name: 'KI-Werkstatt fürs Team',
-      price: "CHF 1'500",
+      name: 'Eigene Automation',
+      price: "ab CHF 8'000",
       summary:
-        'Ein halber Tag bei Ihnen vor Ort, für bis zu 10 Personen. Passt, wenn in Ihrem Team schon einzelne Leute ChatGPT oder ähnliche Programme nutzen.',
-      includes: [
-        'Die Mitarbeitenden lösen eigene Aufgaben mit KI, zum Beispiel eine Offerte formulieren, einen Rapport aus Stichworten schreiben oder einen Text übersetzen.',
-        'Regeln für die KI-Nutzung in Ihrem Betrieb, auf 1 bis 2 Seiten.',
-        'Vorlagen für die 3 bis 5 häufigsten Aufgaben.',
-      ],
-      excludes: 'Nicht enthalten: Lizenzen, eine rechtliche Prüfung dieser Regeln.',
-      credit: 'CHF 500 werden angerechnet, wenn Sie innert 3 Monaten einen Testlauf bestellen.',
+        'Wenn Ihnen nach einer Einführung etwas fehlt, baue ich eine Automation dazu, die es so nicht zu kaufen gibt, zum Beispiel die Tagesübersicht von oben. Mit eigener Offerte.',
+      includes: [],
     },
     en: {
-      name: 'AI workshop for your team',
-      price: "CHF 1'500",
+      name: 'Own automation',
+      price: "from CHF 8'000",
       summary:
-        'Half a day on site, for up to 10 people. A good fit when some people in your team already use ChatGPT or similar tools.',
-      includes: [
-        'Your staff solve their own tasks with AI, for example wording a quote, writing a report from notes or translating a text.',
-        'An AI use policy for your business, 1 to 2 pages.',
-        'Templates for the 3 to 5 most common tasks.',
-      ],
-      excludes: 'Not included: licences, a legal review of the policy.',
-      credit: 'CHF 500 is credited if you order a trial run within 3 months.',
+        'If something is still missing after a rollout, I build an automation that you cannot buy off the shelf, such as the daily overview above. With its own quote.',
+      includes: [],
     },
   },
 };
