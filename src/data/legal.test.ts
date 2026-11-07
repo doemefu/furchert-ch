@@ -83,7 +83,7 @@ describe('legal pages copy', () => {
     for (const locale of LOCALES) {
       const text = strings(LEGAL_PAGES[page][locale]).join('\n');
       expect(text).not.toMatch(/Sentry|Backup|Sicherungskopie|Haftung|Liability|Copyright|Urheberrecht/i);
-      expect(text).not.toMatch(/training|trainiert/i);
+      expect(text).not.toMatch(/\btrain|trainier|training/i);
       expect(text).not.toMatch(/\bMIT\b/);
       expect(text).not.toMatch(/\b(?:90|180|72)\b/);
       expect(text).not.toMatch(/in der Schweiz|in Switzerland|eigenen Servern|own servers|no tracking|keine Tracking/i);
