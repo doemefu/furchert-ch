@@ -39,7 +39,7 @@ Review in addition to the generic checklist:
 
 ## documenter
 
-- Docs: `README.md` (index, quick start, route map), `OVERVIEW.md` (public + private surfaces; state clearly what is real, illustrative or deferred; automation stays listed as a static offer page without AI backend), `INTERFACES.md` (consumed backend endpoints, OIDC client contract), `DEPLOYMENT.md` (Docker/k8s/Flux/Cloudflare Tunnel, required secrets/env), `CONTRIBUTING.md` (local dev: pnpm, local OIDC, port-forwards, lint/build, PR flow), `CHANGELOG.md` (one entry per shipped milestone), `docs/INDEX.md` (index of supplementary docs).
+- Docs: `README.md` (index, quick start, route map), `OVERVIEW.md` (public + private surfaces; state clearly what is real, mock or deferred; automation stays listed as a static offer page without AI backend, its illustrative examples under Mock), `INTERFACES.md` (consumed backend endpoints, OIDC client contract), `DEPLOYMENT.md` (Docker/k8s/Flux/Cloudflare Tunnel, required secrets/env), `CONTRIBUTING.md` (local dev: pnpm, local OIDC, port-forwards, lint/build, PR flow), `CHANGELOG.md` (one entry per shipped milestone), `docs/INDEX.md` (index of supplementary docs).
 - Read the implemented files first; never document what was planned if it differs from what was built.
 - Keep `CLAUDE.md` concise.
 
@@ -67,7 +67,7 @@ Additional checks:
 
 - Audit in full: `README.md`, `OVERVIEW.md`, `INTERFACES.md`, `DEPLOYMENT.md`, `CONTRIBUTING.md`, `CHANGELOG.md` (and `docs/INDEX.md` if supplementary docs changed).
 - `README.md`: new route/page, milestone status, new prerequisite, index still accurate.
-- `OVERVIEW.md`: new public/private surface; change in real vs. illustrative vs. deferred (automation must stay listed as a static offer page without AI backend); route map accurate.
+- `OVERVIEW.md`: new public/private surface; change in real vs. mock vs. deferred (automation must stay listed as a static offer page without AI backend, its illustrative examples under Mock); route map accurate.
 - `INTERFACES.md`: new backend endpoint consumed; OIDC client contract change (redirect URIs, scopes, secret env name).
 - `DEPLOYMENT.md`: new env var or secret key; Dockerfile/k8s/Flux/Cloudflare Tunnel change; new troubleshooting case.
 - `CONTRIBUTING.md`: new local-dev step (pnpm script, local OIDC, port-forward), new test type/command, new CI workflow.
