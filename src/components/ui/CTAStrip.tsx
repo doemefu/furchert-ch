@@ -5,6 +5,7 @@
 // Without them the strip renders as in the prototype.
 import { Link } from '@/i18n/navigation';
 import { Icon } from './Icon';
+import { ContactEmail } from './ContactEmail';
 
 interface StripLink {
   href: string;
@@ -88,11 +89,11 @@ export function CTAStrip({
               {primary.label} <Icon name="arrow" size={12} />
             </Link>
           )}
-          {/* Leaf span: Cloudflare Email Obfuscation rewrites the address in
-              the SSR HTML until its decoder runs (#125). */}
-          <a href="mailto:dominic@furchert.ch" style={linkStyle}>
-            <span suppressHydrationWarning>dominic@furchert.ch</span> <Icon name="arrow" size={12} />
-          </a>
+          {/* The address is rendered only in the browser (#147). */}
+          <ContactEmail style={linkStyle}>
+            {' '}
+            <Icon name="arrow" size={12} />
+          </ContactEmail>
           <a
             href="https://github.com/doemefu"
             target="_blank"

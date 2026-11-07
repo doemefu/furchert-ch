@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
+import { contactEmailAddress } from '@/data/contact-email';
 import { submitContact } from './actions';
 
 const labelStyle = {
@@ -36,6 +37,9 @@ export function ContactForm() {
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', email: '', message: '', form_check: '' });
 
+  // The message names the address; it is assembled in the browser only (#147).
+  const serverError = () => t('errorServer', { email: contactEmailAddress() });
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setPending(true);
@@ -45,7 +49,7 @@ export function ContactForm() {
       if (res.ok) {
         setSent(true);
       } else if (res.error === 'server') {
-        setError(t('errorServer'));
+        setError(serverError());
       } else if (res.error === 'rate_limited') {
         setError(t('errorRateLimited'));
       } else {
@@ -53,7 +57,7 @@ export function ContactForm() {
       }
     } catch {
       // Thrown/network error -> visible error, NEVER a success state.
-      setError(t('errorServer'));
+      setError(serverError());
     } finally {
       setPending(false);
     }

@@ -3,6 +3,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
+import { ContactEmail } from '@/components/ui/ContactEmail';
 
 const NAV_KEYS = ['about', 'it', 'rowing', 'projects', 'automation', 'contact'] as const;
 
@@ -80,16 +81,8 @@ export async function Footer() {
           <div>
             <div style={colTitle}>{t('footer.contact')}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
-              {/* Cloudflare Email Obfuscation rewrites this text and href in the
-                  SSR HTML until its decoder runs; a leaf element with
-                  suppressHydrationWarning lets React hydrate anyway (#125). */}
-              <a
-                href="mailto:dominic@furchert.ch"
-                style={{ ...linkStyle, textTransform: 'none' }}
-                suppressHydrationWarning
-              >
-                dominic@furchert.ch
-              </a>
+              {/* The address is rendered only in the browser (#147). */}
+              <ContactEmail style={{ ...linkStyle, textTransform: 'none' }} />
               <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
                 {t('footer.location')}
               </span>
