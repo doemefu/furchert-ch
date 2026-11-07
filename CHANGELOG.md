@@ -216,7 +216,7 @@ All notable changes per milestone. Newest first.
   so no line can be forged. A phone error marks and focuses the field; the
   success text (demo or general, with the number for a call back) is
   announced and focused. A privacy note under the button names the counting
-  purpose. No cookie, no storage, no new env var or dependency. Tests:
+  purpose and links to the privacy page `/privacy` (#128). No cookie, no storage, no new env var or dependency. Tests:
   `submitContact` cases, mailer lines and header safety, phone rules, the
   allowlists, the call-to-action ids in use and the unchecked call back.
 - **`/automation` rebuilt for the Gate-0 offer, construction first** (#145,

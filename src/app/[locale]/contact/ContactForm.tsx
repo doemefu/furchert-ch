@@ -354,7 +354,15 @@ export function ContactForm() {
       </Btn>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
         <p style={helpStyle}>{t('noPressure')}</p>
-        <p style={helpStyle}>{t('privacyNote')}</p>
+        <p style={helpStyle}>
+          {t.rich('privacyNote', {
+            link: (chunks) => (
+              <Link href="/privacy" style={{ color: 'var(--blue-base)', textDecoration: 'underline' }}>
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
       </div>
     </form>
   );
