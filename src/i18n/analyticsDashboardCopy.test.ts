@@ -19,6 +19,7 @@ const TEMPLATES: Record<string, string[]> = {
   'clicks.${k}': ['cta', 'link', 'faq', 'lang', 'nav', 'outbound', 'mailto', 'tel'].map((k) => `clicks.${k}`),
   'clicks.${kind}': ['cta', 'link', 'faq', 'lang', 'nav', 'outbound', 'mailto', 'tel'].map((k) => `clicks.${k}`),
   'sources.${ch}': ['ai', 'search', 'social', 'referral', 'direct', 'internal'].map((k) => `sources.${k}`),
+  '${key}N': ['funnels.ofPreviousN', 'funnels.ofFirstN'],
   'pages.${PAGE_COLS[i + 1]}': ['pageviews', 'entries', 'exitRate', 'bounce', 'medianTime', 'scroll50', 'scroll90'].map((k) => `pages.${k}`),
   'pages.${k}': ['path', 'pageviews', 'entries', 'exitRate', 'bounce', 'medianTime', 'scroll50', 'scroll90'].map((k) => `pages.${k}`),
   'sources.${k}': ['source', 'medium', 'campaign', 'visits', 'converting'].map((k) => `sources.${k}`),

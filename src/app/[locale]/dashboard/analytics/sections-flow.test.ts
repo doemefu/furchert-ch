@@ -156,6 +156,8 @@ describe('2 Funnels', () => {
     expect(out.indexOf('funnels.steps.visit')).toBeLessThan(out.indexOf('funnels.steps.offerVisit'));
     expect(out).toContain('aria-label="lt3Spoken">lt3</span>');
     expect(out).toContain(q('funnels.ofPrevious{"rate":"30%"}'));
+    // A "x of n" step rate would repeat the count: only n is named.
+    expect(out).toContain(q('funnels.ofPreviousN{"n":"12"}'));
     // contact_submit (2) is small: no rate of the previous step for it, no overall rate.
     expect(out).not.toContain('funnels.ofFirst{');
     expect(out).toMatch(/aria-hidden="true"[^>]*><div style="width:0%/);
@@ -168,6 +170,8 @@ describe('2 Funnels', () => {
     one.funnels = [one.funnels[0]];
     const out = html(FunnelsSection, { result: ok(one), def: full, ctx: ctx() });
     expect(out).toContain('glance.ppChange');
+    expect(out).toContain('funnels.deltaSmall');
+    expect(out).not.toContain('glance.small');
     expect(out).not.toContain('380');
     const partial = html(FunnelsSection, { result: ok(funnelsData({ range: { ...range, previous: { from: '2026-10-01', to: '2026-10-10' } } })), def: full, ctx: ctx() });
     expect(partial).toContain('funnels.comparePartial');
@@ -210,6 +214,8 @@ describe('6 Paths', () => {
   it('seen before contacting: fixed categories with "< 3", n stated (H1)', () => {
     expect(out).toContain(q('paths.seenBefore{"n":"20"}'));
     expect(out).toContain('paths.seenValues.projects');
+    // n = 20 < 30: rates would be "x of 20", which repeats the shown count, so no note.
+    expect(out).not.toContain('fraction{');
     expect(out).toContain('aria-label="lt3Spoken">lt3</span>');
   });
 

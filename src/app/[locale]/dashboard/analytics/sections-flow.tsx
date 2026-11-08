@@ -19,7 +19,7 @@ import type {
   Range,
   ValueCount,
 } from '@/lib/analytics/read';
-import { coverageBand, foldRows, funnelSteps, isSmall, rate, rateDelta, spansMatch, type StepView } from '@/lib/analytics/stats';
+import { coverageBand, foldRows, funnelSteps, isSmall, rate, rateDelta, spansMatch, type Rate, type StepView } from '@/lib/analytics/stats';
 import { RankedBars, SideBySideColumns, TableView, type RankedRow } from './charts';
 import { deviceLabel, flowLabel, funnelLabel, groupPathText, localeLabel, rawLabel, seenLabel, stepLabel, visitorTypeLabel } from './labels';
 import { Ignored, emptyText, grid, type Ctx } from './sections';
@@ -134,6 +134,11 @@ function failed<T>(result: AnalyticsResult<T>, id: string, title: string, t: Tra
 
 // ── 2 Funnels ──────────────────────────────────────────────────────────────
 
+/** A step rate; "x of n" would repeat the step's count, so a fraction names only n. */
+function stepRate(r: Rate, key: 'funnels.ofPrevious' | 'funnels.ofFirst', t: Translate, fmt: Formatters): string {
+  return r.kind === 'fraction' ? t(`${key}N`, { n: fmt.num(r.n) }) : t(key, { rate: rateText(r, t, fmt) });
+}
+
 function StepBars({ steps, ctx }: { steps: StepView[]; ctx: Ctx }) {
   const { t, fmt } = ctx;
   const first = steps[0]?.small ? 0 : (steps[0]?.visits ?? 0);
@@ -146,15 +151,16 @@ function StepBars({ steps, ctx }: { steps: StepView[]; ctx: Ctx }) {
           <li key={s.index}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.75rem', fontFamily: 'var(--mono)', fontSize: '.72rem', marginBottom: '.25rem' }}>
               <span style={{ color: 'var(--n-90)' }}>{stepLabel(s.key, t)}</span>
-              <span style={{ color: 'var(--n-60)', flexShrink: 0, textAlign: 'right' }}>
-                {s.small ? <span aria-label={t('lt3Spoken')}>{t('lt3')}</span> : fmt.num(s.visits)}
-                {s.ofPrevious && ` · ${t('funnels.ofPrevious', { rate: rateText(s.ofPrevious, t, fmt) })}`}
-                {i === last && s.ofFirst && ` · ${t('funnels.ofFirst', { rate: rateText(s.ofFirst, t, fmt) })}`}
-              </span>
+              <span style={{ color: 'var(--n-60)', flexShrink: 0 }}>{s.small ? <span aria-label={t('lt3Spoken')}>{t('lt3')}</span> : fmt.num(s.visits)}</span>
             </div>
             <div aria-hidden="true" style={{ height: 6, background: 'var(--n-20)', borderRadius: '2px', overflow: 'hidden' }}>
               <div style={{ width: `${pct}%`, height: '100%', background: 'var(--blue-base)', borderRadius: '2px' }} />
             </div>
+            {(s.ofPrevious || (i === last && s.ofFirst)) && (
+              <p style={{ ...noteStyle, marginTop: '.25rem' }}>
+                {[s.ofPrevious && stepRate(s.ofPrevious, 'funnels.ofPrevious', t, fmt), i === last && s.ofFirst && stepRate(s.ofFirst, 'funnels.ofFirst', t, fmt)].filter(Boolean).join(' · ')}
+              </p>
+            )}
           </li>
         );
       })}
@@ -168,7 +174,7 @@ function deltaRows(steps: StepView[], previous: { index: number; visits: number 
   return steps.map((s, i) => {
     if (i === 0) return null;
     const d = rateDelta(s.visits, steps[i - 1].visits, prev[i]?.visits ?? 0, prev[i - 1]?.visits ?? 0);
-    return d.kind === 'change' ? ctx.t('glance.ppChange', { pp: `${d.pp > 0 ? '+' : ''}${d.pp}` }) : ctx.t('glance.small');
+    return d.kind === 'change' ? ctx.t('glance.ppChange', { pp: `${d.pp > 0 ? '+' : ''}${d.pp}` }) : '';
   });
 }
 
@@ -202,12 +208,13 @@ export function FunnelsSection({ result, def, ctx }: { result: AnalyticsResult<F
                   {deltas && (
                     <ul style={{ ...noteStyle, listStyle: 'none', padding: 0, margin: '.6rem 0 0', display: 'grid', gap: '.2rem' }}>
                       {steps.map((s, i) =>
-                        deltas[i] === null ? null : (
+                        !deltas[i] ? null : (
                           <li key={s.index}>
                             {stepLabel(s.key, t)}: {deltas[i]}
                           </li>
                         ),
                       )}
+                      {deltas.some((x) => x === '') && <li>{t('funnels.deltaSmall')}</li>}
                     </ul>
                   )}
                   <TableView
@@ -247,7 +254,9 @@ export function PathsSection({ result, def, ctx }: { result: AnalyticsResult<Pat
   const intent = d.seenBeforeContacting.intentVisits;
   const seen: RankedRow[] = d.seenBeforeContacting.items.map((x, i) => {
     const small = x.visits > 0 && isSmall(x.visits);
-    return { key: `seen-${i}`, label: seenLabel(x.seen, t), value: x.visits, small, note: small ? undefined : rateText(rate(x.visits, intent), t, fmt) };
+    const r = rate(x.visits, intent);
+    // The title states n; a "x of n" note would only repeat the count.
+    return { key: `seen-${i}`, label: seenLabel(x.seen, t), value: x.visits, small, note: small || r.kind === 'fraction' ? undefined : rateText(r, t, fmt) };
   });
   const filtered = Object.keys(d.filters.applied).length > 0;
   return (
