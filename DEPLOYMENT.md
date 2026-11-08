@@ -246,6 +246,17 @@ From address differs briefly; this is expected and not an error. Since
 `replicas: 1` with the default `RollingUpdate` strategy (`maxUnavailable: 0`),
 the old pod keeps serving traffic throughout.
 
+## Web analytics: collect route, forward queue, kill switch (#154)
+
+Spec `../docs/100-web-analytics.md` (canonical in `../infrastructure/docs/`), Epic doemefu/homelab#348. The browser side stays dark (`ANALYTICS_UI_ENABLED = false` in code) until the WA-6 go-live (#158); the **enquiry count is live from this rollout on**: every successful contact submission without a session cookie forwards one id-free `enquiry` event.
+
+- **Rollout order:** data-service WA-1 (`POST /api/webanalytics/events`, doemefu/homelab-data-service#53) must be live first, and auth-service must grant the `furchert-ch` client the scope `analytics:write` (WA-0). Otherwise forwarding fails: events are retried, then dropped after 60 min, and one `[analytics] forward summary` line a minute shows the failures.
+- **Env:** `ANALYTICS_COLLECT_ENABLED` (plain, `"true"` in `k8s/deployment.yaml`). Forwarding reuses `DATA_SERVICE_URL`, `DATA_SERVICE_TOKEN_URL` and `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET`; no new secret.
+- **Kill switch:** set `ANALYTICS_COLLECT_ENABLED` to `"false"` in `k8s/deployment.yaml` (a PR the owner merges; Flux applies it), or, with the owner's go, suspend the Flux kustomization and edit the Deployment. It stops `/api/v`, the goal and the enquiry count; `POST /api/v/forget` keeps working. Restart: `kubectl -n apps delete pod -l app=furchert-ch` (never `rollout restart`).
+- **Delivery is at-most-once:** the forward queue lives in memory (2 000 events). A pod restart or a data-service outage longer than 60 min loses queued events; on SIGTERM one last flush is started but may not finish. Accepted by the spec (§1.4).
+- **Logs:** at most one `[analytics] forward summary: …` line a minute with counts only (sent, accepted, duplicates, rejected, dropped400/401/403, failures, circuit). A `dropped403` count means the token lacks `analytics:write` or the client is not in data-service's `webanalytics.api.write-clients`.
+- **Rollback:** revert the PR, or use the kill switch.
+
 ## Search engines and AI crawlers (#134)
 
 - **robots.txt is two layers.** Cloudflare's managed robots.txt (Bot
@@ -270,7 +281,7 @@ curl -sI https://furchert.ch/de/about | grep -i '^link:' | grep -ci hreflang   #
 
 ### Redirects (#145)
 
-- `/ki` and `/bau` redirect to `/de/automation` with 307. Temporary: the target moves after Gate 0, and these URLs are printed on flyers. The Cloudflare "Always Use HTTPS" owner step above must be done before `/ki` or `/bau` are printed.
+- `/ki` and `/bau` redirect to `/de/automation?utm_source=print&utm_medium=shortlink&utm_campaign=ki` (or `…=bau`) with 307 (UTM since #154, spec 100 Q6). An incoming query is appended by Next; the tracker keeps the first value of a duplicated UTM key, so these win. Temporary: the target moves after Gate 0, and these URLs are printed on flyers. The Cloudflare "Always Use HTTPS" owner step above must be done before `/ki` or `/bau` are printed.
 - `/automation/scan` redirects to `/de/automation` with 308.
 - `/{de,en}/automation/scan` redirects to the same locale's `/automation` with 308.
 - Redirects run before the next-intl proxy, match case-insensitively and pass the query string through.
@@ -278,8 +289,8 @@ curl -sI https://furchert.ch/de/about | grep -i '^link:' | grep -ci hreflang   #
 - Verify after deploy:
 
 ```bash
-curl -sI https://furchert.ch/ki | grep -iE '^(HTTP|location)'                  # 307, /de/automation
-curl -sI https://furchert.ch/bau | grep -iE '^(HTTP|location)'                 # 307, /de/automation
+curl -sI https://furchert.ch/ki | grep -iE '^(HTTP|location)'                  # 307, /de/automation?utm_source=print&utm_medium=shortlink&utm_campaign=ki
+curl -sI https://furchert.ch/bau | grep -iE '^(HTTP|location)'                 # 307, …&utm_campaign=bau
 curl -sI https://furchert.ch/automation/scan | grep -iE '^(HTTP|location)'     # 308, /de/automation
 curl -sI https://furchert.ch/en/automation/scan | grep -iE '^(HTTP|location)'  # 308, /en/automation
 ```

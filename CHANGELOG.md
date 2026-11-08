@@ -6,6 +6,24 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Web analytics tracker, collect route and enquiry count, shipped dark**
+  (#154, WA-2b of Epic doemefu/homelab#348): the consented tracker (its own
+  async chunk, loaded only after Allow), the same-origin collect route
+  `POST /api/v` with the WA-2b safety steps, the cookie-only
+  `POST /api/v/forget`, and an in-memory forward queue to data-service
+  (`analytics:write`). Everything browser-side stays off while
+  `ANALYTICS_UI_ENABLED` is false. **Live from this release:** every
+  successful contact submission without a session cookie adds one id-free
+  `enquiry` to data-service's daily count; a contact goal is recorded only
+  once tracking is live and allowed. Click and section ids on the pages
+  (`data-track`, `data-track-section`); the `/ki` and `/bau` short links now
+  carry `utm_source=print&utm_medium=shortlink&utm_campaign=ki|bau`. The
+  contact mail's «Quelle:» line can now also show `about-contact` and
+  `rowing-contact` (the contact buttons on `/about` and `/rowing`). New env
+  `ANALYTICS_COLLECT_ENABLED` (kill switch, plain value). The client-credentials
+  token cache is shared by netmon and analytics. The bundle budget test also
+  checks the tracker chunk. No new dependency.
+
 - **Usage-statistics consent bar and privacy settings, shipped dark** (#153,
   WA-2a of Epic doemefu/homelab#348): a bottom consent bar (copy draft per
   spec 100 §10.1, de/en), a footer "Datenschutz-Einstellungen" / "Privacy

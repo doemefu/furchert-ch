@@ -71,6 +71,12 @@ spec:
             # signed-in admin's own access token. Plain value, no new secret.
             - name: DEVICE_SERVICE_URL
               value: "http://device-service.apps.svc.cluster.local:8081"
+            # Web analytics kill switch (spec 100 §11, #154): "false" stops
+            # /api/v, the contact goal and the enquiry count; forget keeps
+            # working. Forwarding reuses DATA_SERVICE_URL / _TOKEN_URL and the
+            # OIDC client (scope analytics:write). Plain value, no new secret.
+            - name: ANALYTICS_COLLECT_ENABLED
+              value: "true"
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

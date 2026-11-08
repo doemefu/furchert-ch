@@ -9,7 +9,9 @@
 > issue #63; its logins endpoints (NM-4) as of issue #64. §2's Prometheus
 > service-health queries (`/dashboard/services`) are implemented as of issue #47.
 > §4 (browser consent contract for first-party web analytics) is implemented
-> but dark as of issue #153 (WA-2a).
+> but dark as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
+> and §2's data-service web analytics write API as of issue #154 (WA-2b; only
+> the enquiry count is live while the UI flag is off).
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -289,6 +291,20 @@ Local dev: unless both `DATA_SERVICE_URL` and `DATA_SERVICE_TOKEN_URL` are set,
 every call is skipped (`shouldAttemptNetmon()`),
 see `.env.local.example` for the port-forward alternative.
 
+#### Web analytics write API — `POST /api/webanalytics/events` (#154, WA-2b)
+
+Producer contract: data-service `INTERFACES.md` §1b and spec `../docs/100-web-analytics.md` §6. Only the server-side forward queue calls it (`src/lib/analytics/server/queue.ts`); the browser never does.
+
+| Item | furchert-ch behaviour |
+|------|-----------------------|
+| Token | `client_credentials`, scope `analytics:write` only (never combined with `netmon:read`), same `furchert-ch` client; own cache via `createClientCredentialsToken` (`src/lib/auth/clientCredentialsToken.ts`), refreshed at `exp − 60 s` |
+| Body | `{"events": [...], "edgeDrops": {...}}`: every event carries exactly the 28 §6.2 fields (explicit `null`s), `edgeDrops` always the nine reason keys (each 0 to 1 000 000) |
+| Batching | ≤ 200 events **and** ≤ 48 KiB of the serialised body (a full event is ~550 bytes, so about 85 per batch); flush every 5 s, one request in flight, 10 s timeout; queue 2 000 analytics events (goal and enquiry always taken) |
+| Statuses | 200 = done; 413 = split in halves and retry (a lone event still 413 is dropped and counted `invalid`); 400 = batch dropped (logged); 401 = token dropped, one retry, a second 401 drops the batch; 403 = dropped, logged as a configuration hint; network/timeout/5xx = kept and retried, circuit open 60 s after 3 failures; events older than 60 min are dropped (`expired`) |
+| `edgeDrops` units | `signed_in`, `consent`: requests; `invalid`, `path`, `overflow`, `expired`: events; `bot`, `rate_limited`, `mint_limited`: 0 until WA-5 (#157). Sent on a batch's first attempt only (a retry sends zeros); with no events a drops-only batch at most once a minute |
+| Contract test | `src/lib/analytics/server/fixtures/c13-fixtures.json` is a verbatim, sha256-pinned copy of data-service's C13 fixtures (commit named in `forwardModel.test.ts`); a mirror of the producer's per-event rules classifies all cases and accepts every event furchert-ch builds |
+| Logging | at most one `[analytics] forward summary` line a minute, counts only |
+
 ## 3. Outbound: iCloud SMTP (contact form; #46, callback and attribution #145)
 
 `furchert-ch` is an SMTP **client** of iCloud Mail (moved from Infomaniak in #115, whose mail failed furchert.ch's DMARC `p=reject`) — the only
@@ -323,9 +339,13 @@ Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-
 | `fa_consent` (`localStorage`) | `{"v": 1, "choice": "granted" \| "denied", "by": "user" \| "signal", "at": "YYYY-MM-DD"}` (UTC day). Valid while `consentExpired(at, today)` is false: from `at` + 365 days on, for a malformed date or a date more than one day ahead it counts as no choice. Another `v` (`ANALYTICS_CONSENT_VERSION`) asks again. Never written or removed before a choice; a valid record is not rewritten when the same choice is made again (fixed expiry) |
 | `fa_forget_pending` (`localStorage`) | `"1"` from just before a forget until it answers 204. Retried once per page load while tracking is not allowed (choice not `granted`, or `fa_optout` on), never on `/dashboard/**`; a 429 with `Retry-After` (1 to 600 s) schedules one more attempt (fires only under the same conditions), cancelled by an Allow. With neither a stored choice nor `fa_optout` nothing is sent; the next choice sends it. When tracking is allowed at load (granted, switch off) the pending forget is sent once, the marker is dropped whatever the answer, then the tracker may start; an Allow does the same before starting |
 | `fa_optout` (`localStorage`) | `"1"` while the never-track switch (WA-4a #155) is on; hides the bar and keeps the tracker off. The controller's `optOut()` is the seam |
-| Forget request | `POST /api/v/forget`, body `{}`, `Content-Type: application/json`, `credentials: 'same-origin'`, `keepalive: true`; success = 204 only. The route ships in WA-2b (#154); until then it answers 404 and the marker stays |
+| Forget request | `POST /api/v/forget`, body `{}`, `Content-Type: application/json`, `credentials: 'same-origin'`, `keepalive: true`; success = 204 only |
+| `POST /api/v/forget` (route, #154) | Steps 1–4 of `/api/v` (method, JSON media type, same-origin, 8 KiB body); every response, errors included, carries `Set-Cookie: fa_vid=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax` (+ `Secure` in production); always 204 after the checks; never mints; not affected by the kill switches or a session cookie. WA-5 (#157) adds its limiter (429 keeps the cookie) and the synchronous erasure |
+| `POST /api/v` (route, #154) | Spec 100 §5.3 steps 1–6, 9–15: 405 (other methods, `Allow: POST`), 415 (media type not exactly `application/json`), 403 (`Sec-Fetch-Site` not `same-origin`, or without it an `Origin` other than `https://furchert.ch` / `ANALYTICS_DEV_ORIGIN`), 413/408 (8 KiB streamed cap, 5 s), 204 for kill switches, a session cookie, a wrong `cv` or a `consentDate` outside `consentExpired()`, 400 for the strict §5.2 schema (unknown or missing key, > 20 events, depth, string length). Value rules drop single events. `fa_vid=<uuid>.<cv>` is minted only after the consent check, only if at least one event survives, with `Path=/; Expires=<consentDate + 365 d, 00:00 UTC>; HttpOnly; SameSite=Lax` (+ `Secure`). Every answer has `Cache-Control: no-store` and an empty body. Steps 7 (bots) and 8 (rate limits) are WA-5 |
+| Collect envelope | `{ v: 1, cv, consentDate, sentAt, viewport, events }`, events per spec 100 §5.2 with every key present (`null` where empty); nav click targets are the raw pathname, the server canonicalises; referrer/UTM only on the landing pageview |
 | Order on Decline / withdrawal | store `denied` → `fa:consent` event → tracker `stop()` → tracker `abortInFlight()` → set `fa_forget_pending` → forget (one at a time, `controller.forget()`) |
-| Tracker port | `TrackerPort { start(); stop(); abortInFlight() }` from `src/lib/analytics/trackerPort.ts`, loaded through `loadTracker()` (WA-2b supplies the real tracker). `start()` only while granted, not opted out, no forget pending, not on `/dashboard/**` and `mayStart()` agrees; `stop()` and `abortInFlight()` are synchronous. Stop and abort run only through the port |
+| Tracker port | `TrackerPort { start(); stop(); abortInFlight(); setPath(path); onPageShow(); awaitFirstFlush(ms) }` from `src/lib/analytics/trackerPort.ts`. The tracker (`src/lib/analytics/tracker/`) is its own async chunk, loaded by `loadTracker(hooks)` with a dynamic import after Allow; `hooks.allowed()` (granted, not opted out, no forget pending, not signed in) is asked before every request, `hooks.consentDate()` supplies `consentDate`. `start()` only while allowed, not on `/dashboard/**` and with an unauthenticated session (`controller.setSession`); a restart in the same document is not a landing. `stop()` clears every timer and lock waiter; `stop()` and `abortInFlight()` are synchronous. Stop and abort run only through the port; the controller owns `pageshow` and calls `onPageShow()` only after a re-check |
+| Contact form hooks | `globalThis[Symbol.for('furchert.analytics.form')]` = `{ analyticsFlag(), awaitFirstFlush(ms) }`, registered by the controller; read through `src/lib/analytics/formHooks.ts` (false / resolved when absent), so the contact page imports no consent code. The form sends `analytics` (tracking allowed) and waits at most 1 s for the first flush |
 | `fa:consent` (window `CustomEvent`, same tab) | `detail: { choice }` after every change of the choice the controller knows of (own action, other tab, bfcache restore). For observers (UI) only; nobody may stop or start tracking from it |
 | `fa:consent-ui` / `fa:consent-ui-request` / `fa:consent-reopen` (window events) | Internal between `Analytics.tsx` and the footer button (`PrivacySettingsLink.tsx`): state `{ choice, barOpen }` out (on every change and on request), state request and reopen request in. The footer button holds no consent logic; both load client-only |
 | Other tabs | `storage` events re-read the choice: a withdrawal stops and aborts the tracker there without a second forget; an Allow starts it there only after `fa_forget_pending` is gone |
