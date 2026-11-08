@@ -60,6 +60,7 @@ failure each surface a distinct visible error.
 | `/[locale]/automation` | Offer page for construction and civil engineering firms (Gate 0, #145) | real, indexable; static, no AI backend |
 | `/automation/scan`, `/[locale]/automation/scan` | retired (#143, #145) | 308 redirect to the locale's `/automation` |
 | `/ki`, `/bau` | vanity URLs for print and talks | 307 redirect to `/de/automation` |
+| `/projects/aemtlifyer`, `/[locale]/projects/aemtlifyer` | removed project (#160, #163) | 308 redirect to the locale's `/projects` |
 
 The offer page is static: no Claude API, no AI endpoint, no persistence. Its
 three example tiles (native `<details>`, no client JS), the before/after

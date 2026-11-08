@@ -28,7 +28,7 @@ export const HOMELAB_APPS: HomelabApp[] = [
   { name: 'Grafana',        desc: 'Cluster & application metrics',   url: 'https://grafana.furchert.ch',              status: 'unknown', cat: 'Monitoring', repo: null, workload: { kind: 'deployment', namespace: 'monitoring', name: 'kube-prometheus-stack-grafana' } },
   { name: 'Flux CD',        desc: 'GitOps deployment management',    url: 'https://github.com/doemefu/homelab',       status: 'unknown', cat: 'Infra',      repo: null, workload: { kind: 'deployment', namespace: 'flux-system', name: 'kustomize-controller' } },
   { name: 'Auth Service',   desc: 'Identity & access management',    url: 'https://auth.furchert.ch',                 status: 'unknown', cat: 'Infra',      repo: 'https://github.com/doemefu/homelab-auth-service', workload: { kind: 'deployment', namespace: 'apps', name: 'auth-service' } },
-  { name: 'Karaokee',       desc: 'SoPra FS26 — group karaoke app',  url: 'https://karaokee.furchert.ch',             status: 'wip',     cat: 'Apps',       repo: 'https://github.com/doemefu/very-cool-karaoke-client' },
+  { name: 'Karaokee',       desc: 'SoPra FS26 — group karaoke app',  url: 'https://github.com/doemefu/very-cool-karaoke-client', status: 'repo',    cat: 'Apps',       repo: 'https://github.com/doemefu/very-cool-karaoke-client' },
   { name: 'Club Assist',    desc: 'RCRJ club management AI',         url: 'https://club.furchert.ch',                 status: 'unknown', cat: 'AI',         repo: null, workload: { kind: 'deployment', namespace: 'apps', name: 'open-webui' } },
   { name: 'Terra1',         desc: 'ESP32 microcontroller firmware',  url: 'https://github.com/doemefu/Terra1',        status: 'repo',    cat: 'IoT',        repo: 'https://github.com/doemefu/Terra1' },
 ];

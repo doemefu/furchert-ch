@@ -98,6 +98,8 @@ All notable changes per milestone. Newest first.
 
 - **Copy pass** (#160): new home hero, corrected project cards, German status
   labels, unified numbers; Aemtlifyer card removed.
+- **Copy pass follow-ups** (#163): `/projects/aemtlifyer` redirects (308) to
+  the projects list; the dashboard tile for Karaokee shows "Repo".
 
 ### Fixed
 
