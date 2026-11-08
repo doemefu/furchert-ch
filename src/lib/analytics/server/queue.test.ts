@@ -98,6 +98,39 @@ describe('forward queue (§5.10)', () => {
     expect(calls[1].edgeDrops.consent).toBe(0);
   });
 
+  it('puts edgeDrops back after a 413 or a failed token request, not after a network error (N5)', async () => {
+    const r413 = setup([{ status: 413 }]);
+    r413.q.countDrop('consent', 3);
+    r413.q.enqueue(ev(2));
+    await r413.q.flushAll();
+    expect(r413.calls.map((c) => c.edgeDrops.consent)).toEqual([3, 0, 0]);
+    r413.q.enqueue(ev(1, 'x'));
+    await r413.q.flushAll();
+    expect(r413.calls.at(-1)!.edgeDrops.consent).toBe(3);
+
+    const tok = setup();
+    tok.token.fail = true;
+    tok.q.countDrop('path', 2);
+    tok.q.enqueue(ev(1));
+    await tok.q.flush();
+    expect(tok.q.pendingDrops().path).toBe(2);
+
+    const net = setup(['network']);
+    net.q.countDrop('path', 2);
+    net.q.enqueue(ev(1));
+    await net.q.flush();
+    expect(net.q.pendingDrops().path).toBe(0);
+  });
+
+  it('adds a fixed configuration hint to the summary after a 403 (N6)', async () => {
+    const { q, logs, clock } = setup([{ status: 403 }]);
+    q.enqueue(ev(1));
+    await q.flushAll();
+    clock.t += 61_000;
+    await q.flush();
+    expect(logs.join('\n')).toMatch(/dropped403=1 .*hint=check-analytics-write-scope-and-webanalytics\.api\.write-clients/);
+  });
+
   it('clamps drop counters at 1 000 000 and sends a drops-only batch at most once a minute (M4)', async () => {
     const { q, calls, clock } = setup();
     q.countDrop('signed_in', 2_000_000);

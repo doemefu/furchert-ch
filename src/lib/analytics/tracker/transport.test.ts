@@ -99,6 +99,40 @@ describe('Transport (§3.9)', () => {
     expect(four.bodies).toHaveLength(1);
   });
 
+  it('N3: measures the 7 680 cap in UTF-8 bytes', async () => {
+    const { t, inits } = setup();
+    t.push(e(0), true);
+    await settle();
+    for (let i = 1; i <= 15; i += 1) t.push({ eventId: `e${i}`, type: 'click', pad: 'ü'.repeat(300) });
+    t.push(e(16), true);
+    await settle();
+    for (const init of inits) expect(new TextEncoder().encode(String(init.body)).byteLength).toBeLessThanOrEqual(7_680);
+  });
+
+  it('N4: a retry waits for its back-off even when new events ask for an immediate flush', async () => {
+    const { t, clock, bodies } = setup(['network']);
+    t.push(e(1), true);
+    await settle();
+    t.push(e(2), true);
+    await settle();
+    expect(bodies).toHaveLength(1);
+    await clock.advance(5_000);
+    expect(bodies).toHaveLength(2);
+    expect((bodies[1].events as ClientEvent[]).map((x) => x.eventId)).toEqual(['e1', 'e2']);
+  });
+
+  it('a restart during a retry back-off sends at once again', async () => {
+    const { t, bodies } = setup(['network']);
+    t.push(e(1), true);
+    await settle();
+    t.stop();
+    t.restart();
+    t.push(e(2), true);
+    await settle();
+    expect(bodies).toHaveLength(2);
+    expect((bodies[1].events as ClientEvent[]).map((x) => x.eventId)).toEqual(['e2']);
+  });
+
   it('pauses 60 s after a 429 and then sends the same events', async () => {
     const { t, clock, bodies } = setup([429]);
     t.push(e(1), true);

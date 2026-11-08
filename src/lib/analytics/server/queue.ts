@@ -9,8 +9,11 @@
 // - Batches: ≤ 200 events and ≤ 48 KiB of the serialised envelope; a timer
 //   flushes every 5 s; one request in flight; 10 s timeout.
 // - `edgeDrops` (nine keys, each ≤ 1 000 000) ride on a batch's first attempt
-//   only; a retry sends them zeroed. With no events, a drops-only batch goes
-//   out at most once a minute.
+//   only; a retry sends them zeroed. After a 413 or a failed token request
+//   (nothing counted) they go back into the pending counts; after a network
+//   error, timeout or 5xx they do not, since the request may have been counted
+//   (accepted residual). With no events, a drops-only batch goes out at most
+//   once a minute.
 // - 413: split in halves and retry, order kept; a single event that still
 //   gets 413 is dropped and counted `invalid`. 400: drop the batch (logged).
 //   401: drop the token and retry once; a second 401 drops the batch. 403:
@@ -113,8 +116,10 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
     const parts = Object.entries(stats).filter(([, v]) => v > 0);
     if (parts.length === 0 && failures === 0) return;
     lastLog = now;
+    // §5.10: a 403 means configuration, not data (N6).
+    const hint = stats.dropped403 > 0 ? ' hint=check-analytics-write-scope-and-webanalytics.api.write-clients' : '';
     deps.log(
-      `[analytics] forward summary: ${parts.map(([k, v]) => `${k}=${v}`).join(' ')} queued=${items.length} circuit=${now < circuitUntil ? 'open' : 'closed'}`.replace('  ', ' '),
+      `[analytics] forward summary: ${parts.map(([k, v]) => `${k}=${v}`).join(' ')} queued=${items.length} circuit=${now < circuitUntil ? 'open' : 'closed'}${hint}`.replace('  ', ' '),
     );
     stats = zeroStats();
   };
@@ -165,12 +170,24 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
       const edgeDrops = retry ? zeroDrops() : drops;
       const { n, body } = pickBatch(edgeDrops);
       if (!retry) drops = zeroDrops();
+      // Put the counts back when data-service provably counted nothing (N5).
+      const restoreDrops = () => {
+        if (!retry) for (const r of EDGE_DROP_REASONS) countDrop(r, edgeDrops[r]);
+      };
       if (n === 0) lastDropsOnly = now;
       for (let i = 0; i < n; i += 1) items[i].attempts += 1;
 
       let res: Response;
+      let token: string;
       try {
-        res = await post(body, await deps.getToken());
+        token = await deps.getToken();
+      } catch {
+        restoreDrops(); // nothing was sent
+        fail();
+        return false;
+      }
+      try {
+        res = await post(body, token);
         if (res.status === 401) {
           deps.invalidateToken();
           res = await post(body, await deps.getToken());
@@ -182,7 +199,9 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
           }
         }
       } catch {
-        fail(); // network, timeout or token failure: keep the events
+        // Network or timeout: keep the events. The request may have been
+        // counted, so its edgeDrops are not re-sent (§5.10, accepted residual).
+        fail();
         return false;
       }
 
@@ -202,6 +221,7 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
         return true;
       }
       if (res.status === 413) {
+        restoreDrops(); // a 413 is never processed
         if (n <= 1) {
           removeHead(n);
           splits.shift();

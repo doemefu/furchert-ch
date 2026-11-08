@@ -132,6 +132,47 @@ describe('pageviews (§3.4)', () => {
   });
 });
 
+describe('review fixes (#161)', () => {
+  it('B1: the soft-navigation snapshot keeps the old page path, also when the next page is not tracked', async () => {
+    for (const [next, key] of [['/de/it', '/it'], ['/de/privacy', '/privacy']] as const) {
+      const s = setup();
+      s.tracker.setPath('/automation');
+      s.tracker.start();
+      await settle();
+      s.win.location.pathname = next; // the App Router has already pushed the new URL
+      s.tracker.setPath(key);
+      await s.flushAll();
+      const snap = s.events().find((e) => e.type === 'engagement')!;
+      expect(snap.path, next).toBe('/de/automation');
+      expect(canonicalEvent(snap).ok, next).toBe(true);
+    }
+  });
+
+  it('N1: overlong UTM values and referrer hosts are sent as null, so the batch is not rejected', async () => {
+    const long = 'x'.repeat(200);
+    const s = setup({ search: `?utm_source=print&utm_campaign=${long}`, referrer: `https://${'a'.repeat(70)}.example.com/` });
+    s.tracker.setPath('/automation');
+    s.tracker.start();
+    await settle();
+    const pv = s.events()[0];
+    expect(pv).toMatchObject({ utmSource: 'print', utmCampaign: null, referrerHost: null });
+    expect(parseEnvelope(JSON.stringify(s.f.bodies[0]))).not.toBeNull();
+  });
+
+  it('N2: Allow on an untracked page keeps the landing for the first tracked pageview, flushed at once', async () => {
+    const s = setup({ pathname: '/de/privacy', search: '?utm_source=print' });
+    s.tracker.setPath('/privacy');
+    s.tracker.start();
+    await settle();
+    expect(s.f.bodies).toEqual([]);
+    s.win.location.pathname = '/de/automation';
+    s.tracker.setPath('/automation');
+    await settle();
+    expect(s.f.bodies).toHaveLength(1);
+    expect(s.events()[0]).toMatchObject({ type: 'pageview', landing: true, utmSource: 'print', path: '/de/automation' });
+  });
+});
+
 describe('engagement (§3.5)', () => {
   it('snapshots on hidden and pagehide with engaged time, scroll step and fits', async () => {
     const s = setup();

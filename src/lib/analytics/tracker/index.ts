@@ -4,10 +4,12 @@
 // environment; `createBrowserTracker` wires the real window.
 //
 // - One pageview per locale-free path change (the controller passes it in);
-//   locale-only switches are no pageview. `landing` only for the first start
-//   in a document; referrer and UTM are read only when that pageview is built
-//   (first value of a duplicated UTM key wins). Every start flushes its first
-//   pageview at once (that request mints `fa_vid`).
+//   locale-only switches are no pageview. `landing` only for the first
+//   pageview built in a document (also when Allow happened on an untracked
+//   page); referrer and UTM are read only then (first value of a duplicated
+//   key wins; values over 64 characters are sent as null). The first pageview
+//   of every run is flushed at once (that request mints `fa_vid`). Every
+//   event of a pageview keeps the pathname it was built with.
 // - Non-tracked paths (legal pages, /dashboard/**) pause capture and sending;
 //   coming back is a non-landing pageview (review M6).
 // - Engagement snapshots: soft navigation away, hidden, pagehide, before
@@ -65,6 +67,8 @@ export interface Tracker extends TrackerPort {
 
 interface View {
   id: string;
+  /** Raw pathname when the pageview was built; every event of the view keeps it (review B1). */
+  rawPath: string;
   seq: number;
   clock: EngagementClock;
   scrollMax: number;
@@ -83,7 +87,10 @@ export const viewportBucket = (w: number) => VIEWPORTS.find(([max]) => w < max)?
 export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
   const { win, doc } = env;
   let running = false;
-  let startedOnce = false;
+  // The document's landing pageview is still to come (§3.4); set only once a pageview was built (N2).
+  let landingDue = true;
+  // The first pageview of a run is flushed at once: it mints `fa_vid` (§3.9).
+  let firstOfRun = false;
   let path: string | null = null;
   let view: View | null = null;
   let heartbeat: unknown = null;
@@ -109,7 +116,7 @@ export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
     ts: env.now(),
     pageviewId: view!.id,
     seq,
-    path: win.location.pathname,
+    path: view!.rawPath,
   });
 
   const nextSeq = () => (view && view.seq < 99 ? ++view.seq : null);
@@ -149,10 +156,19 @@ export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
     }, HEARTBEAT_MS);
   }
 
-  function pageview(landing: boolean, immediate: boolean) {
+  // Optional landing values longer than the canonical 64 characters go out as
+  // null; one overlong value would otherwise fail the whole batch (N1).
+  const short = (v: string | null) => (v !== null && v.length <= 64 ? v : null);
+
+  function pageview(bfcache = false) {
+    const landing = landingDue && !bfcache;
+    const immediate = firstOfRun;
+    landingDue = false;
+    firstOfRun = false;
     const t = env.perf();
     view = {
       id: env.uuid(),
+      rawPath: win.location.pathname,
       seq: 0,
       clock: new EngagementClock(t, doc.visibilityState === 'visible', doc.hasFocus()),
       scrollMax: 0,
@@ -175,12 +191,12 @@ export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
     if (landing) {
       try {
         const ref = doc.referrer ? new URL(doc.referrer) : null;
-        if (ref && /^https?:$/.test(ref.protocol) && ref.host !== win.location.host) referrerHost = ref.hostname;
+        if (ref && /^https?:$/.test(ref.protocol) && ref.host !== win.location.host) referrerHost = short(ref.hostname);
       } catch {
         referrerHost = null;
       }
       const q = new URLSearchParams(win.location.search);
-      utm = ['utm_source', 'utm_medium', 'utm_campaign'].map((k) => q.get(k));
+      utm = ['utm_source', 'utm_medium', 'utm_campaign'].map((k) => short(q.get(k)));
     }
     transport.push(
       { ...base('pageview', 0), landing, referrerHost, utmSource: utm[0], utmMedium: utm[1], utmCampaign: utm[2] },
@@ -260,11 +276,11 @@ export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
     start() {
       if (running || env.webdriver) return;
       running = true;
+      firstOfRun = true;
       transport.restart();
       for (const [t, type, fn, opts] of bindings) t.addEventListener(type, fn, opts);
       armHeartbeat();
-      if (path !== null && isTracked(path)) pageview(!startedOnce, true);
-      startedOnce = true;
+      if (path !== null && isTracked(path)) pageview();
     },
     stop() {
       if (!running) return;
@@ -285,7 +301,7 @@ export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
       path = next;
       if (!running) return;
       snapshot();
-      if (isTracked(next)) pageview(false, false);
+      if (isTracked(next)) pageview();
       else {
         void transport.flush();
         unobserve?.();
@@ -294,7 +310,7 @@ export function createTracker(env: TrackerEnv, hooks: TrackerHooks): Tracker {
       }
     },
     onPageShow() {
-      if (running && path !== null && isTracked(path)) pageview(false, false);
+      if (running && path !== null && isTracked(path)) pageview(true);
     },
     awaitFirstFlush: (maxMs) => transport.awaitFirstFlush(maxMs),
   };

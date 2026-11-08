@@ -48,6 +48,8 @@ export class Transport {
   private timers = new Set<unknown>();
   private flushTimer: unknown = null;
   private pausedUntil = 0;
+  // A scheduled retry's back-off: nothing goes out before it (review N4).
+  private retryUntil = 0;
   private firstPending = false;
   private resolveFirst: () => void = () => {};
   private first: Promise<void> = Promise.resolve();
@@ -59,6 +61,9 @@ export class Transport {
     this.stopped = false;
     this.firstPending = true;
     this.first = new Promise((r) => (this.resolveFirst = r));
+    this.retryUntil = 0; // the retried batch was dropped by stop()
+    const pause = this.pausedUntil - this.deps.now();
+    if (pause > 0) this.later(() => void this.flush(), pause); // a 429 pause still runs
   }
 
   private later(fn: () => void, ms: number) {
@@ -91,7 +96,7 @@ export class Transport {
   async flush(): Promise<void> {
     if (this.stopped || this.busy || this.queue.length === 0) return;
     const now = this.deps.now();
-    if (now < this.pausedUntil) return;
+    if (now < this.pausedUntil || now < this.retryUntil) return;
     if (this.flushTimer !== null) {
       this.deps.clearTimeout(this.flushTimer);
       this.timers.delete(this.flushTimer);
@@ -99,7 +104,7 @@ export class Transport {
     }
     this.busy = true;
     try {
-      while (!this.stopped && this.queue.length > 0 && this.deps.now() >= this.pausedUntil) {
+      while (!this.stopped && this.queue.length > 0 && this.deps.now() >= Math.max(this.pausedUntil, this.retryUntil)) {
         const batch = this.take();
         if (!batch) break;
         let goOn = false;
@@ -137,10 +142,18 @@ export class Transport {
     }
     const make = (items: Item[], sentAt: number) =>
       JSON.stringify({ v: 1, cv: env.cv, consentDate: env.consentDate, sentAt, viewport: env.viewport, events: items.map((i) => i.event) });
+    // UTF-8 bytes, as the server counts them (review N3).
+    const bytes = (text: string) => new TextEncoder().encode(text).byteLength;
     let n = 0;
-    while (n < this.queue.length && (n === 0 || make(this.queue.slice(0, n + 1), 0).length <= MAX_BODY)) n += 1;
+    while (n < this.queue.length && (n === 0 || bytes(make(this.queue.slice(0, n + 1), 0)) <= MAX_BODY)) n += 1;
     const items = this.queue.splice(0, n);
-    return { items, body: (sentAt) => (make(items, sentAt).length <= MAX_BODY ? make(items, sentAt) : null) };
+    return {
+      items,
+      body: (sentAt) => {
+        const text = make(items, sentAt);
+        return bytes(text) <= MAX_BODY ? text : null;
+      },
+    };
   }
 
   // true = carry on with the next batch; false = stop until a timer fires.
@@ -183,6 +196,7 @@ export class Transport {
     if (attempt >= RETRY_MS.length || this.stopped) return true; // 5 s, then 30 s, then drop
     for (const i of items) i.attempts = attempt + 1;
     this.queue.unshift(...items);
+    this.retryUntil = this.deps.now() + RETRY_MS[attempt];
     this.later(() => void this.flush(), RETRY_MS[attempt]);
     return false;
   }

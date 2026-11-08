@@ -95,6 +95,7 @@ export function canonicalHost(raw: Json): string | null {
     return null;
   }
   host = host.replace(/^www\./, '');
+  if (/^\d+(\.\d+){3}$/.test(host)) return null; // an IPv4 literal is no domain (review N7)
   if (!/^[a-z0-9.-]{1,253}$/.test(host) || !host.includes('.') || host.startsWith('.') || host.endsWith('.')) return null;
   if (host === 'furchert.ch' || host.endsWith('.furchert.ch')) return null;
   return host;

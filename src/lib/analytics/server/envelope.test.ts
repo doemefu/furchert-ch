@@ -80,6 +80,7 @@ describe('canonicalEvent (step 11)', () => {
     expect(canonicalEvent(click({ kind: 'tel', target: '+41 79 000 00 00' }))).toMatchObject({ ok: true, event: { clickTarget: null } });
     expect(canonicalEvent(click({ kind: 'outbound', target: 'WWW.GitHub.com' }))).toMatchObject({ ok: true, event: { clickTarget: 'github.com' } });
     expect(canonicalEvent(click({ kind: 'outbound', target: 'github.com/doemefu' }))).toEqual({ ok: false, reason: 'invalid' });
+    expect(canonicalEvent(click({ kind: 'outbound', target: '192.168.1.10' }))).toEqual({ ok: false, reason: 'invalid' });
     expect(canonicalEvent(click({ kind: 'nav', target: '/de/automation', area: 'header' }))).toMatchObject({ ok: true, event: { clickTarget: '/automation' } });
     expect(canonicalEvent(click({ kind: 'nav', target: '/de/whatever?x=1', area: 'footer' }))).toMatchObject({ ok: true, event: { clickTarget: '(other)' } });
     expect(canonicalEvent(click({ kind: 'faq', target: 'cost' }))).toMatchObject({ ok: true, event: { clickTarget: 'cost' } });
@@ -98,7 +99,7 @@ describe('helpers', () => {
   it('canonicalHost', () => {
     expect(canonicalHost('www.Google.com')).toBe('google.com');
     expect(canonicalHost('bücher.ch')).toBe('xn--bcher-kva.ch');
-    for (const v of ['furchert.ch', 'www.furchert.ch', 'auth.furchert.ch', 'https://google.com', 'localhost', 'a b', '', null]) {
+    for (const v of ['furchert.ch', 'www.furchert.ch', 'auth.furchert.ch', 'https://google.com', 'localhost', 'a b', '', null, '192.168.1.10', '10.0.0.1']) {
       expect(canonicalHost(v), String(v)).toBeNull();
     }
   });
