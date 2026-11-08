@@ -6,7 +6,9 @@
 // `pageshow` (bfcache) events to it, and shows the consent bar while the
 // controller says so. The bar's code is loaded only then (next/dynamic).
 // The footer link is a pure view: it gets the state through CONSENT_UI_EVENT
-// and asks for a reopen through CONSENT_REOPEN_EVENT (ids.ts).
+// and asks for a reopen through CONSENT_REOPEN_EVENT (ids.ts). It also feeds
+// the controller the locale-free path (soft navigations become pageviews)
+// and the Auth.js session status.
 //
 // The bar is portalled into a host that is the FIRST child of <body>: first
 // in focus order, and outside <main className="page-enter">, whose entry
@@ -15,6 +17,7 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useLayoutEffect, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
+import { useSession } from 'next-auth/react';
 import { usePathname } from '@/i18n/navigation';
 import {
   getConsentController,
@@ -44,6 +47,12 @@ export function Analytics() {
   useEffect(() => {
     void getConsentController().init(path);
   }, [path]);
+
+  // Signed-in visitors are never tracked (§3.4, D8); `loading` holds the first pageview.
+  const { status } = useSession();
+  useEffect(() => {
+    getConsentController().setSession(status);
+  }, [status]);
 
   useEffect(() => {
     const controller = getConsentController();

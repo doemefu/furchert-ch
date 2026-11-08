@@ -4,7 +4,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ANALYTICS_CONSENT_VERSION, CONSENT_KEY, FORGET_PENDING_KEY, OPTOUT_KEY, type StorageLike } from './consent';
 import { createConsentController, type ControllerDeps } from './controller';
-import type { TrackerPort } from './trackerPort';
+import type { TrackerHooks, TrackerPort } from './trackerPort';
 
 const NOW = new Date('2026-11-08T12:00:00Z');
 const record = (choice: 'granted' | 'denied', at = '2026-11-01', v = ANALYTICS_CONSENT_VERSION) =>
@@ -50,14 +50,19 @@ function fakeEnv(opts: FakeEnvOptions = {}) {
     const next = responses.shift() ?? status(204);
     return next();
   });
+  const paths: string[] = [];
   const tracker: TrackerPort = {
     start: vi.fn(() => void log.push('tracker.start')),
     stop: vi.fn(() => void log.push('tracker.stop')),
     abortInFlight: vi.fn(() => void log.push('tracker.abortInFlight')),
+    setPath: vi.fn((p: string) => void paths.push(p)),
+    onPageShow: vi.fn(() => void log.push('tracker.onPageShow')),
+    awaitFirstFlush: vi.fn(async () => {}),
   };
   let release: () => void = () => {};
   const loadTracker = vi.fn(
-    () =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (_hooks: TrackerHooks) =>
       new Promise<TrackerPort>((resolve) => {
         if (opts.holdTracker) release = () => resolve(tracker);
         else resolve(tracker);
@@ -90,12 +95,19 @@ function fakeEnv(opts: FakeEnvOptions = {}) {
     await flush();
   };
   const writes = () => log.filter((l) => l.startsWith('set ') || l.startsWith('remove '));
-  return { deps, log, data, fetchFn, tracker, loadTracker, timers, fireTimers, writes, release: () => release() };
+  return { deps, log, data, fetchFn, tracker, loadTracker, timers, fireTimers, writes, paths, release: () => release() };
 }
 
 afterEach(() => {
   vi.unstubAllGlobals();
 });
+
+// Most tests model an anonymous visitor; session handling has its own tests.
+function ctl(deps: ControllerDeps) {
+  const c = createConsentController(deps);
+  c.setSession('unauthenticated');
+  return c;
+}
 
 describe('before a choice', () => {
   it('shows the bar and sends, writes and reads nothing else', async () => {
@@ -116,7 +128,7 @@ describe('before a choice', () => {
     for (const name of ['navigator', 'screen', 'window', 'document']) vi.stubGlobal(name, trap(name));
 
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     expect(c.getSnapshot().ready).toBe(false);
     expect(c.getSnapshot().barOpen).toBe(false);
     await c.init('/');
@@ -131,7 +143,7 @@ describe('before a choice', () => {
   it('keeps an old-version or expired record unwritten and asks again', async () => {
     for (const raw of [record('granted', '2026-11-01', ANALYTICS_CONSENT_VERSION - 1), record('granted', '2025-11-08')]) {
       const env = fakeEnv({ data: new Map([[CONSENT_KEY, raw]]) });
-      const c = createConsentController(env.deps);
+      const c = ctl(env.deps);
       await c.init('/');
       expect(c.getSnapshot().barOpen, raw).toBe(true);
       expect(env.log.filter((l) => l.startsWith('set ')), raw).toEqual([]);
@@ -141,7 +153,7 @@ describe('before a choice', () => {
 
   it('sends nothing for a pending forget and keeps the marker for the next choice (M5b)', async () => {
     const env = fakeEnv({ data: new Map([[FORGET_PENDING_KEY, '1']]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     expect(env.fetchFn).not.toHaveBeenCalled();
     expect(env.data.get(FORGET_PENDING_KEY)).toBe('1');
@@ -150,7 +162,7 @@ describe('before a choice', () => {
 
   it('never shows the bar on /dashboard/**', async () => {
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/dashboard/network');
     expect(c.getSnapshot()).toMatchObject({ ready: true, suppressed: true, barOpen: false });
     c.init('/about');
@@ -159,7 +171,7 @@ describe('before a choice', () => {
 
   it('hides the bar while the never-track switch is on', async () => {
     const env = fakeEnv({ data: new Map([[OPTOUT_KEY, '1']]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     expect(c.getSnapshot()).toMatchObject({ optedOut: true, barOpen: false });
   });
@@ -168,20 +180,20 @@ describe('before a choice', () => {
 describe('Esc is not consent', () => {
   it('hides the bar for this document only and stores nothing', async () => {
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     c.dismiss();
     expect(c.getSnapshot()).toMatchObject({ barOpen: false, choice: null });
     expect(env.log).toEqual([]);
     // Next document load: a new controller on the same storage asks again.
-    const next = createConsentController(fakeEnv({ data: env.data }).deps);
+    const next = ctl(fakeEnv({ data: env.data }).deps);
     await next.init('/');
     expect(next.getSnapshot().barOpen).toBe(true);
   });
 
   it('also closes a bar reopened from the footer (M3)', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('denied')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     c.reopen();
     expect(c.getSnapshot()).toMatchObject({ barOpen: true, reopened: true, choice: 'denied' });
@@ -194,7 +206,7 @@ describe('Esc is not consent', () => {
 describe('Decline', () => {
   it('first Decline: store denied, then forget, then drop the marker on 204', async () => {
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline();
     expect(env.log).toEqual([
@@ -210,7 +222,7 @@ describe('Decline', () => {
 
   it('withdrawal: denied first, stop, abort, marker, forget, in that order', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await flush();
     expect(env.tracker.start).toHaveBeenCalledTimes(1);
@@ -232,7 +244,7 @@ describe('Decline', () => {
 
   it('a Decline while the tracker is still loading never starts it', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]), holdTracker: true });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline();
     env.release();
@@ -242,7 +254,7 @@ describe('Decline', () => {
 
   it('keeps going when storage writes fail and clears the old choice best-effort (L4)', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]), failSet: true });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await flush();
     env.log.length = 0;
@@ -259,7 +271,7 @@ describe('Decline', () => {
 
   it('does not rewrite a valid denied record (fixed date) but still forgets', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('denied', '2026-10-01')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline();
     expect(JSON.parse(env.data.get(CONSENT_KEY)!).at).toBe('2026-10-01');
@@ -268,7 +280,7 @@ describe('Decline', () => {
 
   it('passes the decline origin through (seam for the WA-5 signal decline)', async () => {
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline('signal');
     expect(JSON.parse(env.data.get(CONSENT_KEY)!).by).toBe('signal');
@@ -283,19 +295,19 @@ describe('fa_forget_pending retry', () => {
   ] as const) {
     it(`keeps the marker after ${name} and retries exactly once on the next load`, async () => {
       const first = fakeEnv({ responses: [responder] });
-      const c1 = createConsentController(first.deps);
+      const c1 = ctl(first.deps);
       await c1.init('/');
       await c1.decline();
       expect(first.data.get(FORGET_PENDING_KEY)).toBe('1');
 
       const second = fakeEnv({ data: first.data, responses: [status(204)] });
-      const c2 = createConsentController(second.deps);
+      const c2 = ctl(second.deps);
       await c2.init('/');
       expect(second.fetchFn).toHaveBeenCalledTimes(1);
       expect(second.data.has(FORGET_PENDING_KEY)).toBe(false);
 
       const third = fakeEnv({ data: first.data });
-      await createConsentController(third.deps).init('/');
+      await ctl(third.deps).init('/');
       expect(third.fetchFn).not.toHaveBeenCalled();
     });
   }
@@ -308,7 +320,7 @@ describe('fa_forget_pending retry', () => {
       ]),
       responses: [status(503)],
     });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     c.init('/about');
     await flush();
@@ -323,7 +335,7 @@ describe('fa_forget_pending retry', () => {
         [FORGET_PENDING_KEY, '1'],
       ]),
     });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/dashboard');
     expect(env.fetchFn).not.toHaveBeenCalled();
     await c.init('/');
@@ -332,7 +344,7 @@ describe('fa_forget_pending retry', () => {
 
   it('429 with Retry-After schedules one retry in the same document', async () => {
     const env = fakeEnv({ responses: [status(429, { 'Retry-After': '30' }), status(429, { 'Retry-After': '30' })] });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline();
     expect(env.timers.map((t) => t.ms)).toEqual([30_000]);
@@ -345,7 +357,7 @@ describe('fa_forget_pending retry', () => {
 
   it('429 then Allow: the retry timer is cancelled and never sends (H1)', async () => {
     const env = fakeEnv({ responses: [status(429, { 'Retry-After': '30' })] });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline();
     c.reopen();
@@ -360,7 +372,7 @@ describe('fa_forget_pending retry', () => {
 
   it('a 429 retry does not fire once the page moved to /dashboard/** (F4)', async () => {
     const env = fakeEnv({ responses: [status(429, { 'Retry-After': '30' })] });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.decline();
     await c.init('/dashboard/network');
@@ -374,7 +386,7 @@ describe('fa_forget_pending retry', () => {
       data: new Map([[CONSENT_KEY, record('granted')]]),
       responses: [status(429, { 'Retry-After': '30' }), status(503)],
     });
-    const c1 = createConsentController(first.deps);
+    const c1 = ctl(first.deps);
     await c1.init('/');
     await flush();
     await c1.optOut(true);
@@ -384,7 +396,7 @@ describe('fa_forget_pending retry', () => {
 
     // Next load: granted + opted out + pending is a retry, not the M5a path.
     const second = fakeEnv({ data: first.data, responses: [status(503)] });
-    const c2 = createConsentController(second.deps);
+    const c2 = ctl(second.deps);
     await c2.init('/');
     await flush();
     expect(second.log).toEqual(['fetch /api/v/forget']);
@@ -401,7 +413,7 @@ describe('fa_forget_pending retry', () => {
         ]),
         responses: [responder],
       });
-      const c = createConsentController(env.deps);
+      const c = ctl(env.deps);
       await c.init('/');
       await flush();
       expect(env.log).toEqual(['fetch /api/v/forget', `remove ${FORGET_PENDING_KEY}`, 'tracker.start']);
@@ -412,7 +424,7 @@ describe('fa_forget_pending retry', () => {
 describe('Allow', () => {
   it('stores granted and starts the tracker', async () => {
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.allow();
     await flush();
@@ -422,7 +434,7 @@ describe('Allow', () => {
 
   it('runs a pending forget first and starts only after it answered, even on failure', async () => {
     const env = fakeEnv({ data: new Map([[FORGET_PENDING_KEY, '1']]), responses: [networkError] });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.allow();
     await flush();
@@ -438,7 +450,7 @@ describe('Allow', () => {
   it('awaits a forget that is already in flight instead of starting early (M1)', async () => {
     let answer: (r: Response) => void = () => {};
     const env = fakeEnv({ responses: [() => new Promise<Response>((resolve) => (answer = resolve))] });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     const declined = c.decline();
     await flush();
@@ -457,7 +469,7 @@ describe('Allow', () => {
 
   it('does not rewrite a valid granted record (12 months fixed)', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted', '2026-01-01')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     c.reopen();
     await c.allow();
@@ -467,7 +479,7 @@ describe('Allow', () => {
 
   it('does not start on /dashboard/** or when mayStart says no', async () => {
     const dash = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
-    const c = createConsentController(dash.deps);
+    const c = ctl(dash.deps);
     await c.init('/dashboard');
     await flush();
     expect(dash.loadTracker).not.toHaveBeenCalled();
@@ -476,7 +488,7 @@ describe('Allow', () => {
     expect(dash.tracker.start).toHaveBeenCalledTimes(1);
 
     const blocked = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]), mayStart: () => false });
-    await createConsentController(blocked.deps).init('/');
+    await ctl(blocked.deps).init('/');
     await flush();
     expect(blocked.tracker.start).not.toHaveBeenCalled();
   });
@@ -487,8 +499,8 @@ describe('multi-tab', () => {
     const data = new Map([[CONSENT_KEY, record('granted')]]);
     const a = fakeEnv({ data });
     const b = fakeEnv({ data });
-    const tabA = createConsentController(a.deps);
-    const tabB = createConsentController(b.deps);
+    const tabA = ctl(a.deps);
+    const tabB = ctl(b.deps);
     await tabA.init('/');
     await tabB.init('/automation');
     await flush();
@@ -509,8 +521,8 @@ describe('multi-tab', () => {
     let answer: (r: Response) => void = () => {};
     const a = fakeEnv({ data, responses: [() => new Promise<Response>((resolve) => (answer = resolve))] });
     const b = fakeEnv({ data });
-    const tabA = createConsentController(a.deps);
-    const tabB = createConsentController(b.deps);
+    const tabA = ctl(a.deps);
+    const tabB = ctl(b.deps);
     await tabA.init('/');
     await tabB.init('/');
 
@@ -530,7 +542,7 @@ describe('multi-tab', () => {
   it('re-reads the state when a page comes back from the bfcache', async () => {
     const data = new Map<string, string>();
     const env = fakeEnv({ data });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     data.set(CONSENT_KEY, record('denied'));
     c.onPageShow(false);
@@ -543,7 +555,7 @@ describe('multi-tab', () => {
 describe('never-track switch (seam for WA-4a)', () => {
   it('on: marker, stop, abort, forget; off: removes the flag', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await flush();
     env.log.length = 0;
@@ -567,7 +579,7 @@ describe('never-track switch (seam for WA-4a)', () => {
 describe('snapshot and lifecycle', () => {
   it('init is idempotent and the snapshot object is stable between changes (L5)', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await c.init('/');
     await flush();
@@ -578,7 +590,7 @@ describe('snapshot and lifecycle', () => {
 
   it('notifies subscribers on every change and stops after unsubscribe', async () => {
     const env = fakeEnv();
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     const listener = vi.fn();
     const unsubscribe = c.subscribe(listener);
     await c.init('/');
@@ -593,12 +605,84 @@ describe('snapshot and lifecycle', () => {
 
   it('reopen shows the current choice and writes nothing', async () => {
     const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
-    const c = createConsentController(env.deps);
+    const c = ctl(env.deps);
     await c.init('/');
     await flush();
     env.log.length = 0;
     c.reopen();
     expect(c.getSnapshot()).toMatchObject({ barOpen: true, reopened: true, choice: 'granted' });
     expect(env.log).toEqual([]);
+  });
+});
+
+describe('session, path and form hooks (WA-2b)', () => {
+  it('holds the start while the session is loading and stops on sign-in without a forget', async () => {
+    const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
+    const c = createConsentController(env.deps);
+    await c.init('/');
+    await flush();
+    expect(env.loadTracker).not.toHaveBeenCalled();
+    c.setSession('unauthenticated');
+    await flush();
+    expect(env.tracker.start).toHaveBeenCalledTimes(1);
+    c.setSession('authenticated');
+    expect(env.log).toEqual(['tracker.start', 'tracker.stop', 'tracker.abortInFlight']);
+    expect(env.fetchFn).not.toHaveBeenCalled();
+    c.setSession('unauthenticated');
+    await flush();
+    expect(env.tracker.start).toHaveBeenCalledTimes(2);
+  });
+
+  it('gives the tracker allowed() and consentDate() hooks that follow the state (H3)', async () => {
+    const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted', '2026-11-01')]]) });
+    const c = ctl(env.deps);
+    await c.init('/');
+    await flush();
+    const hooks = env.loadTracker.mock.calls[0][0];
+    expect(hooks.allowed()).toBe(true);
+    expect(hooks.consentDate()).toBe('2026-11-01');
+    c.setSession('authenticated');
+    expect(hooks.allowed()).toBe(false);
+    c.setSession('unauthenticated');
+    await c.optOut(true);
+    expect(hooks.allowed()).toBe(false);
+  });
+
+  it('passes the path before start and on every navigation', async () => {
+    const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
+    const c = ctl(env.deps);
+    await c.init('/automation');
+    await flush();
+    await c.init('/contact');
+    expect(env.paths).toEqual(['/automation', '/contact']);
+  });
+
+  it('forwards a bfcache restore only when tracking is still allowed (M1)', async () => {
+    const data = new Map([[CONSENT_KEY, record('granted')]]);
+    const env = fakeEnv({ data });
+    const c = ctl(env.deps);
+    await c.init('/');
+    await flush();
+    c.onPageShow(true);
+    expect(env.log).toContain('tracker.onPageShow');
+    env.log.length = 0;
+    data.set(CONSENT_KEY, record('denied')); // withdrawn in another tab while this page sat in the bfcache
+    c.onPageShow(true);
+    expect(env.log).toEqual(['event fa:consent denied', 'tracker.stop', 'tracker.abortInFlight']);
+  });
+
+  it('analyticsFlag and awaitFirstFlush for the contact form', async () => {
+    const env = fakeEnv({ data: new Map([[CONSENT_KEY, record('granted')]]) });
+    const c = ctl(env.deps);
+    expect(c.analyticsFlag()).toBe(false); // nothing read before init
+    await c.awaitFirstFlush(1000);
+    expect(env.tracker.awaitFirstFlush).not.toHaveBeenCalled();
+    await c.init('/');
+    expect(c.analyticsFlag()).toBe(true);
+    await flush();
+    await c.awaitFirstFlush(1000);
+    expect(env.tracker.awaitFirstFlush).toHaveBeenCalledWith(1000);
+    await c.decline();
+    expect(c.analyticsFlag()).toBe(false);
   });
 });

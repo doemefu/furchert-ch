@@ -8,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 import { CALC } from '@/data/automation-calc';
 import { contactHref } from '@/data/contact-sources';
 import { HAIRLINE, bodyText, cardTitle, fieldLabel, footnoteStyle, textLink } from './sectionStyles';
+import { trackAttr } from '@/data/track-ids';
 
 export function ExampleCalc({ locale }: { locale: Locale }) {
   const c = CALC.i18n[locale];
@@ -59,7 +60,7 @@ export function ExampleCalc({ locale }: { locale: Locale }) {
       </div>
       <p style={{ ...footnoteStyle, marginTop: '1rem' }}>{c.note}</p>
       <div data-cta="example" style={{ marginTop: '.5rem' }}>
-        <Link href={contactHref('automation-example')} style={textLink}>
+        <Link href={contactHref('automation-example')} style={textLink} data-track={trackAttr('cta', 'automation-example')}>
           {c.cta}
         </Link>
       </div>

@@ -14,6 +14,7 @@ import { contactHref } from '@/data/contact-sources';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { buildHomeJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { trackAttr } from '@/data/track-ids';
 
 const DOTS =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.3'/%3E%3C/svg%3E\")";
@@ -139,10 +140,10 @@ export default async function HomePage({
                 marginTop: '.5rem',
               }}
             >
-              <Btn href="/automation" dark>
+              <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
                 {t('hero.cta2')} <Icon name="arrow" size={12} />
               </Btn>
-              <Btn href="/about">
+              <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
                 {t('hero.cta1')} <Icon name="arrow" size={12} />
               </Btn>
             </div>
@@ -304,6 +305,7 @@ export default async function HomePage({
               <Link
                 key={key}
                 href={`/${key}`}
+                data-track={trackAttr('link', `home-tile-${key}`)}
                 className="hover-card"
                 style={{
                   padding: '2.5rem 2rem',
@@ -410,7 +412,7 @@ export default async function HomePage({
       <CTAStrip
         together={t('cta.together')}
         togsub={t('cta.togsub')}
-        primary={{ href: contactHref('home-cta'), label: t('cta.primary') }}
+        primary={{ href: contactHref('home-cta'), label: t('cta.primary'), track: trackAttr('cta', 'home-cta') }}
         examples={{ href: '/automation', label: t('cta.examples') }}
       />
     </div>

@@ -11,6 +11,7 @@ import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 import { buildHomelabJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { buildPageMetadata, localizedUrl, ownerTitle } from '@/lib/seo/metadata';
 import { HomelabSections } from './HomelabSections';
+import { trackAttr } from '@/data/track-ids';
 
 // Static params: locale × slug (the parent [locale] layout composes locales).
 // `dynamicParams = false`: an unknown slug is a plain 404, never rendered on
@@ -96,6 +97,7 @@ export default async function ProjectDetailPage({
         >
           <Link
             href="/projects"
+            data-track={trackAttr('link', 'project-back')}
             style={{
               fontFamily: 'var(--mono)',
               fontSize: '.75rem',
@@ -191,7 +193,9 @@ export default async function ProjectDetailPage({
               <Icon name="github" size={14} /> GitHub <Icon name="ext" size={12} />
             </Btn>
           )}
-          <Btn href="/projects">{t('pages.projects.backAll')}</Btn>
+          <Btn href="/projects" track={trackAttr('link', 'project-back')}>
+            {t('pages.projects.backAll')}
+          </Btn>
         </div>
       </div>
     </div>

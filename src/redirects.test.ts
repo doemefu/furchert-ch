@@ -15,8 +15,8 @@ describe('redirects (next.config.mjs)', () => {
       permanent,
     }));
     expect(rules).toEqual([
-      { source: '/ki', destination: '/de/automation', permanent: false },
-      { source: '/bau', destination: '/de/automation', permanent: false },
+      { source: '/ki', destination: '/de/automation?utm_source=print&utm_medium=shortlink&utm_campaign=ki', permanent: false },
+      { source: '/bau', destination: '/de/automation?utm_source=print&utm_medium=shortlink&utm_campaign=bau', permanent: false },
       {
         source: '/:locale(de|en)/automation/scan',
         destination: '/:locale/automation',

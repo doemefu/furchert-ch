@@ -34,6 +34,7 @@ import { automationJsonLdText, buildAutomationJsonLd, serializeJsonLd } from '@/
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { FAQAccordion } from './FAQAccordion';
+import { trackAttr } from '@/data/track-ids';
 
 // The home page's dot pattern on the light hero.
 const DOTS =
@@ -70,7 +71,7 @@ export default async function AutomationPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'pages.automation' });
 
-  const faqItems = FAQS.map((f) => f.i18n[locale]);
+  const faqItems = FAQS.map((f) => ({ id: f.id, ...f.i18n[locale] }));
   const jsonLd = buildAutomationJsonLd({
     locale,
     pageUrl: localizedUrl(locale, '/automation'),
@@ -99,6 +100,7 @@ export default async function AutomationPage({
       {/* HERO (light). `data-cta`: the sticky bar waits until it has left. */}
       <div
         data-cta="hero"
+        data-track-section="hero"
         style={{
           background: 'var(--n-10)',
           padding: 'clamp(2rem, 8vw, 6rem) 0 clamp(2.5rem, 6.5vw, 5rem)',
@@ -140,7 +142,7 @@ export default async function AutomationPage({
             {t('heroTilesNote')}
           </p>
           <div style={{ marginTop: '1.25rem' }}>
-            <Btn href={contactHref('automation-hero')} dark>
+            <Btn href={contactHref('automation-hero')} track={trackAttr('cta', 'automation-hero')} dark>
               {t('heroCta')} <Icon name="arrow" size={12} />
             </Btn>
           </div>
@@ -158,6 +160,7 @@ export default async function AutomationPage({
           </p>
           <Link
             href={contactHref('automation-callback')}
+            data-track={trackAttr('cta', 'automation-callback')}
             style={{ ...textLink, display: 'flex', width: 'fit-content' }}
           >
             {t('heroCallback')}
@@ -179,6 +182,7 @@ export default async function AutomationPage({
       <div className="container border-x">
         <TwoColumnChecklist
           id="so-arbeite-ich"
+          trackSection="so-arbeite-ich"
           label={t('workLabel')}
           heading={t('workHeading')}
           lead={t('workLead')}
@@ -191,6 +195,7 @@ export default async function AutomationPage({
         <AutomationPricing locale={locale} />
         <TwoColumnChecklist
           id="daten"
+          trackSection="daten"
           label={t('privacyLabel')}
           heading={t('privacyHeading')}
           lead={t('privacyLead')}
@@ -201,6 +206,7 @@ export default async function AutomationPage({
         {/* WER ICH BIN */}
         <section
           id="ueber-mich"
+          data-track-section="ueber-mich"
           aria-labelledby="about-heading"
           style={{ padding: 'clamp(2rem, 6vw, 3rem) 0', borderBottom: HAIRLINE }}
         >
@@ -270,10 +276,10 @@ export default async function AutomationPage({
               marginTop: '1.5rem',
             }}
           >
-            <Btn href={contactHref('automation-about')} dark>
+            <Btn href={contactHref('automation-about')} track={trackAttr('cta', 'automation-about')} dark>
               {t('aboutCta')} <Icon name="arrow" size={12} />
             </Btn>
-            <Link href="/about" style={textLink}>
+            <Link href="/about" style={textLink} data-track={trackAttr('link', 'automation-about-page')}>
               {t('aboutMiniMore')}
             </Link>
           </div>
@@ -282,6 +288,7 @@ export default async function AutomationPage({
         {/* FAQ: id="scan" from the prototype intentionally dropped (F1). */}
         <section
           id="faq"
+          data-track-section="faq"
           aria-labelledby="faq-heading"
           style={{ padding: '3rem 0', borderBottom: HAIRLINE }}
         >
@@ -316,6 +323,7 @@ export default async function AutomationPage({
         {/* CLOSING CTA, after the FAQ. `data-cta`: the sticky bar hides here. */}
         <section
           data-cta="final"
+          data-track-section="final"
           aria-labelledby="final-heading"
           style={{ padding: '4rem 0', textAlign: 'center' }}
         >
@@ -357,7 +365,7 @@ export default async function AutomationPage({
             {t('bottomCtaAgenda')}
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Btn href={contactHref('automation-final')} dark>
+            <Btn href={contactHref('automation-final')} track={trackAttr('cta', 'automation-final')} dark>
               {t('bottomCtaPrimary')} <Icon name="arrow" size={12} />
             </Btn>
             {/* The address is rendered only in the browser (#147). */}
@@ -365,6 +373,7 @@ export default async function AutomationPage({
           </div>
           <Link
             href={contactHref('automation-callback')}
+            data-track={trackAttr('cta', 'automation-callback')}
             style={{ ...textLink, display: 'flex', width: 'fit-content', margin: '1rem auto 0' }}
           >
             {t('heroCallback')}
@@ -373,6 +382,7 @@ export default async function AutomationPage({
       </div>
       <StickyCta
         href={contactHref('automation-sticky')}
+        track={trackAttr('cta', 'automation-sticky')}
         micro1={t('stickyMicro1')}
         micro2={t('stickyMicro2')}
         label={t('stickyCta')}

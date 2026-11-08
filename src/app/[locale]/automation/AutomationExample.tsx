@@ -85,7 +85,7 @@ export async function AutomationExample({
   const more = ex.fields.slice(VISIBLE_FIELDS);
 
   return (
-    <section id="beispiel" aria-labelledby="example-heading" style={sectionStyle}>
+    <section id="beispiel" aria-labelledby="example-heading" style={sectionStyle} data-track-section="beispiel">
       <p style={labelMono}>{t('exampleLabel')}</p>
       <h2 id="example-heading" style={h2Style}>
         {t('exampleHeading')}

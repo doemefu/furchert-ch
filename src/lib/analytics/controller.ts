@@ -29,7 +29,8 @@ import {
 } from './consent';
 import { sendForget, type ForgetResult } from './forget';
 import { isBarSuppressedPath } from './paths';
-import { loadNoopTracker, type LoadTracker, type TrackerPort } from './trackerPort';
+import { FORM_HOOKS_KEY, type FormHooks } from './formHooks';
+import type { LoadTracker, TrackerPort } from './trackerPort';
 
 export interface ControllerDeps {
   /** `localStorage`, or null when the browser blocks it. */
@@ -41,9 +42,11 @@ export interface ControllerDeps {
   setTimeout: (fn: () => void, ms: number) => unknown;
   clearTimeout: (handle: unknown) => void;
   loadTracker: LoadTracker;
-  /** Extra start condition (WA-2b: not signed in, not automated). */
+  /** Extra start condition (seam; the session status is handled by `setSession`). */
   mayStart?: () => boolean;
 }
+
+export type SessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
 export interface ConsentSnapshot {
   /** False until `init()` ran; the bar never shows before. */
@@ -67,6 +70,12 @@ export interface ConsentController {
   forget(): Promise<ForgetResult>;
   /** The never-track switch (§9.3). */
   optOut(on: boolean): Promise<void>;
+  /** Auth.js session status: `loading` holds the first pageview, `authenticated` stops tracking (§3.4, D8). */
+  setSession(status: SessionStatus): void;
+  /** §5.9: whether the contact form may ask for a goal (tracking allowed). */
+  analyticsFlag(): boolean;
+  /** Waits for the tracker's first flush of the current run, at most `maxMs`. */
+  awaitFirstFlush(maxMs: number): Promise<void>;
   /** Esc: hide until the next document load, store nothing. */
   dismiss(): void;
   /** Footer link: show the bar with the current choice. */
@@ -103,6 +112,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
   let forgetInFlight: Promise<ForgetResult> | null = null;
   let retryTimer: unknown = null;
   let retryUsed = false;
+  let session: SessionStatus = 'loading';
 
   const choice = () => record?.choice ?? null;
   const suppressed = () => isBarSuppressedPath(path);
@@ -146,15 +156,18 @@ export function createConsentController(deps: ControllerDeps): ConsentController
     deps.events.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: { choice: choice() } }));
   };
 
-  const canStart = () => trackingAllowed() && !suppressed() && !pending() && (deps.mayStart?.() ?? true);
+  // H3: what the tracker asks right before every request.
+  const allowed = () => trackingAllowed() && !pending() && session === 'unauthenticated';
+  const canStart = () => allowed() && !suppressed() && (deps.mayStart?.() ?? true);
 
   const maybeStart = () => {
     if (started || !canStart()) return;
-    trackerLoad ??= deps.loadTracker();
+    trackerLoad ??= deps.loadTracker({ allowed, consentDate: () => record?.at ?? null });
     void trackerLoad.then((t) => {
       tracker = t;
       if (!started && canStart()) {
         started = true;
+        t.setPath(path);
         t.start();
       }
     });
@@ -240,6 +253,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
   return {
     init(nextPath) {
       path = nextPath;
+      tracker?.setPath(nextPath);
       if (!ready) {
         ready = true;
         record = readConsent(storage, deps.now());
@@ -302,8 +316,18 @@ export function createConsentController(deps: ControllerDeps): ConsentController
       else if (key === FORGET_PENDING_KEY) maybeStart();
     },
     onPageShow(persisted) {
-      if (ready && persisted) reread();
+      if (!ready || !persisted) return;
+      reread();
+      // M1: the tracker hears about a bfcache restore only if tracking is still allowed.
+      if (started) tracker?.onPageShow();
     },
+    setSession(status) {
+      session = status;
+      if (status === 'authenticated' && started) halt();
+      else maybeStart();
+    },
+    analyticsFlag: () => trackingAllowed(),
+    awaitFirstFlush: (maxMs) => (started && tracker ? tracker.awaitFirstFlush(maxMs) : Promise.resolve()),
   };
 }
 
@@ -328,8 +352,15 @@ export function getConsentController(): ConsentController {
       events: window,
       setTimeout: (fn, ms) => window.setTimeout(fn, ms),
       clearTimeout: (handle) => window.clearTimeout(handle as number),
-      loadTracker: loadNoopTracker,
+      // The tracker is its own async chunk, fetched only after Allow.
+      loadTracker: (hooks) => import('./tracker').then((m) => m.createBrowserTracker(hooks)),
     });
+    const controller = instance;
+    const hooks: FormHooks = {
+      analyticsFlag: () => controller.analyticsFlag(),
+      awaitFirstFlush: (maxMs) => controller.awaitFirstFlush(maxMs),
+    };
+    (globalThis as Record<symbol, unknown>)[FORM_HOOKS_KEY] = hooks;
   }
   return instance;
 }

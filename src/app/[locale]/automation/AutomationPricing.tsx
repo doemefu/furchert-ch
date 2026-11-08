@@ -22,6 +22,7 @@ import {
   leadStyle,
   sectionStyle,
 } from './sectionStyles';
+import { trackAttr } from '@/data/track-ids';
 
 const subLine = {
   fontFamily: 'var(--mono)',
@@ -118,7 +119,7 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
   const includesLabel = t('pricesIncludes');
 
   return (
-    <section id="preise" aria-labelledby="prices-heading" style={sectionStyle}>
+    <section id="preise" aria-labelledby="prices-heading" style={sectionStyle} data-track-section="preise">
       <p style={labelMono}>{t('processLabel')}</p>
       <h2 id="prices-heading" style={h2Style}>
         {t('processHeading')}
@@ -187,7 +188,7 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
       </div>
       <p style={footnoteStyle}>{t('priceFootnote')}</p>
       <div data-cta="prices" style={{ marginTop: 'clamp(1.5rem, 4vw, 2rem)' }}>
-        <Btn href={contactHref('automation-prices')} dark>
+        <Btn href={contactHref('automation-prices')} track={trackAttr('cta', 'automation-prices')} dark>
           {t('pricesCta')} <Icon name="arrow" size={12} />
         </Btn>
       </div>

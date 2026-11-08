@@ -14,6 +14,8 @@ interface BtnProps {
   // existing call sites are unchanged.
   type?: 'button' | 'submit';
   disabled?: boolean;
+  /** Analytics click id, rendered as `data-track` (`trackAttr(kind, id)`; spec 100 §3.6). */
+  track?: string;
   children: ReactNode;
 }
 
@@ -25,6 +27,7 @@ export function Btn({
   small,
   type = 'button',
   disabled,
+  track,
   children,
 }: BtnProps) {
   const base: CSSProperties = {
@@ -64,6 +67,7 @@ export function Btn({
           href={href}
           className="btn"
           data-variant={variant}
+          data-track={track}
           style={base}
           target={newTab ? '_blank' : undefined}
           rel={newTab ? 'noopener noreferrer' : undefined}
@@ -73,7 +77,7 @@ export function Btn({
       );
     }
     return (
-      <Link href={href} className="btn" data-variant={variant} style={base}>
+      <Link href={href} className="btn" data-variant={variant} data-track={track} style={base}>
         {children}
       </Link>
     );
@@ -84,6 +88,7 @@ export function Btn({
       type={type}
       className="btn"
       data-variant={variant}
+      data-track={track}
       onClick={onClick}
       disabled={disabled}
       style={{ ...base, ...(disabled ? { opacity: 0.6, cursor: 'not-allowed' } : null) }}

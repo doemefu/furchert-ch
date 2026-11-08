@@ -138,7 +138,7 @@ export function Header() {
               margin: '0 .5rem',
             }}
           />
-          <button onClick={switchLocale} style={langBtnStyle}>
+          <button onClick={switchLocale} style={langBtnStyle} data-track={`lang:${locale === 'de' ? 'en' : 'de'}`}>
             {locale === 'de' ? 'EN' : 'DE'}
           </button>
           <Link href="/dashboard" style={homelabBtnStyle} title="Homelab Dashboard">
@@ -196,7 +196,7 @@ export function Header() {
               borderTop: '1px solid rgba(162,167,176,.15)',
             }}
           >
-            <button onClick={switchLocale} style={langBtnStyle}>
+            <button onClick={switchLocale} style={langBtnStyle} data-track={`lang:${locale === 'de' ? 'en' : 'de'}`}>
               {locale === 'de' ? 'EN' : 'DE'}
             </button>
             <Link

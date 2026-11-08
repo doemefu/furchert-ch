@@ -5,11 +5,14 @@ const sendContactMail = vi.fn();
 const checkContactRateLimit = vi.fn();
 const undoContactRateLimit = vi.fn();
 const isContactMailConfigured = vi.fn();
+const enqueue = vi.fn();
 
 vi.mock('next/headers', () => ({ headers }));
 vi.mock('@/lib/contact/mailer', () => ({ sendContactMail }));
 vi.mock('@/lib/contact/rateLimit', () => ({ checkContactRateLimit, undoContactRateLimit }));
 vi.mock('@/contact.env', () => ({ isContactMailConfigured }));
+vi.mock('@/lib/analytics/server/runtime', () => ({ getForwardQueue: () => ({ enqueue }) }));
+vi.mock('next-intl/server', () => ({ getLocale: async () => 'de' }));
 
 const { submitContact } = await import('./actions');
 type Input = Parameters<typeof submitContact>[0];
@@ -216,5 +219,32 @@ describe('submitContact: delivery', () => {
     expect(error).toHaveBeenCalledWith('[contact] delivery failed', { code: 'EENVELOPE', responseCode: 550, command: 'RCPT TO' });
     expect(logged()).not.toContain('ada@example.org');
     expect(undoContactRateLimit).toHaveBeenCalledWith('203.0.113.7');
+  });
+});
+
+describe('submitContact: usage statistics (spec 100 §5.9)', () => {
+  const enqueued = () => enqueue.mock.calls.flatMap(([events]) => events as { type: string }[]);
+
+  it('records one id-free enquiry per successful submission while the analytics UI is dark', async () => {
+    expect(await submitContact({ ...base, analytics: true, locale: 'en' })).toEqual({ ok: true });
+    expect(enqueued().map((e) => e.type)).toEqual(['enquiry']);
+    expect(enqueue.mock.calls[0][1]).toEqual({ priority: true });
+    expect(logged()).not.toContain('enquiry');
+  });
+
+  it('records nothing when the delivery fails or the visitor is signed in', async () => {
+    sendContactMail.mockRejectedValue(Object.assign(new Error('x'), { code: 'ECONNECTION' }));
+    await submitContact(base);
+    headers.mockResolvedValue(new Headers({ cookie: '__Secure-authjs.session-token=x' }));
+    sendContactMail.mockResolvedValue(undefined);
+    await submitContact(base);
+    expect(enqueued()).toEqual([]);
+  });
+
+  it('keeps the form result when recording fails', async () => {
+    enqueue.mockImplementation(() => {
+      throw new Error('queue down');
+    });
+    expect(await submitContact(base)).toEqual({ ok: true });
   });
 });
