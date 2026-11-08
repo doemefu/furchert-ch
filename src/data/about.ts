@@ -7,25 +7,25 @@ import type { Locale } from '@/i18n/routing';
 export const BIO: Record<Locale, string[]> = {
   de: [
     'Ich bin Dominic Furchert, Software Engineer und Vereinspräsident. Aufgewachsen in der Region Zürichsee/Obersee, ausgebildet als Applikationsentwickler bei der UBS, jetzt kurz vor dem Bachelor-Abschluss in Software Systems an der UZH.',
-    'Neben dem Studium führe ich den Ruderclub Rapperswil-Jona mit rund 200 Mitgliedern als Präsident. Dazu gehören ein Infrastrukturprojekt im Millionenbereich und die Organisation einer nationalen Regatta. Das hat mich mindestens so viel gelehrt wie jedes Informatik-Modul.',
+    'Neben dem Studium führe ich den Ruderclub Rapperswil-Jona mit rund 200 Mitgliedern als Präsident. Dazu kommen ein Infrastrukturprojekt im Millionenbereich und, als Chef Sicherheit im OK, die Nationale Regatta Schmerikon. Das hat mich mindestens so viel gelehrt wie jedes Informatik-Modul.',
     'Daneben bin ich Feuerwehrmann und J+S-Sportcoach. Beruflich helfe ich KMU im Zürcher Oberland aus Dienstleistung, Handwerk und Produktion, Abläufe mit KI zu vereinfachen: ohne Grossprojekt, Schritt für Schritt.',
   ],
   en: [
     "I'm Dominic Furchert, a software engineer and club president. Raised in the Lake Zurich / Obersee region, trained as an application developer at UBS, and now close to finishing my Bachelor's in Software Systems at UZH.",
-    'Alongside my studies I lead the Rapperswil-Jona Rowing Club and its roughly 200 members as president. The role includes a multi-million-franc infrastructure project and the organisation of a national regatta. That has taught me at least as much as any computer-science module.',
+    'Alongside my studies I lead the Rapperswil-Jona Rowing Club and its roughly 200 members as president. The role includes a multi-million-franc infrastructure project and, as head of safety on the organising committee, the National Regatta Schmerikon. That has taught me at least as much as any computer-science module.',
     "I'm also a firefighter and a J+S sports coach. Professionally, I help SMEs in the Zurich area (services, trades and production) simplify their work with AI, one step at a time and without a big project.",
   ],
 };
 
 export interface Fact {
-  value: string; // locale-invariant (e.g. "B.Sc.", "200+")
+  value: string; // locale-invariant (e.g. "B.Sc.", "~200"; #160)
   i18n: Record<Locale, { label: string }>;
 }
 
 export const FACTS: Fact[] = [
-  { value: 'B.Sc.', i18n: { de: { label: 'Software Systems, UZH' }, en: { label: 'Software Systems, UZH' } } },
-  { value: '200+', i18n: { de: { label: 'Mitglieder als RCRJ-Präsident' }, en: { label: 'Members as RCRJ president' } } },
-  { value: '4 Nodes', i18n: { de: { label: 'Homelab k3s Cluster' }, en: { label: 'Homelab k3s cluster' } } },
+  { value: 'B.Sc.', i18n: { de: { label: 'Software Systems, UZH, kurz vor dem Abschluss' }, en: { label: 'Software Systems, UZH, graduating soon' } } },
+  { value: '~200', i18n: { de: { label: 'Mitglieder als RCRJ-Präsident' }, en: { label: 'Members as RCRJ president' } } },
+  { value: 'EFZ', i18n: { de: { label: 'Applikationsentwickler, UBS' }, en: { label: 'Application developer, UBS' } } },
   { value: "~1'500", i18n: { de: { label: 'Athleten an der Regatta Schmerikon' }, en: { label: 'Athletes at the Schmerikon regatta' } } },
 ];
 
@@ -38,8 +38,8 @@ export const TIMELINE: TimelineRow[] = [
   {
     year: '2026',
     i18n: {
-      de: { items: ['B.Sc. Software Systems, Universität Zürich (Minor BWL)', 'Freelancer: KI für KMU im Zürcher Oberland'] },
-      en: { items: ['B.Sc. Software Systems, University of Zurich (Minor in Business Administration)', 'Freelancer: AI for SMEs in the Zurich area'] },
+      de: { items: ['B.Sc. Software Systems, Universität Zürich (Minor BWL), Abschluss bevorstehend', 'Freelancer: KI für KMU im Zürcher Oberland'] },
+      en: { items: ['B.Sc. Software Systems, University of Zurich (Minor in Business Administration), graduating soon', 'Freelancer: AI for SMEs in the Zurich area'] },
     },
   },
   {

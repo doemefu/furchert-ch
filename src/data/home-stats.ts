@@ -1,5 +1,5 @@
-// Bilingual content for the Home stats strip. DE = prototype verbatim
-// (pages.jsx PageHome STATS), EN = faithful translation. `value`
+// Bilingual content for the Home stats strip. Refilled in the copy pass
+// (#160): no longer the prototype's verbatim stats. `value`
 // locale-invariant; per-record locale maps (F-Q2).
 import type { Locale } from '@/i18n/routing';
 
@@ -10,24 +10,24 @@ export interface HomeStat {
 
 export const HOME_STATS: HomeStat[] = [
   {
-    value: '200',
+    value: '6',
     i18n: {
-      de: { unit: 'Mitglieder', label: 'Ruderclub Rapperswil-Jona' },
-      en: { unit: 'Members', label: 'Rapperswil-Jona Rowing Club' },
+      de: { unit: 'Wochen', label: 'bis zur Messung, ob genutzt wird' },
+      en: { unit: 'Weeks', label: 'until we measure whether it is used' },
     },
   },
   {
-    value: '1500+',
+    value: "~1'500",
     i18n: {
-      de: { unit: 'Athleten', label: 'Nationale Regatta Schmerikon 2026' },
-      en: { unit: 'Athletes', label: 'National Regatta Schmerikon 2026' },
+      de: { unit: 'Athleten', label: 'Chef Sicherheit, Regatta Schmerikon 2026' },
+      en: { unit: 'Athletes', label: 'Head of safety, Schmerikon regatta 2026' },
     },
   },
   {
-    value: '4',
+    value: '~200',
     i18n: {
-      de: { unit: 'Nodes', label: 'Homelab k3s-Cluster' },
-      en: { unit: 'Nodes', label: 'Homelab k3s cluster' },
+      de: { unit: 'Mitglieder', label: 'als Präsident, Ruderclub Rapperswil-Jona' },
+      en: { unit: 'Members', label: 'as president, Rapperswil-Jona Rowing Club' },
     },
   },
 ];

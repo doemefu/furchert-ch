@@ -142,8 +142,8 @@ export default async function HomePage({
               <Btn href="/automation" dark>
                 {t('hero.cta2')} <Icon name="arrow" size={12} />
               </Btn>
-              <Btn href="/projects">
-                {t('hero.seeProjects')} <Icon name="arrow" size={12} />
+              <Btn href="/about">
+                {t('hero.cta1')} <Icon name="arrow" size={12} />
               </Btn>
             </div>
           </div>

@@ -1,6 +1,6 @@
-// Ported verbatim from the prototype (shared.jsx TICKER_ITEMS).
+// Ported from the prototype (shared.jsx TICKER_ITEMS); Spring Boot version updated (#160).
 export const TICKER_ITEMS: string[] = [
-  'Spring Boot 3',
+  'Spring Boot 4',
   'Kubernetes / k3s',
   'Ansible',
   'React / Next.js',

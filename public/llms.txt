@@ -22,10 +22,9 @@
 ## Projects
 
 - [Homelab Infrastructure as Code](https://furchert.ch/en/projects/homelab): a 4-node k3s cluster provisioned with Ansible.
-- [IoT Platform: Terra1](https://furchert.ch/en/projects/iot-platform): ESP32 sensor nodes, MQTT and Spring Boot services.
-- [Homelab Auth Service](https://furchert.ch/en/projects/auth-service): identity and access management for the homelab.
-- [RCRJ Club Assist](https://furchert.ch/en/projects/club-assist): AI-assisted club management for the rowing club.
-- [Aemtlifyer](https://furchert.ch/en/projects/aemtlifyer): role and task management for the rowing club.
+- [IoT Platform: Terra1](https://furchert.ch/en/projects/iot-platform): ESP32 firmware, MQTT, a Spring Boot device service and a Next.js dashboard.
+- [Homelab Auth Service](https://furchert.ch/en/projects/auth-service): own OIDC provider for the homelab.
+- [RCRJ Club Assist](https://furchert.ch/en/projects/club-assist): AI assistant for the rowing club's board.
 - [Karaokee (SoPra FS26)](https://furchert.ch/en/projects/karaokee): group karaoke app, a university software project.
 
 ## Optional
