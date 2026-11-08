@@ -202,13 +202,13 @@ export function Header() {
               borderTop: '1px solid rgba(162,167,176,.15)',
             }}
           >
-            <button onClick={switchLocale} style={langBtnStyle} data-track={`lang:${locale === 'de' ? 'en' : 'de'}`}>
+            <button onClick={switchLocale} style={{ ...langBtnStyle, height: 44 }} data-track={`lang:${locale === 'de' ? 'en' : 'de'}`}>
               {locale === 'de' ? 'EN' : 'DE'}
             </button>
             <Link
               href="/dashboard"
               onClick={() => setMenuOpen(false)}
-              style={{ ...homelabBtnStyle, marginLeft: 0 }}
+              style={{ ...homelabBtnStyle, marginLeft: 0, height: 44 }}
             >
               <Icon name="lock" size={11} /> {t('common.homelab')}
             </Link>

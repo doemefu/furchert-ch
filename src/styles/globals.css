@@ -145,6 +145,8 @@ a.btn:hover { opacity: 1; }
 .btn[data-variant="dark"]:not(:disabled):hover { background-color: var(--n-80) !important; border-color: var(--n-80) !important; }
 .btn[data-variant="outline"]:not(:disabled):hover { background-color: var(--blue-wash) !important; }
 .btn[data-variant="default"]:not(:disabled):hover { background-color: var(--white) !important; }
+/* CTA strip primary on dark (#167): the inline white needs !important, as above. */
+.cta-primary:hover { background-color: var(--n-20) !important; border-color: var(--n-20) !important; }
 
 /* ── HOVER CARD ──
    Prototype teaser/project cards were <div onClick> with an inline

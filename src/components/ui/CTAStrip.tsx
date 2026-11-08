@@ -112,7 +112,7 @@ export function CTAStrip({
         </div>
         <div className="cta-actions" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {primary && (
-            <Link href={primary.href} className="btn" style={primaryStyle} data-track={primary.track}>
+            <Link href={primary.href} className="btn cta-primary" style={primaryStyle} data-track={primary.track}>
               {primary.label} <Icon name="arrow" size={12} />
             </Link>
           )}
