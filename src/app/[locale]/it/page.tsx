@@ -55,7 +55,7 @@ export default async function ITPage({
               fontSize: '.8125rem',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
-              color: 'var(--n-50)',
+              color: 'var(--n-60)',
               marginBottom: '1.5rem',
             }}
           >
@@ -76,7 +76,7 @@ export default async function ITPage({
                     fontSize: '.72rem',
                     letterSpacing: '.05em',
                     textTransform: 'uppercase',
-                    color: 'var(--n-40)',
+                    color: 'var(--n-60)',
                     marginBottom: '.5rem',
                   }}
                 >

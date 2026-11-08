@@ -107,7 +107,7 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
                 fontFamily: 'var(--mono)',
                 fontSize: '.7rem',
                 letterSpacing: '.04em',
-                color: '#b91c1c',
+                color: 'var(--status-offline-ink)',
                 background: '#fef2f2',
                 border: '1px solid #fecaca',
                 padding: '.5rem .75rem',
@@ -152,7 +152,7 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
                 fontSize: '.65rem',
                 letterSpacing: '.04em',
                 textTransform: 'uppercase',
-                color: 'var(--n-50)',
+                color: 'var(--n-60)',
               }}
             >
               {t('protectedBy')}

@@ -21,7 +21,7 @@ export function MonoLabel({ children, mt = 0, mb = 0 }: { children: ReactNode; m
         fontSize: '.72rem',
         letterSpacing: '.06em',
         textTransform: 'uppercase',
-        color: 'var(--n-50)',
+        color: 'var(--n-60)',
         marginTop: mt,
         marginBottom: mb,
       }}
@@ -33,10 +33,11 @@ export function MonoLabel({ children, mt = 0, mb = 0 }: { children: ReactNode; m
 
 export type PillTone = 'ok' | 'warn' | 'err' | 'info' | 'mute';
 
+// Tint alpha .06 so the ink text keeps 4.5:1 (#151).
 const PILL: Record<PillTone, { bg: string; bd: string; fg: string }> = {
-  ok: { bg: 'rgba(34,197,94,.1)', bd: 'rgba(34,197,94,.3)', fg: '#15803d' },
-  warn: { bg: 'rgba(245,158,11,.1)', bd: 'rgba(245,158,11,.3)', fg: '#a16207' },
-  err: { bg: 'rgba(239,68,68,.1)', bd: 'rgba(239,68,68,.3)', fg: '#b91c1c' },
+  ok: { bg: 'rgba(34,197,94,.06)', bd: 'rgba(34,197,94,.3)', fg: 'var(--status-online-ink)' },
+  warn: { bg: 'rgba(245,158,11,.06)', bd: 'rgba(245,158,11,.3)', fg: 'var(--status-wip-ink)' },
+  err: { bg: 'rgba(239,68,68,.06)', bd: 'rgba(239,68,68,.3)', fg: 'var(--status-offline-ink)' },
   info: { bg: 'var(--blue-wash)', bd: 'rgba(14,60,166,.2)', fg: 'var(--blue-base)' },
   mute: { bg: 'var(--n-10)', bd: 'rgba(162,167,176,.3)', fg: 'var(--n-60)' },
 };
@@ -83,7 +84,7 @@ export function MetaCard({
             fontSize: '.62rem',
             letterSpacing: '.06em',
             textTransform: 'uppercase',
-            color: 'var(--n-50)',
+            color: 'var(--n-60)',
           }}
         >
           {label}
@@ -94,6 +95,7 @@ export function MetaCard({
         style={{
           fontFamily: 'var(--sans)',
           fontSize: '1.5rem',
+          fontVariantNumeric: 'tabular-nums',
           fontWeight: 500,
           letterSpacing: '-.02em',
           color: 'var(--n-100)',
@@ -103,7 +105,7 @@ export function MetaCard({
         {value}
       </div>
       {sub && (
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.04em', color: 'var(--n-50)', marginTop: '.4rem' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.04em', color: 'var(--n-60)', marginTop: '.4rem' }}>
           {sub}
         </div>
       )}
@@ -144,7 +146,7 @@ export const btnDanger: CSSProperties = {
   ...btnBase,
   padding: '.5rem .85rem',
   background: 'transparent',
-  color: '#b91c1c',
+  color: 'var(--status-offline-ink)',
   border: '1px solid rgba(239,68,68,.4)',
 };
 
@@ -171,14 +173,14 @@ export const fieldStyle: CSSProperties = {
 export const hintStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.62rem',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   marginTop: '.3rem',
 };
 
 export const errorTextStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.68rem',
-  color: '#b91c1c',
+  color: 'var(--status-offline-ink)',
   marginTop: '.3rem',
 };
 

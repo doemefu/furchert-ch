@@ -87,6 +87,7 @@ export async function AuthOverview({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Service banner */}
       <div
+        className="on-dark"
         style={{
           background: 'var(--n-100)',
           color: 'var(--white)',
@@ -156,7 +157,7 @@ export async function AuthOverview({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem', fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-70)' }}>
             {ENDPOINTS.map(([m, p]) => (
               <div key={p} style={{ display: 'flex', gap: '.6rem', padding: '.3rem 0', borderBottom: '1px dashed rgba(162,167,176,.22)' }}>
-                <span style={{ width: 46, color: m === 'POST' ? '#a16207' : m === 'GET' ? '#15803d' : 'var(--n-50)' }}>{m}</span>
+                <span style={{ width: 46, color: m === 'POST' ? '#a16207' : m === 'GET' ? '#15803d' : 'var(--n-60)' }}>{m}</span>
                 <span style={{ color: 'var(--n-90)' }}>{p}</span>
               </div>
             ))}

@@ -20,7 +20,7 @@ export async function JwksPanel({ keys }: { keys: JwksKey[] }) {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
       <div style={{ ...cardStyle, padding: '1.25rem' }}>
         <MonoLabel mb=".75rem">{t('keys', { count: keys.length })}</MonoLabel>
-        {keys.length === 0 && <p style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-50)' }}>{t('noKeys')}</p>}
+        {keys.length === 0 && <p style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>{t('noKeys')}</p>}
         {keys.map((k, i) => (
           <div key={k.kid ?? i} style={{ marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.85rem' }}>
@@ -40,19 +40,19 @@ export async function JwksPanel({ keys }: { keys: JwksKey[] }) {
               </span>
               <div>
                 <div style={{ fontFamily: 'var(--mono)', fontSize: '.9rem', fontWeight: 500, color: 'var(--n-100)', wordBreak: 'break-all' }}>{k.kid ?? '—'}</div>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)' }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>
                   {[k.alg, k.bits ? t('bits', { bits: k.bits }) : null, k.use ? `use=${k.use}` : null].filter(Boolean).join(' · ')}
                 </div>
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '.4rem .9rem', fontFamily: 'var(--mono)', fontSize: '.72rem' }}>
-              <span style={{ color: 'var(--n-50)' }}>{t('kid')}</span>
+              <span style={{ color: 'var(--n-60)' }}>{t('kid')}</span>
               <span style={{ color: 'var(--n-90)', wordBreak: 'break-all' }}>{k.kid ?? '—'}</span>
-              <span style={{ color: 'var(--n-50)' }}>{t('algorithm')}</span>
+              <span style={{ color: 'var(--n-60)' }}>{t('algorithm')}</span>
               <span style={{ color: 'var(--n-90)' }}>{k.alg ?? '—'}</span>
-              <span style={{ color: 'var(--n-50)' }}>{t('keyType')}</span>
+              <span style={{ color: 'var(--n-60)' }}>{t('keyType')}</span>
               <span style={{ color: 'var(--n-90)' }}>{k.kty}</span>
-              <span style={{ color: 'var(--n-50)' }}>{t('size')}</span>
+              <span style={{ color: 'var(--n-60)' }}>{t('size')}</span>
               <span style={{ color: 'var(--n-90)' }}>{k.bits ? t('bits', { bits: k.bits }) : '—'}</span>
             </div>
           </div>
@@ -69,7 +69,7 @@ export async function JwksPanel({ keys }: { keys: JwksKey[] }) {
         </div>
       </div>
 
-      <div style={{ background: 'var(--n-100)', borderRadius: '2px', padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
+      <div className="on-dark" style={{ background: 'var(--n-100)', borderRadius: '2px', padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.6rem' }}>
           <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-30)' }}>
             GET /oauth2/jwks

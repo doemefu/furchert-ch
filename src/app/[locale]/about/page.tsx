@@ -32,7 +32,7 @@ const labelMono = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase' as const,
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 export default async function AboutPage({
@@ -104,6 +104,7 @@ export default async function AboutPage({
                 style={{
                   fontFamily: 'var(--sans)',
                   fontSize: 'clamp(1.5rem,3vw,2.25rem)',
+                  fontVariantNumeric: 'tabular-nums',
                   fontWeight: 500,
                   letterSpacing: '-.04em',
                   color: 'var(--n-100)',
@@ -151,7 +152,7 @@ export default async function AboutPage({
                     fontSize: '.75rem',
                     letterSpacing: '.04em',
                     textTransform: 'uppercase',
-                    color: 'var(--n-40)',
+                    color: 'var(--n-60)',
                     width: '2.25rem',
                     textAlign: 'right',
                   }}

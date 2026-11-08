@@ -51,7 +51,7 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem', flexWrap: 'wrap', gap: '.5rem' }}>
         <div>
           <MonoLabel>{t('registered', { count: clients.length })}</MonoLabel>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)' }}>{t('source')}</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>{t('source')}</span>
         </div>
         {!creating && (
           <button type="button" onClick={() => setCreating(true)} style={btnPrimary}>
@@ -143,7 +143,7 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
       )}
 
       {clients.length === 0 && (
-        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-50)' }}>
+        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
           {t('none')}
         </div>
       )}
@@ -197,12 +197,12 @@ function ClientItem({ client: c, isOpen, onToggle }: { client: ClientRow; isOpen
         </span>
         <span>
           <div style={{ fontFamily: 'var(--mono)', fontSize: '.85rem', fontWeight: 500, color: 'var(--n-100)' }}>{c.clientId}</div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)', marginTop: '.15rem' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
             {c.scopes.join(' · ')} · {c.description ?? t('noDescription')}
           </div>
         </span>
         <Pill tone="info">device</Pill>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '.85rem', color: 'var(--n-50)' }}>{isOpen ? '−' : '+'}</span>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: '.85rem', color: 'var(--n-60)' }}>{isOpen ? '−' : '+'}</span>
       </button>
 
       {isOpen && (

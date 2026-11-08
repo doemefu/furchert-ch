@@ -69,7 +69,7 @@ export default async function RowingPage({
               fontSize: '.7rem',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
-              color: 'var(--n-40)',
+              color: 'var(--n-60)',
               padding: '1rem 1.25rem',
             }}
           >

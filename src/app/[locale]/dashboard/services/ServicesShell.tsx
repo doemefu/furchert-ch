@@ -53,7 +53,7 @@ const monoKicker: CSSProperties = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
@@ -72,7 +72,7 @@ const noteStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.68rem',
   letterSpacing: '.03em',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   marginBottom: '.75rem',
 };
 
@@ -81,7 +81,7 @@ const microLabel: CSSProperties = {
   fontSize: '.6rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-40)',
+  color: 'var(--n-60)',
   marginBottom: '.2rem',
 };
 
@@ -101,7 +101,7 @@ const pillStyle: CSSProperties = {
   padding: '.1rem .4rem',
   border: '1px solid rgba(162,167,176,.3)',
   borderRadius: '2px',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   whiteSpace: 'nowrap',
 };
 
@@ -251,7 +251,7 @@ function HourlyStrip({
               justifyContent: 'space-between',
               fontFamily: 'var(--mono)',
               fontSize: '.6rem',
-              color: 'var(--n-40)',
+              color: 'var(--n-60)',
               marginTop: '.15rem',
             }}
           >
@@ -318,7 +318,7 @@ function ServiceRow({
           <span style={pillStyle}>{svc.kind}</span>
           {svc.desiredReplicas === 0 && <span style={pillStyle}>{t('scaledToZero')}</span>}
         </div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-50)' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-60)' }}>
           {svc.namespace}
         </div>
       </div>
@@ -478,7 +478,7 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
             </div>
             <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
           </div>
-          <p style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-50)' }}>
+          <p style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-60)' }}>
             {t('meta', { time })}
           </p>
         </div>

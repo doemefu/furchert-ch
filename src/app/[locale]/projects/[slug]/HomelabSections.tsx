@@ -20,7 +20,7 @@ const label = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase' as const,
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   marginBottom: '1rem',
 };
 const h2 = {

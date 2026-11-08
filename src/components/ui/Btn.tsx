@@ -41,7 +41,7 @@ export function Btn({
     cursor: 'pointer',
     padding: small ? '.5rem 1rem' : '.875rem 1.375rem',
     whiteSpace: 'nowrap',
-    transition: 'background .15s, color .15s, border-color .15s',
+    transition: 'background-color .15s, color .15s, border-color .15s',
     border: dark
       ? '1px solid var(--n-90)'
       : outline
@@ -50,6 +50,8 @@ export function Btn({
     background: dark ? 'var(--n-90)' : 'transparent',
     color: dark ? 'var(--white)' : outline ? 'var(--blue-base)' : 'var(--n-100)',
   };
+
+  const variant = dark ? 'dark' : outline ? 'outline' : 'default'; // hover styles in globals.css (#151)
 
   if (href) {
     const external = /^(https?:|mailto:|tel:)/.test(href);
@@ -60,6 +62,8 @@ export function Btn({
       return (
         <a
           href={href}
+          className="btn"
+          data-variant={variant}
           style={base}
           target={newTab ? '_blank' : undefined}
           rel={newTab ? 'noopener noreferrer' : undefined}
@@ -69,7 +73,7 @@ export function Btn({
       );
     }
     return (
-      <Link href={href} style={base}>
+      <Link href={href} className="btn" data-variant={variant} style={base}>
         {children}
       </Link>
     );
@@ -78,6 +82,8 @@ export function Btn({
   return (
     <button
       type={type}
+      className="btn"
+      data-variant={variant}
       onClick={onClick}
       disabled={disabled}
       style={{ ...base, ...(disabled ? { opacity: 0.6, cursor: 'not-allowed' } : null) }}

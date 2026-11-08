@@ -58,6 +58,19 @@ All notable changes per milestone. Newest first.
   guards it (no e-mail in text, no postal address, no dashes, required
   recipients incl. Anthropic Ireland, removed topics stay out).
 
+### Fixed
+
+- **Accessibility and tokens pass** (#151): small text on light surfaces is
+  never lighter than `--n-60` (5.26:1; `--n-50`/`--n-40` labels were 3.47 and
+  2.32:1), footer text on navy moves to `--n-40`. Status colours are split
+  into dot tones (`--status-*`, 3:1) and text tones (`--status-*-ink`, 4.5:1),
+  so project pills, dashboard status labels, pills, hints and flags are
+  readable; status text hexes become ink tokens. Global
+  `:focus-visible` ring (white on dark bands), visible input focus halo,
+  buttons hover by a surface step instead of dimming, `tabular-nums` on
+  figures, motion tokens, and the page entry animation honours
+  `prefers-reduced-motion`. No layout or copy change.
+
 ### Security
 
 - **Contact e-mail kept out of the server HTML and the RSC payload** (#147):

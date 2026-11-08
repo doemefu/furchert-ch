@@ -20,7 +20,7 @@ import { formatDashboardDateTime } from './datetime';
 const style: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.75rem',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   letterSpacing: '.02em',
 };
 

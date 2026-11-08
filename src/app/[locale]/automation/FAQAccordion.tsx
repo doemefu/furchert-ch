@@ -62,7 +62,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 style={{
                   fontFamily: 'var(--mono)',
                   fontSize: '.9rem',
-                  color: 'var(--n-50)',
+                  color: 'var(--n-60)',
                   transition: 'transform .2s',
                   transform: isOpen ? 'rotate(45deg)' : 'none',
                 }}

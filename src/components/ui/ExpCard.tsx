@@ -58,7 +58,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
               fontSize: '.75rem',
               textTransform: 'uppercase',
               letterSpacing: '.04em',
-              color: 'var(--n-50)',
+              color: 'var(--n-60)',
               marginTop: '.2rem',
             }}
           >

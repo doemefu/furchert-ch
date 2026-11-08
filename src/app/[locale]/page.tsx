@@ -23,7 +23,7 @@ const labelMono = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase' as const,
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 export async function generateMetadata({
@@ -162,7 +162,7 @@ export default async function HomePage({
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
             >
-              <p style={{ ...labelMono, color: 'var(--n-40)', marginBottom: '1.5rem' }}>
+              <p style={{ ...labelMono, color: 'var(--n-60)', marginBottom: '1.5rem' }}>
                 {t('about.exp')}
               </p>
               <ul
@@ -202,7 +202,7 @@ export default async function HomePage({
                           fontSize: '.72rem',
                           textTransform: 'uppercase',
                           letterSpacing: '.04em',
-                          color: 'var(--n-50)',
+                          color: 'var(--n-60)',
                           marginTop: '.2rem',
                         }}
                       >
@@ -219,7 +219,7 @@ export default async function HomePage({
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
             >
-              <p style={{ ...labelMono, color: 'var(--n-40)', marginBottom: '1.5rem' }}>
+              <p style={{ ...labelMono, color: 'var(--n-60)', marginBottom: '1.5rem' }}>
                 {t('about.eng')}
               </p>
               <ul
@@ -259,7 +259,7 @@ export default async function HomePage({
                           fontSize: '.72rem',
                           textTransform: 'uppercase',
                           letterSpacing: '.04em',
-                          color: 'var(--n-50)',
+                          color: 'var(--n-60)',
                           marginTop: '.2rem',
                         }}
                       >
@@ -389,6 +389,7 @@ export default async function HomePage({
                   style={{
                     fontFamily: 'var(--sans)',
                     fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    fontVariantNumeric: 'tabular-nums',
                     fontWeight: 500,
                     letterSpacing: '-.04em',
                     color: 'var(--n-100)',

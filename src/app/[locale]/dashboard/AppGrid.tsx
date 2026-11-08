@@ -7,7 +7,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon, type IconName } from '@/components/ui/Icon';
-import { StatusDot, STATUS_COLOR } from '@/components/ui/StatusDot';
+import { StatusDot, STATUS_INK } from '@/components/ui/StatusDot';
 import type { HomelabApp } from '@/data/homelab-apps';
 import { Link } from '@/i18n/navigation';
 
@@ -33,7 +33,7 @@ const sectionLabel: CSSProperties = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const chipBase: CSSProperties = {
@@ -194,7 +194,7 @@ export function AppGrid({
                       fontSize: '.65rem',
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
-                      color: STATUS_COLOR[app.status],
+                      color: STATUS_INK[app.status],
                     }}
                   >
                     {t(`status.${app.status}`)}
@@ -233,7 +233,7 @@ export function AppGrid({
                     fontSize: '.65rem',
                     letterSpacing: '.04em',
                     textTransform: 'uppercase',
-                    color: 'var(--n-50)',
+                    color: 'var(--n-60)',
                   }}
                 >
                   {app.cat}
@@ -253,7 +253,7 @@ export function AppGrid({
                         fontSize: '.65rem',
                         letterSpacing: '.04em',
                         textTransform: 'uppercase',
-                        color: 'var(--n-50)',
+                        color: 'var(--n-60)',
                         textDecoration: 'none',
                       }}
                     >

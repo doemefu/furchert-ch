@@ -12,7 +12,7 @@ const labelMono = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase' as const,
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   // DM Mono is loaded at 400/500 only; h2 would otherwise get a faux bold.
   fontWeight: 400,
 };
