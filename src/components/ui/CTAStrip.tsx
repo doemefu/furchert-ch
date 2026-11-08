@@ -39,7 +39,7 @@ export function CTAStrip({
     transition: 'background .15s, border-color .15s',
   };
   return (
-    <div style={{ background: 'var(--n-90)', padding: '3rem 0' }}>
+    <div className="on-dark" style={{ background: 'var(--n-90)', padding: '3rem 0' }}>
       <div
         className="container border-x"
         style={{

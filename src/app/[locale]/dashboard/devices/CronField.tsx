@@ -141,7 +141,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
           <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-90)' }}>{t('stored', { expr })}</div>
         )}
         {means && <p style={{ ...hintStyle, color: 'var(--n-70)', lineHeight: 1.5 }}>{means}</p>}
-        {shift && <p style={{ ...hintStyle, color: '#a16207', lineHeight: 1.5 }}>{shift}</p>}
+        {shift && <p style={{ ...hintStyle, color: 'var(--status-wip-ink)', lineHeight: 1.5 }}>{shift}</p>}
       </div>
       <FieldError state={state} field="cronExpression" />
     </fieldset>

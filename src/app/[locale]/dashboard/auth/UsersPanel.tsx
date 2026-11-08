@@ -142,7 +142,7 @@ export function UsersPanel({
               fontSize: '.62rem',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
-              color: 'var(--n-50)',
+              color: 'var(--n-60)',
             }}
           >
             <span>{t('colId')}</span>
@@ -154,7 +154,7 @@ export function UsersPanel({
             <span />
           </div>
           {filtered.length === 0 && (
-            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-50)' }}>
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
               {t('none')}
             </div>
           )}
@@ -173,7 +173,7 @@ export function UsersPanel({
                 color: 'var(--n-90)',
               }}
             >
-              <span style={{ color: 'var(--n-50)' }}>#{u.id}</span>
+              <span style={{ color: 'var(--n-60)' }}>#{u.id}</span>
               <span style={{ color: 'var(--n-100)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.username}</span>
               {/* Cloudflare Email Obfuscation rewrites addresses in the SSR HTML (#125). */}
               <span style={{ color: 'var(--n-60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} suppressHydrationWarning>{u.email}</span>
@@ -183,7 +183,7 @@ export function UsersPanel({
               <span>
                 <Pill tone={u.status === 'ACTIVE' ? 'ok' : 'warn'}>{u.status}</Pill>
               </span>
-              <span style={{ color: 'var(--n-50)', fontSize: '.7rem' }}>{u.updatedLabel}</span>
+              <span style={{ color: 'var(--n-60)', fontSize: '.7rem' }}>{u.updatedLabel}</span>
               <span style={{ display: 'flex', gap: '.3rem', justifyContent: 'flex-end' }}>
                 <button type="button" onClick={(e) => openDrawer(u.id, e.currentTarget)} style={btnSmall}>
                   {t('edit')}
@@ -196,7 +196,7 @@ export function UsersPanel({
 
       {/* Paging — only when auth-service holds more than one page */}
       {(pages > 1 || page > 0) && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.75rem', fontFamily: 'var(--mono)', fontSize: '.68rem', color: 'var(--n-50)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.75rem', fontFamily: 'var(--mono)', fontSize: '.68rem', color: 'var(--n-60)' }}>
           <span>
             {total > page * size && <>{t('pageInfo', { from: page * size + 1, to: Math.min((page + 1) * size, total), total })} · </>}
             {t('pageOnlyFilter')}
@@ -303,7 +303,7 @@ function UserDrawer({
       >
         <div style={{ padding: '1.5rem', borderBottom: BORDER, background: 'var(--white)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-50)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-60)' }}>
               {isNew ? 'POST /api/v1/users' : `PUT /api/v1/users/${user.id}`}
             </span>
             <button
@@ -319,7 +319,7 @@ function UserDrawer({
             {isNew ? t('newTitle') : user.username}
           </div>
           {!isNew && (
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '.7rem', color: 'var(--n-50)', marginTop: '.25rem' }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '.7rem', color: 'var(--n-60)', marginTop: '.25rem' }}>
               {t('created', { id: user.id, created: user.createdLabel })}
             </div>
           )}
@@ -416,7 +416,7 @@ function UserDrawer({
                   <FieldError state={resetState} field="newPassword" />
                   <FormError state={resetState} />
                   {resetState.status === 'ok' && (
-                    <p role="status" style={{ ...hintStyle, color: '#15803d' }}>
+                    <p role="status" style={{ ...hintStyle, color: 'var(--status-online-ink)' }}>
                       {t('resetDone')}
                     </p>
                   )}

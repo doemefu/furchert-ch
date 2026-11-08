@@ -34,7 +34,7 @@ const monoKicker: CSSProperties = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const monoLabel: CSSProperties = {
@@ -42,7 +42,7 @@ const monoLabel: CSSProperties = {
   fontSize: '.72rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
@@ -176,7 +176,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                 fontFamily: 'var(--mono)',
                 fontSize: '.68rem',
                 letterSpacing: '.03em',
-                color: 'var(--n-50)',
+                color: 'var(--n-60)',
                 marginBottom: '.75rem',
               }}
             >
@@ -231,7 +231,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                       padding: '.1rem .4rem',
                       border: '1px solid rgba(162,167,176,.3)',
                       borderRadius: '2px',
-                      color: node.role === 'control-plane' ? 'var(--blue-base)' : 'var(--n-50)',
+                      color: node.role === 'control-plane' ? 'var(--blue-base)' : 'var(--n-60)',
                     }}
                   >
                     {node.role}
@@ -242,7 +242,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                     fontFamily: 'var(--mono)',
                     fontSize: '.68rem',
                     letterSpacing: '.03em',
-                    color: 'var(--n-50)',
+                    color: 'var(--n-60)',
                     marginBottom: '.75rem',
                   }}
                 >
@@ -269,7 +269,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                             fontSize: '.6rem',
                             letterSpacing: '.06em',
                             textTransform: 'uppercase',
-                            color: 'var(--n-40)',
+                            color: 'var(--n-60)',
                             marginBottom: '.2rem',
                           }}
                         >
@@ -286,7 +286,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                             }}
                           />
                         </div>
-                        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
+                        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem', fontVariantNumeric: 'tabular-nums' }}>
                           {displayLabel}
                         </div>
                       </div>

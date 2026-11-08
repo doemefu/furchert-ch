@@ -169,7 +169,7 @@ export function ContactForm() {
     return (
       <div role="status" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-          <span style={{ color: '#22c55e' }}>
+          <span style={{ color: 'var(--status-online)' }}>
             <Icon name="check" size={20} />
           </span>
           <h2

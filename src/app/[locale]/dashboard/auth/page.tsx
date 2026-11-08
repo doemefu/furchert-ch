@@ -116,7 +116,7 @@ async function Header({ healthStatus }: { healthStatus: string | null }) {
               <Pill tone={healthStatus === 'UP' ? 'ok' : 'err'}>{healthStatus === 'UP' ? t('statusUp') : t('statusDown')}</Pill>
             )}
           </div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-50)', marginTop: '.35rem' }}>{t('meta')}</div>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-60)', marginTop: '.35rem' }}>{t('meta')}</div>
         </div>
         <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
           <a href="https://github.com/doemefu/homelab-auth-service" target="_blank" rel="noopener noreferrer" style={linkStyle}>

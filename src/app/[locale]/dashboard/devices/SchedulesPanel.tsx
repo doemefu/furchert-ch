@@ -103,7 +103,7 @@ export function SchedulesPanel({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.75rem', flexWrap: 'wrap', marginBottom: '.75rem' }}>
         <div>
           <MonoLabel>{t('schedules.count', { count: schedules.length })}</MonoLabel>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)' }}>{t('schedules.source')}</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>{t('schedules.source')}</span>
         </div>
         <button type="button" ref={newButton} onClick={(e) => openDrawer('new', e.currentTarget)} style={btnPrimary}>
           {t('schedules.new')}
@@ -131,7 +131,7 @@ export function SchedulesPanel({
               borderRadius: '2px',
               fontFamily: 'var(--mono)',
               fontSize: '.75rem',
-              color: '#15803d',
+              color: 'var(--status-online-ink)',
             }}
           >
             <span>{banner}</span>
@@ -143,7 +143,7 @@ export function SchedulesPanel({
       </div>
       <div role="alert">
         {rowError && (
-          <p style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: '#b91c1c', marginBottom: '1rem', lineHeight: 1.5 }}>
+          <p style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--status-offline-ink)', marginBottom: '1rem', lineHeight: 1.5 }}>
             {t('schedules.rowError', { id: rowError.id, error: rowError.text })}
           </p>
         )}
@@ -165,7 +165,7 @@ export function SchedulesPanel({
               fontSize: '.62rem',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
-              color: 'var(--n-50)',
+              color: 'var(--n-60)',
             }}
           >
             <span>{t('schedules.colId')}</span>
@@ -178,7 +178,7 @@ export function SchedulesPanel({
             <span />
           </div>
           {schedules.length === 0 && (
-            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-50)' }}>
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
               {t('schedules.none')}
             </div>
           )}
@@ -198,7 +198,7 @@ export function SchedulesPanel({
                 opacity: s.active ? 1 : 0.7,
               }}
             >
-              <span style={{ color: 'var(--n-50)' }}>#{s.id}</span>
+              <span style={{ color: 'var(--n-60)' }}>#{s.id}</span>
               <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: '50%', background: s.active ? 'var(--status-online)' : 'var(--status-unknown)' }} />
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.deviceName ?? '—'}</span>
               <span>
@@ -214,16 +214,16 @@ export function SchedulesPanel({
               </span>
               <span>
                 <span style={{ color: 'var(--n-100)' }}>{describe(s)}</span>
-                <span style={{ display: 'block', fontSize: '.66rem', color: 'var(--n-50)', marginTop: '.15rem' }}>{s.cronExpression ?? '—'} · UTC</span>
+                <span style={{ display: 'block', fontSize: '.66rem', color: 'var(--n-60)', marginTop: '.15rem' }}>{s.cronExpression ?? '—'} · UTC</span>
               </span>
               <span>
                 {s.nextRunAbs ? (
                   <>
                     <span style={{ color: 'var(--n-100)' }}>{s.nextRunAbs}</span>
-                    <span style={{ display: 'block', fontSize: '.66rem', color: 'var(--n-50)', marginTop: '.15rem' }}>{s.nextRunRel}</span>
+                    <span style={{ display: 'block', fontSize: '.66rem', color: 'var(--n-60)', marginTop: '.15rem' }}>{s.nextRunRel}</span>
                   </>
                 ) : (
-                  <span style={{ color: 'var(--n-50)' }}>{s.active ? t('schedules.noNextRunInvalid') : t('schedules.noNextRunInactive')}</span>
+                  <span style={{ color: 'var(--n-60)' }}>{s.active ? t('schedules.noNextRunInvalid') : t('schedules.noNextRunInactive')}</span>
                 )}
               </span>
               <span>
@@ -305,7 +305,7 @@ function ActiveSwitch({ row, onResult }: { row: ScheduleRow; onResult: (id: numb
           fontSize: '.66rem',
           letterSpacing: '.04em',
           textTransform: 'uppercase',
-          color: row.active ? '#15803d' : 'var(--n-60)',
+          color: row.active ? 'var(--status-online-ink)' : 'var(--n-60)',
         }}
       >
         <span
@@ -427,7 +427,7 @@ function ScheduleDrawer({
       >
         <div style={{ padding: '1.5rem', borderBottom: BORDER, background: 'var(--white)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-50)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-60)' }}>
               {isNew ? 'POST /schedules' : `PUT /schedules/${row.id}`}
             </span>
             <button
@@ -508,7 +508,7 @@ function ScheduleDrawer({
           </fieldset>
 
           {row && row.state === null && row.payload && (
-            <p style={{ ...hintStyle, color: '#a16207', marginTop: 0, lineHeight: 1.5 }}>{t('drawer.legacyPayload', { payload: row.payload })}</p>
+            <p style={{ ...hintStyle, color: 'var(--status-wip-ink)', marginTop: 0, lineHeight: 1.5 }}>{t('drawer.legacyPayload', { payload: row.payload })}</p>
           )}
 
           <CronField initial={row?.cronExpression ?? null} nowMs={nowMs} state={saveState} />

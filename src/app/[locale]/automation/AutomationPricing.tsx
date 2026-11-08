@@ -34,8 +34,8 @@ const subLine = {
 function PriceLine({ c }: { c: PackageCopy }) {
   return (
     <>
-      <p style={{ ...cardTitle, color: 'var(--blue-base)', marginTop: '.35rem' }}>{c.price}</p>
-      {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--blue-base)' }}>{c.priceAlt}</p>}
+      <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.35rem' }}>{c.price}</p>
+      {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums' }}>{c.priceAlt}</p>}
       {c.priceNote && (
         <p style={{ fontSize: '.875rem', color: 'var(--n-70)', marginTop: '.25rem' }}>
           {c.priceNote}

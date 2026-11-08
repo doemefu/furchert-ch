@@ -39,12 +39,12 @@ export function DevicesPanel({ devices }: { devices: DeviceRow[] }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
       <div>
         <MonoLabel>{t('count', { count: devices.length })}</MonoLabel>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)' }}>{t('source')}</span>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>{t('source')}</span>
         <p style={{ ...hintStyle, marginTop: '.4rem' }}>{t('later')}</p>
       </div>
 
       {devices.length === 0 ? (
-        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-50)' }}>
+        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
           {t('none')}
         </div>
       ) : (
@@ -94,7 +94,7 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
           <h2 id={headingId} style={{ fontFamily: 'var(--mono)', fontSize: '.9rem', fontWeight: 500, color: 'var(--n-100)' }}>
             {d.name}
           </h2>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-50)', marginTop: '.15rem' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
             #{d.id} ·{' '}
             {d.lastSeenAbs ? t('devices.lastSeen', { abs: d.lastSeenAbs, rel: d.lastSeenRel ?? '—' }) : t('devices.neverSeen')}
           </div>
@@ -119,12 +119,13 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
                 fontWeight: 500,
                 letterSpacing: '-.02em',
                 lineHeight: 1,
-                color: d.freshness === 'live' ? 'var(--n-100)' : 'var(--n-50)',
+                fontVariantNumeric: 'tabular-nums',
+                color: d.freshness === 'live' ? 'var(--n-100)' : 'var(--n-60)',
               }}
             >
               {value ?? '—'}
             </div>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '.6rem', letterSpacing: '.04em', color: 'var(--n-50)', marginTop: '.35rem' }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '.6rem', letterSpacing: '.04em', color: 'var(--n-60)', marginTop: '.35rem' }}>
               {value ? valueNote : ' '}
             </div>
           </div>
@@ -187,7 +188,7 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
             {lock}
           </p>
         )}
-        <div role="status" style={{ ...hintStyle, marginTop: lock ? '.4rem' : 0, lineHeight: 1.5, color: '#15803d' }}>
+        <div role="status" style={{ ...hintStyle, marginTop: lock ? '.4rem' : 0, lineHeight: 1.5, color: 'var(--status-online-ink)' }}>
           {state.status === 'ok' && state.sent && (
             <>
               {t('devices.sent', {

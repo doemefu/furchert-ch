@@ -23,7 +23,7 @@ export function Tag({
         background: blue ? 'var(--blue-wash)' : 'var(--n-10)',
         border: `1px solid ${blue ? 'rgba(14,60,166,.2)' : 'rgba(162,167,176,.3)'}`,
         borderRadius: '2px',
-        color: blue ? 'var(--blue-base)' : contrast ? 'var(--n-60)' : 'var(--n-50)',
+        color: blue ? 'var(--blue-base)' : contrast ? 'var(--n-60)' : 'var(--n-60)',
         whiteSpace: 'nowrap',
       }}
     >

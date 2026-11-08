@@ -174,7 +174,7 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
                   </span>
                 </span>
                 {uptime && (
-                  <span style={{ ...mono, fontSize: '.72rem', color: 'var(--n-60)' }}>{uptime}</span>
+                  <span style={{ ...mono, fontSize: '.72rem', color: 'var(--n-60)', fontVariantNumeric: 'tabular-nums' }}>{uptime}</span>
                 )}
               </div>
             </li>

@@ -2,14 +2,22 @@
 // Colours via --status-* design tokens (globals.css).
 export type DotStatus = 'online' | 'wip' | 'repo' | 'offline' | 'unknown';
 
-// Single source for status→colour, also consumed by AppGrid's status text
-// so the dot and its label can never drift apart.
+// Single source for status→dot colour.
 export const STATUS_COLOR: Record<DotStatus, string> = {
   online: 'var(--status-online)',
   wip: 'var(--status-wip)',
   repo: 'var(--status-repo)',
   offline: 'var(--status-offline)',
   unknown: 'var(--status-unknown)',
+};
+
+// Text colour for a status label: the dot tones only meet 3:1, text needs 4.5:1 (#151).
+export const STATUS_INK: Record<DotStatus, string> = {
+  online: 'var(--status-online-ink)',
+  wip: 'var(--status-wip-ink)',
+  repo: 'var(--n-60)',
+  offline: 'var(--status-offline-ink)',
+  unknown: 'var(--n-60)',
 };
 
 // `label` makes the dot non-decorative for screen readers (role="img").

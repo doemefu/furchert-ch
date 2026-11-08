@@ -12,7 +12,7 @@ import { HAIRLINE, bodyText, cardTitle, fieldLabel, footnoteStyle, textLink } fr
 export function ExampleCalc({ locale }: { locale: Locale }) {
   const c = CALC.i18n[locale];
   const cell = { padding: '.5rem .75rem .5rem 0', verticalAlign: 'top' as const };
-  const num = { ...cell, textAlign: 'right' as const, whiteSpace: 'nowrap' as const, paddingRight: 0, paddingLeft: '.75rem' };
+  const num = { ...cell, textAlign: 'right' as const, whiteSpace: 'nowrap' as const, paddingRight: 0, paddingLeft: '.75rem', fontVariantNumeric: 'tabular-nums' };
 
   return (
     <div

@@ -152,10 +152,11 @@ export const PROJECTS: Project[] = [
 
 // Status pill — colours invariant (prototype statusColor); labels per locale
 // (prototype statusLabel; identical text in both — product status terms).
+// Ink tokens, not dot colours: the colour is also the pill text (#151).
 export const STATUS_COLOR: Record<ProjectStatus, string> = {
-  live: '#22c55e',
-  wip: '#f59e0b',
-  planned: '#94a3b8',
+  live: 'var(--status-online-ink)',
+  wip: 'var(--status-wip-ink)',
+  planned: 'var(--n-60)',
 };
 
 // Deliberately identical in DE and EN — these are product status terms the

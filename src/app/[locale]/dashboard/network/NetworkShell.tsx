@@ -180,7 +180,7 @@ const monoKicker: CSSProperties = {
   fontSize: '.8125rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const monoLabel: CSSProperties = {
@@ -188,7 +188,7 @@ const monoLabel: CSSProperties = {
   fontSize: '.72rem',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
@@ -215,7 +215,7 @@ const noteStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
   fontSize: '.68rem',
   letterSpacing: '.03em',
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
 };
 
 const sectionStyle: CSSProperties = { borderBottom: '1px solid rgba(162,167,176,.22)', padding: '1.5rem 0' };
@@ -268,7 +268,7 @@ const flagStyle: CSSProperties = {
   padding: '.05rem .35rem',
   borderRadius: '2px',
   border: '1px solid var(--status-offline)',
-  color: 'var(--status-offline)',
+  color: 'var(--status-offline-ink)',
   whiteSpace: 'nowrap',
 };
 
@@ -360,7 +360,7 @@ function StatTile({ label, value }: { label: string; value: string }) {
   return (
     <div style={cardStyle}>
       <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.35rem' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--sans)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)' }}>
+      <p style={{ fontFamily: 'var(--sans)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)', fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </p>
     </div>
@@ -1336,7 +1336,7 @@ function LoginTimeline({ points, daily, fmt, t }: { points: LoginTimelineBucket[
 function LoginOutcomeBadge({ outcome, t }: { outcome: string; t: Translate }) {
   if (outcome === 'success') return <Tag blue>{t('logins.success')}</Tag>;
   if (outcome === 'failure') return <span style={flagStyle}>{t('logins.failure')}</span>;
-  if (outcome === 'locked') return <span style={{ ...flagStyle, borderColor: 'var(--status-wip)', color: 'var(--status-wip)' }}>{t('logins.locked')}</span>;
+  if (outcome === 'locked') return <span style={{ ...flagStyle, borderColor: 'var(--status-wip)', color: 'var(--status-wip-ink)' }}>{t('logins.locked')}</span>;
   return <Tag>{outcome}</Tag>;
 }
 

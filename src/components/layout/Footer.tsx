@@ -31,9 +31,10 @@ export async function Footer() {
 
   return (
     <footer
+      className="on-dark"
       style={{
         background: 'var(--n-100)',
-        color: 'var(--n-60)',
+        color: 'var(--n-40)',
         paddingTop: '3rem',
         paddingBottom: '3rem',
       }}
@@ -62,7 +63,7 @@ export async function Footer() {
             >
               furchert.ch
             </div>
-            <p style={{ fontSize: '.875rem', color: 'var(--n-60)', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '.875rem', color: 'var(--n-40)', lineHeight: 1.5 }}>
               {t('footer.role')}
             </p>
           </div>
@@ -83,7 +84,7 @@ export async function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
               {/* The address is rendered only in the browser (#147). */}
               <ContactEmail style={{ ...linkStyle, textTransform: 'none' }} />
-              <span style={{ ...linkStyle, color: 'var(--n-60)', cursor: 'default' }}>
+              <span style={{ ...linkStyle, color: 'var(--n-40)', cursor: 'default' }}>
                 {t('footer.location')}
               </span>
             </div>
@@ -121,15 +122,15 @@ export async function Footer() {
             gap: '1rem',
             paddingTop: '1.5rem',
             fontSize: '.8125rem',
-            color: 'var(--n-60)',
+            color: 'var(--n-40)',
           }}
         >
           <span>{t('footer.copy')}</span>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <Link href="/imprint" style={{ ...linkStyle, color: 'var(--n-60)' }}>
+            <Link href="/imprint" style={{ ...linkStyle, color: 'var(--n-40)' }}>
               {t('footer.imprint')}
             </Link>
-            <Link href="/privacy" style={{ ...linkStyle, color: 'var(--n-60)' }}>
+            <Link href="/privacy" style={{ ...linkStyle, color: 'var(--n-40)' }}>
               {t('footer.privacy')}
             </Link>
           </div>

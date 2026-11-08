@@ -25,7 +25,7 @@ const devAreaLabelStyle = {
   fontSize: '.65rem',
   letterSpacing: '.08em',
   textTransform: 'uppercase' as const,
-  color: 'var(--n-40)',
+  color: 'var(--n-60)',
   paddingRight: '1rem',
   borderRight: '1px solid rgba(162,167,176,.2)',
   whiteSpace: 'nowrap' as const,
@@ -51,7 +51,7 @@ const tabActive = {
 };
 
 const tabInactive = {
-  color: 'var(--n-50)',
+  color: 'var(--n-60)',
   borderBottom: '2px solid transparent',
 };
 
