@@ -105,10 +105,13 @@ export interface PagesResponse {
   filters: Filters;
   items: PageItem[];
 }
+// Click kinds/paths/areas are nullable: the list remainder ("(other)") comes
+// with null fields (spec rev 3.5: kind/path/area null; the producer on main:
+// kind and path "(other)", area null). Both shapes are accepted.
 export interface DetailClick {
-  kind: string;
+  kind: string | null;
   target: string | null;
-  area: string;
+  area: string | null;
   clicks: number;
   visits: number;
   convertingVisits: number;
@@ -125,10 +128,10 @@ export interface PageDetailResponse {
   daily: { day: string; pageviews: number; visitsViewed: number }[];
 }
 export interface ClickItem {
-  kind: string;
+  kind: string | null;
   target: string | null;
-  path: string;
-  area: string;
+  path: string | null;
+  area: string | null;
   clicks: number;
   visits: number;
   convertingVisits: number;
@@ -151,7 +154,7 @@ export interface SourcesResponse {
   range: Range;
   filters: Filters;
   channels: ChannelItem[];
-  referrers: { domain: string; channel: string; visits: number; convertingVisits: number }[];
+  referrers: { domain: string | null; channel: string | null; visits: number; convertingVisits: number }[];
   campaigns: { source: string | null; medium: string | null; campaign: string | null; visits: number; convertingVisits: number }[];
   converters: {
     byLandingChannel: { channel: string | null; convertingVisits: number; conversions: number }[];
@@ -274,10 +277,24 @@ export const isStatus = (v: unknown): v is StatusResponse =>
 export const isOverview = (v: unknown): v is OverviewResponse =>
   ranged(v) && isCounts(v.current) && (v.previous === null || isCounts(v.previous)) && isArr(v.daily, isObj) && (v.visitors === null || isObj(v.visitors));
 export const isPages = (v: unknown): v is PagesResponse => ranged(v) && isArr(v.items, isPageItem);
+const isClickFields = (v: Record<string, unknown>) =>
+  isStrOrNull(v.kind) && isStrOrNull(v.target) && isStrOrNull(v.area) && isNum(v.clicks) && isNum(v.visits) && isNum(v.convertingVisits);
+export const isDetailClick = (v: unknown): v is DetailClick => isObj(v) && isClickFields(v);
+export const isClickItem = (v: unknown): v is ClickItem =>
+  isObj(v) && isClickFields(v) && isStrOrNull(v.path) && (v.pageVisits === null || isNum(v.pageVisits));
 export const isPageDetail = (v: unknown): v is PageDetailResponse =>
-  ranged(v) && (v.summary === null || isPageItem(v.summary)) && isArr(v.clicks, isObj) && isArr(v.daily, isObj) &&
+  ranged(v) && (v.summary === null || isPageItem(v.summary)) && isArr(v.clicks, isDetailClick) && isArr(v.daily, isObj) &&
   (v.faqOpens === null || isArr(v.faqOpens, isObj)) && (v.sections === null || isObj(v.sections));
-export const isClicks = (v: unknown): v is ClicksResponse => ranged(v) && isArr(v.items, isObj);
+export const isClicks = (v: unknown): v is ClicksResponse => ranged(v) && isArr(v.items, isClickItem);
+
+/**
+ * The list remainder of /clicks or a drilldown's clicks, in either shape
+ * (spec rev 3.5: kind null; producer on main: kind or path "(other)"). A
+ * real nav click to an untracked path (`nav` / `(other)`) is not a remainder
+ * and stays its own row (§8.2).
+ */
+export const isClickRemainder = (x: { kind: string | null; target: string | null; path?: string | null }) =>
+  x.kind === null || x.kind === '(other)' || x.path === '(other)' || (x.kind !== 'nav' && x.target === '(other)');
 export const isSources = (v: unknown): v is SourcesResponse =>
   ranged(v) && isArr(v.channels, isObj) && isArr(v.referrers, isObj) && isArr(v.campaigns, isObj) && isObj(v.converters) &&
   isArr(v.converters.byLandingChannel, isObj) && isArr(v.converters.byFirstChannel, isObj) && isArr(v.converters.byEntryPath, isObj);

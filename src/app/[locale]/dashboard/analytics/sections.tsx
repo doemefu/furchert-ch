@@ -6,6 +6,7 @@
 // constant (review M1).
 import { StatusDot, type DotStatus } from '@/components/ui/StatusDot';
 import { TRACKED_PATHS, isTracked } from '@/lib/analytics/registry';
+import { isClickRemainder } from '@/lib/analytics/read';
 import type {
   AnalyticsResult,
   ClicksResponse,
@@ -60,6 +61,9 @@ interface Ctx {
   c: Controls;
   locale: string;
 }
+
+// A known click kind gets its label; anything else renders as its raw text.
+const kindLabel = (kind: string | null, t: Translate) => (kind !== null && (CLICK_KINDS as readonly string[]).includes(kind) ? t(`clicks.${kind}`) : (kind ?? '—'));
 
 const linkTo = (ctx: Ctx, change: Partial<Controls>, hash?: string) => `/${ctx.locale}${hrefFor(ctx.c, change, hash)}`;
 const grid = (min: number) => ({ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gap: '.75rem' }) as const;
@@ -377,7 +381,7 @@ export function PageDrilldown({ result, path, ctx }: { result: AnalyticsResult<P
   }
   const d = result.data;
   const empty = emptyText(d.range, t, fmt);
-  const clicks = foldRows(d.clicks, (x) => x.clicks, (x) => x.target === '(other)');
+  const clicks = foldRows(d.clicks, (x) => x.clicks, isClickRemainder);
   const faq = d.faqOpens ? foldRows(d.faqOpens, (x) => x.opens, (x) => x.faq === '(other)') : null;
   const pv = d.summary?.pageviews ?? 0;
   return (
@@ -395,7 +399,7 @@ export function PageDrilldown({ result, path, ctx }: { result: AnalyticsResult<P
           <RankedBars
             title={t('pages.clicks')}
             rows={[
-              ...clicks.kept.map((x) => ({ key: `${x.kind}|${x.target}|${x.area}`, label: `${t(`clicks.${x.kind}`)} · ${x.target ?? '—'}`, value: x.clicks })),
+              ...clicks.kept.map((x) => ({ key: `${x.kind}|${x.target}|${x.area}`, label: `${kindLabel(x.kind, t)} · ${x.target ?? '—'}`, value: x.clicks })),
               ...(clicks.other !== null ? [{ key: '(other)', label: t('other', { n: fmt.num(clicks.other) }), value: clicks.other }] : []),
             ]}
             fmt={fmt}
@@ -451,7 +455,8 @@ export function ClicksSection({ result, ctx }: { result: AnalyticsResult<ClicksR
   }
   const d = result.data;
   const empty = emptyText(d.range, t, fmt);
-  const folded = foldRows(d.items, (x) => x.clicks, (x) => x.target === '(other)' || x.path === '(other)');
+  // N2: only the list remainder folds; a nav click to "(other)" keeps its row.
+  const folded = foldRows(d.items, (x) => x.clicks, isClickRemainder);
   return (
     <Section id="wa-clicks" title={t('clicks.title')} aside={<Ignored filters={d.filters} t={t} />}>
       <div style={{ display: 'grid', gap: '.75rem' }}>
@@ -474,10 +479,10 @@ export function ClicksSection({ result, ctx }: { result: AnalyticsResult<ClicksR
             <tbody>
               {folded.kept.map((x) => (
                 <tr key={`${x.kind}|${x.target}|${x.path}|${x.area}`}>
-                  <td style={tdStyle}>{t(`clicks.${x.kind}`)}</td>
+                  <td style={tdStyle}>{kindLabel(x.kind, t)}</td>
                   <td style={tdStyle}>{x.target ?? '—'}</td>
-                  <td style={tdStyle}>{x.path}</td>
-                  <td style={tdStyle}>{x.area}</td>
+                  <td style={tdStyle}>{x.path ?? '—'}</td>
+                  <td style={tdStyle}>{x.area ?? '—'}</td>
                   <td style={numTd}>{fmt.num(x.clicks)}</td>
                   <td style={numTd}>{rateText(ctr(x.visits, x.pageVisits), t, fmt)}</td>
                   <td style={numTd}>{fmt.num(x.convertingVisits)}</td>
@@ -517,7 +522,7 @@ export function SourcesSection({ result, ctx }: { result: AnalyticsResult<Source
   const empty = emptyText(d.range, t, fmt);
   // Channels stay unfolded (M3); every other list folds rows below 3.
   const channels = [...d.channels].sort((a, b) => b.visits - a.visits);
-  const referrers = foldRows(d.referrers, (x) => x.visits, (x) => x.domain === '(other)');
+  const referrers = foldRows(d.referrers, (x) => x.visits, (x) => x.domain === '(other)' || x.domain === null);
   const campaigns = foldRows(d.campaigns, (x) => x.visits, (x) => x.source === '(other)');
   const entry = foldRows(d.converters.byEntryPath, (x) => x.convertingVisits, (x) => x.path === '(other)');
   const otherRow = (n: number | null) => (n === null ? [] : [{ key: '(other)', label: t('other', { n: fmt.num(n) }), value: n }]);
@@ -537,7 +542,7 @@ export function SourcesSection({ result, ctx }: { result: AnalyticsResult<Source
             />
             <RankedBars
               title={t('sources.referrers')}
-              rows={[...referrers.kept.map((x) => ({ key: x.domain, label: x.domain, value: x.visits })), ...otherRow(referrers.other)]}
+              rows={[...referrers.kept.map((x) => ({ key: x.domain ?? '', label: x.domain ?? '—', value: x.visits })), ...otherRow(referrers.other)]}
               fmt={fmt}
               emptyText={t('sources.noRows')}
             />

@@ -35,4 +35,12 @@ describe('/dashboard/analytics sources', () => {
     expect(src).toMatch(/createClientCredentialsToken\('analytics:read'/);
     expect(src).not.toMatch(/analytics:write|netmon:read/);
   });
+
+  it('the switch keeps a constant label with aria-pressed (N3); role="status" only for its storage message (N4)', () => {
+    const sw = read('src/components/analytics/NeverTrackSwitch.tsx');
+    expect(sw).toMatch(/aria-pressed=\{on\}/);
+    expect(sw).not.toMatch(/turnOff/);
+    expect(sw.match(/role="status"/g)).toHaveLength(1);
+    for (const f of files.filter((x) => !x.endsWith('NeverTrackSwitch.tsx'))) expect(read(f), f).not.toMatch(/role="status"/);
+  });
 });

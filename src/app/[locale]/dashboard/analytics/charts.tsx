@@ -63,7 +63,6 @@ export function EmphasisColumns({
       {buckets.length > 0 && (
         <div style={{ ...noteStyle, display: 'flex', justifyContent: 'space-between', marginTop: '.35rem' }}>
           <span>{fmt.day(buckets[0].start)}</span>
-          <span>{`${labels.subject}: ${fmt.num(buckets[buckets.length - 1].values[subject] ?? 0)}`}</span>
           <span>{fmt.day(buckets[buckets.length - 1].start)}</span>
         </div>
       )}

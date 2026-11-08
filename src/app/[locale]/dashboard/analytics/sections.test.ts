@@ -63,6 +63,28 @@ describe('C16: stored values render as text, never as markup or links', () => {
   });
 });
 
+describe('#168 review fixes', () => {
+  const base = { area: 'main', clicks: 5, visits: 5, convertingVisits: 0, pageVisits: 20 };
+  it('N2: a nav click to "(other)" keeps its row; both remainder shapes fold into "other (n)"', () => {
+    const out = html(ClicksSection, {
+      result: { ok: true, data: { range, filters, items: [
+        { ...base, kind: 'nav', target: '(other)', path: '/', area: 'header' },
+        { ...base, kind: 'cta', target: 'automation-hero', path: '/automation' },
+        { kind: null, target: '(other)', path: null, area: null, clicks: 4, visits: 4, convertingVisits: 0, pageVisits: null },
+        { kind: '(other)', target: null, path: '(other)', area: null, clicks: 3, visits: 3, convertingVisits: 0, pageVisits: null },
+      ] } },
+      ctx: ctx(),
+    });
+    expect(out).toContain('clicks.nav</td><td');
+    expect(out).toContain('other{&quot;n&quot;:&quot;7&quot;}');
+    expect(out).not.toContain('clicks.null');
+  });
+  it('N4: static notes and failures are no live regions', () => {
+    const out = html(PagesSection, { result: { ok: false, kind: 'unreachable' }, ctx: ctx() });
+    expect(out).not.toContain('role="status"');
+  });
+});
+
 describe('offer at a glance (M4)', () => {
   const overview = (o: Partial<OverviewResponse> = {}): OverviewResponse => ({
     range, filters, current: counts(), previous: counts({ visits: 100 }), visitors: { current: { value: 120, basis: '28d' }, previous: { value: 98, basis: '28d' } },

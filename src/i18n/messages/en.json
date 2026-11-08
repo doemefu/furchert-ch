@@ -304,7 +304,7 @@
         "submits": "Enquiries",
         "submitsValue": "{x} consented of {n} total",
         "unfiltered": "total unfiltered",
-        "visitors": "Browsers",
+        "visitors": "Visitors (browsers)",
         "basis7d": "7 days",
         "basis28d": "28 days",
         "basisMonth": "month",
@@ -401,7 +401,6 @@
         "on": "This browser is never tracked.",
         "off": "This browser is tracked when usage statistics are allowed.",
         "turnOn": "Never track this browser",
-        "turnOff": "Track this browser again",
         "perBrowser": "Applies to this browser on this device only, independent of signing in.",
         "notLive": "Usage statistics are not live yet; the setting applies from the start.",
         "storageBlocked": "The setting cannot be stored in this browser; it applies until the page is reloaded."

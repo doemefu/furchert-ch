@@ -87,4 +87,15 @@ describe('read client', () => {
     expect(await read.getStatus()).toEqual({ ok: false, kind: 'disabled' });
     expect(calls).toEqual([]);
   });
+
+  it('accepts both shapes of the /clicks remainder and rejects other drift (N1)', async () => {
+    const read = await import('./read');
+    const row = { kind: 'cta', target: 'automation-hero', path: '/automation', area: 'main', clicks: 3, visits: 3, convertingVisits: 0, pageVisits: 10 };
+    const specShape = { kind: null, target: '(other)', path: null, area: null, clicks: 4, visits: 4, convertingVisits: 0, pageVisits: null };
+    const mainShape = { kind: '(other)', target: null, path: '(other)', area: null, clicks: 4, visits: 4, convertingVisits: 0, pageVisits: null };
+    expect(read.isClicks({ range, filters, items: [row, specShape, mainShape] })).toBe(true);
+    expect(read.isClicks({ range, filters, items: [{ ...row, clicks: '3' }] })).toBe(false);
+    expect(read.isClicks({ range, filters, items: [{ ...row, path: 7 }] })).toBe(false);
+    expect([row, specShape, mainShape, { ...row, kind: 'nav', target: '(other)' }].map(read.isClickRemainder)).toEqual([false, true, true, false]);
+  });
 });

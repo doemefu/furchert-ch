@@ -304,7 +304,7 @@
         "submits": "Anfragen",
         "submitsValue": "{x} mit Einwilligung von {n} total",
         "unfiltered": "total ungefiltert",
-        "visitors": "Browser",
+        "visitors": "Besucher (Browser)",
         "basis7d": "7 Tage",
         "basis28d": "28 Tage",
         "basisMonth": "Monat",
@@ -401,7 +401,6 @@
         "on": "Dieser Browser wird nie erfasst.",
         "off": "Dieser Browser wird erfasst, wenn die Nutzungsstatistik erlaubt ist.",
         "turnOn": "Diesen Browser nie erfassen",
-        "turnOff": "Diesen Browser wieder erfassen",
         "perBrowser": "Gilt nur für diesen Browser auf diesem Gerät, unabhängig von der Anmeldung.",
         "notLive": "Die Nutzungsstatistik ist noch nicht live; die Einstellung gilt ab dem Start.",
         "storageBlocked": "Die Einstellung kann in diesem Browser nicht gespeichert werden; sie gilt nur bis zum Neuladen."

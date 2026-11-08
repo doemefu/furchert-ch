@@ -74,19 +74,12 @@ export function Section({ id, title, aside, children }: { id: string; title: str
 export function Failure({ result, t }: { result: AnalyticsFailure; t: Translate }) {
   const text =
     result.kind === 'disabled' ? t('disabled') : result.kind === 'problem' ? t('problem', { status: result.status, code: result.code }) : result.kind === 'malformed' ? t('malformed') : t('unavailable');
-  return (
-    <p role="status" style={noteStyle}>
-      {text}
-    </p>
-  );
+  return <p style={noteStyle}>{text}</p>;
 }
 
+// Static server-rendered text: no live region (review N4).
 export function Note({ children }: { children: ReactNode }) {
-  return (
-    <p role="status" style={noteStyle}>
-      {children}
-    </p>
-  );
+  return <p style={noteStyle}>{children}</p>;
 }
 
 export function StatTile({ label, value, sub }: { label: string; value: string; sub?: ReactNode }) {
