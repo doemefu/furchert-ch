@@ -6,6 +6,20 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Web analytics dashboard, core sections** (#155, WA-4a of Epic
+  doemefu/homelab#348): ADMIN-only `/dashboard/analytics` with a new subnav
+  tab. Range controls (7/28/90 days, rolling 12 months, custom), compare,
+  entry-locale and device filters; a status strip; offer at a glance (six
+  tiles with the small-number rules: "x of n" below 30, a 95 % range up to
+  199, deltas only when clear; enquiries as two counts); pages with a
+  drilldown (clicks, daily views, `/automation` section reach and FAQ
+  opens); clicks with a kind filter; sources. Funnels, paths, audience and
+  coverage follow in WA-4b. A "never track this browser" switch, also usable
+  while the usage statistics are not live yet. Data comes from data-service's
+  read API server-side (scope `analytics:read`); every value renders as text.
+  The page stays empty ("no complete day yet") until the nightly rollup has
+  a final day. No new dependency.
+
 - **Web analytics tracker, collect route and enquiry count, shipped dark**
   (#154, WA-2b of Epic doemefu/homelab#348): the consented tracker (its own
   async chunk, loaded only after Allow), the same-origin collect route

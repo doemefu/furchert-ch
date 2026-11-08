@@ -686,3 +686,53 @@ describe('session, path and form hooks (WA-2b)', () => {
     expect(c.analyticsFlag()).toBe(false);
   });
 });
+
+describe('WA-4a seams (#155)', () => {
+  it('N1 (#159): an opted-out browser that clicks Allow keeps the pending opt-out forget', async () => {
+    const env = fakeEnv({ data: new Map([[OPTOUT_KEY, '1'], [FORGET_PENDING_KEY, '1']]), responses: [status(503), status(503)] });
+    const c = ctl(env.deps);
+    await c.init('/');
+    await c.allow();
+    expect(env.data.get(FORGET_PENDING_KEY)).toBe('1');
+    expect(env.tracker.start).not.toHaveBeenCalled();
+  });
+
+  it('M7: optOut reports whether the switch could be stored', async () => {
+    const ok = fakeEnv();
+    const c1 = ctl(ok.deps);
+    await c1.init('/dashboard/analytics');
+    expect(await c1.optOut(true)).toBe(true);
+    expect(await c1.optOut(false)).toBe(true);
+
+    const blocked = fakeEnv({ failSet: true });
+    const c2 = ctl(blocked.deps);
+    await c2.init('/dashboard/analytics');
+    expect(await c2.optOut(true)).toBe(false);
+    expect(c2.getSnapshot().optedOut).toBe(true); // in memory for this page
+  });
+
+  it('H1: the browser controller is one instance per page, even across module copies', async () => {
+    const store = new Map<string, string>();
+    const win = {
+      localStorage: { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => void store.set(k, v), removeItem: (k: string) => void store.delete(k) },
+      dispatchEvent: () => true,
+      setTimeout: (fn: () => void, ms: number) => setTimeout(fn, ms),
+      clearTimeout: (h: number) => clearTimeout(h),
+    };
+    vi.stubGlobal('window', win);
+    const key = Symbol.for('furchert.analytics.consentController');
+    const hooksKey = Symbol.for('furchert.analytics.form');
+    const g = globalThis as Record<symbol, unknown>;
+    delete g[key];
+    delete g[hooksKey];
+    vi.resetModules();
+    const a = (await import('./controller')).getConsentController();
+    const hooks = g[hooksKey];
+    vi.resetModules();
+    const b = (await import('./controller')).getConsentController();
+    expect(b).toBe(a);
+    expect(g[hooksKey]).toBe(hooks);
+    delete g[key];
+    delete g[hooksKey];
+  });
+});

@@ -11,7 +11,8 @@
 > §4 (browser consent contract for first-party web analytics) is implemented
 > but dark as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
 > and §2's data-service web analytics write API as of issue #154 (WA-2b; only
-> the enquiry count is live while the UI flag is off).
+> the enquiry count is live while the UI flag is off); §2's data-service web
+> analytics read API and the never-track switch as of issue #155 (WA-4a).
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -305,6 +306,19 @@ Producer contract: data-service `INTERFACES.md` §1b and spec `../docs/100-web-a
 | Contract test | `src/lib/analytics/server/fixtures/c13-fixtures.json` is a verbatim, sha256-pinned copy of data-service's C13 fixtures (commit named in `forwardModel.test.ts`); a mirror of the producer's per-event rules classifies all cases and accepts every event furchert-ch builds |
 | Logging | at most one `[analytics] forward summary` line a minute, counts only |
 
+#### Web analytics read API — `GET /api/webanalytics/*` (#155, WA-4a)
+
+Producer contract: data-service `INTERFACES.md` §1c and spec `../docs/100-web-analytics.md` §8. Only `/dashboard/analytics` calls it, server-side after the ADMIN check (`src/lib/analytics/read.ts`).
+
+| Item | furchert-ch behaviour |
+|------|-----------------------|
+| Token | `client_credentials`, scope `analytics:read` only, same `furchert-ch` client, own cache (`createClientCredentialsToken`) |
+| Endpoints | `/status`, `/overview`, `/pages` (`limit=100`), `/pages/detail?path=` (registry paths only), `/clicks?kind=` (`limit=100`), `/sources` (`limit=100`); WA-4b adds `/funnels`, `/paths`, `/audience`, `/coverage` |
+| Parameters | `from`/`to` (Zurich dates; 7d/90d/12m end at `/status.lastCompleteDay`, 28d and custom ranges use the API default or the given dates), `compare=previous\|none`, `locale` (entry locale, URL param `entry`), `device`; all validated before they leave the server |
+| Failure | `no-store`, 5 s timeout, one retry after 401; a result union per section (`disabled`, `unreachable`, `problem`, `malformed`) rendered as a fixed text; `/status` failing falls back to the API default range with a note |
+| Numbers | the API returns counts only; rates, Wilson intervals, deltas, medians and the small-number rules come from `src/lib/analytics/stats.ts` (spec §8.3, §8.6) |
+| Rendering | every API value as text; drilldown links only for registry paths; "Data through" = the echoed `range.lastCompleteDay` (never a provisional day) |
+
 ## 3. Outbound: iCloud SMTP (contact form; #46, callback and attribution #145)
 
 `furchert-ch` is an SMTP **client** of iCloud Mail (moved from Infomaniak in #115, whose mail failed furchert.ch's DMARC `p=reject`) — the only
@@ -345,6 +359,7 @@ Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-
 | Collect envelope | `{ v: 1, cv, consentDate, sentAt, viewport, events }`, events per spec 100 §5.2 with every key present (`null` where empty); nav click targets are the raw pathname, the server canonicalises; referrer/UTM only on the landing pageview |
 | Order on Decline / withdrawal | store `denied` → `fa:consent` event → tracker `stop()` → tracker `abortInFlight()` → set `fa_forget_pending` → forget (one at a time, `controller.forget()`) |
 | Tracker port | `TrackerPort { start(); stop(); abortInFlight(); setPath(path); onPageShow(); awaitFirstFlush(ms) }` from `src/lib/analytics/trackerPort.ts`. The tracker (`src/lib/analytics/tracker/`) is its own async chunk, loaded by `loadTracker(hooks)` with a dynamic import after Allow; `hooks.allowed()` (granted, not opted out, no forget pending, not signed in) is asked before every request, `hooks.consentDate()` supplies `consentDate`. `start()` only while allowed, not on `/dashboard/**` and with an unauthenticated session (`controller.setSession`); a restart in the same document is not a landing. `stop()` clears every timer and lock waiter; `stop()` and `abortInFlight()` are synchronous. Stop and abort run only through the port; the controller owns `pageshow` and calls `onPageShow()` only after a re-check |
+| Never-track switch (#155) | `/dashboard/analytics` section 9: `src/components/analytics/NeverTrackSwitch.tsx`, loaded by its own module `lazySwitch.tsx` (`ssr: false`, that page only). On: `fa_optout` stored first, then stop + abort, then forget (`controller.optOut`); off: `fa_optout` removed; `fa_consent` untouched. Works while the analytics UI is dark (says so); reports when the browser cannot store it. The controller is one instance per page (`globalThis[Symbol.for('furchert.analytics.consentController')]`), also when the switch chunk carries its own copy of the module |
 | Contact form hooks | `globalThis[Symbol.for('furchert.analytics.form')]` = `{ analyticsFlag(), awaitFirstFlush(ms) }`, registered by the controller; read through `src/lib/analytics/formHooks.ts` (false / resolved when absent), so the contact page imports no consent code. The form sends `analytics` (tracking allowed) and waits at most 1 s for the first flush |
 | `fa:consent` (window `CustomEvent`, same tab) | `detail: { choice }` after every change of the choice the controller knows of (own action, other tab, bfcache restore). For observers (UI) only; nobody may stop or start tracking from it |
 | `fa:consent-ui` / `fa:consent-ui-request` / `fa:consent-reopen` (window events) | Internal between `Analytics.tsx` and the footer button (`PrivacySettingsLink.tsx`): state `{ choice, barOpen }` out (on every change and on request), state request and reopen request in. The footer button holds no consent logic; both load client-only |
