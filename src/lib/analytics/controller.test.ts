@@ -358,6 +358,40 @@ describe('fa_forget_pending retry', () => {
     expect(env.timers.every((t) => t.cleared)).toBe(true);
   });
 
+  it('a 429 retry does not fire once the page moved to /dashboard/** (F4)', async () => {
+    const env = fakeEnv({ responses: [status(429, { 'Retry-After': '30' })] });
+    const c = createConsentController(env.deps);
+    await c.init('/');
+    await c.decline();
+    await c.init('/dashboard/network');
+    await env.fireTimers();
+    expect(env.fetchFn).toHaveBeenCalledTimes(1);
+    expect(env.data.get(FORGET_PENDING_KEY)).toBe('1');
+  });
+
+  it('opt-out with granted: a failed forget is retried, not abandoned (F5)', async () => {
+    const first = fakeEnv({
+      data: new Map([[CONSENT_KEY, record('granted')]]),
+      responses: [status(429, { 'Retry-After': '30' }), status(503)],
+    });
+    const c1 = createConsentController(first.deps);
+    await c1.init('/');
+    await flush();
+    await c1.optOut(true);
+    await first.fireTimers();
+    expect(first.fetchFn).toHaveBeenCalledTimes(2);
+    expect(first.data.get(FORGET_PENDING_KEY)).toBe('1');
+
+    // Next load: granted + opted out + pending is a retry, not the M5a path.
+    const second = fakeEnv({ data: first.data, responses: [status(503)] });
+    const c2 = createConsentController(second.deps);
+    await c2.init('/');
+    await flush();
+    expect(second.log).toEqual(['fetch /api/v/forget']);
+    expect(second.data.get(FORGET_PENDING_KEY)).toBe('1');
+    expect(second.tracker.start).not.toHaveBeenCalled();
+  });
+
   it('granted + pending at load: one forget, marker dropped whatever the answer, then start (M5a)', async () => {
     for (const responder of [status(204), status(503)]) {
       const env = fakeEnv({

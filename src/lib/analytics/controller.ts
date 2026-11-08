@@ -9,8 +9,9 @@
 // - Decline/withdrawal: store `denied`, stop and abort the tracker, set
 //   `fa_forget_pending`, then forget; the marker goes on a 204 only.
 // - One forget at a time (`forget()`); a pending forget is retried once per
-//   document load and only while the choice is not `granted`; a 429 may
-//   schedule one more attempt, cancelled by an Allow.
+//   document load and only while tracking is not allowed (choice not
+//   `granted`, or the never-track switch on) and the path is public; a 429
+//   may schedule one more attempt, cancelled by an Allow.
 // - The tracker starts only while granted, not opted out, no forget pending,
 //   not on `/dashboard/**`, and `mayStart()` agrees.
 import {
@@ -106,6 +107,9 @@ export function createConsentController(deps: ControllerDeps): ConsentController
   const choice = () => record?.choice ?? null;
   const suppressed = () => isBarSuppressedPath(path);
   const pending = () => readFlag(storage, FORGET_PENDING_KEY);
+  // Tracking allowed = granted and the never-track switch off. A pending
+  // forget is retried only while tracking is not allowed (F5).
+  const trackingAllowed = () => choice() === 'granted' && !optedOut;
 
   const set = (key: string, value: string): boolean => {
     try {
@@ -142,8 +146,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
     deps.events.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: { choice: choice() } }));
   };
 
-  const canStart = () =>
-    choice() === 'granted' && !optedOut && !suppressed() && !pending() && (deps.mayStart?.() ?? true);
+  const canStart = () => trackingAllowed() && !suppressed() && !pending() && (deps.mayStart?.() ?? true);
 
   const maybeStart = () => {
     if (started || !canStart()) return;
@@ -179,7 +182,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
         retryUsed = true;
         retryTimer = deps.setTimeout(() => {
           retryTimer = null;
-          if (choice() !== 'granted' && pending()) void forget();
+          if (!trackingAllowed() && pending() && !suppressed()) void forget();
         }, result.retryAfterMs);
       }
       return result;
@@ -191,9 +194,10 @@ export function createConsentController(deps: ControllerDeps): ConsentController
   // for the first public path) and never sends anything before a choice.
   const boot = async () => {
     booted = true;
-    const c = choice();
-    if (pending() && c !== null) {
-      if (c === 'granted') {
+    // No network before a choice (§1.4): with neither a choice nor the
+    // never-track switch, a pending marker waits for the next choice.
+    if (pending() && (choice() !== null || optedOut)) {
+      if (trackingAllowed()) {
         // Allowed again while a forget was pending: one attempt, then the
         // marker goes whatever the answer, then the tracker may start.
         await forget();
@@ -214,7 +218,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
       reopened = false;
       announce();
     }
-    if (wasRunning && (choice() !== 'granted' || optedOut)) halt();
+    if (wasRunning && !trackingAllowed()) halt();
     maybeStart();
     emit();
   };

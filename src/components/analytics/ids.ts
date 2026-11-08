@@ -10,6 +10,8 @@ export const PRIVACY_SETTINGS_ID = 'fa-privacy-settings';
 export const CONSENT_UI_EVENT = 'fa:consent-ui';
 /** Footer link → Analytics: reopen the bar. */
 export const CONSENT_REOPEN_EVENT = 'fa:consent-reopen';
+/** Footer link → Analytics: send the current state now (on subscribe). */
+export const CONSENT_UI_REQUEST_EVENT = 'fa:consent-ui-request';
 
 export interface ConsentUiState {
   choice: 'granted' | 'denied' | null;

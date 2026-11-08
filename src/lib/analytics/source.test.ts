@@ -49,6 +49,12 @@ describe('dark launch', () => {
     }
   });
 
+  it('loads both entry points client-only, so no page preloads their chunks (F1)', () => {
+    const lazy = code('src/components/analytics/lazy.tsx');
+    expect(lazy.match(/dynamic\(/g)).toHaveLength(2);
+    expect(lazy.match(/\{ ssr: false \}/g)).toHaveLength(2);
+  });
+
   it('mounts <Analytics /> after the footer and outside <main>', () => {
     const layout = code('src/app/[locale]/layout.tsx');
     expect(layout.indexOf('<LazyAnalytics')).toBeGreaterThan(layout.indexOf('</main>'));

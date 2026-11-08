@@ -1,7 +1,9 @@
 // Bundle budget of the consent layer (spec 100 §3.10; WA-2a #153). Reads the
-// production build, so it needs `pnpm build` first: the pre-build `pnpm test`
-// run skips it, and CI runs it again after the build with
-// ANALYTICS_BUNDLE_CHECK=1, where a missing build fails.
+// production build, so it runs only with ANALYTICS_BUNDLE_CHECK=1 (the CI
+// step after `pnpm build`; locally: `pnpm build && ANALYTICS_BUNDLE_CHECK=1
+// pnpm vitest run src/lib/analytics/bundle.test.ts`). A plain `pnpm test`
+// skips it, so it never measures a stale local build; with the variable set,
+// a missing build fails.
 //
 // The consent code must live only in async chunks (next/dynamic, see
 // src/components/analytics/lazy.tsx): none of them may be referenced by a
@@ -41,7 +43,7 @@ describe('consent layer bundle', () => {
     expect(built, 'run `pnpm build` before this check').toBe(true);
   });
 
-  describe.runIf(built)('built chunks', () => {
+  describe.runIf(required && built)('built chunks', () => {
     // Markers: strings that only these modules contain.
     const controller = () => withMarker('fa_forget_pending');
     const bar = () => withMarker('consent-inner').filter((f) => !controller().includes(f));

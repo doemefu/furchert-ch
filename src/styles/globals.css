@@ -211,17 +211,18 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 }
 
 /* ── CONSENT BAR (WA-2a #153; dark until WA-6) ──
-   ConsentBar.tsx. A twin of the header surface at the bottom, the page's
-   `.border-x` grid running through it. No shadow, no radius, no motion. Only
-   existing tokens. z-index between the /automation sticky CTA (90) and the
+   ConsentBar.tsx. The page surface (--n-10) at the bottom with the header's
+   hairline, the page's `.border-x` grid running through it. No shadow, no
+   radius, no motion. Only existing tokens. z-index between the /automation sticky CTA (90) and the
    header (100), so the mobile menu still covers it. */
 .consent-bar {
   position: fixed;
   inset: auto 0 0;
   z-index: 95;
-  background: rgba(250,250,255,.92);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  /* Solid --n-10, not the header's 92 % glass: over the dark footer (where a
+     reopened bar always sits) the glass turned grey and pushed the
+     current-choice label below 4.5:1 (review of #159, F2). */
+  background: var(--n-10);
   border-top: 1px solid rgba(162,167,176,.22);
 }
 .consent-bar:focus { outline: none; }

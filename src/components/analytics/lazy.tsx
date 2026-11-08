@@ -9,6 +9,11 @@ import dynamic from 'next/dynamic';
 
 export const LazyAnalytics = dynamic(() => import('./Analytics').then((m) => m.Analytics), { ssr: false });
 
-export const LazyPrivacySettingsLink = dynamic(() =>
-  import('./PrivacySettingsLink').then((m) => m.PrivacySettingsLink),
+// `ssr: false` for the footer button too: a server-rendered dynamic component
+// gets its chunk preloaded by every prerendered page (F1, review of #159).
+// It mounts after hydration at the end of the footer's legal row, below the
+// fold, so it shifts nothing in view.
+export const LazyPrivacySettingsLink = dynamic(
+  () => import('./PrivacySettingsLink').then((m) => m.PrivacySettingsLink),
+  { ssr: false },
 );

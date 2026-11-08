@@ -8,8 +8,9 @@
 //
 // It holds no consent logic: Analytics.tsx owns the controller and announces
 // `{ choice, barOpen }` with CONSENT_UI_EVENT; a click asks it to reopen the
-// bar with CONSENT_REOPEN_EVENT. Until Analytics has loaded, the label shows
-// without a state.
+// bar with CONSENT_REOPEN_EVENT. On subscribe it asks for the current state
+// (CONSENT_UI_REQUEST_EVENT), so the load order of the two chunks does not
+// matter. Until Analytics has answered, the label shows without a state.
 import { useSyncExternalStore, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
@@ -18,6 +19,7 @@ import {
   CONSENT_BAR_ID,
   CONSENT_REOPEN_EVENT,
   CONSENT_UI_EVENT,
+  CONSENT_UI_REQUEST_EVENT,
   PRIVACY_SETTINGS_ID,
   type ConsentUiState,
 } from './ids';
@@ -30,6 +32,9 @@ function subscribe(onChange: () => void) {
     onChange();
   };
   window.addEventListener(CONSENT_UI_EVENT, listener);
+  // Whichever loads first: if Analytics is already running it answers now,
+  // otherwise its first announcement arrives once it is ready.
+  window.dispatchEvent(new Event(CONSENT_UI_REQUEST_EVENT));
   return () => window.removeEventListener(CONSENT_UI_EVENT, listener);
 }
 const getSnapshot = () => ui;
