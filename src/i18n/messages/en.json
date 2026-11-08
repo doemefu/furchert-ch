@@ -9,30 +9,28 @@
   },
   "hero": {
     "label": "Software Engineer · AI for SMEs · Zurich",
-    "title1": "Technology",
-    "title2": " that creates impact.",
-    "sub": "I'm Dominic Furchert. I set up AI tools in SMEs around Zurich, starting with construction, and measure after 6 weeks whether they are used. I also build systems from ESP32 firmware to Kubernetes clusters.",
-    "cta1": "About me",
+    "title1": "It isn't done",
+    "title2": " until your people use it.",
+    "sub": "Dominic Furchert, based near Zurich. I show you in your own daily work where AI saves time, set up one workflow so that it works, and measure after 6 weeks whether it is used.",
+    "cta1": "Background and projects",
     "cta2": "AI for your business",
     "seeProjects": "See projects"
   },
   "teasers": {
-    "it": { "title": "IT & Tech", "text": "UZH, UBS, KPMG, AMZ Racing: from mainframe to Kubernetes." },
-    "rowing": { "title": "Rowing", "text": "President RCRJ. Safety Chief, National Rowing Regatta Schmerikon." },
-    "projects": { "title": "Projects", "text": "IoT platform, homelab k3s cluster, AI-powered club assistant." },
-    "automation": { "title": "AI for SMEs", "text": "Speak site reports instead of typing them, draft quotes from enquiries, and later a daily overview at 5:30 am as an own automation. Starting with construction." },
-    "more": "→ More"
+    "it": { "title": "IT & Tech", "text": "COBOL at UBS, IT audit at KPMG, embedded systems at AMZ Racing, studies at UZH." },
+    "rowing": { "title": "Rowing", "text": "President of the Rapperswil-Jona Rowing Club. Head of safety on the organising committee of the National Regatta Schmerikon." },
+    "projects": { "title": "Projects", "text": "Own login service, IoT platform from ESP32 to dashboard, AI assistant for the rowing club. All on my own k3s cluster." },
+    "automation": { "title": "AI for SMEs", "text": "Dictate reports instead of typing them, draft quotes from enquiries: one workflow from your daily work, set up and measured after 6 weeks." },
+    "more": "More →"
   },
   "about": {
     "label": "About me",
     "exp": "Experience",
-    "eng": "Engagement & Roles",
-    "p1": "I combine technical depth with organisational leadership and feel as much at home in a Kubernetes cluster as in a board meeting.",
-    "p2": "Currently: BSc Software Systems at UZH, SoPra FS26 (Karaokee), homelab infrastructure with Ansible + k3s, club management tool for RCRJ."
+    "eng": "Engagement & Roles"
   },
   "cta": {
     "together": "A business or a project?",
-    "togsub": "For businesses: see AI tools live, 30 minutes, free. For tech projects from infrastructure to full stack: write to me.",
+    "togsub": "Businesses: a 30-minute live demo, free, on site or by video. For engineering roles and tech projects from infrastructure to full stack: write to me.",
     "primary": "See it live",
     "examples": "See the examples first →"
   },
@@ -85,9 +83,9 @@
   "pages": {
     "home": {
       "areas": "Areas",
-      "areasTitle": "What defines me.",
+      "areasTitle": "What I work on",
       "metaTitle": "Dominic Furchert | Software Engineer · AI for SMEs",
-      "metaDescription": "Dominic Furchert, a software engineer, sets up AI tools in SMEs in the Zurich area, starting with construction. Plus projects, a homelab and rowing."
+      "metaDescription": "Dominic Furchert, software engineer near Zurich, sets up one AI workflow in SMEs and measures whether it is used. Plus projects, homelab, rowing."
     },
     "about": {
       "headerLabel": "About me",
@@ -156,7 +154,7 @@
       "heroTitlePre": "Three things AI can do in construction ",
       "heroTitleEm": "today",
       "heroTitlePost": ".",
-      "heroSub": "I'm Dominic Furchert. I set up ready-made AI tools in construction and civil engineering firms with 10 to 50 people east of Zurich, show them to your people and measure after 6 weeks whether they are used. At a fixed price.",
+      "heroSub": "Dominic Furchert, software engineer. I set up ready-made AI tools in construction and civil engineering firms with 10 to 50 people east of Zurich, show them to your people and measure after 6 weeks whether they are used. At a fixed price.",
       "metaDescription": "Site reports by voice, quote drafts from enquiries: Dominic Furchert sets up AI tools in construction firms near Zurich. Free live demo.",
       "heroTilesNote": "Examples with invented names. Everything runs on your own licences, not on my systems.",
       "heroTileOpen": "Show",

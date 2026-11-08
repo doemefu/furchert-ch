@@ -13,23 +13,22 @@ import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 export const SITE_LAUNCH_DATE = '2026-06-25';
 
 export const PAGE_LAST_MODIFIED = {
-  '/': '2026-11-07',
-  '/about': '2026-11-04',
-  '/it': '2026-11-04',
+  '/': '2026-11-08',
+  '/about': '2026-11-08',
+  '/it': '2026-11-08',
   // Construction-first offer, Gate-0 prices, example tiles (#145).
   '/automation': '2026-11-07',
-  '/rowing': '2026-11-04',
-  '/projects': '2026-11-04',
+  '/rowing': '2026-11-08',
+  '/projects': '2026-11-08',
   // Sie form, call back and source fields (#145, part 2).
   '/contact': '2026-11-07',
   // Legal pages (#16); bump when the copy in src/data/legal.ts changes.
   '/imprint': '2026-11-05',
   '/privacy': '2026-11-07',
-  '/projects/iot-platform': '2026-11-04',
+  '/projects/iot-platform': '2026-11-08',
   // The page shows this date itself ("Stand der Beschreibung").
   '/projects/homelab': LAB_CONTENT_UPDATED,
-  '/projects/club-assist': SITE_LAUNCH_DATE,
-  '/projects/karaokee': '2026-11-04',
-  '/projects/auth-service': SITE_LAUNCH_DATE,
-  '/projects/aemtlifyer': SITE_LAUNCH_DATE,
+  '/projects/club-assist': '2026-11-08',
+  '/projects/karaokee': '2026-11-08',
+  '/projects/auth-service': '2026-11-08',
 } as const satisfies Record<string, `${number}-${number}-${number}`>;
