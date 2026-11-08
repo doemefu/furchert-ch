@@ -101,6 +101,9 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **Copilot data-boundary footnote and FAQ** (#165): /automation now names all
+  three documented exceptions to the EU Data Boundary (Bing web search,
+  Anthropic models in Word/Excel/PowerPoint, flex routing at peak load).
 - **Accessibility and tokens pass** (#151): small text on light surfaces is
   never lighter than `--n-60` (5.26:1; `--n-50`/`--n-40` labels were 3.47 and
   2.32:1), footer text on navy moves to `--n-40`. Status colours are split
