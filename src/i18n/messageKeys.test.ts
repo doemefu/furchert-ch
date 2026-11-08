@@ -5,8 +5,8 @@
 // - every key the /automation, contact, home, header, footer and
 //   ContactEmail components ask for exists in both locales, read from the
 //   source files as text;
-// - every /automation and `contact.*` key is used, so retired copy does not
-//   linger.
+// - every /automation, `contact.*` and `analytics.*` key is used, so retired
+//   copy does not linger.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -42,6 +42,8 @@ const FILES: Record<string, string> = {
   'src/components/layout/Header.tsx': '',
   'src/components/layout/Footer.tsx': '',
   'src/components/ui/ContactEmail.tsx': 'contact',
+  'src/components/analytics/ConsentBar.tsx': 'analytics.consent',
+  'src/components/analytics/PrivacySettingsLink.tsx': '',
 };
 
 // String array literal assigned to `name` in a source file.
@@ -119,6 +121,17 @@ describe('message keys', () => {
     for (const locale of [de, en]) {
       for (const key of heardViaKeys) expect(locale.contact, key).toHaveProperty([key]);
     }
+  });
+
+  it('are all used by the consent bar and the footer settings link (no retired copy left behind)', () => {
+    const used = new Set(
+      [
+        ...usedKeys('src/components/analytics/ConsentBar.tsx').map((key) => `analytics.consent.${key}`),
+        ...usedKeys('src/components/analytics/PrivacySettingsLink.tsx'),
+      ],
+    );
+    for (const key of flatten(de.analytics)) expect(used.has(`analytics.${key}`), key).toBe(true);
+    expect(used.has('footer.privacySettings')).toBe(true);
   });
 
   it('are all used on /contact or by ContactEmail (no retired copy left behind)', () => {

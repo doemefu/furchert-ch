@@ -7,6 +7,8 @@ import { dmSans, dmMono } from '@/lib/fonts';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Providers } from '@/components/Providers';
+import { LazyAnalytics } from '@/components/analytics/lazy';
+import { ANALYTICS_UI_ENABLED } from '@/lib/analytics/flags';
 import { ownerTitle } from '@/lib/seo/metadata';
 import '@/styles/globals.css';
 
@@ -48,6 +50,8 @@ export default async function LocaleLayout({
               {children}
             </main>
             <Footer />
+            {/* Dark until the WA-6 go-live (#158); see src/lib/analytics/flags.ts. */}
+            {ANALYTICS_UI_ENABLED && <LazyAnalytics />}
           </Providers>
         </NextIntlClientProvider>
       </body>
