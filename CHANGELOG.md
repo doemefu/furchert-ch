@@ -6,6 +6,20 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Web analytics dashboard, remaining sections** (#156, WA-4b of Epic
+  doemefu/homelab#348): `/dashboard/analytics` gains funnels (offer and
+  contact form, step rates, "< 3" for small steps, rate comparison only on a
+  previous period of the same length), paths (page-group paths, entry and
+  exit pages, seen before contacting, page transitions), audience (new and
+  returning visits, repeat offer viewers, device, entry language and
+  dimension lists), coverage and data quality (consented page views next to
+  Cloudflare page requests, an indicative 10-point band, enquiries by
+  submission day, registry pages only, data-quality reasons), and previous
+  and next pages in the page drilldown. The page explains when the current
+  counting rules or the go-live date shorten a range. The pages table turns
+  into cards on phones. Needs data-service #55; without it these sections
+  show "data-service error". No new dependency.
+
 - **Web analytics dashboard, core sections** (#155, WA-4a of Epic
   doemefu/homelab#348): ADMIN-only `/dashboard/analytics` with a new subnav
   tab. Range controls (7/28/90 days, rolling 12 months, custom), compare,

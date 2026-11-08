@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bucketSeries, countDelta, foldRows, medianBucket, rate, rateDelta, wilson, winner } from './stats';
+import { bucketSeries, countDelta, coverageBand, foldRows, funnelSteps, isSmall, medianBucket, rate, rateDelta, spansMatch, wilson, winner } from './stats';
 
 describe('rate (§8.6 percentage + interval)', () => {
   it('shows "x of n" below 30, a Wilson interval from 30 to 199, a percentage from 200', () => {
@@ -93,5 +93,53 @@ describe('bucketSeries (§8.6 charts, L5)', () => {
     expect(b.buckets[0]).toMatchObject({ start: '2025-11-01', values: { v: 16 }, partial: true });
     expect(b.buckets[1]).toMatchObject({ start: '2025-12-01', values: { v: 31 }, partial: false });
     expect(b.buckets[2].start).toBe('2026-01-01');
+  });
+});
+
+
+describe('funnelSteps (§8.6 funnel cells, Q1/Q3)', () => {
+  it('orders by index, marks cells below 3 and drops rates that touch them', () => {
+    const s = funnelSteps([
+      { index: 1, key: 'offer_visit', visits: 80 },
+      { index: 0, key: 'visit', visits: 160 },
+      { index: 2, key: 'reached_prices', visits: 2 },
+      { index: 3, key: 'contact_intent', visits: 20 },
+    ]);
+    expect(s.map((x) => x.key)).toEqual(['visit', 'offer_visit', 'reached_prices', 'contact_intent']);
+    expect(s[0].ofPrevious).toBeNull();
+    expect(s[1].ofPrevious).toMatchObject({ kind: 'interval', x: 80, n: 160 });
+    expect(s[2]).toMatchObject({ small: true, ofPrevious: null, ofFirst: null });
+    expect(s[3]).toMatchObject({ small: false, ofPrevious: null }); // previous step is small
+    expect(s[3].ofFirst).toMatchObject({ x: 20, n: 160 });
+    expect(isSmall(2)).toBe(true);
+    expect(isSmall(3)).toBe(false);
+  });
+});
+
+describe('spansMatch (H3)', () => {
+  it('compares only when the previous span has the same number of days', () => {
+    expect(spansMatch({ from: '2026-10-11', to: '2026-11-07', days: 28, lastCompleteDay: '2026-11-07', previous: { from: '2026-09-13', to: '2026-10-10' } })).toBe(true);
+    expect(spansMatch({ from: '2026-10-11', to: '2026-11-07', days: 28, lastCompleteDay: '2026-11-07', previous: { from: '2026-10-01', to: '2026-10-10' } })).toBe(false);
+    expect(spansMatch({ from: '2026-10-11', to: '2026-11-07', days: 28, lastCompleteDay: '2026-11-07', previous: null })).toBe(false);
+  });
+});
+
+describe('coverageBand (§8.3, M4)', () => {
+  const d = (consented: number, cf: number, i = 0) => ({ day: `2026-10-${String(10 + i).padStart(2, '0')}`, consentedPageviews: consented, cloudflareRequests: cf, sampled: false });
+  it('needs both sums ≥ 50, on days with Cloudflare requests only', () => {
+    expect(coverageBand([d(49, 200)])).toEqual({ kind: 'small', excludedDays: 0 });
+    expect(coverageBand([d(60, 49)])).toEqual({ kind: 'small', excludedDays: 0 });
+    // A gap day (no Cloudflare rows) is left out of both sums and noted.
+    expect(coverageBand([d(50, 100, 0), d(30, 0, 1)])).toEqual({ kind: 'band', lo: 50, hi: 60, excludedDays: 1 });
+  });
+  it('integer 10-point bands; exact tens; 0.999; 1.0 and above', () => {
+    expect(coverageBand([d(60, 200)])).toMatchObject({ lo: 30, hi: 40 });
+    expect(coverageBand([d(999, 1000)])).toMatchObject({ lo: 90, hi: 100 });
+    expect(coverageBand([d(1000, 1000)])).toEqual({ kind: 'atLeast100', excludedDays: 0 });
+    expect(coverageBand([d(120, 100)])).toEqual({ kind: 'atLeast100', excludedDays: 0 });
+  });
+  it('uses the last 28 days of the range', () => {
+    const days = [d(500, 500), ...Array.from({ length: 28 }, (_, i) => d(10, 100, i))];
+    expect(coverageBand(days)).toMatchObject({ kind: 'band', lo: 10, hi: 20 });
   });
 });

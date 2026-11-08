@@ -92,9 +92,9 @@ export function StatTile({ label, value, sub }: { label: string; value: string; 
   );
 }
 
-export function TableWrap({ caption, children }: { caption?: string; children: ReactNode }) {
+export function TableWrap({ caption, className, children }: { caption?: string; className?: string; children: ReactNode }) {
   return (
-    <div style={{ ...cardStyle, padding: 0, overflowX: 'auto' }}>
+    <div className={className} style={{ ...cardStyle, padding: 0, overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         {caption && <caption style={{ ...noteStyle, textAlign: 'left', padding: '.5rem .75rem' }}>{caption}</caption>}
         {children}

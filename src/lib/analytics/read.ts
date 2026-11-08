@@ -120,8 +120,9 @@ export interface PageDetailResponse {
   range: Range;
   filters: Filters;
   summary: PageItem | null;
-  previous: { path: string; count: number }[] | null;
-  next: { path: string; count: number }[] | null;
+  /** WA-3b: top 5 incl. `(entrance)`/`(exit)` + `(other)`; null kept for version skew. */
+  previous: { path: string | null; count: number }[] | null;
+  next: { path: string | null; count: number }[] | null;
   clicks: DetailClick[];
   sections: { reached: { section: string; pageviews: number }[]; deepestAtExit: { section: string; visits: number }[] } | null;
   faqOpens: { faq: string; opens: number; visits: number }[] | null;
@@ -161,6 +162,58 @@ export interface SourcesResponse {
     byFirstChannel: { channel: string | null; convertingVisits: number; conversions: number }[];
     byEntryPath: { path: string; convertingVisits: number; conversions: number }[];
   };
+}
+
+// WA-3b endpoints (data-service ReadDtos, definition 2; spec 100 rev 3.5 §8.2).
+// Key strings are nullable: "none" keys come back as null (§8.1).
+export interface FunnelStep {
+  index: number;
+  key: string | null;
+  visits: number;
+}
+export interface FunnelsResponse {
+  range: Range;
+  filters: Filters;
+  definitionVersion: number;
+  definitionFrom: string | null;
+  funnels: { id: string | null; steps: FunnelStep[]; previous: FunnelStep[] | null }[];
+}
+export interface PathsResponse {
+  range: Range;
+  filters: Filters;
+  definitionFrom: string | null;
+  groupPaths: { path: string | null; visits: number; convertingVisits: number }[];
+  entryExit: { entry: string | null; exit: string | null; visits: number }[];
+  seenBeforeContacting: { intentVisits: number; items: { seen: string | null; visits: number }[] };
+  transitions: { fromPath: string | null; toPath: string | null; count: number }[];
+}
+export interface ValueCount {
+  value: string | null;
+  visits: number;
+}
+export interface AudienceResponse {
+  range: Range;
+  filters: Filters;
+  newVsReturning: { newVisits: number; returningVisits: number };
+  repeatOfferViewers: { value: number | null; basis: string | null };
+  deviceClass: ValueCount[];
+  entryLocale: ValueCount[];
+  dimensions: { country: ValueCount[]; browserFamily: ValueCount[]; osFamily: ValueCount[]; viewport: ValueCount[]; visitorType: ValueCount[] };
+}
+export interface CoverageDay {
+  day: string;
+  consentedPageviews: number;
+  cloudflareRequests: number;
+  sampled: boolean;
+}
+export interface CoverageResponse {
+  range: Range;
+  filters: Filters;
+  baselineFrom: string | null;
+  daily: CoverageDay[];
+  byPage: { path: string | null; locale: string | null; consentedPageviews: number; cloudflareRequests: number; sampled: boolean }[];
+  enquiries: { consentedSubmits: number; totalSubmits: number };
+  dataQuality: { edge: Record<string, number>; secondLine: Record<string, number>; duplicates: number; cappedDays: number | null };
 }
 
 // ── Result type ────────────────────────────────────────────────────────────
@@ -284,8 +337,37 @@ export const isClickItem = (v: unknown): v is ClickItem =>
   isObj(v) && isClickFields(v) && isStrOrNull(v.path) && (v.pageVisits === null || isNum(v.pageVisits));
 export const isPageDetail = (v: unknown): v is PageDetailResponse =>
   ranged(v) && (v.summary === null || isPageItem(v.summary)) && isArr(v.clicks, isDetailClick) && isArr(v.daily, isObj) &&
-  (v.faqOpens === null || isArr(v.faqOpens, isObj)) && (v.sections === null || isObj(v.sections));
+  (v.faqOpens === null || isArr(v.faqOpens, isObj)) && (v.sections === null || isObj(v.sections)) &&
+  (v.previous === null || isArr(v.previous, isPathCount)) && (v.next === null || isArr(v.next, isPathCount));
 export const isClicks = (v: unknown): v is ClicksResponse => ranged(v) && isArr(v.items, isClickItem);
+
+const isStep = (v: unknown) => isObj(v) && isNum(v.index) && isStrOrNull(v.key) && isNum(v.visits);
+const isValueCount = (v: unknown) => isObj(v) && isStrOrNull(v.value) && isNum(v.visits);
+const isNumMap = (v: unknown) => isObj(v) && Object.values(v).every(isNum);
+const isPathCount = (v: unknown) => isObj(v) && isStrOrNull(v.path) && isNum(v.count);
+
+export const isFunnels = (v: unknown): v is FunnelsResponse =>
+  ranged(v) && isNum(v.definitionVersion) && isStrOrNull(v.definitionFrom) &&
+  isArr(v.funnels, (f) => isObj(f) && isStrOrNull(f.id) && isArr(f.steps, isStep) && (f.previous === null || isArr(f.previous, isStep)));
+export const isPaths = (v: unknown): v is PathsResponse =>
+  ranged(v) && isStrOrNull(v.definitionFrom) &&
+  isArr(v.groupPaths, (x) => isObj(x) && isStrOrNull(x.path) && isNum(x.visits) && isNum(x.convertingVisits)) &&
+  isArr(v.entryExit, (x) => isObj(x) && isStrOrNull(x.entry) && isStrOrNull(x.exit) && isNum(x.visits)) &&
+  isObj(v.seenBeforeContacting) && isNum(v.seenBeforeContacting.intentVisits) &&
+  isArr(v.seenBeforeContacting.items, (x) => isObj(x) && isStrOrNull(x.seen) && isNum(x.visits)) &&
+  isArr(v.transitions, (x) => isObj(x) && isStrOrNull(x.fromPath) && isStrOrNull(x.toPath) && isNum(x.count));
+export const isAudience = (v: unknown): v is AudienceResponse =>
+  ranged(v) && isObj(v.newVsReturning) && isNum(v.newVsReturning.newVisits) && isNum(v.newVsReturning.returningVisits) &&
+  isObj(v.repeatOfferViewers) && (v.repeatOfferViewers.value === null || isNum(v.repeatOfferViewers.value)) && isStrOrNull(v.repeatOfferViewers.basis) &&
+  isArr(v.deviceClass, isValueCount) && isArr(v.entryLocale, isValueCount) && isObj(v.dimensions) &&
+  ['country', 'browserFamily', 'osFamily', 'viewport', 'visitorType'].every((k) => isArr((v.dimensions as Record<string, unknown>)[k], isValueCount));
+export const isCoverage = (v: unknown): v is CoverageResponse =>
+  ranged(v) && isStrOrNull(v.baselineFrom) &&
+  isArr(v.daily, (x) => isObj(x) && typeof x.day === 'string' && isNum(x.consentedPageviews) && isNum(x.cloudflareRequests) && typeof x.sampled === 'boolean') &&
+  isArr(v.byPage, (x) => isObj(x) && isStrOrNull(x.path) && isStrOrNull(x.locale) && isNum(x.consentedPageviews) && isNum(x.cloudflareRequests) && typeof x.sampled === 'boolean') &&
+  isObj(v.enquiries) && isNum(v.enquiries.consentedSubmits) && isNum(v.enquiries.totalSubmits) &&
+  isObj(v.dataQuality) && isNumMap(v.dataQuality.edge) && isNumMap(v.dataQuality.secondLine) && isNum(v.dataQuality.duplicates) &&
+  (v.dataQuality.cappedDays === null || isNum(v.dataQuality.cappedDays));
 
 /**
  * The list remainder of /clicks or a drilldown's clicks, in either shape
@@ -306,6 +388,10 @@ const rangeQuery = (q: RangeQuery): Query => ({ from: q.from, to: q.to, compare:
 export const getStatus = () => getJson('status', '/status', {}, isStatus);
 export const getOverview = (q: RangeQuery) => getJson('overview', '/overview', rangeQuery(q), isOverview);
 export const getPages = (q: RangeQuery) => getJson('pages', '/pages', { ...rangeQuery(q), limit: 100 }, isPages);
-export const getPageDetail = (q: RangeQuery, path: string) => getJson('pages/detail', '/pages/detail', { ...rangeQuery(q), path }, isPageDetail);
+export const getPageDetail = (q: RangeQuery, path: string) => getJson('pages/detail', '/pages/detail', { ...rangeQuery(q), path, limit: 5 }, isPageDetail);
 export const getClicks = (q: RangeQuery, kind?: string) => getJson('clicks', '/clicks', { ...rangeQuery(q), kind, limit: 100 }, isClicks);
 export const getSources = (q: RangeQuery) => getJson('sources', '/sources', { ...rangeQuery(q), limit: 100 }, isSources);
+export const getFunnels = (q: RangeQuery) => getJson('funnels', '/funnels', rangeQuery(q), isFunnels);
+export const getPaths = (q: RangeQuery) => getJson('paths', '/paths', { ...rangeQuery(q), limit: 100 }, isPaths);
+export const getAudience = (q: RangeQuery) => getJson('audience', '/audience', { ...rangeQuery(q), limit: 100 }, isAudience);
+export const getCoverage = (q: RangeQuery) => getJson('coverage', '/coverage', { ...rangeQuery(q), limit: 100 }, isCoverage);

@@ -142,3 +142,71 @@ export const bounce = (entries: number, landingEngaged: number): Rate => rate(Ma
 export const exitRate = (exits: number, visitsViewed: number): Rate => rate(exits, visitsViewed);
 export const ctr = (visits: number, pageVisits: number | null): Rate => (pageVisits === null ? { kind: 'none' } : rate(visits, pageVisits));
 export const scrollReach = (reached: number, samples: number): Rate => rate(reached, samples);
+
+// ── WA-4b (#156) ───────────────────────────────────────────────────────────
+
+/** §8.6 small cell: fewer than 3. */
+export const isSmall = (n: number) => n < 3;
+
+export interface StepView {
+  index: number;
+  key: string | null;
+  visits: number;
+  small: boolean;
+  /** Share of the previous step; null for the first step or when either side is small. */
+  ofPrevious: Rate | null;
+  /** Share of the first step; null when either side is small. */
+  ofFirst: Rate | null;
+}
+
+/** Funnel steps in order with step and overall rates; small cells drop the rates that touch them (Q1, Q3). */
+export function funnelSteps(steps: { index: number; key: string | null; visits: number }[]): StepView[] {
+  const sorted = [...steps].sort((a, b) => a.index - b.index);
+  const first = sorted[0];
+  return sorted.map((s, i) => {
+    const prev = i > 0 ? sorted[i - 1] : null;
+    const small = isSmall(s.visits);
+    return {
+      index: s.index,
+      key: s.key,
+      visits: s.visits,
+      small,
+      ofPrevious: prev && !small && !isSmall(prev.visits) ? rate(s.visits, prev.visits) : null,
+      ofFirst: i > 0 && first && !small && !isSmall(first.visits) ? rate(s.visits, first.visits) : null,
+    };
+  });
+}
+
+const DAYS = (from: string, to: string) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000) + 1;
+
+/** A comparison is fair only when the previous span has as many days as the range (H3). */
+export function spansMatch<R extends { days: number; previous: { from: string; to: string } | null }>(range: R): boolean {
+  return range.previous !== null && DAYS(range.previous.from, range.previous.to) === range.days;
+}
+
+export type CoverageBand =
+  | { kind: 'small'; excludedDays: number }
+  | { kind: 'band'; lo: number; hi: number; excludedDays: number }
+  | { kind: 'atLeast100'; excludedDays: number };
+
+/**
+ * Indicative coverage band (§8.3, M4): the last 28 days of the range, only
+ * days with Cloudflare requests in both sums, both sums ≥ 50, a 10-point band
+ * in integer maths (lo = floor(10·c/f)·10, hi = lo + 10); c ≥ f → "≥ 100 %".
+ */
+export function coverageBand(daily: { consentedPageviews: number; cloudflareRequests: number }[]): CoverageBand {
+  const window = daily.slice(-28);
+  let c = 0;
+  let f = 0;
+  let excludedDays = 0;
+  for (const d of window) {
+    if (d.cloudflareRequests > 0) {
+      c += d.consentedPageviews;
+      f += d.cloudflareRequests;
+    } else excludedDays += 1;
+  }
+  if (c < 50 || f < 50) return { kind: 'small', excludedDays };
+  if (c >= f) return { kind: 'atLeast100', excludedDays };
+  const tenths = (10 * c - ((10 * c) % f)) / f; // exact integer floor(10·c/f)
+  return { kind: 'band', lo: tenths * 10, hi: tenths * 10 + 10, excludedDays };
+}
