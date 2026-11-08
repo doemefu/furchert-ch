@@ -313,6 +313,7 @@
         "flat": "no clear change",
         "small": "too little data to compare",
         "change": "{diff} vs previous",
+        "interval95": "95 % range: {lo}–{hi}",
         "ppChange": "{pp} percentage points vs previous",
         "chart": "Visits per {unit}",
         "unitDay": "day",

@@ -313,6 +313,7 @@
         "flat": "keine klare Veränderung",
         "small": "zu wenig Daten für einen Vergleich",
         "change": "{diff} ggü. Vorperiode",
+        "interval95": "95 %-Bereich: {lo}–{hi}",
         "ppChange": "{pp} Prozentpunkte ggü. Vorperiode",
         "chart": "Besuche pro {unit}",
         "unitDay": "Tag",

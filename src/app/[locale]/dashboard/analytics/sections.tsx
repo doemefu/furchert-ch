@@ -244,20 +244,23 @@ export function OfferGlance({ result, ctx }: { result: AnalyticsResult<OverviewR
             <StatTile label={t('glance.offerVisits')} value={fmt.num(cur.offerVisits)} sub={deltaText(cur.offerVisits, prev?.offerVisits, ctx)} />
             <StatTile
               label={t('glance.engagedOffer')}
-              value={rateText(engaged, t, fmt)}
-              sub={
+              value={engaged.kind === 'interval' ? fmt.pct(engaged.p) : rateText(engaged, t, fmt)}
+              sub={[
+                engaged.kind === 'interval' ? t('glance.interval95', { lo: fmt.pct(engaged.lo), hi: fmt.pct(engaged.hi) }) : null,
                 engagedDelta === null
                   ? null
                   : engagedDelta.kind === 'change'
                     ? t('glance.ppChange', { pp: `${engagedDelta.pp > 0 ? '+' : ''}${engagedDelta.pp}` })
-                    : `${t('glance.previous', { value: rateText(rate(prev!.engagedOfferVisits, prev!.offerVisits), t, fmt) })}`
-              }
+                    : t('glance.previous', { value: rateText(rate(prev!.engagedOfferVisits, prev!.offerVisits), t, fmt) }),
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             />
             <StatTile label={t('glance.contactIntents')} value={fmt.num(cur.contactIntentVisits)} sub={deltaText(cur.contactIntentVisits, prev?.contactIntentVisits, ctx)} />
             <StatTile
               label={t('glance.submits')}
-              value={t('glance.submitsValue', { x: fmt.num(consented), n: fmt.num(cur.enquiriesTotal) })}
-              sub={filtered ? t('glance.unfiltered') : null}
+              value={t('fraction', { x: fmt.num(consented), n: fmt.num(cur.enquiriesTotal) })}
+              sub={[t('glance.submitsValue', { x: fmt.num(consented), n: fmt.num(cur.enquiriesTotal) }), filtered ? t('glance.unfiltered') : null].filter(Boolean).join(' · ')}
             />
             <StatTile
               label={t('glance.visitors')}
