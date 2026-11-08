@@ -18,6 +18,7 @@ const CONSENT_FILES = [
   'src/lib/analytics/trackerPort.ts',
   'src/lib/analytics/controller.ts',
   'src/lib/analytics/paths.ts',
+  'src/lib/analytics/formHooks.ts',
   'src/components/analytics/ids.ts',
   'src/components/analytics/lazy.tsx',
   'src/components/analytics/Analytics.tsx',
@@ -126,5 +127,45 @@ describe('consent bar', () => {
 
   it('sets no aria-expanded on the footer button (it is not a disclosure)', () => {
     expect(code('src/components/analytics/PrivacySettingsLink.tsx')).not.toMatch(/aria-expanded/);
+  });
+});
+
+describe('WA-2b wiring (#154)', () => {
+  const TRACKER_FILES = ['index.ts', 'clicks.ts', 'engagement.ts', 'transport.ts'].map((f) => `src/lib/analytics/tracker/${f}`);
+
+  it('the browser talks only to /api/v and /api/v/forget, and both routes exist', () => {
+    for (const file of [...CONSENT_FILES, ...TRACKER_FILES]) {
+      for (const m of code(file).matchAll(/['"`](\/api\/[^'"`]*)['"`]/g)) {
+        expect(['/api/v', '/api/v/forget'], `${file}: ${m[1]}`).toContain(m[1]);
+      }
+    }
+    expect(code('src/lib/analytics/tracker/transport.ts')).toMatch(/COLLECT_URL = '\/api\/v'/);
+    expect(code('src/lib/analytics/forget.ts')).toMatch(/FORGET_ENDPOINT = '\/api\/v\/forget'/);
+    for (const route of ['src/app/api/v/route.ts', 'src/app/api/v/forget/route.ts']) expect(code(route)).toMatch(/export function POST/);
+  });
+
+  it('the contact form reaches the consent layer only through formHooks (H2)', () => {
+    const form = code('src/app/[locale]/contact/ContactForm.tsx');
+    const imports = [...form.matchAll(/from '(@\/lib\/analytics\/[^']+)'/g)].map((m) => m[1]);
+    expect(imports).toEqual(['@/lib/analytics/formHooks']);
+    const hooks = code('src/lib/analytics/formHooks.ts');
+    for (const marker of ['fa_forget_pending', 'fa-first-flush', 'consent-inner', 'fa-privacy-settings', 'fa_consent']) {
+      expect(hooks, marker).not.toContain(marker);
+    }
+    expect(hooks).not.toMatch(/from '\.\/(controller|consent|tracker)/);
+  });
+
+  it('the tracker is loaded only by a dynamic import in the controller', () => {
+    const controller = code('src/lib/analytics/controller.ts');
+    expect(controller).toMatch(/import\('\.\/tracker'\)/);
+    expect(controller).not.toMatch(/from '\.\/tracker/);
+    for (const file of ['src/components/analytics/Analytics.tsx', 'src/components/analytics/lazy.tsx', 'src/components/analytics/PrivacySettingsLink.tsx']) {
+      expect(code(file), file).not.toMatch(/analytics\/tracker/);
+    }
+  });
+
+  it('registry.ts stays out of the consent controller and the footer button (H1)', () => {
+    for (const file of CONSENT_FILES) expect(code(file), file).not.toMatch(/['/]registry'/);
+    expect(code('src/lib/analytics/paths.ts')).not.toMatch(/^import /m);
   });
 });

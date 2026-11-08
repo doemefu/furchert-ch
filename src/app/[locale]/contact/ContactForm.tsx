@@ -16,7 +16,7 @@
 // number shown on success is the visitor's own input, never sent back by the
 // server.
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
@@ -24,6 +24,7 @@ import { contactEmailAddress } from '@/data/contact-email';
 import { HEARD_VIA_IDS, heardViaMessageKey, isFromId, type FromId } from '@/data/contact-sources';
 import { submitContact, type ContactTopic } from './actions';
 import { trackAttr } from '@/data/track-ids';
+import { formAnalyticsFlag, formAwaitFirstFlush } from '@/lib/analytics/formHooks';
 
 const labelStyle = {
   fontFamily: 'var(--mono)',
@@ -84,6 +85,7 @@ const noFrom = () => null;
 
 export function ContactForm() {
   const t = useTranslations('contact');
+  const locale = useLocale();
   const rawFrom = useSyncExternalStore(noSubscribe, readFrom, noFrom);
   const urlFrom: FromId | null = isFromId(rawFrom) ? rawFrom : null;
   // The `from` of this visit, kept after the parameter leaves the address bar.
@@ -146,11 +148,18 @@ export function ContactForm() {
     setPending(true);
     setError(null);
     try {
+      // Usage statistics (spec 100 §5.9): only while the visitor allows
+      // tracking; then wait at most 1 s for the tracker's first flush, so the
+      // goal finds the fa_vid cookie. Never delays the form beyond that.
+      const analytics = formAnalyticsFlag();
+      if (analytics) await formAwaitFirstFlush(1000);
       const res = await submitContact({
         ...form,
         topic: topic ?? undefined,
         callback,
         from: from ?? undefined,
+        analytics,
+        locale,
       });
       if (res.ok) {
         setSent({ topic, phone: callback ? form.phone.trim() : null });
