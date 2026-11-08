@@ -18,7 +18,6 @@ export const TRACKED_PATHS = [
   '/projects/club-assist',
   '/projects/karaokee',
   '/projects/auth-service',
-  '/projects/aemtlifyer',
 ] as const;
 
 export const NAV_TARGETS: readonly string[] = [...TRACKED_PATHS, '/imprint', '/privacy', '/dashboard'];

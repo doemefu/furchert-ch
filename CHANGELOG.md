@@ -94,6 +94,11 @@ All notable changes per milestone. Newest first.
   guards it (no e-mail in text, no postal address, no dashes, required
   recipients incl. Anthropic Ireland, removed topics stay out).
 
+### Changed
+
+- **Copy pass** (#160): new home hero, corrected project cards, German status
+  labels, unified numbers; Aemtlifyer card removed.
+
 ### Fixed
 
 - **Accessibility and tokens pass** (#151): small text on light surfaces is

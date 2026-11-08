@@ -29,7 +29,7 @@ describe('classifyClick (§3.6)', () => {
   it('data-track wins: cta, link, faq (opening state), lang', () => {
     const span = node('span', {}, node('a', { href: '/de/contact?from=automation-hero', 'data-track': 'cta:automation-hero' }, main));
     expect(classifyClick(el(span), ORIGIN)).toEqual({ kind: 'cta', target: 'automation-hero', area: 'main' });
-    expect(classifyClick(el(node('a', { href: '/de/projects', 'data-track': 'link:home-hero-projects' }, main)), ORIGIN)).toMatchObject({ kind: 'link', target: 'home-hero-projects' });
+    expect(classifyClick(el(node('a', { href: '/de/about', 'data-track': 'link:home-hero-about' }, main)), ORIGIN)).toMatchObject({ kind: 'link', target: 'home-hero-about' });
     expect(classifyClick(el(node('button', { 'data-track': 'faq:cost', 'aria-expanded': 'false' }, main)), ORIGIN)).toEqual({ kind: 'faq', target: 'cost', area: 'main', opening: true });
     expect(classifyClick(el(node('button', { 'data-track': 'faq:cost', 'aria-expanded': 'true' }, main)), ORIGIN)?.opening).toBe(false);
     expect(classifyClick(el(node('button', { 'data-track': 'lang:en' }, header)), ORIGIN)).toEqual({ kind: 'lang', target: 'en', area: 'header' });

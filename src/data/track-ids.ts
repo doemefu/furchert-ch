@@ -5,7 +5,7 @@
 // at most 100 in total (track-ids.test.ts). Never question text or indexes.
 import { FROM_IDS } from './contact-sources';
 
-const PROJECT_SLUGS = ['iot-platform', 'homelab', 'club-assist', 'karaokee', 'auth-service', 'aemtlifyer'] as const;
+const PROJECT_SLUGS = ['iot-platform', 'homelab', 'club-assist', 'karaokee', 'auth-service'] as const;
 
 export const SECTION_IDS = [
   'hero',
@@ -23,7 +23,7 @@ export const TRACK_IDS = {
   cta: FROM_IDS as readonly string[],
   link: [
     'home-hero-automation',
-    'home-hero-projects',
+    'home-hero-about',
     'home-tile-automation',
     'home-tile-it',
     'home-tile-projects',

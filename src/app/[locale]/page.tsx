@@ -143,8 +143,8 @@ export default async function HomePage({
               <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
                 {t('hero.cta2')} <Icon name="arrow" size={12} />
               </Btn>
-              <Btn href="/projects" track={trackAttr('link', 'home-hero-projects')}>
-                {t('hero.seeProjects')} <Icon name="arrow" size={12} />
+              <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
+                {t('hero.cta1')} <Icon name="arrow" size={12} />
               </Btn>
             </div>
           </div>
