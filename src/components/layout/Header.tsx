@@ -62,7 +62,10 @@ export function Header() {
     background: 'none',
     border: '1px solid rgba(162,167,176,.35)',
     borderRadius: '2px',
-    padding: '.25rem .5rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    height: 28,
+    padding: '0 .5rem',
     cursor: 'pointer',
     color: 'var(--n-60)',
     transition: 'color .15s',
@@ -70,14 +73,15 @@ export function Header() {
   const homelabBtnStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: '.4rem',
+    gap: '.5rem',
     background: authed ? 'var(--blue-base)' : 'none',
     border: '1px solid rgba(162,167,176,.35)',
     borderRadius: '2px',
-    padding: '.3rem .55rem',
+    height: 28,
+    padding: '0 .5rem',
     cursor: 'pointer',
     color: authed ? 'var(--white)' : 'var(--n-70)',
-    marginLeft: '.25rem',
+    marginLeft: '.5rem',
     transition: 'background .15s, color .15s',
     fontFamily: 'var(--mono)',
     fontSize: '.68rem',
@@ -127,7 +131,7 @@ export function Header() {
 
         <nav
           className="desktop-nav"
-          style={{ display: 'flex', gap: '.1rem', alignItems: 'center', flexWrap: 'nowrap' }}
+          style={{ display: 'flex', gap: '2px', alignItems: 'center', flexWrap: 'nowrap' }}
         >
           {NAV_KEYS.map((k) => navLink(k, t(`nav.${k}`)))}
           <span
@@ -156,7 +160,9 @@ export function Header() {
             background: 'none',
             border: '1px solid rgba(162,167,176,.35)',
             borderRadius: '2px',
-            padding: '.3rem .5rem',
+            minHeight: 44,
+            minWidth: 44,
+            padding: '0 .5rem',
             cursor: 'pointer',
             color: 'var(--n-70)',
             fontFamily: 'var(--mono)',

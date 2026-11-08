@@ -34,14 +34,38 @@ export function CTAStrip({
     letterSpacing: '.02em',
     textTransform: 'uppercase' as const,
     textDecoration: 'none',
-    border: '1px solid rgba(255,255,255,.25)',
+    minHeight: 48,
     borderRadius: '2px',
-    padding: '.875rem 1.375rem',
-    color: 'var(--white)',
+    padding: '0 1.5rem',
     transition: 'background-color .15s, border-color .15s, opacity var(--dur-fast) var(--ease)',
   };
+  const textLinkStyle = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '.5rem',
+    minHeight: 44,
+    fontFamily: 'var(--mono)',
+    fontSize: '.75rem',
+    letterSpacing: '.04em',
+    textTransform: 'uppercase' as const,
+    color: 'var(--white)',
+    textDecoration: 'underline',
+    textUnderlineOffset: '.25em',
+  };
+  // #167: primary is the filled button; the e-mail link is the outline one.
+  const primaryStyle = {
+    ...linkStyle,
+    background: 'var(--white)',
+    color: 'var(--n-100)',
+    border: '1px solid var(--white)',
+  };
+  const secondaryStyle = {
+    ...linkStyle,
+    border: '1px solid rgba(255,255,255,.25)',
+    color: 'var(--white)',
+  };
   return (
-    <div className="on-dark" style={{ background: 'var(--n-90)', padding: '3rem 0' }}>
+    <div className="on-dark" style={{ background: 'var(--n-90)' }}>
       <div
         className="container border-x"
         style={{
@@ -50,6 +74,7 @@ export function CTAStrip({
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '1.5rem',
+          paddingBlock: '3rem',
         }}
       >
         <div>
@@ -85,14 +110,14 @@ export function CTAStrip({
             </Link>
           )}
         </div>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="cta-actions" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {primary && (
-            <Link href={primary.href} style={linkStyle} data-track={primary.track}>
+            <Link href={primary.href} className="btn" style={primaryStyle} data-track={primary.track}>
               {primary.label} <Icon name="arrow" size={12} />
             </Link>
           )}
           {/* The address is rendered only in the browser (#147). */}
-          <ContactEmail style={linkStyle}>
+          <ContactEmail className="btn" style={secondaryStyle}>
             {' '}
             <Icon name="arrow" size={12} />
           </ContactEmail>
@@ -100,7 +125,8 @@ export function CTAStrip({
             href="https://github.com/doemefu"
             target="_blank"
             rel="noopener noreferrer"
-            style={linkStyle}
+            className="cta-text"
+            style={textLinkStyle}
           >
             <Icon name="github" size={14} /> github/doemefu
           </a>

@@ -38,21 +38,21 @@ function Fields({ fields }: { fields: ExampleField[] }) {
             display: 'grid',
             gridTemplateColumns: 'minmax(5.5rem, 28%) 1fr',
             gap: '.75rem',
-            padding: '.6rem 0',
+            padding: '.5rem 0',
             borderTop: '1px solid rgba(14,60,166,.1)',
           }}
         >
-          <dt style={{ ...fieldLabel, paddingTop: '.2rem' }}>{field.label}</dt>
+          <dt style={{ ...fieldLabel, paddingTop: '.25rem' }}>{field.label}</dt>
           <dd style={{ margin: 0, fontSize: '.9rem', color: 'var(--n-80)', lineHeight: 1.5 }}>
             {field.lines.map((line) => (
-              <div key={line.text} style={{ marginBottom: '.15rem' }}>
+              <div key={line.text} style={{ marginBottom: '2px' }}>
                 {line.text}
                 {line.check && (
                   <span
                     style={{
                       display: 'block',
-                      margin: '.3rem 0 .2rem',
-                      padding: '.15rem .5rem',
+                      margin: '.25rem 0 .25rem',
+                      padding: '2px .5rem',
                       fontSize: '.8125rem',
                       color: 'var(--n-80)',
                       background: 'color-mix(in srgb, var(--tier-mid) 16%, var(--white))',

@@ -47,7 +47,7 @@ export default async function ProjectsPage({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, max(360px, 33.333%)), 1fr))',
             borderTop: '1px solid rgba(162,167,176,.22)',
           }}
         >
@@ -58,7 +58,7 @@ export default async function ProjectsPage({
               data-track={trackAttr('link', `project-card-${p.slug}`)}
               className="hover-card"
               style={{
-                padding: '2rem',
+                padding: '2rem var(--card-px)',
                 borderRight: '1px solid rgba(162,167,176,.22)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
                 // Prototype pages.jsx:417 — flex column with gap; tag row
@@ -89,7 +89,7 @@ export default async function ProjectsPage({
                     fontSize: '.65rem',
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
-                    padding: '.2rem .5rem',
+                    padding: '.25rem .5rem',
                     border: `1px solid ${STATUS_COLOR[p.status]}`,
                     borderRadius: '2px',
                     color: STATUS_COLOR[p.status],
@@ -106,7 +106,7 @@ export default async function ProjectsPage({
                     fontWeight: 500,
                     letterSpacing: '-.02em',
                     color: 'var(--n-100)',
-                    marginBottom: '.4rem',
+                    marginBottom: '.5rem',
                   }}
                 >
                   {p.title}
@@ -122,7 +122,7 @@ export default async function ProjectsPage({
                   {p.i18n[locale].summary}
                 </p>
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.3rem', marginTop: 'auto' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.25rem', marginTop: 'auto' }}>
                 {p.tags.slice(0, 4).map((tag) => (
                   <Tag key={tag}>{tag}</Tag>
                 ))}
@@ -141,25 +141,41 @@ export default async function ProjectsPage({
               </div>
             </Link>
           ))}
-        </div>
-        <div style={{ padding: '2.5rem 0' }}>
           <a
             href="https://github.com/doemefu"
             target="_blank"
             rel="noopener noreferrer"
+            className="hover-card"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '.5rem',
+              padding: '2rem var(--card-px)',
+              borderRight: '1px solid rgba(162,167,176,.22)',
+              borderBottom: '1px solid rgba(162,167,176,.22)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
               fontFamily: 'var(--mono)',
               fontSize: '.8125rem',
               letterSpacing: '.04em',
               textTransform: 'uppercase',
-              textDecoration: 'none',
               color: 'var(--blue-base)',
             }}
           >
-            <Icon name="github" size={14} /> {t('pages.projects.allRepos')} <Icon name="ext" size={12} />
+            <div
+              style={{
+                width: '2rem',
+                height: '2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid rgba(162,167,176,.35)',
+                background: 'var(--n-10)',
+              }}
+            >
+              <Icon name="github" size={14} />
+            </div>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
+              {t('pages.projects.allRepos')} <Icon name="ext" size={12} />
+            </span>
           </a>
         </div>
       </div>

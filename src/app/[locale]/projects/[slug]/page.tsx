@@ -150,7 +150,7 @@ export default async function ProjectDetailPage({
                 fontSize: '.7rem',
                 letterSpacing: '.06em',
                 textTransform: 'uppercase',
-                padding: '.2rem .6rem',
+                padding: '.25rem .5rem',
                 background: 'transparent',
                 border: `1px solid ${STATUS_COLOR[p.status]}`,
                 borderRadius: '2px',

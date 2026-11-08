@@ -83,7 +83,7 @@ export default async function ITPage({
                 >
                   {s.i18n[locale].cat}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
                   {s.items.map((it) => (
                     <span key={it} style={{ fontSize: '.9rem', color: 'var(--n-70)' }}>
                       {it}

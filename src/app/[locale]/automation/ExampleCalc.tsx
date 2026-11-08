@@ -51,7 +51,7 @@ export function ExampleCalc({ locale }: { locale: Locale }) {
         </tbody>
       </table>
       <p style={{ ...footnoteStyle, marginTop: '.75rem' }}>{c.assumptions}</p>
-      <div style={{ marginTop: '1rem', display: 'grid', gap: '.6rem', maxWidth: '68ch' }}>
+      <div style={{ marginTop: '1rem', display: 'grid', gap: '.5rem', maxWidth: '68ch' }}>
         {c.results.map((r) => (
           <p key={r} style={bodyText}>
             {r}

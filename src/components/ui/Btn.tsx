@@ -33,7 +33,7 @@ export function Btn({
   const base: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '.45rem',
+    gap: '.5rem',
     fontFamily: 'var(--mono)',
     fontSize: small ? '.75rem' : '.8125rem',
     fontWeight: 400,
@@ -42,7 +42,8 @@ export function Btn({
     textDecoration: 'none',
     borderRadius: '2px',
     cursor: 'pointer',
-    padding: small ? '.5rem 1rem' : '.875rem 1.375rem',
+    padding: small ? '0 1rem' : '0 1.5rem',
+    minHeight: small ? 36 : 48,
     whiteSpace: 'nowrap',
     transition: 'background-color .15s, color .15s, border-color .15s',
     border: dark

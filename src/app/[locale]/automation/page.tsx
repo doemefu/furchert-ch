@@ -103,7 +103,6 @@ export default async function AutomationPage({
         data-track-section="hero"
         style={{
           background: 'var(--n-10)',
-          padding: 'clamp(2rem, 8vw, 6rem) 0 clamp(2.5rem, 6.5vw, 5rem)',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -118,7 +117,14 @@ export default async function AutomationPage({
             pointerEvents: 'none',
           }}
         />
-        <div className="container border-x" style={{ position: 'relative' }}>
+        <div
+          className="container border-x"
+          style={{
+            position: 'relative',
+            paddingTop: 'clamp(2rem, 8vw, 6rem)',
+            paddingBottom: 'clamp(2.5rem, 6.5vw, 5rem)',
+          }}
+        >
           <p style={{ ...labelMono, marginBottom: 'clamp(.75rem, 2vw, 1.5rem)' }}>{t('heroLabel')}</p>
           <h1
             style={{
