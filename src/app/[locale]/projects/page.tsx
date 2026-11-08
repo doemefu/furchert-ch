@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
+import { trackAttr } from '@/data/track-ids';
 
 export async function generateMetadata({
   params,
@@ -54,6 +55,7 @@ export default async function ProjectsPage({
             <Link
               key={p.slug}
               href={`/projects/${p.slug}`}
+              data-track={trackAttr('link', `project-card-${p.slug}`)}
               className="hover-card"
               style={{
                 padding: '2rem',

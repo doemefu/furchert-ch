@@ -8,6 +8,8 @@ import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ExpCard } from '@/components/ui/ExpCard';
 import { ROWING_CARDS } from '@/data/rowing';
+import { trackAttr } from '@/data/track-ids';
+import { contactHref } from '@/data/contact-sources';
 
 export async function generateMetadata({
   params,
@@ -78,10 +80,10 @@ export default async function RowingPage({
         </div>
 
         <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <Btn href="/projects">
+          <Btn href="/projects" track={trackAttr('link', 'rowing-projects')}>
             {t('hero.seeProjects')} <Icon name="arrow" size={12} />
           </Btn>
-          <Btn href="/contact" dark>
+          <Btn href={contactHref('rowing-contact')} track={trackAttr('cta', 'rowing-contact')} dark>
             {t('nav.contact')} <Icon name="arrow" size={12} />
           </Btn>
         </div>

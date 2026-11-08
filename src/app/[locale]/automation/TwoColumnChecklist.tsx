@@ -54,6 +54,7 @@ export function TwoColumnChecklist({
   left,
   right,
   footnote,
+  trackSection,
 }: {
   id: string;
   label: string;
@@ -62,10 +63,12 @@ export function TwoColumnChecklist({
   left?: ChecklistColumn;
   right: ChecklistColumn;
   footnote?: string;
+  /** Section id for the /automation section-reach measure (spec 100 §3.5, §3.7). */
+  trackSection?: string;
 }) {
   const headingId = `${id}-heading`;
   return (
-    <section id={id} aria-labelledby={headingId} style={sectionStyle}>
+    <section id={id} aria-labelledby={headingId} style={sectionStyle} data-track-section={trackSection}>
       <p style={labelMono}>{label}</p>
       <h2 id={headingId} style={h2Style}>
         {heading}

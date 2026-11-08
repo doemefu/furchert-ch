@@ -66,8 +66,11 @@ async function redirects() {
   return [
     // Vanity URLs for print and talks. Temporary: the target moves after
     // Gate 0 (#145).
-    { source: '/ki', destination: '/de/automation', permanent: false },
-    { source: '/bau', destination: '/de/automation', permanent: false },
+    // UTM per Q6 (spec 100, WA-2b #154): print material links the short URLs.
+    // Next appends an incoming query; the tracker keeps the first value of a
+    // duplicated key, so these values win.
+    { source: '/ki', destination: '/de/automation?utm_source=print&utm_medium=shortlink&utm_campaign=ki', permanent: false },
+    { source: '/bau', destination: '/de/automation?utm_source=print&utm_medium=shortlink&utm_campaign=bau', permanent: false },
     // The scan demo is retired (#143, #145).
     { source: '/:locale(de|en)/automation/scan', destination: '/:locale/automation', permanent: true },
     { source: '/automation/scan', destination: '/de/automation', permanent: true },

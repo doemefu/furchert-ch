@@ -23,6 +23,7 @@ import { Btn } from '@/components/ui/Btn';
 import { contactEmailAddress } from '@/data/contact-email';
 import { HEARD_VIA_IDS, heardViaMessageKey, isFromId, type FromId } from '@/data/contact-sources';
 import { submitContact, type ContactTopic } from './actions';
+import { trackAttr } from '@/data/track-ids';
 
 const labelStyle = {
   fontFamily: 'var(--mono)',
@@ -189,7 +190,7 @@ export function ContactForm() {
           </p>
         )}
         {sent.topic === 'demo' && (
-          <Link href="/automation" style={textLinkStyle}>
+          <Link href="/automation" style={textLinkStyle} data-track={trackAttr('link', 'contact-automation')}>
             {t('sentBack')}
           </Link>
         )}

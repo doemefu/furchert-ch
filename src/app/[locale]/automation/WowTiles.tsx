@@ -21,6 +21,7 @@ import {
   type WowTile,
 } from '@/data/automation-wow';
 import { HAIRLINE, fieldLabel, footnoteStyle, textLink } from './sectionStyles';
+import { trackAttr } from '@/data/track-ids';
 
 // Panel steps fade in one after another (`--i` sets the delay in CSS).
 const step = (i: number): CSSProperties => ({ ['--i' as string]: i }) as CSSProperties;
@@ -349,11 +350,15 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                 <PanelBody tile={tile} locale={locale} />
                 <p style={{ display: 'flex', flexWrap: 'wrap', columnGap: '1.25rem', marginTop: '.5rem' }}>
                   {tile.id === 'rapport' && (
-                    <a href="#beispiel" style={textLink}>
+                    <a href="#beispiel" style={textLink} data-track={trackAttr('link', 'automation-tile-example')}>
                       {tile.i18n[locale].panel.exampleLink}
                     </a>
                   )}
-                  <Link href={contactHref(`automation-tile-${tile.id}`)} style={textLink}>
+                  <Link
+                    href={contactHref(`automation-tile-${tile.id}`)}
+                    style={textLink}
+                    data-track={trackAttr('cta', `automation-tile-${tile.id}`)}
+                  >
                     {own ? t('heroTileCtaSimilar') : t('heroTileCta')} <Icon name="arrow" size={10} />
                   </Link>
                 </p>

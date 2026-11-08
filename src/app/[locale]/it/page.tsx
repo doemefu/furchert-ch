@@ -8,6 +8,7 @@ import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ExpCard } from '@/components/ui/ExpCard';
 import { IT_CARDS, TECH_STACK } from '@/data/it';
+import { trackAttr } from '@/data/track-ids';
 
 export async function generateMetadata({
   params,
@@ -94,10 +95,10 @@ export default async function ITPage({
           </div>
         </div>
         <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <Btn href="/projects">
+          <Btn href="/projects" track={trackAttr('link', 'it-projects')}>
             {t('hero.seeProjects')} <Icon name="arrow" size={12} />
           </Btn>
-          <Btn href="/automation" dark>
+          <Btn href="/automation" track={trackAttr('link', 'it-automation')} dark>
             {t('hero.cta2')} <Icon name="arrow" size={12} />
           </Btn>
         </div>

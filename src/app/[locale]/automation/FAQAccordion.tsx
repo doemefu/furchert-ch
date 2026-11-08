@@ -10,8 +10,11 @@
 //     with the `hidden` attribute while collapsed, so crawlers and AI
 //     search read the answers without running any script
 import { useState } from 'react';
+import { trackAttr } from '@/data/track-ids';
 
 export interface FAQItem {
+  /** Analytics id (`faq:<id>`, spec 100 §3.3); counted once per item on open. */
+  id: string;
   q: string;
   a: string;
 }
@@ -31,6 +34,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
             <button
               type="button"
               id={buttonId}
+              data-track={trackAttr('faq', faq.id)}
               onClick={() => setOpenIndex(isOpen ? null : i)}
               aria-expanded={isOpen}
               aria-controls={panelId}

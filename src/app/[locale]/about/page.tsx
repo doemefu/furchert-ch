@@ -10,6 +10,8 @@ import { BIO, FACTS, TIMELINE, INTERESTS } from '@/data/about';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { buildProfilePageJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
+import { trackAttr } from '@/data/track-ids';
+import { contactHref } from '@/data/contact-sources';
 
 export async function generateMetadata({
   params,
@@ -195,10 +197,10 @@ export default async function AboutPage({
         </div>
 
         <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <Btn href="/projects">
+          <Btn href="/projects" track={trackAttr('link', 'about-projects')}>
             {t('hero.seeProjects')} <Icon name="arrow" size={12} />
           </Btn>
-          <Btn href="/contact" dark>
+          <Btn href={contactHref('about-contact')} track={trackAttr('cta', 'about-contact')} dark>
             {t('nav.contact')} <Icon name="arrow" size={12} />
           </Btn>
         </div>

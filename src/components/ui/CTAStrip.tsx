@@ -10,6 +10,8 @@ import { ContactEmail } from './ContactEmail';
 interface StripLink {
   href: string;
   label: string;
+  /** Analytics click id, rendered as `data-track` (spec 100 §3.6). */
+  track?: string;
 }
 
 export function CTAStrip({
@@ -85,7 +87,7 @@ export function CTAStrip({
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {primary && (
-            <Link href={primary.href} style={linkStyle}>
+            <Link href={primary.href} style={linkStyle} data-track={primary.track}>
               {primary.label} <Icon name="arrow" size={12} />
             </Link>
           )}

@@ -25,11 +25,13 @@ interface ContactEmailProps {
   subject?: string;
   /** Render as the default `Btn`; `style` and `className` are then ignored. */
   btn?: boolean;
+  /** Analytics click id (`data-track`, spec 100 §3.6); mailto clicks are captured without it too. */
+  track?: string;
   style?: CSSProperties;
   className?: string;
 }
 
-export function ContactEmail({ label, children, subject, btn, style, className }: ContactEmailProps) {
+export function ContactEmail({ label, children, subject, btn, track, style, className }: ContactEmailProps) {
   const t = useTranslations('contact');
   // false on the server and during hydration, true once mounted on the client.
   const mounted = useSyncExternalStore(
@@ -43,7 +45,7 @@ export function ContactEmail({ label, children, subject, btn, style, className }
 
   if (btn) {
     return (
-      <Btn href={href}>
+      <Btn href={href} track={track}>
         {text}
         {children}
       </Btn>
@@ -51,7 +53,7 @@ export function ContactEmail({ label, children, subject, btn, style, className }
   }
   if (mounted) {
     return (
-      <a href={href} style={style} className={className}>
+      <a href={href} style={style} className={className} data-track={track}>
         {text}
         {children}
       </a>
@@ -59,7 +61,7 @@ export function ContactEmail({ label, children, subject, btn, style, className }
   }
   // No prefetch: the link is swapped for the `mailto:` one right after hydration.
   return (
-    <Link href={href} prefetch={false} style={style} className={className}>
+    <Link href={href} prefetch={false} style={style} className={className} data-track={track}>
       {text}
       {children}
     </Link>

@@ -20,7 +20,7 @@ describe('contact sources', () => {
   it('lists every call-to-action id once, including the callback link', () => {
     expect(new Set(FROM_IDS).size).toBe(FROM_IDS.length);
     expect(FROM_IDS).toContain('automation-callback');
-    for (const id of FROM_IDS) expect(id).toMatch(/^(automation|home)-[a-z-]+$/);
+    for (const id of FROM_IDS) expect(id).toMatch(/^(automation|home|about|rowing)-[a-z-]+$/);
     expect(contactHref('automation-callback')).toBe('/contact?from=automation-callback');
   });
 
@@ -51,6 +51,8 @@ describe('call-to-action ids in use', () => {
     'src/app/[locale]/automation/ExampleCalc.tsx',
     'src/app/[locale]/automation/AutomationPricing.tsx',
     'src/app/[locale]/page.tsx',
+    'src/app/[locale]/about/page.tsx',
+    'src/app/[locale]/rowing/page.tsx',
   ];
   const sources = CTA_FILES.map(read).join('\n');
   const literalIds = [...sources.matchAll(/contactHref\('([^']+)'\)/g)].map((m) => m[1]);
@@ -59,7 +61,7 @@ describe('call-to-action ids in use', () => {
     ? WOW_TILES.map((tile) => `automation-tile-${tile.id}`)
     : [];
 
-  it('links every listed id from /automation or the home page', () => {
+  it('links every listed id from /automation, the home, about or rowing page', () => {
     const used = new Set([...literalIds, ...tileIds]);
     for (const id of FROM_IDS) expect(used.has(id), id).toBe(true);
   });

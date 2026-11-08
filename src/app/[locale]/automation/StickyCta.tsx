@@ -20,11 +20,14 @@ const noSubscribe = () => () => {};
 
 export function StickyCta({
   href,
+  track,
   micro1,
   micro2,
   label,
 }: {
   href: string;
+  /** Analytics click id (`data-track`), spec 100 §3.6. */
+  track?: string;
   micro1: string;
   micro2: string;
   label: string;
@@ -69,7 +72,7 @@ export function StickyCta({
         <span>{micro1}</span>
         <span>{micro2}</span>
       </p>
-      <Btn href={href} dark>
+      <Btn href={href} track={track} dark>
         {label} <Icon name="arrow" size={12} />
       </Btn>
     </div>,

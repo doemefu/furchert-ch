@@ -10,6 +10,8 @@
 import type { Locale } from '@/i18n/routing';
 
 export interface AutomationFaq {
+  /** Stable click id for analytics (`faq:<id>`, spec 100 §3.3); never the question text. */
+  id: string;
   /** `false`: shown on the page, not mirrored into the FAQPage JSON-LD. */
   markup?: false;
   i18n: Record<Locale, { q: string; a: string }>;
@@ -17,6 +19,7 @@ export interface AutomationFaq {
 
 export const FAQS: AutomationFaq[] = [
   {
+    id: 'cost',
     markup: false,
     i18n: {
       de: {
@@ -30,6 +33,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'fit',
     i18n: {
       de: {
         q: 'Für welche Betriebe ist das gedacht?',
@@ -42,6 +46,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'buy-self',
     i18n: {
       de: {
         q: 'Warum kaufe ich die Rapport-App nicht einfach selbst?',
@@ -54,6 +59,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'adoption',
     i18n: {
       de: {
         q: 'Was, wenn meine Leute nicht mitmachen?',
@@ -66,6 +72,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'swiss-german',
     i18n: {
       de: {
         q: 'Versteht eine Rapport-App Schweizerdeutsch?',
@@ -78,6 +85,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'monitoring',
     i18n: {
       de: {
         q: 'Überwachen Sie damit meine Leute?',
@@ -90,6 +98,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'data-ch',
     i18n: {
       de: {
         q: 'Bleiben unsere Daten in der Schweiz?',
@@ -102,6 +111,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'copilot-payroll',
     i18n: {
       de: {
         q: 'Findet Microsoft 365 Copilot auch die Lohnliste?',
@@ -114,6 +124,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'access',
     i18n: {
       de: {
         q: 'Welchen Zugang bekommen Sie zu unseren Systemen?',
@@ -126,6 +137,7 @@ export const FAQS: AutomationFaq[] = [
     },
   },
   {
+    id: 'student-time',
     i18n: {
       de: {
         q: 'Sie studieren noch. Haben Sie überhaupt Zeit für uns?',

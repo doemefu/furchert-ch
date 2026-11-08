@@ -1,6 +1,6 @@
 // Which call to action brought a visitor to /contact: every CTA links to
 // `/contact?from=<id>`, so enquiries can be counted per button without
-// cookies (#145). A neutral data module, so /automation and the home page
+// cookies (#145; `about-contact` and `rowing-contact` since #154). A neutral data module, so /automation and the home page
 // can build the links without importing the contact surface (see the
 // isolation note in src/app/[locale]/contact/actions.ts).
 //
@@ -22,6 +22,8 @@ export const FROM_IDS = [
   'automation-final',
   'automation-sticky',
   'home-cta',
+  'about-contact',
+  'rowing-contact',
 ] as const;
 
 export type FromId = (typeof FROM_IDS)[number];
