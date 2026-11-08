@@ -36,7 +36,7 @@ export function CTAStrip({
     borderRadius: '2px',
     padding: '.875rem 1.375rem',
     color: 'var(--white)',
-    transition: 'background .15s, border-color .15s',
+    transition: 'background-color .15s, border-color .15s, opacity var(--dur-fast) var(--ease)',
   };
   return (
     <div className="on-dark" style={{ background: 'var(--n-90)', padding: '3rem 0' }}>

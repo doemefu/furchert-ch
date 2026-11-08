@@ -146,7 +146,7 @@ a.btn:hover { opacity: 1; }
    <Link> (server component, no client JS) and reproduce that exact
    behaviour with CSS. Opt out of the global link opacity hover so the
    whole card does not dim (the prototype only changed the background). */
-a.hover-card { display: block; text-decoration: none; color: inherit; transition: background .2s; }
+a.hover-card { display: block; text-decoration: none; color: inherit; transition: background-color .2s var(--ease); }
 a.hover-card:hover { opacity: 1; background: var(--n-10); }
 
 /* ── WOW TILES (/automation hero, #145) ──

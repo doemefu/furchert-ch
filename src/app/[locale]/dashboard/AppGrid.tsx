@@ -92,7 +92,7 @@ const actionBase: CSSProperties = {
 const disabledAction: CSSProperties = {
   ...actionBase,
   background: 'var(--n-20)',
-  color: 'var(--n-60)',
+  color: 'var(--n-50)',
   cursor: 'default',
   // pointerEvents: 'none' on the button itself stops nested <span>/<Icon>
   // from showing a text cursor when hovered — disabled buttons receive
