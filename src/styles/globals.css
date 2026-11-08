@@ -209,3 +209,66 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 @media (max-width: 820px) {
   html:has(.sticky-cta[data-visible="true"]) { scroll-padding-bottom: 5.5rem; }
 }
+
+/* ── CONSENT BAR (WA-2a #153; dark until WA-6) ──
+   ConsentBar.tsx. The page surface (--n-10) at the bottom with the header's
+   hairline, the page's `.border-x` grid running through it. No shadow, no
+   radius, no motion. Only existing tokens. z-index between the /automation sticky CTA (90) and the
+   header (100), so the mobile menu still covers it. */
+.consent-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 95;
+  /* Solid --n-10, not the header's 92 % glass: over the dark footer (where a
+     reopened bar always sits) the glass turned grey and pushed the
+     current-choice label below 4.5:1 (review of #159, F2). */
+  background: var(--n-10);
+  border-top: 1px solid rgba(162,167,176,.22);
+}
+.consent-bar:focus { outline: none; }
+.consent-bar:focus-visible { outline: 2px solid var(--blue-base); outline-offset: -2px; }
+.consent-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  /* Padding inside the grid container, so its hairlines run the full height
+     of the bar; 2rem gutter as in the content sections. */
+  padding: 1rem 2rem calc(1rem + env(safe-area-inset-bottom));
+}
+.consent-text {
+  max-width: 72ch;
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
+  font-size: .8125rem;
+  line-height: 1.55;
+  color: var(--n-80);
+}
+.consent-text strong { font-weight: 500; color: var(--n-100); }
+.consent-text a { color: var(--blue-base); text-decoration: underline; text-underline-offset: 2px; }
+.consent-side { display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; flex-shrink: 0; }
+.consent-current {
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--n-60);
+}
+.consent-actions { display: flex; gap: .75rem; }
+@media (max-width: 820px) {
+  .consent-inner { flex-direction: column; align-items: stretch; gap: .875rem; padding-inline: 1rem; }
+  .consent-side { align-items: stretch; }
+  .consent-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .consent-actions > .btn { width: 100%; justify-content: center; }
+}
+/* While the bar shows: the page end and focused elements stay clear of it
+   (WCAG 2.4.11), and the /automation sticky CTA steps aside. The id selector
+   outranks `.sticky-cta`; --consent-bar-h comes from a ResizeObserver. */
+html:has(#fa-consent-bar) { scroll-padding-bottom: var(--consent-bar-h, 0px); }
+html:has(#fa-consent-bar) body { padding-bottom: var(--consent-bar-h, 0px); }
+html:has(#fa-consent-bar) .sticky-cta { display: none; }
+
+/* Footer "Privacy settings" button: looks like the legal links beside it. */
+.footer-settings { background: none; border: 0; padding: 0; text-align: left; }
+.footer-settings:hover { opacity: .85; }

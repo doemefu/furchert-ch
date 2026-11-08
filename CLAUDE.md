@@ -67,7 +67,8 @@ Agents come from the `homelab-workflow` plugin: `homelab-workflow:<role>` for `a
 ```
 src/app/[locale]/        # public pages (about, contact, it, projects, rowing, automation, imprint, privacy) + /dashboard (overview, network, services, auth, devices) (App Router)
 src/app/api/             # auth/[...nextauth], federated-logout, health (server-side proxies; no scan API)
-src/components/{ui,layout}/, Providers.tsx
+src/components/{ui,layout,analytics}/, Providers.tsx   # analytics/: consent bar + footer settings button, dark until WA-6 (#153)
+src/lib/analytics/       # consent store + controller (client, pure TS; flags.ts ANALYTICS_UI_ENABLED)
 src/lib/                 # server-side clients: metrics (Prometheus: cluster.ts, services.ts + pure serviceHealth.ts), netmon (data-service), authadmin (auth-service admin API), deviceadmin (device-service API + cron presets), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts
 src/*.env.ts             # lazy env accessors (auth, metrics, netmon, authadmin, deviceadmin, contact)
 src/data/                # typed static data (projects, cluster nodes, apps, home stats, ...)

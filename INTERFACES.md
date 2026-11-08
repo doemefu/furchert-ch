@@ -8,6 +8,8 @@
 > implemented as of issue #61; its LAN endpoints (NM-3) as of issue #62; its egress endpoint (NM-2) as of
 > issue #63; its logins endpoints (NM-4) as of issue #64. §2's Prometheus
 > service-health queries (`/dashboard/services`) are implemented as of issue #47.
+> §4 (browser consent contract for first-party web analytics) is implemented
+> but dark as of issue #153 (WA-2a).
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -311,3 +313,20 @@ missing or SMTP_PORT invalid)`) — never a silent success. The client only
 renders "sent" when the action returns `{ok:true}`, which happens only after
 `sendMail()` resolves with at least one accepted recipient and none
 rejected.
+
+## 4. Browser: usage-statistics consent (WA-2a #153; dark until WA-6)
+
+Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-analytics.md`) §4 and §10.1. Rendered only while `ANALYTICS_UI_ENABLED` (`src/lib/analytics/flags.ts`) is `true`; it is `false` until the go-live PR (#158).
+
+| Item | Contract |
+|------|----------|
+| `fa_consent` (`localStorage`) | `{"v": 1, "choice": "granted" \| "denied", "by": "user" \| "signal", "at": "YYYY-MM-DD"}` (UTC day). Valid while `consentExpired(at, today)` is false: from `at` + 365 days on, for a malformed date or a date more than one day ahead it counts as no choice. Another `v` (`ANALYTICS_CONSENT_VERSION`) asks again. Never written or removed before a choice; a valid record is not rewritten when the same choice is made again (fixed expiry) |
+| `fa_forget_pending` (`localStorage`) | `"1"` from just before a forget until it answers 204. Retried once per page load while tracking is not allowed (choice not `granted`, or `fa_optout` on), never on `/dashboard/**`; a 429 with `Retry-After` (1 to 600 s) schedules one more attempt (fires only under the same conditions), cancelled by an Allow. With neither a stored choice nor `fa_optout` nothing is sent; the next choice sends it. When tracking is allowed at load (granted, switch off) the pending forget is sent once, the marker is dropped whatever the answer, then the tracker may start; an Allow does the same before starting |
+| `fa_optout` (`localStorage`) | `"1"` while the never-track switch (WA-4a #155) is on; hides the bar and keeps the tracker off. The controller's `optOut()` is the seam |
+| Forget request | `POST /api/v/forget`, body `{}`, `Content-Type: application/json`, `credentials: 'same-origin'`, `keepalive: true`; success = 204 only. The route ships in WA-2b (#154); until then it answers 404 and the marker stays |
+| Order on Decline / withdrawal | store `denied` → `fa:consent` event → tracker `stop()` → tracker `abortInFlight()` → set `fa_forget_pending` → forget (one at a time, `controller.forget()`) |
+| Tracker port | `TrackerPort { start(); stop(); abortInFlight() }` from `src/lib/analytics/trackerPort.ts`, loaded through `loadTracker()` (WA-2b supplies the real tracker). `start()` only while granted, not opted out, no forget pending, not on `/dashboard/**` and `mayStart()` agrees; `stop()` and `abortInFlight()` are synchronous. Stop and abort run only through the port |
+| `fa:consent` (window `CustomEvent`, same tab) | `detail: { choice }` after every change of the choice the controller knows of (own action, other tab, bfcache restore). For observers (UI) only; nobody may stop or start tracking from it |
+| `fa:consent-ui` / `fa:consent-ui-request` / `fa:consent-reopen` (window events) | Internal between `Analytics.tsx` and the footer button (`PrivacySettingsLink.tsx`): state `{ choice, barOpen }` out (on every change and on request), state request and reopen request in. The footer button holds no consent logic; both load client-only |
+| Other tabs | `storage` events re-read the choice: a withdrawal stops and aborts the tracker there without a second forget; an Allow starts it there only after `fa_forget_pending` is gone |
+| Bundle | Consent code lives only in async, client-only chunks (`src/components/analytics/lazy.tsx`, both loaders `ssr: false`), never referenced by a prerendered page; gzip budgets in `src/lib/analytics/bundle.test.ts` (CI step after `pnpm build`, `ANALYTICS_BUNDLE_CHECK=1`) |

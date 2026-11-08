@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { ContactEmail } from '@/components/ui/ContactEmail';
+import { LazyPrivacySettingsLink } from '@/components/analytics/lazy';
+import { ANALYTICS_UI_ENABLED } from '@/lib/analytics/flags';
 
 const NAV_KEYS = ['about', 'it', 'rowing', 'projects', 'automation', 'contact'] as const;
 
@@ -126,13 +128,21 @@ export async function Footer() {
           }}
         >
           <span>{t('footer.copy')}</span>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          {/* Three links wrap on phones; unchanged while analytics is dark. */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '1.5rem',
+              ...(ANALYTICS_UI_ENABLED ? { flexWrap: 'wrap' as const, rowGap: '.5rem' } : null),
+            }}
+          >
             <Link href="/imprint" style={{ ...linkStyle, color: 'var(--n-40)' }}>
               {t('footer.imprint')}
             </Link>
             <Link href="/privacy" style={{ ...linkStyle, color: 'var(--n-40)' }}>
               {t('footer.privacy')}
             </Link>
+            {ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink style={{ ...linkStyle, color: 'var(--n-40)' }} />}
           </div>
         </div>
       </div>

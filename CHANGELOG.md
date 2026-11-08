@@ -6,6 +6,24 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Usage-statistics consent bar and privacy settings, shipped dark** (#153,
+  WA-2a of Epic doemefu/homelab#348): a bottom consent bar (copy draft per
+  spec 100 §10.1, de/en), a footer "Datenschutz-Einstellungen" / "Privacy
+  settings" button that shows the current choice and reopens the bar, and the
+  consent controller behind them (`src/lib/analytics/`). Nothing is visible
+  or sent: `ANALYTICS_UI_ENABLED` is `false` until the WA-6 go-live (#158),
+  and the dark build loads none of the consent code (layout and Footer import
+  it only through `next/dynamic` loaders). With the flag on: no request,
+  storage write or device-property read before a choice; Decline and
+  Allow are equal buttons, Decline first; Esc hides the bar for the page load
+  and stores nothing; Decline and withdrawal store `denied`, stop and abort
+  the (WA-2b) tracker, then call `POST /api/v/forget` with a
+  `fa_forget_pending` retry; `fa_consent` lasts 365 days fixed and a consent
+  version bump asks again; other tabs follow a withdrawal; no bar or settings
+  button on `/dashboard`. New CI step: consent bundle budget after the build.
+  The privacy text (`legal.ts`) is unchanged until WA-6; GPC/DNT handling and
+  the final copy follow in WA-5 (#157). No new dependency.
+
 - **Device-service admin GUI, slice 1** (#45): ADMIN-only `/dashboard/devices`
   with the same gate, token handling and look as `/dashboard/auth`. Overview
   tiles (devices live, last message, active schedules, next run); one card per

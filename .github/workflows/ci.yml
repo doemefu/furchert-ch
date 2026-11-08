@@ -32,6 +32,12 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      # Consent-layer bundle budget and "no consent chunk in any prerendered
+      # page" (spec 100 §3.10, #153); needs the build, skipped in `pnpm test`.
+      - name: Consent bundle budget (#153)
+        run: pnpm vitest run src/lib/analytics/bundle.test.ts
+        env:
+          ANALYTICS_BUNDLE_CHECK: '1'
       # The contact address must reach visitors only through the browser
       # (#147), never the server HTML, the RSC payload or the client chunks.
       # The patterns keep the literal out of the repo. grep exits 1 when
