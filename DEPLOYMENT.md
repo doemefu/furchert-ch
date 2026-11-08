@@ -295,6 +295,8 @@ curl -sI https://furchert.ch/bau | grep -iE '^(HTTP|location)'                 #
 curl -sI https://furchert.ch/automation/scan | grep -iE '^(HTTP|location)'     # 308, /de/automation
 curl -sI https://furchert.ch/en/automation/scan | grep -iE '^(HTTP|location)'  # 308, /en/automation
 curl -sI https://furchert.ch/de/projects/aemtlifyer | grep -iE '^(HTTP|location)'  # 308, /de/projects
+curl -sI https://furchert.ch/en/projects/aemtlifyer | grep -iE '^(HTTP|location)'  # 308, /en/projects
+curl -sI https://furchert.ch/projects/aemtlifyer | grep -iE '^(HTTP|location)'     # 308, /de/projects
 ```
 
 ## Validation
