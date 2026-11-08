@@ -22,8 +22,8 @@ const built = existsSync(CHUNKS);
 
 // gzip bytes (level 9). Option A (WA-2a ruling): measured + about 10 %,
 // async only, one chunk each. WA-2b (#154) measurements on 2026-11-08:
-// controller 2 904 B (session, form hooks and tracker loader added; cap
-// pending the lead's ruling), tracker 3 877 B (hard ceiling 6 KB).
+// controller 2 904 B (session, form hooks and tracker loader added), tracker
+// 3 877 B (hard ceiling 6 KB); both caps confirmed by the lead's ruling.
 const BUDGET = {
   controller: 3_200, // Analytics + consent controller + store + forget client
   bar: 1_000, // ConsentBar, loaded only while the bar is open
