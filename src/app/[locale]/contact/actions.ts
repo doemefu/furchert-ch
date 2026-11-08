@@ -22,7 +22,13 @@
 // (`contactHref` in the neutral `src/data/contact-sources.ts`).
 
 import { headers } from 'next/headers';
+import { getLocale } from 'next-intl/server';
 import { isContactMailConfigured } from '@/contact.env';
+import { isLocale } from '@/i18n/routing';
+import { ANALYTICS_UI_ENABLED } from '@/lib/analytics/flags';
+import { recordContactSubmission } from '@/lib/analytics/server/contactEvents';
+import { ANALYTICS_ENV } from '@/lib/analytics/server/env';
+import { getForwardQueue } from '@/lib/analytics/server/runtime';
 import { isFromId, isHeardVia } from '@/data/contact-sources';
 import { sendContactMail } from '@/lib/contact/mailer';
 import { parsePhone } from '@/lib/contact/phone';
@@ -47,6 +53,14 @@ export interface ContactInput {
   heardVia?: string;
   /** An id of FROM_IDS, else dropped. */
   from?: string;
+  /**
+   * Usage statistics (spec 100 §5.9): `true` only while the visitor allows
+   * tracking; then a goal is recorded if an `fa_vid` cookie already exists.
+   * Nothing from the form is attached to it.
+   */
+  analytics?: boolean;
+  /** The page locale (`de`/`en`) for the goal; anything else falls back to the request locale. */
+  locale?: string;
 }
 
 export type ContactResult =
@@ -140,11 +154,33 @@ export async function submitContact(input: ContactInput): Promise<ContactResult>
       heardVia,
     });
     console.info('[contact] submission delivered', { messageLength: message.length, topic, callback, from, heardVia });
+    await recordAnalytics(input, requestHeaders.get('cookie'));
     return { ok: true };
   } catch (err) {
     const { code, responseCode, command } = err as { code?: string; responseCode?: number; command?: string };
     console.error('[contact] delivery failed', { code, responseCode, command });
     undoContactRateLimit(clientKey);
     return { ok: false, error: 'server' };
+  }
+}
+
+// Goal and enquiry (spec 100 §5.9). The enquiry counts every successful
+// submission, without identifier or content, also while the analytics UI is
+// dark. Failures here never change the form result.
+async function recordAnalytics(input: ContactInput, cookieHeader: string | null): Promise<void> {
+  try {
+    const locale = typeof input.locale === 'string' && isLocale(input.locale) ? input.locale : await getLocale().catch(() => 'de');
+    const queue = getForwardQueue();
+    recordContactSubmission(
+      { analytics: input.analytics, cookieHeader, locale: isLocale(locale) ? locale : 'de' },
+      {
+        enqueue: (events, opts) => queue.enqueue(events, opts),
+        now: () => Date.now(),
+        uiEnabled: ANALYTICS_UI_ENABLED,
+        collectEnabled: ANALYTICS_ENV.collectEnabled,
+      },
+    );
+  } catch {
+    // never affects the form result
   }
 }
