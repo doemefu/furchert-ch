@@ -115,7 +115,7 @@ export default async function HomePage({
                   }}
                 >
                   <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
-                  <span style={{ color: 'var(--n-50)' }}>{t('hero.title2')}</span>
+                  <span style={{ color: 'var(--n-100)' }}>{t('hero.title2')}</span>
                 </h1>
                 <p
                   style={{
