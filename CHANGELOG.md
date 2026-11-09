@@ -173,7 +173,7 @@ All notable changes per milestone. Newest first.
   longer loaded. The dashboard and the consent bar follow in later steps.
 - **Dashboard type scale** (#182): the signed-in dashboard (overview, network,
   services, auth, devices) and the sign-in and no-access screens use the same
-  type tokens as the public pages. Nothing renders below the 12 px floor any
+  type tokens as the public pages. Nothing on these pages renders below the 12 px floor any
   more, so the former 9.6 to 11.5 px micro labels, pills and table heads are
   slightly larger. Tracking follows the final size (.05em at 12 px, .04em at
   13 px, never negative below 24 px, none on text that is not uppercase).
