@@ -6,13 +6,14 @@
 // The hourly panel is always in the SSR output (`hidden`), so
 // `aria-controls` always resolves; without JS it stays collapsed.
 import { useState, type ReactNode } from 'react';
+import { DAY_GRID } from '@/lib/metrics/serviceHealth';
+import type { BucketStyle } from './buckets';
 
 export function StripToggle({
   id,
   groupLabel,
   label,
-  todayColor,
-  todayOpacity,
+  todayStyle,
   todayTitle,
   pastBars,
   hourly,
@@ -20,21 +21,24 @@ export function StripToggle({
   id: string;
   groupLabel: string;
   label: string;
-  todayColor: string;
-  todayOpacity: number;
+  todayStyle: BucketStyle;
   todayTitle: string;
   pastBars: ReactNode;
   hourly: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  // The blue ring marks today; it joins the no-data hairline when there is one.
+  const ring = `0 0 0 ${open ? 2 : 1}px var(--blue-base)`;
 
   return (
     <>
-      <div role="group" aria-label={groupLabel} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+      <div
+        role="group"
+        aria-label={groupLabel}
+        style={{ gridArea: 'days', display: 'grid', gridTemplateColumns: DAY_GRID, gap: 2, minWidth: 0 }}
+      >
         {pastBars}
-        {/* Vertical padding only (offset by the negative margin) for a larger
-            hit area without widening the 3px bar gap. No inline `outline`,
-            so the browser's default focus ring stays visible. */}
+        {/* No inline `outline`, so the browser's default focus ring stays visible. */}
         <button
           type="button"
           aria-expanded={open}
@@ -42,32 +46,23 @@ export function StripToggle({
           aria-label={label}
           title={todayTitle}
           onClick={() => setOpen((v) => !v)}
-          style={{
-            display: 'block',
-            flex: '0 0 7px',
-            width: 7,
-            padding: '6px 0',
-            margin: '-6px 0',
-            border: 0,
-            background: 'transparent',
-            cursor: 'pointer',
-          }}
+          style={{ display: 'block', width: '100%', height: 20, padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
         >
           <span
             aria-hidden="true"
             style={{
               display: 'block',
-              width: 7,
-              height: 12,
-              borderRadius: 1,
-              background: todayColor,
-              opacity: todayOpacity,
-              boxShadow: `0 0 0 ${open ? 2 : 1}px var(--blue-base)`,
+              width: '100%',
+              height: 20,
+              borderRadius: 2,
+              background: todayStyle.background,
+              opacity: todayStyle.opacity,
+              boxShadow: todayStyle.boxShadow ? `${todayStyle.boxShadow}, ${ring}` : ring,
             }}
           />
         </button>
       </div>
-      <div id={id} hidden={!open} style={{ marginTop: '.4rem' }}>
+      <div id={id} className="svc-hourly" hidden={!open}>
         {hourly}
       </div>
     </>

@@ -278,9 +278,8 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                             style={{
                               height: '100%',
                               width: fillWidth,
-                              background: 'var(--blue-base)',
+                              background: 'var(--n-50)',
                               borderRadius: '2px',
-                              transition: 'width 1s ease',
                             }}
                           />
                         </div>

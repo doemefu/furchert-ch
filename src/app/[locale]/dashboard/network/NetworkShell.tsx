@@ -39,6 +39,7 @@ import {
   type EgressFlow,
   type EgressTopResponse,
   type FirewallEvent,
+  type InboundSummary,
   type IpDetail,
   type LanConnectionsResponse,
   type LoginEvent,
@@ -54,6 +55,7 @@ import {
   type TimeWindow,
 } from '@/lib/netmon/client';
 import { LOCALE_TAG } from '../datetime';
+import { fillLoginTimeline, niceCeil, slotBuckets } from './chartScale';
 
 export const NETWORK_RANGES = ['24h', '7d', '30d'] as const;
 export type NetworkRange = (typeof NETWORK_RANGES)[number];
@@ -345,7 +347,7 @@ function BarList({ title, rows, fmt, emptyText }: { title: string; rows: BarRow[
                   <span style={{ color: 'var(--n-60)', flexShrink: 0 }}>{fmt.num(r.value)}</span>
                 </div>
                 <div style={{ height: 4, background: 'var(--n-20)', borderRadius: '2px', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${pct}%`, background: 'var(--blue-base)', borderRadius: '2px' }} />
+                  <div style={{ height: '100%', width: `${pct}%`, background: 'var(--n-40)', borderRadius: '2px' }} />
                 </div>
               </li>
             );
@@ -367,44 +369,143 @@ function StatTile({ label, value }: { label: string; value: string }) {
   );
 }
 
-// Inline-SVG column chart; each bar carries a native <title> tooltip.
-function Timeline({
-  points,
+// Main inbound chart (#179): requests per hour (≤ 7 d window) or UTC day, one
+// slot per time step so the x axis is proportional to time. The only
+// --blue-base series on the page. A slot without a bucket is a gap, not a zero
+// (the API lists buckets with data only); the first (partial) and last
+// (ongoing) slots are drawn lighter. Inline SVG, y/x labels are HTML so the
+// stretched viewBox does not distort the text.
+function InboundChart({
+  summary,
+  window,
+  range,
   fmt,
-  label,
+  t,
 }: {
-  points: Array<{ bucketStart: string; requests: number }>;
+  summary: InboundSummary;
+  window: TimeWindow;
+  range: NetworkRange;
   fmt: Formatters;
-  label: string;
+  t: Translate;
 }) {
-  const max = points.reduce((m, p) => Math.max(m, Number.isFinite(p.requests) ? p.requests : 0), 0);
-  const barW = 10;
-  const height = 64;
+  const label = t('inbound.timeline');
+  const req = (n: number) => (Number.isFinite(n) && n > 0 ? n : 0);
+  const r = slotBuckets(summary.timeline, window);
+  const at = (ms: number) => (r.daily ? fmt.utcDate(new Date(ms).toISOString()) : fmt.time(new Date(ms).toISOString()));
+
+  interface Bar {
+    key: string;
+    ms: number;
+    value: number | null;
+    partial: boolean;
+    ongoing: boolean;
+  }
+  let bars: Bar[];
+  if (r.aligned) {
+    bars = r.slots.map((s) => ({
+      key: String(s.start),
+      ms: s.start,
+      value: s.point ? req(s.point.requests) : null,
+      partial: s.partial,
+      ongoing: s.ongoing,
+    }));
+  } else {
+    // Buckets that do not fit the window's slots: equal-width bars over the
+    // sorted raw buckets.
+    bars = r.points
+      .map((p) => ({ key: p.bucketStart, ms: Date.parse(p.bucketStart), value: req(p.requests) as number | null, partial: false, ongoing: false }))
+      .sort((x, y) => x.ms - y.ms);
+  }
+
+  const niceMax = niceCeil(bars.reduce((m, x) => Math.max(m, x.value ?? 0), 0));
+  const n = bars.length;
+  const hasGap = bars.some((x) => x.value === null);
+  const title = (x: Bar) => {
+    const when = Number.isFinite(x.ms) ? at(x.ms) : '—';
+    const flag = x.ongoing ? ` · ${t('inbound.ongoing')}` : x.partial ? ` · ${t('inbound.partial')}` : '';
+    return x.value === null ? `${when} · ${t('inbound.gapHint')}` : `${when} · ${fmt.num(x.value)}${flag}`;
+  };
+  const xLabels = n === 0 ? [] : Array.from(new Set([0, Math.floor((n - 1) / 2), n - 1]));
+  const yLabels: Array<{ top: string; text: string }> = [{ top: '0%', text: fmt.num(niceMax) }];
+  if (Number.isInteger(niceMax / 2)) yLabels.push({ top: '50%', text: fmt.num(niceMax / 2) });
+  yLabels.push({ top: '100%', text: fmt.num(0) });
+
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.75rem' }}>{label}</p>
-      <svg
-        role="img"
-        aria-label={label}
-        viewBox={`0 0 ${Math.max(points.length, 1) * barW} ${height}`}
-        preserveAspectRatio="none"
-        style={{ display: 'block', width: '100%', height, background: 'var(--n-10)' }}
-      >
-        {points.map((p, i) => {
-          const v = Number.isFinite(p.requests) ? p.requests : 0;
-          const h = max > 0 ? Math.max((v / max) * height, v > 0 ? 1 : 0) : 0;
-          return (
-            <rect key={p.bucketStart} x={i * barW + 1} y={height - h} width={barW - 2} height={h} fill="var(--blue-base)">
-              <title>{`${fmt.time(p.bucketStart)} · ${fmt.num(v)}`}</title>
-            </rect>
-          );
-        })}
-      </svg>
-      {points.length > 0 && (
-        <div style={{ ...noteStyle, display: 'flex', justifyContent: 'space-between', marginTop: '.35rem' }}>
-          <span>{fmt.time(points[0].bucketStart)}</span>
-          <span>{fmt.time(points[points.length - 1].bucketStart)}</span>
-        </div>
+      <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.35rem' }}>{label}</p>
+      <p style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-24)', fontWeight: 500, letterSpacing: '-.01em', color: 'var(--n-100)', fontVariantNumeric: 'tabular-nums' }}>
+        {summary.totals.sampled ? '≈ ' : ''}
+        {fmt.num(summary.totals.requests)}
+      </p>
+      <p style={{ ...noteStyle, marginBottom: 0 }}>
+        {`${fmt.num(summary.totals.uniqueClientIps)} ${t('inbound.uniqueIps')} · ${t(`window.${range}`)}`}
+      </p>
+      {n === 0 ? (
+        <p style={{ ...noteStyle, marginTop: '1rem' }}>{t('empty')}</p>
+      ) : (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: '3rem 1fr', columnGap: '.5rem', paddingTop: '.5rem', marginTop: '.75rem' }}>
+            <div className="netmon-chart-plot" aria-hidden style={{ position: 'relative' }}>
+              {yLabels.map((y) => (
+                <span
+                  key={y.top}
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: y.top,
+                    transform: 'translateY(-50%)',
+                    fontFamily: 'var(--mono)',
+                    fontSize: 'var(--fs-12)',
+                    lineHeight: 1,
+                    color: 'var(--n-40)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {y.text}
+                </span>
+              ))}
+            </div>
+            <svg
+              className="netmon-chart-plot"
+              role="img"
+              aria-label={label}
+              viewBox={`0 0 ${n * 10} 100`}
+              preserveAspectRatio="none"
+              style={{ display: 'block', width: '100%', overflow: 'visible' }}
+            >
+              {[0, 50, 100].map((y) => (
+                <line key={y} x1={0} x2={n * 10} y1={y} y2={y} stroke="rgba(162,167,176,.3)" strokeWidth={1} vectorEffect="non-scaling-stroke" />
+              ))}
+              {bars.map((x, i) => {
+                const h = x.value === null ? 0 : Math.max((x.value / niceMax) * 100, x.value > 0 ? 0.5 : 0);
+                return (
+                  <g key={x.key}>
+                    {x.value !== null && h > 0 && (
+                      <rect
+                        x={i * 10 + 1.5}
+                        y={100 - h}
+                        width={7}
+                        height={h}
+                        fill="var(--blue-base)"
+                        opacity={x.partial || x.ongoing ? 0.5 : 1}
+                      />
+                    )}
+                    <rect x={i * 10} y={0} width={10} height={100} fill="transparent">
+                      <title>{title(x)}</title>
+                    </rect>
+                  </g>
+                );
+              })}
+            </svg>
+            <span aria-hidden />
+            <div style={{ ...noteStyle, display: 'flex', justifyContent: 'space-between', margin: '.35rem 0 0' }}>
+              {xLabels.map((i) => (
+                <span key={i}>{Number.isFinite(bars[i].ms) ? at(bars[i].ms) : '—'}</span>
+              ))}
+            </div>
+          </div>
+          {hasGap && <p style={{ ...noteStyle, margin: '.5rem 0 0' }}>{t('inbound.gapHint')}</p>}
+        </>
       )}
     </div>
   );
@@ -1231,7 +1332,7 @@ function EgressSection({
 // ── Logins (NM-4) ───────────────────────────────────────────────────────────
 
 const LOGIN_COLORS: Record<LoginOutcome, string> = {
-  success: 'var(--blue-base)',
+  success: 'var(--n-50)',
   failure: 'var(--status-offline)',
   locked: 'var(--status-wip)',
 };
@@ -1248,37 +1349,8 @@ function loginCollector(status: NetmonResult<{ collectors: CollectorStatus[] }>)
   return status.ok ? status.data.collectors.find((c) => c.name === 'login-events') : undefined;
 }
 
-const HOUR_MS = 3600 * 1000;
-const DAY_MS = 24 * HOUR_MS;
-
-// The API returns buckets with data only (1 h iff to − from ≤ 7 d, else 1 d,
-// UTC). Logins are sparse, so — unlike the inbound Timeline, which plots the
-// returned buckets as they are — the missing slots are deliberately filled
-// with zeros (absence means no events) to keep the x axis proportional to
-// time. If a bucket does not sit on a slot boundary the raw buckets are shown.
-function fillLoginTimeline(points: LoginTimelineBucket[], window: TimeWindow): { points: LoginTimelineBucket[]; daily: boolean } {
-  const from = Date.parse(window.from);
-  const to = Date.parse(window.to);
-  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return { points, daily: false };
-  const step = to - from <= 7 * DAY_MS ? HOUR_MS : DAY_MS;
-  const daily = step === DAY_MS;
-  const byStart = new Map<number, LoginTimelineBucket>();
-  for (const p of points) {
-    const ms = Date.parse(p.bucketStart);
-    if (!Number.isFinite(ms) || ms % step !== 0) return { points, daily };
-    byStart.set(ms, p);
-  }
-  const filled: LoginTimelineBucket[] = [];
-  for (let ms = Math.floor(from / step) * step; ms < to; ms += step) {
-    filled.push(byStart.get(ms) ?? { bucketStart: new Date(ms).toISOString(), success: 0, failure: 0, locked: 0 });
-    byStart.delete(ms);
-  }
-  // A bucket outside the page window (clock skew) would silently vanish.
-  return { points: byStart.size > 0 ? points : filled, daily };
-}
-
 // Stacked inline-SVG columns (success, failure, locked from the bottom), the
-// inbound Timeline idiom with one <title> tooltip per bucket.
+// inbound chart idiom with one <title> tooltip per bucket.
 function LoginTimeline({ points, daily, fmt, t }: { points: LoginTimelineBucket[]; daily: boolean; fmt: Formatters; t: Translate }) {
   // 1-day buckets start at UTC midnight (02:00 in Zurich): label the date only.
   const at = (iso: string) => (daily ? fmt.utcDate(iso) : fmt.time(iso));
@@ -1804,11 +1876,7 @@ export async function NetworkShell({
             <Failure result={summary} t={t} />
           ) : (
             <div style={{ display: 'grid', gap: '.75rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.75rem' }}>
-                <StatTile label={t('inbound.requests')} value={fmt.num(summary.data.totals.requests)} />
-                <StatTile label={t('inbound.uniqueIps')} value={fmt.num(summary.data.totals.uniqueClientIps)} />
-              </div>
-              <Timeline points={summary.data.timeline} fmt={fmt} label={t('inbound.timeline')} />
+              <InboundChart summary={summary.data} window={pageWindow} range={range} fmt={fmt} t={t} />
 
               <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginTop: '.5rem' }}>{t('inbound.topIps')}</p>
               {summary.data.topClientIps.length === 0 ? (

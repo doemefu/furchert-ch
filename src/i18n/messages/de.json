@@ -594,7 +594,7 @@
         "request": "des Requests (kein Limit gesetzt)"
       },
       "usageNone": "Keine Nutzungsdaten oder weder Limit noch Request gesetzt",
-      "daily": "14 T",
+      "workload": "Workload",
       "last24h": "Letzte 24 h · stündlich",
       "toggleLabel": "Stundenansicht der letzten 24 h für {name}",
       "dailyAria": "Tägliche Verfügbarkeit von {name}, letzte 14 Tage",
@@ -690,6 +690,9 @@
         "requests": "Anfragen",
         "uniqueIps": "Eindeutige Client-IPs",
         "timeline": "Anfragen im Zeitverlauf",
+        "gapHint": "Kein Balken: keine Daten für diese Stunde bzw. diesen Tag",
+        "ongoing": "laufend",
+        "partial": "teilweise",
         "topIps": "Top-Client-IPs",
         "countries": "Länder",
         "asns": "Netze (ASN)",

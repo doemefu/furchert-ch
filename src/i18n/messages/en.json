@@ -594,7 +594,7 @@
         "request": "of its request (no limit set)"
       },
       "usageNone": "No usage data, or no limit and no request set",
-      "daily": "14 d",
+      "workload": "Workload",
       "last24h": "Last 24 h · hourly",
       "toggleLabel": "Hourly view of the last 24 h for {name}",
       "dailyAria": "Daily availability of {name}, last 14 days",
@@ -690,6 +690,9 @@
         "requests": "Requests",
         "uniqueIps": "Unique client IPs",
         "timeline": "Requests over time",
+        "gapHint": "No bar: no data for that hour or day",
+        "ongoing": "in progress",
+        "partial": "partial",
         "topIps": "Top client IPs",
         "countries": "Countries",
         "asns": "Networks (ASN)",

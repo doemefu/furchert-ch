@@ -10,6 +10,8 @@ import type { PromSample, PromSeries } from './prometheus';
 export const SERVICE_HEALTH_TZ = 'Europe/Zurich';
 export const DAYS_SHOWN = 14; // 13 full Zurich days + today (keeps the window inside the 14 d retention)
 export const HOURS_SHOWN = 24;
+// Shared grid template of the day columns (matrix header and row strips).
+export const DAY_GRID = `repeat(${DAYS_SHOWN}, minmax(0, 1fr))`;
 export const STEP_SEC = 3600;
 
 export type WorkloadKind = 'Deployment' | 'StatefulSet';
