@@ -144,6 +144,10 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Analytics dashboard type and details** (#191): `/dashboard/analytics` and
+  the never-track switch use the `--fs-*` type tokens (small labels now 12 px);
+  the status strip announces each collector status once; chart legends use the
+  12×2 line key of `/dashboard/network`.
 - **Frame-line doubles and touch targets** (#188): full-width boxes on
   `/automation` use the page frame as their sides, gapped card rows on
   `/automation` and `/dashboard` inset by their gap, the contact columns

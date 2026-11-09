@@ -43,16 +43,16 @@ export function rateText(r: Rate, t: Translate, fmt: Formatters): string {
   }
 }
 
-export const monoLabel: CSSProperties = { fontFamily: 'var(--mono)', fontSize: '.72rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-60)' };
+export const monoLabel: CSSProperties = { fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-60)' };
 export const cardStyle: CSSProperties = { padding: '1rem', background: 'var(--white)', border: '1px solid rgba(162,167,176,.22)', borderRadius: '2px', minWidth: 0 };
-export const noteStyle: CSSProperties = { fontFamily: 'var(--mono)', fontSize: '.68rem', letterSpacing: '.03em', color: 'var(--n-60)' };
+export const noteStyle: CSSProperties = { fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: '.03em', color: 'var(--n-60)' };
 export const sectionStyle: CSSProperties = { borderBottom: '1px solid rgba(162,167,176,.22)', padding: '1.5rem 0' };
-export const thStyle: CSSProperties = { ...monoLabel, fontSize: '.62rem', textAlign: 'left', fontWeight: 400, padding: '.5rem .75rem', borderBottom: '1px solid rgba(162,167,176,.3)', whiteSpace: 'nowrap' };
-export const tdStyle: CSSProperties = { fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-80)', padding: '.45rem .75rem', borderBottom: '1px solid rgba(162,167,176,.15)', verticalAlign: 'top' };
+export const thStyle: CSSProperties = { ...monoLabel, textAlign: 'left', fontWeight: 400, padding: '.5rem .75rem', borderBottom: '1px solid rgba(162,167,176,.3)', whiteSpace: 'nowrap' };
+export const tdStyle: CSSProperties = { fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)', padding: '.45rem .75rem', borderBottom: '1px solid rgba(162,167,176,.15)', verticalAlign: 'top' };
 export const numTd: CSSProperties = { ...tdStyle, textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' };
 export const linkStyle: CSSProperties = { color: 'var(--blue-base)', textDecoration: 'none' };
 export const chipBase: CSSProperties = {
-  fontFamily: 'var(--mono)', fontSize: '.72rem', letterSpacing: '.04em', textTransform: 'uppercase', textDecoration: 'none',
+  fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: '.04em', textTransform: 'uppercase', textDecoration: 'none',
   border: '1px solid rgba(162,167,176,.3)', borderRadius: '2px', padding: '.35rem .75rem', color: 'var(--n-70)', background: 'var(--white)',
 };
 export const chipActive: CSSProperties = { ...chipBase, background: 'var(--n-90)', borderColor: 'var(--n-90)', color: 'var(--white)' };
@@ -85,8 +85,8 @@ export function Note({ children }: { children: ReactNode }) {
 export function StatTile({ label, value, sub }: { label: string; value: string; sub?: ReactNode }) {
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.35rem' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--sans)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)', fontVariantNumeric: 'tabular-nums' }}>{value}</p>
+      <p style={{ ...monoLabel, marginBottom: '.35rem' }}>{label}</p>
+      <p style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-24)', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)', fontVariantNumeric: 'tabular-nums' }}>{value}</p>
       {sub && <div style={{ ...noteStyle, marginTop: '.35rem' }}>{sub}</div>}
     </div>
   );

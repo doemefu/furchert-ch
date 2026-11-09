@@ -40,7 +40,7 @@ export function EmphasisColumns({
   return (
     <figure style={cardStyle}>
       <figcaption style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '.75rem' }}>
-        <span style={{ ...monoLabel, fontSize: '.62rem' }}>{title}</span>
+        <span style={monoLabel}>{title}</span>
         <Legend color={CONTEXT} text={labels.context} />
         <Legend color={ACCENT} text={labels.subject} />
       </figcaption>
@@ -80,7 +80,8 @@ export function EmphasisColumns({
 function Legend({ color, text }: { color: string; text: string }) {
   return (
     <span style={{ ...noteStyle, display: 'inline-flex', alignItems: 'center', gap: '.35rem' }}>
-      <span aria-hidden="true" style={{ width: 10, height: 10, background: color, borderRadius: 2, display: 'inline-block' }} />
+      {/* #191: a 12×2 line key, as on /dashboard/network. */}
+      <span aria-hidden="true" style={{ width: 12, height: 2, background: color, display: 'inline-block' }} />
       {text}
     </span>
   );
@@ -147,7 +148,7 @@ export function RankedBars({
   const max = rows.reduce((m, r) => Math.max(m, r.small ? 0 : r.value), 0);
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{title}</p>
+      <p style={{ ...monoLabel, marginBottom: '.75rem' }}>{title}</p>
       {rows.length === 0 ? (
         <p style={noteStyle}>{emptyText}</p>
       ) : (
@@ -156,7 +157,7 @@ export function RankedBars({
             const pct = max > 0 && !r.small ? (r.value / max) * 100 : 0;
             return (
               <li key={r.key}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.5rem', fontFamily: 'var(--mono)', fontSize: '.68rem', color: 'var(--n-70)', marginBottom: '.2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.5rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-70)', marginBottom: '.2rem' }}>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {r.label}
                     {badge && badge.index === i && <span style={{ marginLeft: '.4rem', color: 'var(--n-90)' }}>· {badge.text}</span>}
@@ -206,7 +207,7 @@ export function SideBySideColumns({
   return (
     <figure style={cardStyle}>
       <figcaption style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '.75rem' }}>
-        <span style={{ ...monoLabel, fontSize: '.62rem' }}>{title}</span>
+        <span style={monoLabel}>{title}</span>
         <Legend color={ACCENT} text={labels.subject} />
         <Legend color={CONTEXT} text={labels.reference} />
       </figcaption>
