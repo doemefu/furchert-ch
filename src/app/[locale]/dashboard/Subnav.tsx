@@ -6,7 +6,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
-type DevSubnavActive = 'overview' | 'network' | 'services' | 'auth' | 'devices';
+type DevSubnavActive = 'overview' | 'network' | 'analytics' | 'services' | 'auth' | 'devices';
 
 const containerStyle = {
   borderBottom: '1px solid rgba(162,167,176,.22)',
@@ -77,6 +77,14 @@ export async function DevSubnav({ active }: { active: DevSubnavActive }) {
           style={{ ...tabBase, ...(active === 'network' ? tabActive : tabInactive) }}
         >
           {t('network')}
+        </Link>
+
+        <Link
+          href="/dashboard/analytics"
+          aria-current={active === 'analytics' ? 'page' : undefined}
+          style={{ ...tabBase, ...(active === 'analytics' ? tabActive : tabInactive) }}
+        >
+          {t('analytics')}
         </Link>
 
         <Link

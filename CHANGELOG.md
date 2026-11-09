@@ -6,6 +6,34 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Web analytics dashboard, remaining sections** (#156, WA-4b of Epic
+  doemefu/homelab#348): `/dashboard/analytics` gains funnels (offer and
+  contact form, step rates, "< 3" for small steps, rate comparison only on a
+  previous period of the same length), paths (page-group paths, entry and
+  exit pages, seen before contacting, page transitions), audience (new and
+  returning visits, repeat offer viewers, device, entry language and
+  dimension lists), coverage and data quality (consented page views next to
+  Cloudflare page requests, an indicative 10-point band, enquiries by
+  submission day, registry pages only, data-quality reasons), and previous
+  and next pages in the page drilldown. The page explains when the current
+  counting rules or the go-live date shorten a range. The pages table turns
+  into cards on phones. Needs data-service #55; without it these sections
+  show "data-service error". No new dependency.
+
+- **Web analytics dashboard, core sections** (#155, WA-4a of Epic
+  doemefu/homelab#348): ADMIN-only `/dashboard/analytics` with a new subnav
+  tab. Range controls (7/28/90 days, rolling 12 months, custom), compare,
+  entry-locale and device filters; a status strip; offer at a glance (six
+  tiles with the small-number rules: "x of n" below 30, a 95 % range up to
+  199, deltas only when clear; enquiries as two counts); pages with a
+  drilldown (clicks, daily views, `/automation` section reach and FAQ
+  opens); clicks with a kind filter; sources. Funnels, paths, audience and
+  coverage follow in WA-4b. A "never track this browser" switch, also usable
+  while the usage statistics are not live yet. Data comes from data-service's
+  read API server-side (scope `analytics:read`); every value renders as text.
+  The page stays empty ("no complete day yet") until the nightly rollup has
+  a final day. No new dependency.
+
 - **Web analytics tracker, collect route and enquiry count, shipped dark**
   (#154, WA-2b of Epic doemefu/homelab#348): the consented tracker (its own
   async chunk, loaded only after Allow), the same-origin collect route
@@ -98,6 +126,8 @@ All notable changes per milestone. Newest first.
 
 - **Copy pass** (#160): new home hero, corrected project cards, German status
   labels, unified numbers; Aemtlifyer card removed.
+- **Copy pass follow-ups** (#163): `/projects/aemtlifyer` redirects (308) to
+  the projects list; the dashboard tile for Karaokee shows "Repo".
 - **Spacing and grid pass** (#167): frame lines run unbroken through the
   automation hero, CTA strip and footer; the home hero fits the viewport below
   the header; buttons are 48 px high; the projects grid is 3+3 on wide screens
@@ -106,6 +136,16 @@ All notable changes per milestone. Newest first.
   strip has a filled primary button and a quiet GitHub text link.
 
 ### Fixed
+
+- **Copilot data-boundary footnote and FAQ** (#165): /automation now names all
+  three documented exceptions to the EU Data Boundary (Bing web search,
+  Anthropic models if enabled, flex routing at peak load).
+
+- **Web analytics dashboard follow-ups** (#156, review of #170): the coverage
+  chart groups days into weeks or months for longer ranges like section 1
+  (sampled and partial buckets marked); funnel comparisons skip steps that
+  rest on a cell below 3; new and returning visit tiles show "< 3" at 1–2;
+  every visitor-count basis (7 days, 28 days, month) gets its label.
 
 - **Accessibility and tokens pass** (#151): small text on light surfaces is
   never lighter than `--n-60` (5.26:1; `--n-50`/`--n-40` labels were 3.47 and
