@@ -40,7 +40,7 @@ export function EmphasisColumns({
   return (
     <figure style={cardStyle}>
       <figcaption style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '.75rem' }}>
-        <span style={{ ...monoLabel }}>{title}</span>
+        <span style={monoLabel}>{title}</span>
         <Legend color={CONTEXT} text={labels.context} />
         <Legend color={ACCENT} text={labels.subject} />
       </figcaption>
@@ -207,7 +207,7 @@ export function SideBySideColumns({
   return (
     <figure style={cardStyle}>
       <figcaption style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '.75rem' }}>
-        <span style={{ ...monoLabel }}>{title}</span>
+        <span style={monoLabel}>{title}</span>
         <Legend color={ACCENT} text={labels.subject} />
         <Legend color={CONTEXT} text={labels.reference} />
       </figcaption>
