@@ -23,7 +23,7 @@
 
 **Full architecture spec:** `../docs/052-architecture-target.md`
 
-**Design source of truth:** the exported Claude Design prototype (ETHON system).
+**Design starting point:** the exported Claude Design prototype (ETHON system). It is a draft, not a constitution (Dominic, 2026-11-09); the live site has moved on from it (unslop stages A and B, #151–#189).
 
 **Implementation history:** `.claude/worklogs/` (local-only) and `docs/INDEX.md`
 
@@ -37,7 +37,7 @@
 - Before any merge, wait for the Copilot review and fix or answer every comment (CodeRabbit is not installed here).
 - All code, comments, and documentation in **English**.
 - Minimize diff size: no drive-by refactors, no style-only churn, no renames unless required.
-- Recreate the design **pixel-faithfully** from the prototype source; do not redesign.
+- Treat the prototype as the starting point, not as a spec to match pixel for pixel. Fix craft defects (spacing, doubled lines, contrast, touch targets, alignment, type scale) without asking. Propose bigger direction changes (new sections, hero concepts, brand colours, layout of whole pages) before building them. Keep the ETHON tokens and the `.border-x` frame.
 - Always run the relevant lint/typecheck/test/build commands for the touched area and record results in the worklog.
 
 ## Tech Stack (pinned — see `package.json`)
