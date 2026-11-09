@@ -25,7 +25,7 @@ const bodyText = {
   maxWidth: '70ch',
 };
 
-const valueText = { fontSize: '1rem', color: 'var(--n-100)', marginTop: '.35rem' };
+const valueText = { fontSize: '1rem', color: 'var(--n-100)', marginTop: '.25rem' };
 
 export function LegalPage({ copy }: { copy: LegalPageCopy }) {
   return (

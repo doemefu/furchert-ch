@@ -33,7 +33,7 @@ export function CheckRow({ children }: { children: ReactNode }) {
         color: 'var(--n-70)',
       }}
     >
-      <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.15rem' }}>
+      <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '2px' }}>
         <Icon name="check" size={16} />
       </span>
       <span>{children}</span>

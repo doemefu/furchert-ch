@@ -128,6 +128,12 @@ All notable changes per milestone. Newest first.
   labels, unified numbers; Aemtlifyer card removed.
 - **Copy pass follow-ups** (#163): `/projects/aemtlifyer` redirects (308) to
   the projects list; the dashboard tile for Karaokee shows "Repo".
+- **Spacing and grid pass** (#167): frame lines run unbroken through the
+  automation hero, CTA strip and footer; the home hero fits the viewport below
+  the header; buttons are 48 px high; the projects grid is 3+3 on wide screens
+  with the GitHub link as its sixth cell; 16 px page gutters and 20 px card
+  padding on phones; fractional rem spacing moved to the 4 px grid; the CTA
+  strip has a filled primary button and a quiet GitHub text link.
 
 ### Fixed
 

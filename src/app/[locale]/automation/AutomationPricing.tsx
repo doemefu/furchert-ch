@@ -35,7 +35,7 @@ const subLine = {
 function PriceLine({ c }: { c: PackageCopy }) {
   return (
     <>
-      <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.35rem' }}>{c.price}</p>
+      <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.25rem' }}>{c.price}</p>
       {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums' }}>{c.priceAlt}</p>}
       {c.priceNote && (
         <p style={{ fontSize: '.875rem', color: 'var(--n-70)', marginTop: '.25rem' }}>
@@ -53,7 +53,7 @@ function Summary({ c }: { c: PackageCopy }) {
 function Terms({ c }: { c: PackageCopy }) {
   if (!c.terms?.length) return null;
   return (
-    <div style={{ display: 'grid', gap: '.6rem', marginBottom: '1rem' }}>
+    <div style={{ display: 'grid', gap: '.5rem', marginBottom: '1rem' }}>
       {c.terms.map((term) => (
         <p key={term} style={bodyText}>
           {term}
@@ -86,16 +86,16 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
                 key={item}
                 style={{
                   display: 'flex',
-                  gap: '.6rem',
+                  gap: '.5rem',
                   alignItems: 'flex-start',
-                  padding: '.45rem 0',
+                  padding: '.5rem 0',
                   borderTop: '1px solid rgba(162,167,176,.12)',
                   fontSize: '.875rem',
                   color: 'var(--n-70)',
                   lineHeight: 1.5,
                 }}
               >
-                <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.2rem' }}>
+                <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.25rem' }}>
                   <Icon name="check" size={14} />
                 </span>
                 {item}
@@ -175,7 +175,7 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
         }}
       >
         <div>
-          <p style={{ ...subLine, marginBottom: '.35rem' }}>{t('addonLabel')}</p>
+          <p style={{ ...subLine, marginBottom: '.25rem' }}>{t('addonLabel')}</p>
           <h3 style={cardTitle}>{addon.name}</h3>
           <PriceLine c={addon} />
           <Summary c={addon} />

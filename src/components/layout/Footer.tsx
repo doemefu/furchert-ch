@@ -37,11 +37,9 @@ export async function Footer() {
       style={{
         background: 'var(--n-100)',
         color: 'var(--n-40)',
-        paddingTop: '3rem',
-        paddingBottom: '3rem',
       }}
     >
-      <div className="container border-x">
+      <div className="container border-x" style={{ paddingBlock: '3rem' }}>
         <div
           style={{
             display: 'grid',
@@ -72,7 +70,7 @@ export async function Footer() {
 
           <div>
             <div style={colTitle}>{t('footer.navigation')}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
               {NAV_KEYS.map((k) => (
                 <Link key={k} href={`/${k}`} style={linkStyle}>
                   {t(`nav.${k}`)}
@@ -83,7 +81,7 @@ export async function Footer() {
 
           <div>
             <div style={colTitle}>{t('footer.contact')}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
               {/* The address is rendered only in the browser (#147). */}
               <ContactEmail style={{ ...linkStyle, textTransform: 'none' }} />
               <span style={{ ...linkStyle, color: 'var(--n-40)', cursor: 'default' }}>
@@ -94,12 +92,12 @@ export async function Footer() {
 
           <div>
             <div style={colTitle}>{t('footer.social')}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
               <a
                 href="https://github.com/doemefu"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: '.4rem' }}
+                style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: '.5rem' }}
               >
                 <Icon name="github" size={13} /> GitHub
               </a>
