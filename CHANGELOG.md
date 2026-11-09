@@ -195,6 +195,15 @@ All notable changes per milestone. Newest first.
   costing, none are shown). The endless ticker is replaced by a static status
   line with the live state of the public services, a short fallback text when
   no data is available, and a link to the live status.
+- **Dashboard charts** (#179): `/dashboard/network` leads with one large
+  inbound chart (requests per hour, or per UTC day above 7 d) on a time
+  axis: an hour or day without data is a gap, and the first and last slots
+  are drawn lighter. It replaces the stat tiles and the small timeline;
+  the figure shows "≈" when the numbers are sampled. `/dashboard/services` is
+  now an aligned matrix with a column header (workload, 14 days, availability,
+  restarts, CPU / MEM) that stacks on narrow screens. Blue is kept for the
+  inbound series and the "today" marker; healthy cells, bars, login successes
+  and the node and workload meters are grey. No data and no new dependency.
 
 ### Fixed
 
