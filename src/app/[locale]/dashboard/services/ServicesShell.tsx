@@ -159,13 +159,16 @@ function Bar({ status, title, width, height }: { status: BucketStatus; title: st
       role="img"
       aria-label={title}
       title={title}
-      className={height === undefined ? 'svc-day' : undefined}
       style={{
         display: 'block',
         flex: width ? `0 0 ${width}px` : undefined,
-        width: width ?? '100%',
-        height,
-        borderRadius: 2,
+        // Day bars keep the original slim look (7×12) and sit centred in
+        // their matrix column, so the columns still line up with the header.
+        width: width ?? 7,
+        height: height ?? 12,
+        justifySelf: 'center',
+        alignSelf: 'center',
+        borderRadius: 1,
         ...bucketStyle(status),
       }}
     />

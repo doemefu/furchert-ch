@@ -198,6 +198,9 @@ All notable changes per milestone. Newest first.
   Roles, scopes, failure kinds and other labels stay pills. The home page
   bullets are small round dots and the login legend keys are short lines, so
   nothing else looks like the LED.
+- **Services matrix colours**: healthy days are green again and no-data days
+  light grey, drawn as the original slim 7×12 bars, now centred in the aligned
+  day columns (the grey of #186 read worse).
 - **Home headline in one tone**: both lines of the home hero headline are
   set in the primary text colour; the grey second line read as a template tell.
 - **Home first screen** (#178): the hero is now a split with the headline,

@@ -47,15 +47,15 @@ export function StripToggle({
           title={todayTitle}
           onClick={() => setOpen((v) => !v)}
           className="svc-day"
-          style={{ display: 'block', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
         >
           <span
             aria-hidden="true"
             style={{
               display: 'block',
-              width: '100%',
-              height: '100%',
-              borderRadius: 2,
+              width: 7,
+              height: 12,
+              borderRadius: 1,
               background: todayStyle.background,
               opacity: todayStyle.opacity,
               boxShadow: todayStyle.boxShadow ? `${todayStyle.boxShadow}, ${ring}` : ring,
