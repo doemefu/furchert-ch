@@ -18,7 +18,7 @@ export function Tag({
         fontSize: '.6875rem',
         letterSpacing: '.03em',
         textTransform: 'uppercase',
-        padding: '.2rem .55rem',
+        padding: '.25rem .5rem',
         background: blue ? 'var(--blue-wash)' : 'var(--n-10)',
         border: `1px solid ${blue ? 'rgba(14,60,166,.2)' : 'rgba(162,167,176,.3)'}`,
         borderRadius: '2px',

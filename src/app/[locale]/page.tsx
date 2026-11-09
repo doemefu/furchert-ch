@@ -77,8 +77,8 @@ export default async function HomePage({
       />
       {/* HERO — note: layout <main> already supplies paddingTop:var(--header-h),
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
-      <section style={{ minHeight: '100svh', background: 'var(--n-10)' }}>
-        <div className="container border-x">
+      <section style={{ background: 'var(--n-10)' }}>
+        <div className="container border-x" style={{ minHeight: 'calc(100svh - var(--header-h))' }}>
           <div
             style={{
               position: 'relative',
@@ -86,7 +86,7 @@ export default async function HomePage({
               flexDirection: 'column',
               alignItems: 'center',
               textAlign: 'center',
-              gap: '2rem',
+              gap: 0,
               padding: '5rem 1.5rem 4rem',
             }}
           >
@@ -111,6 +111,7 @@ export default async function HomePage({
                 maxWidth: '22ch',
                 textWrap: 'balance',
                 position: 'relative',
+                marginTop: '1rem',
               }}
             >
               <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
@@ -126,6 +127,7 @@ export default async function HomePage({
                 lineHeight: 1.45,
                 letterSpacing: '-.02em',
                 position: 'relative',
+                marginTop: '1.5rem',
               }}
             >
               {t('hero.sub')}
@@ -133,11 +135,11 @@ export default async function HomePage({
             <div
               style={{
                 display: 'flex',
-                gap: '.875rem',
+                gap: '.75rem',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
                 position: 'relative',
-                marginTop: '.5rem',
+                marginTop: '2.5rem',
               }}
             >
               <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
@@ -158,7 +160,7 @@ export default async function HomePage({
           >
             <div
               style={{
-                padding: '3rem 2rem',
+                padding: '3rem var(--card-px)',
                 borderRight: '1px solid rgba(162,167,176,.22)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
@@ -179,7 +181,7 @@ export default async function HomePage({
                     <span
                       style={{
                         flexShrink: 0,
-                        marginTop: '.45rem',
+                        marginTop: '6px',
                         width: '.5rem',
                         height: '.5rem',
                         background: 'var(--n-30)',
@@ -204,7 +206,7 @@ export default async function HomePage({
                           textTransform: 'uppercase',
                           letterSpacing: '.04em',
                           color: 'var(--n-60)',
-                          marginTop: '.2rem',
+                          marginTop: '.25rem',
                         }}
                       >
                         {e.org}
@@ -216,7 +218,7 @@ export default async function HomePage({
             </div>
             <div
               style={{
-                padding: '3rem 2rem',
+                padding: '3rem var(--card-px)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
             >
@@ -236,7 +238,7 @@ export default async function HomePage({
                     <span
                       style={{
                         flexShrink: 0,
-                        marginTop: '.45rem',
+                        marginTop: '6px',
                         width: '.5rem',
                         height: '.5rem',
                         background: 'var(--n-30)',
@@ -261,7 +263,7 @@ export default async function HomePage({
                           textTransform: 'uppercase',
                           letterSpacing: '.04em',
                           color: 'var(--n-60)',
-                          marginTop: '.2rem',
+                          marginTop: '.25rem',
                         }}
                       >
                         {e.org}
@@ -298,7 +300,6 @@ export default async function HomePage({
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              borderTop: '1px solid rgba(162,167,176,.22)',
             }}
           >
             {teaserKeys.map((key) => (
@@ -308,7 +309,7 @@ export default async function HomePage({
                 data-track={trackAttr('link', `home-tile-${key}`)}
                 className="hover-card"
                 style={{
-                  padding: '2.5rem 2rem',
+                  padding: '2.5rem var(--card-px)',
                   borderRight: '1px solid rgba(162,167,176,.22)',
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}
@@ -379,12 +380,12 @@ export default async function HomePage({
               <div
                 key={i}
                 style={{
-                  padding: '2.5rem 1.75rem',
+                  padding: '2.5rem var(--card-px)',
                   borderRight: '1px solid rgba(162,167,176,.22)',
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}
               >
-                <div style={{ ...labelMono, fontSize: '.75rem', letterSpacing: '.05em', marginBottom: '.3rem' }}>
+                <div style={{ ...labelMono, fontSize: '.75rem', letterSpacing: '.05em', marginBottom: '.25rem' }}>
                   {s.i18n[locale].unit}
                 </div>
                 <div

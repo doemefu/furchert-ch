@@ -28,7 +28,7 @@ const step = (i: number): CSSProperties => ({ ['--i' as string]: i }) as CSSProp
 
 const AMBER: CSSProperties = {
   display: 'block',
-  padding: '.15rem .5rem',
+  padding: '2px .5rem',
   fontSize: '.8125rem',
   color: 'var(--n-80)',
   background: 'color-mix(in srgb, var(--tier-mid) 16%, var(--white))',
@@ -78,11 +78,11 @@ function RapportBody({ p }: { p: RapportPanel }) {
               display: 'grid',
               gridTemplateColumns: 'minmax(5rem, 30%) 1fr',
               gap: '.75rem',
-              padding: '.45rem 0',
+              padding: '.5rem 0',
               borderTop: '1px solid rgba(14,60,166,.1)',
             }}
           >
-            <dt style={{ ...fieldLabel, paddingTop: '.15rem' }}>{row.label}</dt>
+            <dt style={{ ...fieldLabel, paddingTop: '2px' }}>{row.label}</dt>
             <dd style={{ margin: 0, ...smallText, color: 'var(--n-80)' }}>{row.value}</dd>
           </Step>
         ))}
@@ -92,11 +92,11 @@ function RapportBody({ p }: { p: RapportPanel }) {
             display: 'grid',
             gridTemplateColumns: 'minmax(5rem, 30%) 1fr',
             gap: '.75rem',
-            padding: '.45rem 0',
+            padding: '.5rem 0',
             borderTop: '1px solid rgba(14,60,166,.1)',
           }}
         >
-          <dt style={{ ...fieldLabel, paddingTop: '.15rem' }}>{p.openItem.label}</dt>
+          <dt style={{ ...fieldLabel, paddingTop: '2px' }}>{p.openItem.label}</dt>
           <dd style={{ margin: 0 }}>
             <span style={AMBER}>{p.openItem.value}</span>
           </dd>
@@ -108,7 +108,7 @@ function RapportBody({ p }: { p: RapportPanel }) {
 }
 
 function OfferBody({ p }: { p: OfferPanel }) {
-  const cell: CSSProperties = { padding: '.4rem .5rem .4rem 0', textAlign: 'left', verticalAlign: 'top' };
+  const cell: CSSProperties = { padding: '.5rem .5rem .5rem 0', textAlign: 'left', verticalAlign: 'top' };
   return (
     <>
       <Step i={0} style={{ padding: '.75rem', background: 'var(--white)', border: HAIRLINE, borderRadius: 2 }}>
@@ -116,7 +116,7 @@ function OfferBody({ p }: { p: OfferPanel }) {
           <Icon name="mail" size={14} />
           {p.mailFrom}
         </p>
-        <p style={{ ...smallText, color: 'var(--n-100)', fontWeight: 500, marginTop: '.15rem' }}>{p.mailSubject}</p>
+        <p style={{ ...smallText, color: 'var(--n-100)', fontWeight: 500, marginTop: '2px' }}>{p.mailSubject}</p>
       </Step>
       <Step i={1} style={{ marginTop: '1rem' }}>
         <p style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '.5rem', ...smallText }}>
@@ -127,7 +127,7 @@ function OfferBody({ p }: { p: OfferPanel }) {
       </Step>
       <Step i={2} style={{ marginTop: '1rem' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.8125rem', color: 'var(--n-80)' }}>
-          <caption style={{ ...fieldLabel, textAlign: 'left', marginBottom: '.35rem' }}>{p.table.caption}</caption>
+          <caption style={{ ...fieldLabel, textAlign: 'left', marginBottom: '.25rem' }}>{p.table.caption}</caption>
           <thead>
             <tr style={{ borderBottom: HAIRLINE }}>
               {p.table.columns.map((c) => (
@@ -175,7 +175,7 @@ function OfferBody({ p }: { p: OfferPanel }) {
 function OverviewBody({ p }: { p: OverviewPanel }) {
   return (
     <>
-      <Step i={0} style={{ display: 'flex', flexWrap: 'wrap', gap: '.4rem' }}>
+      <Step i={0} style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
         {p.sources.map((s) => (
           <Tag key={s} contrast>
             {s}
@@ -286,7 +286,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '.6rem',
+                    gap: '.5rem',
                     fontFamily: 'var(--sans)',
                     fontSize: '1.0625rem',
                     fontWeight: 500,

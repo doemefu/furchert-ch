@@ -1,6 +1,6 @@
 // Ported from the prototype (pages.jsx PageProjects).
 // Consumed by /projects + /projects/[slug] (Phase 2).
-// DE = prototype verbatim; EN = faithful translation (per-record locale map).
+// DE/EN copy corrected in #160 (no longer prototype verbatim); per-record locale map.
 import type { Locale } from '@/i18n/routing';
 
 export type ProjectStatus = 'live' | 'wip' | 'planned' | 'done';

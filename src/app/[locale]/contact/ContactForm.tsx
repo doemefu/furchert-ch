@@ -43,7 +43,7 @@ const inputStyle = {
   color: 'var(--n-100)',
   outline: 'none',
 };
-const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '.4rem' };
+const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '.5rem' };
 const helpStyle: CSSProperties = { fontSize: '.8125rem', color: 'var(--n-60)', lineHeight: 1.5 };
 // Radio and checkbox rows: the whole row is the label, at least 44 px high.
 const choiceStyle: CSSProperties = {
@@ -232,7 +232,7 @@ export function ContactForm() {
         aria-describedby="contact-topic-help"
         style={{ border: 0, padding: 0, margin: 0, minWidth: 0, display: 'flex', flexDirection: 'column' }}
       >
-        <legend style={{ ...labelStyle, padding: 0, marginBottom: '.4rem' }}>{t('topicLegend')}</legend>
+        <legend style={{ ...labelStyle, padding: 0, marginBottom: '.5rem' }}>{t('topicLegend')}</legend>
         <label style={choiceStyle}>
           <input
             type="radio"

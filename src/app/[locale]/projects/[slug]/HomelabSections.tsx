@@ -96,7 +96,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
               </h3>
               <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.55 }}>{item.i18n[locale].text}</p>
               {item.repos.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.4rem 1rem', marginTop: 'auto' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem 1rem', marginTop: 'auto' }}>
                   {item.repos.map((repo) => (
                     <a
                       key={repo.href}
@@ -107,7 +107,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '.4rem',
+                        gap: '.5rem',
                         fontFamily: 'var(--mono)',
                         fontSize: '.72rem',
                         letterSpacing: '.04em',

@@ -59,7 +59,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
               textTransform: 'uppercase',
               letterSpacing: '.04em',
               color: 'var(--n-60)',
-              marginTop: '.2rem',
+              marginTop: '.25rem',
             }}
           >
             {org}
@@ -86,7 +86,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
             listStyle: 'none',
             display: 'flex',
             flexDirection: 'column',
-            gap: '.4rem',
+            gap: '.5rem',
             marginBottom: '1rem',
           }}
         >
@@ -103,7 +103,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
             >
               <span
                 style={{
-                  marginTop: '.35rem',
+                  marginTop: '8px',
                   width: 4,
                   height: 4,
                   background: 'var(--n-40)',

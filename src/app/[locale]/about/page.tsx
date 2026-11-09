@@ -164,15 +164,15 @@ export default async function AboutPage({
                 <div
                   style={{
                     position: 'absolute',
-                    left: '-.35rem',
-                    top: '.35rem',
+                    left: '-3.5px',
+                    top: '4px',
                     width: 6,
                     height: 6,
                     background: 'var(--n-30)',
                     borderRadius: '50%',
                   }}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
                   {row.i18n[locale].items.map((item, ii) => (
                     <span
                       key={ii}
