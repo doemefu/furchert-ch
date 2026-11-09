@@ -152,6 +152,7 @@ export default async function HomePage({
           </div>
 
           <div
+            className="cell-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -297,6 +298,7 @@ export default async function HomePage({
             </h2>
           </div>
           <div
+            className="cell-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -371,6 +373,7 @@ export default async function HomePage({
       <section>
         <div className="container border-x">
           <div
+            className="cell-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',

@@ -45,10 +45,10 @@ export default async function ProjectsPage({
           sub={t('pages.projects.headerSub')}
         />
         <div
+          className="cell-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, max(360px, 33.333%)), 1fr))',
-            borderTop: '1px solid rgba(162,167,176,.22)',
           }}
         >
           {PROJECTS.map((p) => (

@@ -127,10 +127,13 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
       <p style={leadStyle}>{t('processLead')}</p>
       <ol
         role="list"
+        className="cell-grid"
         style={{
           listStyle: 'none',
           padding: 0,
-          margin: 0,
+          // Longhands only: an inline `margin` would cancel .cell-grid's margin-right.
+          marginBlock: 0,
+          marginLeft: 0,
           display: 'grid',
           // Up to four columns; two on tablets, one on phones.
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(15rem, 22%)), 1fr))',
