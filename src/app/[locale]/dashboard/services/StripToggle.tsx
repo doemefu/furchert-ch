@@ -27,7 +27,7 @@ export function StripToggle({
   hourly: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  // The blue ring marks today; it joins the no-data hairline when there is one.
+  // The blue ring marks today (2px while the hourly panel is open).
   const ring = `0 0 0 ${open ? 2 : 1}px var(--blue-base)`;
 
   return (
@@ -47,18 +47,18 @@ export function StripToggle({
           title={todayTitle}
           onClick={() => setOpen((v) => !v)}
           className="svc-day"
-          style={{ display: 'block', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
         >
           <span
             aria-hidden="true"
             style={{
               display: 'block',
-              width: '100%',
-              height: '100%',
-              borderRadius: 2,
+              width: 7,
+              height: 12,
+              borderRadius: 1,
               background: todayStyle.background,
               opacity: todayStyle.opacity,
-              boxShadow: todayStyle.boxShadow ? `${todayStyle.boxShadow}, ${ring}` : ring,
+              boxShadow: ring,
             }}
           />
         </button>

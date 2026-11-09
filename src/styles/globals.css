@@ -395,8 +395,8 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
   .svc-num { text-align: right; }
 }
 
-/* Services day cells (#188): taller on phones, where the 14 day columns are
-   under 20px wide, so the today toggle is easier to hit. */
+/* Services today toggle (#188): the slim 7×12 bar sits in a taller hit area,
+   28px on phones where the 14 day columns are under 20px wide. */
 .svc-day { height: 20px; }
 @media (max-width: 63.99rem) {
   .svc-day { height: 28px; }
