@@ -240,12 +240,11 @@ export default async function AutomationPage({
             {t('aboutMiniText')}
           </p>
           <div
+            className="about-mini-box"
             style={{
               marginTop: '1.5rem',
               padding: 'clamp(1rem, 4vw, 1.25rem) clamp(1rem, 4vw, 1.5rem)',
               background: 'var(--blue-wash)',
-              border: '1px solid rgba(14,60,166,.12)',
-              borderRadius: '2px',
               maxWidth: '40rem',
             }}
           >

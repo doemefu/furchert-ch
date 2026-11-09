@@ -144,6 +144,11 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Frame-line doubles and touch targets** (#188): full-width boxes on
+  `/automation` use the page frame as their sides, gapped card rows on
+  `/automation` and `/dashboard` inset by their gap, the contact columns
+  inset by the card padding, and the services day cells are 28px tall on
+  phones.
 - **Copy pass** (#160): new home hero, corrected project cards, German status
   labels, unified numbers; Aemtlifyer card removed.
 - **Copy pass follow-ups** (#163): `/projects/aemtlifyer` redirects (308) to

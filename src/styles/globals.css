@@ -158,15 +158,28 @@ input:focus, textarea:focus {
 }
 .contact-form ::placeholder { color: var(--n-60); opacity: 1; }
 
-/* Contact columns: form | direct links (#175). Stacked below 40rem with equal
-   insets and one hairline between the blocks. */
+/* «Wer ich bin» box on /automation (#188): its left side sits on the frame
+   line, so it draws no left border; below about 44rem it spans the full
+   width and drops the right border too. */
+.about-mini-box {
+  border-top: 1px solid rgba(14,60,166,.12);
+  border-right: 1px solid rgba(14,60,166,.12);
+  border-bottom: 1px solid rgba(14,60,166,.12);
+}
+@media (max-width: 43.99rem) {
+  .about-mini-box { border-right: 0; }
+}
+
+/* Contact columns: form | direct links (#175, #188). Inset by --card-px on both
+   sides so the inputs clear the frame line; stacked below 40rem with one
+   hairline between the blocks. */
 .contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.contact-col-form { padding: 3rem 2rem 3rem 0; border-right: 1px solid rgba(162,167,176,.22); }
-.contact-col-direct { padding: 3rem 0 3rem 3rem; }
+.contact-col-form { padding: 3rem var(--card-px); border-right: 1px solid rgba(162,167,176,.22); }
+.contact-col-direct { padding: 3rem var(--card-px); }
 @media (max-width: 39.99rem) {
   .contact-grid { grid-template-columns: 1fr; }
-  .contact-col-form { padding: 3rem var(--card-px); border-right: 0; }
-  .contact-col-direct { padding: 3rem var(--card-px); border-top: 1px solid rgba(162,167,176,.22); }
+  .contact-col-form { border-right: 0; }
+  .contact-col-direct { border-top: 1px solid rgba(162,167,176,.22); }
 }
 
 /* ── FOCUS RING (#151) ──
@@ -380,4 +393,11 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
   .svc-head { display: grid; }
   .svc-mlabel { display: none; }
   .svc-num { text-align: right; }
+}
+
+/* Services day cells (#188): taller on phones, where the 14 day columns are
+   under 20px wide, so the today toggle is easier to hit. */
+.svc-day { height: 20px; }
+@media (max-width: 63.99rem) {
+  .svc-day { height: 28px; }
 }

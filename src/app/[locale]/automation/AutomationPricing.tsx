@@ -170,8 +170,8 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
         style={{
           marginTop: 'clamp(1.5rem, 4vw, 2rem)',
           padding: 'clamp(1.25rem, 5vw, 2rem)',
-          border: HAIRLINE,
-          borderRadius: '2px',
+          borderTop: HAIRLINE,
+          borderBottom: HAIRLINE,
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '0 2rem',
