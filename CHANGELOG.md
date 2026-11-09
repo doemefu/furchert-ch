@@ -189,6 +189,8 @@ All notable changes per milestone. Newest first.
   Roles, scopes, failure kinds and other labels stay pills. The home page
   bullets are small round dots and the login legend keys are short lines, so
   nothing else looks like the LED.
+- **Home headline in one tone**: both lines of the home hero headline are
+  set in the primary text colour; the grey second line read as a template tell.
 - **Home first screen** (#178): the hero is now a split with the headline,
   text and buttons on the left and one invented example quote on the right
   (an enquiry becomes a draft quote; prices come from the customer's own
