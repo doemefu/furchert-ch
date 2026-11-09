@@ -87,7 +87,7 @@ describe('nothing before consent', () => {
   // WA-6 (#158, owner decision): the bar waits for the first interaction. The only
   // scroll listener allowed is this one-shot list (passive, removed after firing,
   // never sends anything; behaviour pinned in controller.test.ts).
-  const FIRST_INTERACTION = /export const FIRST_INTERACTION_EVENTS = \['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'\] as const;/;
+  const FIRST_INTERACTION = /export const FIRST_INTERACTION_EVENTS = \['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll', 'focusin'\] as const;/;
 
   it('the controller listens for scroll only in the one-shot first-interaction list (WA-6)', () => {
     const src = code('src/lib/analytics/controller.ts');

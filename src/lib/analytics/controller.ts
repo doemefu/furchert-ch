@@ -19,7 +19,7 @@
 //   are stored at once, and the boot sends the one forget. An explicit choice
 //   from the bar (Allow, or Decline) is stored with `by: "user"` (review L11).
 // - The bar first appears on the visitor's first interaction (pointerdown,
-//   keydown, wheel, touchstart or scroll; owner decision 2026-11-09, WA-6
+//   keydown, wheel, touchstart, scroll or focusin; owner decision 2026-11-09, WA-6
 //   #158), so it never becomes the page's LCP element. The footer link opens
 //   it at once; a bfcache restore with the bar pending counts as interaction.
 import {
@@ -381,8 +381,8 @@ export function createConsentController(deps: ControllerDeps): ConsentController
   };
 }
 
-/** The events that count as a first interaction (WA-6). Keyboard users: keydown covers Tab. */
-export const FIRST_INTERACTION_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'] as const;
+/** The events that count as a first interaction (WA-6). Keyboard users: keydown covers Tab; focusin covers screen readers in browse mode (#174 review). */
+export const FIRST_INTERACTION_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll', 'focusin'] as const;
 
 /**
  * Calls `cb` once on the first of FIRST_INTERACTION_EVENTS on `target`

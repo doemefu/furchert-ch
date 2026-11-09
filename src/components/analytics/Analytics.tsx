@@ -1,8 +1,8 @@
 'use client';
 
 // Mount point of first-party web analytics (spec 100 §3.10, §10.1; WA-2a
-// #153). Rendered by the locale layout only while ANALYTICS_UI_ENABLED is
-// true. Starts the consent controller, forwards `storage` (other tabs) and
+// #153). Rendered by the locale layout while ANALYTICS_UI_ENABLED is true
+// (live since WA-6 #158). Starts the consent controller, forwards `storage` (other tabs) and
 // `pageshow` (bfcache) events to it, and shows the consent bar while the
 // controller says so. The bar's code is loaded only then (next/dynamic).
 // The footer link is a pure view: it gets the state through CONSENT_UI_EVENT
@@ -10,10 +10,13 @@
 // the controller the locale-free path (soft navigations become pageviews)
 // and the Auth.js session status.
 //
-// The bar is portalled into a host that is the FIRST child of <body>: first
-// in focus order, and outside <main className="page-enter">, whose entry
-// animation leaves a transform that would pin a fixed element to <main>
-// (PR #146). Visually it is fixed to the bottom (globals.css).
+// The bar is portalled into a host that is the FIRST child of <body>, outside
+// <main className="page-enter">, whose entry animation leaves a transform that
+// would pin a fixed element to <main> (PR #146). Visually it is fixed to the
+// bottom (globals.css). Since WA-6 (#158) the bar first appears on the first
+// interaction, so a keyboard user's first Tab already moved focus past the
+// host: the bar is no longer first in focus order on that first pass (it is
+// reached with Shift+Tab or on the next cycle; the footer link focuses it).
 import dynamic from 'next/dynamic';
 import { useEffect, useLayoutEffect, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
