@@ -20,6 +20,10 @@ export const ANALYTICS_ENV = {
   get eventsUrl(): string {
     return `${NETMON_ENV.DATA_SERVICE_URL.replace(/\/+$/, '')}/api/webanalytics/events`;
   },
+  /** `DELETE` target of the §6.5 erasure (WA-5). */
+  visitorUrl(id: string): string {
+    return `${NETMON_ENV.DATA_SERVICE_URL.replace(/\/+$/, '')}/api/webanalytics/visitors/${encodeURIComponent(id)}`;
+  },
   get tokenUrl(): string {
     return NETMON_ENV.DATA_SERVICE_TOKEN_URL;
   },

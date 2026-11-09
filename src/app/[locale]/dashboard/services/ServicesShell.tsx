@@ -25,6 +25,7 @@ import {
   type ServiceHealthReport,
 } from '@/lib/metrics/serviceHealth';
 import { LOCALE_TAG } from '../datetime';
+import { BUCKET_ORDER, bucketStyle } from './buckets';
 import { StripToggle } from './StripToggle';
 
 type Translate = Awaited<ReturnType<typeof getTranslations>>;
@@ -32,34 +33,20 @@ type Translate = Awaited<ReturnType<typeof getTranslations>>;
 const HOUR_MS = 3_600_000;
 const GROUP_ORDER: MetricGroup[] = ['availability', 'restarts', 'cpu', 'mem'];
 
-// Bar colours (UI layer). Green is rendered at opacity .85; no data is a
-// neutral grey, never a status colour.
-const BUCKET_COLOR: Record<BucketStatus, string> = {
-  green: 'var(--status-online)',
-  amber: 'var(--status-wip)',
-  red: 'var(--status-offline)',
-  nodata: 'var(--n-20)',
-};
-const BUCKET_ORDER: BucketStatus[] = ['green', 'amber', 'red', 'nodata'];
-
-function bucketOpacity(status: BucketStatus): number {
-  return status === 'green' ? 0.85 : 1;
-}
-
 // ── Styles (DashboardShell / NetworkShell idioms) ──────────────────────────
 
 const monoKicker: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.15rem .5rem',
   background: 'var(--blue-wash)',
@@ -70,16 +57,16 @@ const privatePillStyle: CSSProperties = {
 
 const noteStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.03em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: 0,
   color: 'var(--n-60)',
   marginBottom: '.75rem',
 };
 
 const microLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.6rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
   marginBottom: '.2rem',
@@ -87,34 +74,22 @@ const microLabel: CSSProperties = {
 
 const smallMono: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.65rem',
-  letterSpacing: '.02em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: 0,
   color: 'var(--n-60)',
   overflowWrap: 'anywhere',
 };
 
 const pillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.65rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.1rem .4rem',
   border: '1px solid rgba(162,167,176,.3)',
   borderRadius: '2px',
   color: 'var(--n-60)',
   whiteSpace: 'nowrap',
-};
-
-const rowStyle: CSSProperties = {
-  padding: '1rem',
-  background: 'var(--white)',
-  border: '1px solid rgba(162,167,176,.22)',
-  borderRadius: '2px',
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '1rem 1.5rem',
-  alignItems: 'flex-start',
-  minWidth: 0,
 };
 
 // ── Formatters ─────────────────────────────────────────────────────────────
@@ -173,7 +148,8 @@ function hourTitle(hour: HourlyAvailability, fmt: Formatters, t: Translate): str
 
 // ── Building blocks ────────────────────────────────────────────────────────
 
-function Bar({ status, title, width, height }: { status: BucketStatus; title: string; width: number; height: number }) {
+// Fixed `width` for the hourly strip; without it the bar fills its grid column.
+function Bar({ status, title, width, height }: { status: BucketStatus; title: string; width?: number; height?: number }) {
   return (
     <span
       role="img"
@@ -181,12 +157,15 @@ function Bar({ status, title, width, height }: { status: BucketStatus; title: st
       title={title}
       style={{
         display: 'block',
-        flex: `0 0 ${width}px`,
-        width,
-        height,
+        flex: width ? `0 0 ${width}px` : undefined,
+        // Day bars keep the original slim look (7×12), one per 7px track of
+        // the packed day strip (DAY_GRID).
+        width: width ?? 7,
+        height: height ?? 12,
+        justifySelf: 'center',
+        alignSelf: 'center',
         borderRadius: 1,
-        background: BUCKET_COLOR[status],
-        opacity: bucketOpacity(status),
+        ...bucketStyle(status),
       }}
     />
   );
@@ -209,13 +188,12 @@ function Meter({ label, usage, fmt, t }: { label: string; usage: ResourceUsage |
           style={{
             height: '100%',
             width: fillWidth,
-            background: 'var(--blue-base)',
+            background: 'var(--n-50)',
             borderRadius: '2px',
-            transition: 'width 1s ease',
           }}
         />
       </div>
-      <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
+      <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem' }}>
         {displayLabel}
       </div>
     </div>
@@ -241,7 +219,7 @@ function HourlyStrip({
       <div style={{ display: 'inline-block', maxWidth: '100%' }}>
         <div role="group" aria-label={t('hourlyAria', { name: svc.name })} style={{ display: 'flex', gap: 2 }}>
           {svc.hourly.map((h) => (
-            <Bar key={h.startMs} status={h.status} title={hourTitle(h, fmt, t)} width={6} height={8} />
+            <Bar key={h.startMs} status={h.status} title={hourTitle(h, fmt, t)} width={8} height={12} />
           ))}
         </div>
         {first && (
@@ -250,7 +228,7 @@ function HourlyStrip({
               display: 'flex',
               justifyContent: 'space-between',
               fontFamily: 'var(--mono)',
-              fontSize: '.6rem',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
               marginTop: '.15rem',
             }}
@@ -298,17 +276,20 @@ function ServiceRow({
       ? t('coverage', { hours: svc.hoursWithData14d })
       : undefined;
 
+  const mlabel = (text: string) => <span className="svc-mlabel">{text}</span>;
+
+  // The cells are direct children of the grid row (areas in globals.css).
   return (
-    <li style={rowStyle}>
+    <li className="svc-row">
       {/* Identity */}
-      <div style={{ flex: '1 1 11rem', minWidth: 0 }}>
+      <div style={{ gridArea: 'name', minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap', marginBottom: '.25rem' }}>
           <span
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
+              fontSize: 'var(--fs-12)',
               fontWeight: 500,
-              letterSpacing: '.04em',
+              letterSpacing: 0,
               color: 'var(--n-100)',
               overflowWrap: 'anywhere',
             }}
@@ -318,57 +299,70 @@ function ServiceRow({
           <span style={pillStyle}>{svc.kind}</span>
           {svc.desiredReplicas === 0 && <span style={pillStyle}>{t('scaledToZero')}</span>}
         </div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-60)' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: 0, color: 'var(--n-60)' }}>
           {svc.namespace}
         </div>
       </div>
 
+      {/* 13 past days + today (the toggle); the hourly panel spans the row. */}
+      <StripToggle
+        id={panelId}
+        groupLabel={t('dailyAria', { name: svc.name })}
+        label={`${t('toggleLabel', { name: svc.name })} · ${todayTitle}`}
+        todayStyle={bucketStyle(todayStatus)}
+        todayTitle={todayTitle}
+        pastBars={past.map((d) => (
+          <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} />
+        ))}
+        hourly={<HourlyStrip svc={svc} generatedAtMs={generatedAtMs} fmt={fmt} t={t} />}
+      />
+
+      {/* Numbers */}
+      <div className="svc-num" style={{ ...smallMono, gridArea: 'a24' }}>
+        {mlabel(`${t('availability')} ${t('span24h')}`)}
+        <span title={cov24}>{pct(svc.availability24h)}</span>
+      </div>
+      <div className="svc-num" style={{ ...smallMono, gridArea: 'a14' }}>
+        {mlabel(`${t('availability')} ${t('span14d')}`)}
+        <span title={cov14}>{pct(svc.availability14d)}</span>
+      </div>
+      <div className="svc-num" style={{ ...smallMono, gridArea: 'rst' }}>
+        {mlabel(`${t('restarts')} ${t('span24h')} · ${t('span14d')}`)}
+        {num(svc.restarts24h)} · {num(svc.restarts14d)}
+      </div>
+
       {/* Usage */}
-      <div style={{ flex: '1 1 12rem', minWidth: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem' }}>
+      <div style={{ gridArea: 'use', minWidth: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem' }}>
         <Meter label={t('cpu')} usage={svc.cpu} fmt={fmt} t={t} />
         <Meter label={t('mem')} usage={svc.mem} fmt={fmt} t={t} />
       </div>
-
-      {/* Strips: 13 past days + today (the toggle), hourly panel below.
-          Not squeezed below the hourly strip's 190px. */}
-      <div style={{ flex: '0 1 auto', minWidth: '12.5rem' }}>
-        <div style={microLabel}>{t('daily')}</div>
-        <StripToggle
-          id={panelId}
-          groupLabel={t('dailyAria', { name: svc.name })}
-          label={`${t('toggleLabel', { name: svc.name })} · ${todayTitle}`}
-          todayColor={BUCKET_COLOR[todayStatus]}
-          todayOpacity={bucketOpacity(todayStatus)}
-          todayTitle={todayTitle}
-          pastBars={past.map((d) => (
-            <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} width={7} height={12} />
-          ))}
-          hourly={<HourlyStrip svc={svc} generatedAtMs={generatedAtMs} fmt={fmt} t={t} />}
-        />
-      </div>
-
-      {/* Numbers */}
-      <div style={{ flex: '1 1 10rem', minWidth: 0, display: 'grid', gap: '.4rem' }}>
-        <div>
-          <div style={microLabel}>{t('availability')}</div>
-          <div style={smallMono}>
-            <span title={cov24}>
-              {t('span24h')} {pct(svc.availability24h)}
-            </span>
-            {' · '}
-            <span title={cov14}>
-              {t('span14d')} {pct(svc.availability14d)}
-            </span>
-          </div>
-        </div>
-        <div>
-          <div style={microLabel}>{t('restarts')}</div>
-          <div style={smallMono}>
-            {t('span24h')} {num(svc.restarts24h)} · {t('span14d')} {num(svc.restarts14d)}
-          </div>
-        </div>
-      </div>
     </li>
+  );
+}
+
+// Column header of the matrix: the same `.svc-row` grid (and padding / border
+// box) as the rows, so the columns line up; hidden below 64rem, where each
+// cell carries its own label. The day labels come from the first workload.
+function MatrixHeader({ days, fmt, t }: { days: DailyAvailability[]; fmt: Formatters; t: Translate }) {
+  return (
+    <div className="svc-row svc-head" aria-hidden="true">
+      <div style={{ ...microLabel, gridArea: 'name', marginBottom: 0 }}>{t('workload')}</div>
+      {/* The packed 7px strip has no room for per-day numbers: the header
+          names the range instead (first day – today). */}
+      <div style={{ ...microLabel, gridArea: 'days', marginBottom: 0, letterSpacing: 0 }}>
+        {days.length > 0 ? `${fmt.day(days[0].startMs)} – ${fmt.day(days[days.length - 1].startMs)}` : null}
+      </div>
+      <div style={{ ...microLabel, gridArea: 'a24', marginBottom: 0, textAlign: 'right' }} title={t('availability')}>
+        {t('span24h')}
+      </div>
+      <div style={{ ...microLabel, gridArea: 'a14', marginBottom: 0, textAlign: 'right' }} title={t('availability')}>
+        {t('span14d')}
+      </div>
+      <div style={{ ...microLabel, gridArea: 'rst', marginBottom: 0, textAlign: 'right' }}>{t('restarts')}</div>
+      <div style={{ ...microLabel, gridArea: 'use', marginBottom: 0 }}>
+        {t('cpu')} / {t('mem')}
+      </div>
+    </div>
   );
 }
 
@@ -382,8 +376,8 @@ function Legend({ t }: { t: Translate }) {
         flexWrap: 'wrap',
         gap: '.5rem 1.25rem',
         fontFamily: 'var(--mono)',
-        fontSize: '.65rem',
-        letterSpacing: '.03em',
+        fontSize: 'var(--fs-12)',
+        letterSpacing: 0,
         color: 'var(--n-60)',
         marginBottom: '1rem',
       }}
@@ -397,8 +391,7 @@ function Legend({ t }: { t: Translate }) {
               width: 10,
               height: 10,
               borderRadius: 1,
-              background: BUCKET_COLOR[s],
-              opacity: bucketOpacity(s),
+              ...bucketStyle(s),
             }}
           />
           {t(`legend.${s}`)}
@@ -445,6 +438,8 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
         ) : (
           <>
             <Legend t={t} />
+            <div style={{ paddingInline: '.75rem' }}>
+            <MatrixHeader days={report.services[0].daily} fmt={fmt} t={t} />
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.5rem', minWidth: 0 }}>
               {report.services.map((svc) => (
                 <ServiceRow
@@ -457,6 +452,7 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
                 />
               ))}
             </ul>
+            </div>
           </>
         )}
       </>
@@ -476,9 +472,9 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
               <h1 style={{ ...monoKicker, fontWeight: 400 }}>{t('kicker')}</h1>
               <span style={privatePillStyle}>{t('adminOnly')}</span>
             </div>
-            <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
+            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
           </div>
-          <p style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-60)' }}>
+          <p style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: 0, color: 'var(--n-60)' }}>
             {t('meta', { time })}
           </p>
         </div>

@@ -13,7 +13,7 @@ import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 export const SITE_LAUNCH_DATE = '2026-06-25';
 
 export const PAGE_LAST_MODIFIED = {
-  '/': '2026-11-08',
+  '/': '2026-11-09',
   '/about': '2026-11-08',
   '/it': '2026-11-08',
   // Construction-first offer, Gate-0 prices, example tiles (#145).

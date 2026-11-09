@@ -5,7 +5,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 ## architect
 
 - Output goes to `INTERFACES.md` (route/component/API-usage contract); for cross-repo work also a spec under `../docs/`.
-- Read first: `docs/INDEX.md`, and the prototype source for the area in scope (design bundle: `shared.jsx`, `pages.jsx`, `dashboard.jsx`, `auth-admin.jsx`, `device-admin.jsx`), which is authoritative for layout and styling. The old `furchert-ch-website-spec.md` is superseded; never follow it.
+- Read first: `docs/INDEX.md`, and the prototype source for the area in scope (design bundle: `shared.jsx`, `pages.jsx`, `dashboard.jsx`, `auth-admin.jsx`, `device-admin.jsx`), which is the starting point for layout and styling (the live code wins where it deliberately deviates). The old `furchert-ch-website-spec.md` is superseded; never follow it.
 - For dashboard/admin work also read `../auth-service/INTERFACES.md` and `../device-service/README.md` ("REST Endpoints", "Schedules"). Do not invent backend endpoints; only those documented there (and `../data-service/INTERFACES.md` for `/dashboard/network`).
 - Per area the contract must define: route(s) (App Router path, locale handling) and which are public vs. OIDC-gated; component tree (props, data source `src/data/*` / i18n / backend, client vs. server component); i18n keys added (de/en) and static data modules touched.
 - For backend-connected surfaces: exact upstream endpoints (method, path, auth, request/response shape), the Next route handler that proxies them (so the OIDC access token stays server-side), and the role gating (`role=ADMIN` for admin writes).
@@ -14,7 +14,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 
 ## implementer
 
-- Read the exported Claude Design prototype (ETHON) in addition to the contracts, and recreate it pixel-faithfully (spacing, fonts, borders, the `.border-x` grid); restructure internals only where Next/RSC requires it.
+- Read the exported Claude Design prototype (ETHON) in addition to the contracts as the starting point. Follow the live ETHON system (tokens, `--fs-*`, `.border-x`, `.cell-grid`, StatusLabel); fix craft defects freely, propose bigger direction changes first.
 - Server Components by default; `'use client'` only where interactivity needs it. Shared types in `src/types/`, component-only types co-located.
 - Styling: ETHON tokens from `src/styles/globals.css` via CSS variables (`var(--blue-base)`, `var(--n-60)`, ...). No UI kit, no second styling system.
 - Copy via next-intl (`src/i18n/messages/{de,en}.json`), static content typed in `src/data/`; no hardcoded UI strings. Both locales must work; `/` redirects to `/de`.
@@ -28,7 +28,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 
 Review in addition to the generic checklist:
 - OIDC access tokens never reach the browser; OIDC-gated routes enforced server-side; admin write actions gated on `role=ADMIN` per the service `INTERFACES.md` files.
-- Pixel fidelity: the UI matches the prototype source for the touched page (tokens, spacing, `.border-x` grid) in DE and EN.
+- Design: the UI is consistent with the live ETHON system (tokens, `--fs-*`, `.border-x` grid) in DE and EN; craft fixes are welcome, bigger direction changes need a proposal; where the live code deliberately deviates from the prototype, the live code wins.
 - Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules"); surfaces without a real endpoint are labelled placeholders, never fabricated "live" data.
 - `/automation` stays a static offer page: no outbound network calls, no AI or scan API routes, no fake success; its examples are labelled as illustrative.
 - Server vs. client components used appropriately; data fetched server-side.
@@ -58,7 +58,7 @@ Additional checks:
 - Secrets and auth: OIDC access token stays server-side; OIDC-gated routes enforced server-side; admin writes require `role=ADMIN`; no `.env` committed, k8s env via `secretKeyRef`.
 - Automation = static offer page: plan keeps `/automation` without any AI backend (no Claude API, no AI endpoint, no persistence, no accidental backend wiring); `/automation/scan` stays retired.
 - Backend integration: consumed endpoints exist in `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules") (not invented); shapes correct; failure handled (backend down, 401/403); surfaces without an endpoint are explicit placeholders.
-- Design fidelity: pixel-faithful recreation of the prototype (tokens, `.border-x` grid, DE+EN), not a redesign; the superseded `furchert-ch-website-spec.md` is not followed by mistake.
+- Design: consistent with the live ETHON system (tokens, `--fs-*`, `.border-x` grid, DE+EN); craft fixes are welcome, bigger direction changes need a proposal; the superseded `furchert-ch-website-spec.md` is not followed by mistake.
 - Next.js: server/client split correct, data fetched server-side, both locales handled, `/` to `/de` redirect intact, no required in-memory state across pod restarts.
 - Failure mode question: what does the user see if auth-service or device-service is unavailable?
 - Resumability: milestone ends buildable and shippable.

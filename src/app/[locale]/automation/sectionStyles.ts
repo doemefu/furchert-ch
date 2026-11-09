@@ -15,8 +15,8 @@ export const sectionStyle: CSSProperties = {
 // n-60 instead of the prototype's label grey for AA contrast (#145).
 export const labelMono: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
   marginBottom: '1rem',
@@ -24,16 +24,16 @@ export const labelMono: CSSProperties = {
 
 export const h2Style: CSSProperties = {
   fontFamily: 'var(--sans)',
-  fontSize: 'clamp(1.5rem,3vw,2.25rem)',
+  fontSize: 'var(--fs-h2)',
   fontWeight: 500,
-  letterSpacing: '-.03em',
+  letterSpacing: '-.02em',
   color: 'var(--n-100)',
   marginBottom: '1rem',
 };
 
 // Short direct answer under a question heading (GEO: quotable by AI search).
 export const leadStyle: CSSProperties = {
-  fontSize: '1rem',
+  fontSize: 'var(--fs-16)',
   color: 'var(--n-70)',
   lineHeight: 1.55,
   maxWidth: '62ch',
@@ -43,30 +43,30 @@ export const leadStyle: CSSProperties = {
 // Card title (h3): the prototype's process-step title.
 export const cardTitle: CSSProperties = {
   fontFamily: 'var(--sans)',
-  fontSize: '1.125rem',
+  fontSize: 'var(--fs-18)',
   fontWeight: 500,
-  letterSpacing: '-.02em',
+  letterSpacing: 0,
   color: 'var(--n-100)',
 };
 
 // Small mono field label (dt). n-60 instead of the label grey for AA contrast.
 export const fieldLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 export const bodyText: CSSProperties = {
-  fontSize: '.9375rem',
+  fontSize: 'var(--fs-15)',
   color: 'var(--n-70)',
   lineHeight: 1.55,
 };
 
 export const footnoteStyle: CSSProperties = {
   marginTop: 'clamp(1rem, 3vw, 1.5rem)',
-  fontSize: '.875rem',
+  fontSize: 'var(--fs-14)',
   color: 'var(--n-60)',
   lineHeight: 1.55,
   maxWidth: '68ch',
@@ -80,9 +80,7 @@ export const textLink: CSSProperties = {
   gap: '.4rem',
   minHeight: 44,
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
-  letterSpacing: '.04em',
-  textTransform: 'uppercase',
+  fontSize: 'var(--fs-12)',
   color: 'var(--blue-base)',
   textDecoration: 'none',
 };

@@ -7,7 +7,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon, type IconName } from '@/components/ui/Icon';
-import { StatusDot, STATUS_INK } from '@/components/ui/StatusDot';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import type { HomelabApp } from '@/data/homelab-apps';
 import { Link } from '@/i18n/navigation';
 
@@ -30,16 +30,16 @@ const ADMIN_ROUTES: Record<string, string> = { 'Auth Service': '/dashboard/auth'
 
 const sectionLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const chipBase: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.3rem .65rem',
   borderRadius: '2px',
@@ -75,8 +75,8 @@ const actionBase: CSSProperties = {
   alignItems: 'center',
   gap: '.35rem',
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.35rem .7rem',
   border: 'none',
@@ -159,6 +159,7 @@ export function AppGrid({
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
           gap: '.75rem',
+          paddingInline: '.75rem',
         }}
       >
         {filtered.map((app) => {
@@ -186,36 +187,23 @@ export function AppGrid({
                 <div style={iconBoxStyle}>
                   <Icon name={iconName} size={14} />
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                  <StatusDot status={app.status} />
-                  <span
-                    style={{
-                      fontFamily: 'var(--mono)',
-                      fontSize: '.65rem',
-                      letterSpacing: '.06em',
-                      textTransform: 'uppercase',
-                      color: STATUS_INK[app.status],
-                    }}
-                  >
-                    {t(`status.${app.status}`)}
-                  </span>
-                </div>
+                <StatusLabel status={app.status}>{t(`status.${app.status}`)}</StatusLabel>
               </div>
 
               <div>
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: '.95rem',
+                    fontSize: 'var(--fs-15)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                     marginBottom: '.25rem',
                   }}
                 >
                   {app.name}
                 </div>
-                <p style={{ fontSize: '.825rem', color: 'var(--n-60)', lineHeight: 1.45 }}>{app.desc}</p>
+                <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-60)', lineHeight: 1.45 }}>{app.desc}</p>
               </div>
 
               <div
@@ -230,8 +218,8 @@ export function AppGrid({
                 <span
                   style={{
                     fontFamily: 'var(--mono)',
-                    fontSize: '.65rem',
-                    letterSpacing: '.04em',
+                    fontSize: 'var(--fs-12)',
+                    letterSpacing: '.05em',
                     textTransform: 'uppercase',
                     color: 'var(--n-60)',
                   }}
@@ -250,8 +238,8 @@ export function AppGrid({
                         alignItems: 'center',
                         gap: '.3rem',
                         fontFamily: 'var(--mono)',
-                        fontSize: '.65rem',
-                        letterSpacing: '.04em',
+                        fontSize: 'var(--fs-12)',
+                        letterSpacing: '.05em',
                         textTransform: 'uppercase',
                         color: 'var(--n-60)',
                         textDecoration: 'none',

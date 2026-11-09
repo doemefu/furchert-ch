@@ -15,10 +15,8 @@ export function Tag({
     <span
       style={{
         fontFamily: 'var(--mono)',
-        fontSize: '.6875rem',
-        letterSpacing: '.03em',
-        textTransform: 'uppercase',
-        padding: '.2rem .55rem',
+        fontSize: 'var(--fs-12)',
+        padding: '.25rem .5rem',
         background: blue ? 'var(--blue-wash)' : 'var(--n-10)',
         border: `1px solid ${blue ? 'rgba(14,60,166,.2)' : 'rgba(162,167,176,.3)'}`,
         borderRadius: '2px',

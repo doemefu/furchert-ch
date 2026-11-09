@@ -9,8 +9,8 @@ const BORDER = '1px solid rgba(162,167,176,.22)';
 
 const labelMono = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase' as const,
   color: 'var(--n-60)',
   // DM Mono is loaded at 400/500 only; h2 would otherwise get a faux bold.
@@ -18,14 +18,14 @@ const labelMono = {
 };
 
 const bodyText = {
-  fontSize: '1rem',
+  fontSize: 'var(--fs-16)',
   color: 'var(--n-60)',
   lineHeight: 1.6,
-  letterSpacing: '-.01em',
+  letterSpacing: 0,
   maxWidth: '70ch',
 };
 
-const valueText = { fontSize: '1rem', color: 'var(--n-100)', marginTop: '.35rem' };
+const valueText = { fontSize: 'var(--fs-16)', color: 'var(--n-100)', marginTop: '.25rem' };
 
 export function LegalPage({ copy }: { copy: LegalPageCopy }) {
   return (
@@ -63,7 +63,7 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
           </section>
         ))}
 
-        <p style={{ ...labelMono, fontSize: '.75rem', padding: '2rem 0 3rem' }}>
+        <p style={{ ...labelMono, fontSize: 'var(--fs-12)', padding: '2rem 0 3rem' }}>
           {copy.updatedLabel}: {copy.updated}
         </p>
       </div>

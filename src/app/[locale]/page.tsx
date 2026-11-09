@@ -6,7 +6,8 @@ import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { CTAStrip } from '@/components/ui/CTAStrip';
-import { Ticker } from '@/components/layout/Ticker';
+import { HomeStatusLine } from '@/components/layout/HomeStatusLine';
+import { HomeOfferSheet } from './HomeOfferSheet';
 import { EXPERIENCE } from '@/data/experience';
 import { ENGAGEMENT } from '@/data/engagement';
 import { HOME_STATS } from '@/data/home-stats';
@@ -21,8 +22,8 @@ const DOTS =
 
 const labelMono = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase' as const,
   color: 'var(--n-60)',
 };
@@ -77,79 +78,84 @@ export default async function HomePage({
       />
       {/* HERO — note: layout <main> already supplies paddingTop:var(--header-h),
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
-      <section style={{ minHeight: '100svh', background: 'var(--n-10)' }}>
-        <div className="container border-x">
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: '2rem',
-              padding: '5rem 1.5rem 4rem',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                pointerEvents: 'none',
-                backgroundImage: DOTS,
-                backgroundRepeat: 'repeat',
-                backgroundSize: '1.125rem',
-              }}
-            />
-            <p style={{ ...labelMono, position: 'relative' }}>{t('hero.label')}</p>
-            <h1
-              style={{
-                fontFamily: 'var(--sans)',
-                fontSize: 'clamp(2.4rem, 7vw, 4.75rem)',
-                fontWeight: 500,
-                letterSpacing: '-.04em',
-                lineHeight: 1,
-                maxWidth: '22ch',
-                textWrap: 'balance',
-                position: 'relative',
-              }}
-            >
-              <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
-              <span style={{ color: 'var(--n-50)' }}>{t('hero.title2')}</span>
-            </h1>
-            <p
-              style={{
-                fontFamily: 'var(--sans)',
-                fontSize: 'clamp(1rem, 1.4vw, 1.375rem)',
-                color: 'var(--n-60)',
-                maxWidth: '52ch',
-                textWrap: 'balance',
-                lineHeight: 1.45,
-                letterSpacing: '-.02em',
-                position: 'relative',
-              }}
-            >
-              {t('hero.sub')}
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                gap: '.875rem',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                position: 'relative',
-                marginTop: '.5rem',
-              }}
-            >
-              <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
-                {t('hero.cta2')} <Icon name="arrow" size={12} />
-              </Btn>
-              <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
-                {t('hero.cta1')} <Icon name="arrow" size={12} />
-              </Btn>
+      <section style={{ background: 'var(--n-10)' }}>
+        <div className="container border-x home-hero">
+          <div className="home-hero-body">
+            <div className="home-hero-split" style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  backgroundImage: DOTS,
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '1.125rem',
+                }}
+              />
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  textAlign: 'left',
+                  minWidth: 0,
+                }}
+              >
+                <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0 }}>{t('hero.label')}</p>
+                <h1
+                  className="home-hero-title"
+                  style={{
+                    fontFamily: 'var(--sans)',
+                    fontWeight: 500,
+                    letterSpacing: '-.03em',
+                    lineHeight: 1,
+                    textWrap: 'balance',
+                    marginTop: '1rem',
+                  }}
+                >
+                  <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
+                  <span style={{ color: 'var(--n-100)' }}>{t('hero.title2')}</span>
+                </h1>
+                <p
+                  style={{
+                    fontFamily: 'var(--sans)',
+                    fontSize: 'var(--fs-lead)',
+                    color: 'var(--n-60)',
+                    maxWidth: '52ch',
+                    textWrap: 'balance',
+                    lineHeight: 1.45,
+                    letterSpacing: 0,
+                    marginTop: '1.5rem',
+                  }}
+                >
+                  {t('hero.sub')}
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '.75rem',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-start',
+                    marginTop: '2.5rem',
+                  }}
+                >
+                  <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
+                    {t('hero.cta2')} <Icon name="arrow" size={12} />
+                  </Btn>
+                  <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
+                    {t('hero.cta1')} <Icon name="arrow" size={12} />
+                  </Btn>
+                </div>
+              </div>
+              <div style={{ position: 'relative', minWidth: 0 }}>
+                <HomeOfferSheet locale={locale} />
+              </div>
             </div>
           </div>
 
           <div
+            className="cell-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -158,7 +164,7 @@ export default async function HomePage({
           >
             <div
               style={{
-                padding: '3rem 2rem',
+                padding: '3rem var(--card-px)',
                 borderRight: '1px solid rgba(162,167,176,.22)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
@@ -179,20 +185,21 @@ export default async function HomePage({
                     <span
                       style={{
                         flexShrink: 0,
-                        marginTop: '.45rem',
-                        width: '.5rem',
-                        height: '.5rem',
-                        background: 'var(--n-30)',
+                        marginTop: '8px',
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: 'var(--n-40)',
                       }}
                     />
                     <div>
                       <div
                         style={{
-                          fontSize: '1rem',
+                          fontSize: 'var(--fs-16)',
                           fontWeight: 500,
                           color: 'var(--n-100)',
                           lineHeight: 1.2,
-                          letterSpacing: '-.02em',
+                          letterSpacing: 0,
                         }}
                       >
                         {e.title}
@@ -200,11 +207,9 @@ export default async function HomePage({
                       <div
                         style={{
                           fontFamily: 'var(--mono)',
-                          fontSize: '.72rem',
-                          textTransform: 'uppercase',
-                          letterSpacing: '.04em',
+                          fontSize: 'var(--fs-12)',
                           color: 'var(--n-60)',
-                          marginTop: '.2rem',
+                          marginTop: '.25rem',
                         }}
                       >
                         {e.org}
@@ -216,7 +221,7 @@ export default async function HomePage({
             </div>
             <div
               style={{
-                padding: '3rem 2rem',
+                padding: '3rem var(--card-px)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
             >
@@ -236,20 +241,21 @@ export default async function HomePage({
                     <span
                       style={{
                         flexShrink: 0,
-                        marginTop: '.45rem',
-                        width: '.5rem',
-                        height: '.5rem',
-                        background: 'var(--n-30)',
+                        marginTop: '8px',
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: 'var(--n-40)',
                       }}
                     />
                     <div>
                       <div
                         style={{
-                          fontSize: '1rem',
+                          fontSize: 'var(--fs-16)',
                           fontWeight: 500,
                           color: 'var(--n-100)',
                           lineHeight: 1.2,
-                          letterSpacing: '-.02em',
+                          letterSpacing: 0,
                         }}
                       >
                         {e.title}
@@ -257,11 +263,9 @@ export default async function HomePage({
                       <div
                         style={{
                           fontFamily: 'var(--mono)',
-                          fontSize: '.72rem',
-                          textTransform: 'uppercase',
-                          letterSpacing: '.04em',
+                          fontSize: 'var(--fs-12)',
                           color: 'var(--n-60)',
-                          marginTop: '.2rem',
+                          marginTop: '.25rem',
                         }}
                       >
                         {e.org}
@@ -275,7 +279,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      <Ticker />
+      <HomeStatusLine />
 
       <section style={{ background: 'var(--white)' }}>
         <div className="container border-x">
@@ -284,9 +288,9 @@ export default async function HomePage({
             <h2
               style={{
                 fontFamily: 'var(--sans)',
-                fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                fontSize: 'var(--fs-h2)',
                 fontWeight: 500,
-                letterSpacing: '-.03em',
+                letterSpacing: '-.02em',
                 color: 'var(--n-100)',
                 maxWidth: '22ch',
               }}
@@ -295,10 +299,10 @@ export default async function HomePage({
             </h2>
           </div>
           <div
+            className="cell-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              borderTop: '1px solid rgba(162,167,176,.22)',
             }}
           >
             {teaserKeys.map((key) => (
@@ -308,7 +312,7 @@ export default async function HomePage({
                 data-track={trackAttr('link', `home-tile-${key}`)}
                 className="hover-card"
                 style={{
-                  padding: '2.5rem 2rem',
+                  padding: '2.5rem var(--card-px)',
                   borderRight: '1px solid rgba(162,167,176,.22)',
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}
@@ -330,9 +334,9 @@ export default async function HomePage({
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: '1.125rem',
+                    fontSize: 'var(--fs-18)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                     marginBottom: '.5rem',
                   }}
@@ -341,10 +345,10 @@ export default async function HomePage({
                 </div>
                 <p
                   style={{
-                    fontSize: '.9375rem',
+                    fontSize: 'var(--fs-15)',
                     color: 'var(--n-60)',
                     lineHeight: 1.5,
-                    letterSpacing: '-.01em',
+                    letterSpacing: 0,
                   }}
                 >
                   {t(`teasers.${key}.text`)}
@@ -353,8 +357,8 @@ export default async function HomePage({
                   style={{
                     marginTop: '1.5rem',
                     fontFamily: 'var(--mono)',
-                    fontSize: '.75rem',
-                    letterSpacing: '.04em',
+                    fontSize: 'var(--fs-12)',
+                    letterSpacing: '.05em',
                     textTransform: 'uppercase',
                     color: 'var(--blue-base)',
                   }}
@@ -370,6 +374,7 @@ export default async function HomePage({
       <section>
         <div className="container border-x">
           <div
+            className="cell-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -379,28 +384,28 @@ export default async function HomePage({
               <div
                 key={i}
                 style={{
-                  padding: '2.5rem 1.75rem',
+                  padding: '2.5rem var(--card-px)',
                   borderRight: '1px solid rgba(162,167,176,.22)',
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}
               >
-                <div style={{ ...labelMono, fontSize: '.75rem', letterSpacing: '.05em', marginBottom: '.3rem' }}>
+                <div style={{ ...labelMono, fontSize: 'var(--fs-12)', letterSpacing: '.05em', marginBottom: '.25rem' }}>
                   {s.i18n[locale].unit}
                 </div>
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    fontSize: 'var(--fs-title)',
                     fontVariantNumeric: 'tabular-nums',
                     fontWeight: 500,
-                    letterSpacing: '-.04em',
+                    letterSpacing: '-.03em',
                     color: 'var(--n-100)',
                     lineHeight: 1,
                   }}
                 >
                   {s.value}
                 </div>
-                <div style={{ fontSize: '.875rem', color: 'var(--n-60)', marginTop: '.5rem' }}>
+                <div style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', marginTop: '.5rem' }}>
                   {s.i18n[locale].label}
                 </div>
               </div>

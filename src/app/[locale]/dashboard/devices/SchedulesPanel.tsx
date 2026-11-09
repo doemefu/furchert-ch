@@ -20,6 +20,7 @@ import { CronField } from './CronField';
 import { FieldError, FormError, inputAria, useErrorText } from './FormFeedback';
 import { useFocusTrap, useReturnFocus } from '../useDrawerFocus';
 import { makeFormatters } from './format';
+import { StatusDot } from '@/components/ui/StatusDot';
 import { BORDER, MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle } from '../auth/ui';
 
 /** A schedule as rendered — `nextRun` labels and the cron description come from the server. */
@@ -103,7 +104,7 @@ export function SchedulesPanel({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.75rem', flexWrap: 'wrap', marginBottom: '.75rem' }}>
         <div>
           <MonoLabel>{t('schedules.count', { count: schedules.length })}</MonoLabel>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>{t('schedules.source')}</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>{t('schedules.source')}</span>
         </div>
         <button type="button" ref={newButton} onClick={(e) => openDrawer('new', e.currentTarget)} style={btnPrimary}>
           {t('schedules.new')}
@@ -111,8 +112,8 @@ export function SchedulesPanel({
       </div>
 
       <div style={{ padding: '.8rem 1rem', marginBottom: '1rem', background: 'var(--blue-wash)', border: '1px solid rgba(14,60,166,.2)', borderRadius: '2px' }}>
-        <p style={{ fontSize: '.8rem', color: 'var(--n-80)', lineHeight: 1.55 }}>{t('schedules.fanout')}</p>
-        <p style={{ fontSize: '.8rem', color: 'var(--n-80)', lineHeight: 1.55, marginTop: '.35rem' }}>{t('schedules.twoSchedules')}</p>
+        <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-80)', lineHeight: 1.55 }}>{t('schedules.fanout')}</p>
+        <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-80)', lineHeight: 1.55, marginTop: '.35rem' }}>{t('schedules.twoSchedules')}</p>
       </div>
 
       {/* Result of the last save / delete / toggle */}
@@ -130,7 +131,7 @@ export function SchedulesPanel({
               border: '1px solid rgba(34,197,94,.3)',
               borderRadius: '2px',
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
+              fontSize: 'var(--fs-12)',
               color: 'var(--status-online-ink)',
             }}
           >
@@ -143,7 +144,7 @@ export function SchedulesPanel({
       </div>
       <div role="alert">
         {rowError && (
-          <p style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--status-offline-ink)', marginBottom: '1rem', lineHeight: 1.5 }}>
+          <p style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--status-offline-ink)', marginBottom: '1rem', lineHeight: 1.5 }}>
             {t('schedules.rowError', { id: rowError.id, error: rowError.text })}
           </p>
         )}
@@ -162,8 +163,8 @@ export function SchedulesPanel({
               background: 'var(--n-10)',
               borderBottom: BORDER,
               fontFamily: 'var(--mono)',
-              fontSize: '.62rem',
-              letterSpacing: '.06em',
+              fontSize: 'var(--fs-12)',
+              letterSpacing: '.05em',
               textTransform: 'uppercase',
               color: 'var(--n-60)',
             }}
@@ -178,7 +179,7 @@ export function SchedulesPanel({
             <span />
           </div>
           {schedules.length === 0 && (
-            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
               {t('schedules.none')}
             </div>
           )}
@@ -193,13 +194,13 @@ export function SchedulesPanel({
                 padding: '.7rem 1rem',
                 borderBottom: i < schedules.length - 1 ? '1px solid rgba(162,167,176,.18)' : 'none',
                 fontFamily: 'var(--mono)',
-                fontSize: '.76rem',
+                fontSize: 'var(--fs-13)',
                 color: 'var(--n-90)',
                 opacity: s.active ? 1 : 0.7,
               }}
             >
               <span style={{ color: 'var(--n-60)' }}>#{s.id}</span>
-              <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: '50%', background: s.active ? 'var(--status-online)' : 'var(--status-unknown)' }} />
+              <StatusDot status={s.active ? 'online' : 'unknown'} />
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.deviceName ?? '—'}</span>
               <span>
                 {s.state !== null && isDeviceField(s.field) ? (
@@ -214,13 +215,13 @@ export function SchedulesPanel({
               </span>
               <span>
                 <span style={{ color: 'var(--n-100)' }}>{describe(s)}</span>
-                <span style={{ display: 'block', fontSize: '.66rem', color: 'var(--n-60)', marginTop: '.15rem' }}>{s.cronExpression ?? '—'} · UTC</span>
+                <span style={{ display: 'block', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem' }}>{s.cronExpression ?? '—'} · UTC</span>
               </span>
               <span>
                 {s.nextRunAbs ? (
                   <>
                     <span style={{ color: 'var(--n-100)' }}>{s.nextRunAbs}</span>
-                    <span style={{ display: 'block', fontSize: '.66rem', color: 'var(--n-60)', marginTop: '.15rem' }}>{s.nextRunRel}</span>
+                    <span style={{ display: 'block', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem' }}>{s.nextRunRel}</span>
                   </>
                 ) : (
                   <span style={{ color: 'var(--n-60)' }}>{s.active ? t('schedules.noNextRunInvalid') : t('schedules.noNextRunInactive')}</span>
@@ -302,8 +303,8 @@ function ActiveSwitch({ row, onResult }: { row: ScheduleRow; onResult: (id: numb
           cursor: locked ? 'not-allowed' : 'pointer',
           opacity: locked ? 0.45 : pending ? 0.6 : 1,
           fontFamily: 'var(--mono)',
-          fontSize: '.66rem',
-          letterSpacing: '.04em',
+          fontSize: 'var(--fs-12)',
+          letterSpacing: '.05em',
           textTransform: 'uppercase',
           color: row.active ? 'var(--status-online-ink)' : 'var(--n-60)',
         }}
@@ -408,7 +409,7 @@ function ScheduleDrawer({
   };
 
   const stateAria = inputAria(saveState, 'state');
-  const radioLabel = { display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)' };
+  const radioLabel = { display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)' };
 
   // Portalled to <body>: the page's layout wrappers form a stacking context
   // below the fixed site header, which would otherwise cover the drawer top.
@@ -427,19 +428,19 @@ function ScheduleDrawer({
       >
         <div style={{ padding: '1.5rem', borderBottom: BORDER, background: 'var(--white)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-60)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
               {isNew ? 'POST /schedules' : `PUT /schedules/${row.id}`}
             </span>
             <button
               type="button"
               onClick={onClose}
               aria-label={t('drawer.close')}
-              style={{ fontFamily: 'var(--mono)', fontSize: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--n-60)' }}
+              style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-16)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--n-60)' }}
             >
               ×
             </button>
           </div>
-          <div id="schedule-drawer-title" style={{ fontFamily: 'var(--sans)', fontSize: '1.25rem', fontWeight: 500, letterSpacing: '-.02em', color: 'var(--n-100)' }}>
+          <div id="schedule-drawer-title" style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-18)', fontWeight: 500, letterSpacing: 0, color: 'var(--n-100)' }}>
             {isNew ? t('drawer.newTitle') : t('drawer.editTitle', { id: row.id })}
           </div>
         </div>

@@ -28,9 +28,7 @@ import { formAnalyticsFlag, formAwaitFirstFlush } from '@/lib/analytics/formHook
 
 const labelStyle = {
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
-  letterSpacing: '.05em',
-  textTransform: 'uppercase' as const,
+  fontSize: 'var(--fs-12)',
   color: 'var(--n-60)',
 };
 const inputStyle = {
@@ -39,12 +37,12 @@ const inputStyle = {
   borderRadius: '2px',
   background: 'var(--n-10)',
   fontFamily: 'var(--sans)',
-  fontSize: '1rem',
+  fontSize: 'var(--fs-16)',
   color: 'var(--n-100)',
   outline: 'none',
 };
-const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '.4rem' };
-const helpStyle: CSSProperties = { fontSize: '.8125rem', color: 'var(--n-60)', lineHeight: 1.5 };
+const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '.5rem' };
+const helpStyle: CSSProperties = { fontSize: 'var(--fs-13)', color: 'var(--n-60)', lineHeight: 1.5 };
 // Radio and checkbox rows: the whole row is the label, at least 44 px high.
 const choiceStyle: CSSProperties = {
   display: 'flex',
@@ -52,7 +50,7 @@ const choiceStyle: CSSProperties = {
   gap: '.75rem',
   minHeight: 44,
   fontFamily: 'var(--sans)',
-  fontSize: '1rem',
+  fontSize: 'var(--fs-16)',
   lineHeight: 1.4,
   color: 'var(--n-100)',
   cursor: 'pointer',
@@ -68,9 +66,7 @@ const textLinkStyle: CSSProperties = {
   alignItems: 'center',
   minHeight: 44,
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
-  letterSpacing: '.04em',
-  textTransform: 'uppercase',
+  fontSize: 'var(--fs-12)',
   color: 'var(--blue-base)',
   textDecoration: 'none',
 };
@@ -185,16 +181,16 @@ export function ContactForm() {
           <h2
             ref={sentRef}
             tabIndex={-1}
-            style={{ fontFamily: 'var(--sans)', fontSize: '1.125rem', fontWeight: 500, color: 'var(--n-100)' }}
+            style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-18)', fontWeight: 500, color: 'var(--n-100)' }}
           >
             {t('sent')}
           </h2>
         </div>
-        <p style={{ fontSize: '.9375rem', color: 'var(--n-60)', lineHeight: 1.55 }}>
+        <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-60)', lineHeight: 1.55 }}>
           {sent.topic === 'demo' ? t('sentSubDemo') : t('sentSub')}
         </p>
         {sent.phone && (
-          <p style={{ fontSize: '.9375rem', color: 'var(--n-70)', lineHeight: 1.55 }}>
+          <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', lineHeight: 1.55 }}>
             {t('sentPhone', { phone: sent.phone })}
           </p>
         )}
@@ -232,7 +228,7 @@ export function ContactForm() {
         aria-describedby="contact-topic-help"
         style={{ border: 0, padding: 0, margin: 0, minWidth: 0, display: 'flex', flexDirection: 'column' }}
       >
-        <legend style={{ ...labelStyle, padding: 0, marginBottom: '.4rem' }}>{t('topicLegend')}</legend>
+        <legend style={{ ...labelStyle, padding: 0, marginBottom: '.5rem' }}>{t('topicLegend')}</legend>
         <label style={choiceStyle}>
           <input
             type="radio"
@@ -360,7 +356,7 @@ export function ContactForm() {
         </select>
       </div>
       {error && (
-        <p id="contact-error" role="alert" style={{ fontSize: '.875rem', color: '#dc2626', lineHeight: 1.5 }}>
+        <p id="contact-error" role="alert" style={{ fontSize: 'var(--fs-14)', color: '#dc2626', lineHeight: 1.5 }}>
           {errorText(error)}
         </p>
       )}

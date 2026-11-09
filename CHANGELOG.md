@@ -6,6 +6,26 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Web analytics abuse limits, durable erasure and GPC/DNT, shipped dark**
+  (#157, WA-5 of Epic doemefu/homelab#348). Everything below stays off
+  until `ANALYTICS_UI_ENABLED` flips in WA-6, except the forward-queue
+  change, which the live enquiry count already uses.
+  - `POST /api/v` drops bots and prefetch requests and is rate-limited per
+    client (IPv6 /64) and globally (429 with `Retry-After`); at most 5 new
+    visitor ids per hour and client.
+  - `POST /api/v/forget` has its own limits and now erases the visitor's
+    events in data-service. If data-service is down, the answer is 503 and
+    the `fa_forget` cookie keeps the ids for a later retry; failed ids are
+    also retried in the background for 24 h.
+  - The forward queue gives goal and enquiry their own lane, keeps sending
+    them while data-service caps analytics events, and never resends an
+    erased visitor's events.
+  - Browsers with Global Privacy Control or Do Not Track are declined
+    automatically, with one forget; an explicit Allow overrides the signal.
+  - The tracker honours `Retry-After` on a rate-limited collect.
+
+  Needs data-service #56 to be live. No new dependency.
+
 - **Web analytics dashboard, remaining sections** (#156, WA-4b of Epic
   doemefu/homelab#348): `/dashboard/analytics` gains funnels (offer and
   contact form, step rates, "< 3" for small steps, rate comparison only on a
@@ -124,10 +144,88 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Analytics dashboard type and details** (#191): `/dashboard/analytics` and
+  the never-track switch use the `--fs-*` type tokens (small labels now 12 px);
+  the status strip announces each collector status once; chart legends use the
+  12×2 line key of `/dashboard/network`.
+- **Frame-line doubles and touch targets** (#188): full-width boxes on
+  `/automation` use the page frame as their sides, gapped card rows on
+  `/automation` and `/dashboard` inset by their gap, the contact columns
+  inset by the card padding, and the services day cells are 28px tall on
+  phones.
 - **Copy pass** (#160): new home hero, corrected project cards, German status
   labels, unified numbers; Aemtlifyer card removed.
+- **Copy pass follow-ups** (#163): `/projects/aemtlifyer` redirects (308) to
+  the projects list; the dashboard tile for Karaokee shows "Repo".
+- **Spacing and grid pass** (#167): frame lines run unbroken through the
+  automation hero, CTA strip and footer; the home hero fits the viewport below
+  the header; buttons are 48 px high; the projects grid is 3+3 on wide screens
+  with the GitHub link as its sixth cell; 16 px page gutters and 20 px card
+  padding on phones; fractional rem spacing moved to the 4 px grid; the CTA
+  strip has a filled primary button and a quiet GitHub text link.
+- **Grid seams and contact on mobile** (#175): where a grid's last column met
+  the vertical frame line, two hairlines sat side by side; the grid now
+  reaches into the frame pixel and clips it (home, about, projects, homelab
+  showcase, automation price steps), which also stops hover backgrounds from
+  painting over the frame. Two horizontal double lines are gone (projects
+  header, rowing photo). The contact page stacks below 640 px with equal
+  20 px insets and one divider instead of uneven insets.
+- **Type scale and uppercase on public pages** (#176): 11 type tokens (`--fs-12`
+  to `--fs-hero`) in `globals.css` replace about 40 ad-hoc font sizes across
+  the public pages, layout and shared components; nothing renders below a
+  12 px floor any more. Uppercase now stays only on short structural labels
+  (nav, buttons, section labels, table heads, status pills); sentences, meta
+  lines, tech names and form labels use normal case, and tracking is never
+  negative below 24 px. Dashboard tags (`Tag`, used on the network page) now
+  show their raw lowercase values (block/allow, outcomes). The rowing photo
+  caption got proper capitalisation, and the unused DM Sans weight 300 is no
+  longer loaded. The dashboard and the consent bar follow in later steps.
+- **Dashboard type scale** (#182): the signed-in dashboard (overview, network,
+  services, auth, devices) and the sign-in and no-access screens use the same
+  type tokens as the public pages. Nothing on these pages renders below the 12 px floor any
+  more, so the former 9.6 to 11.5 px micro labels, pills and table heads are
+  slightly larger. Tracking follows the final size (.05em at 12 px, .04em at
+  13 px, never negative below 24 px, none on text that is not uppercase).
+  Identifiers (HTTP paths, client ids, OAuth scopes, blocklist names, node
+  roles) are shown in their real case instead of uppercase. The users table
+  scroll floor grew from 720 to 780 px. The web analytics pages follow
+  separately.
+- **Status signature** (#177): a status is now an 8 px square LED plus plain
+  text instead of a coloured pill. This covers project status on the
+  projects pages, the live status of the homelab lab, the dashboard app tiles,
+  device freshness and switch state, user status and the service health
+  badges. The LED is hidden from screen readers where text names the status.
+  Roles, scopes, failure kinds and other labels stay pills. The home page
+  bullets are small round dots and the login legend keys are short lines, so
+  nothing else looks like the LED.
+- **Services day strip back to the original look**: healthy days are green
+  again and no-data days light grey, drawn as slim 7×12 bars packed 3 px apart
+  as before #186 (the grey, spread-out matrix read worse). The header names the
+  date range, the day column is narrower so the other columns get the room, and
+  the today toggle keeps a 24 px wide hit area.
+- **Home headline in one tone**: both lines of the home hero headline are
+  set in the primary text colour; the grey second line read as a template tell.
+- **Home first screen** (#178): the hero is now a split with the headline,
+  text and buttons on the left and one invented example quote on the right
+  (an enquiry becomes a draft quote; prices come from the customer's own
+  costing, none are shown). The endless ticker is replaced by a static status
+  line with the live state of the public services, a short fallback text when
+  no data is available, and a link to the live status.
+- **Dashboard charts** (#179): `/dashboard/network` leads with one large
+  inbound chart (requests per hour, or per UTC day above 7 d) on a time
+  axis: an hour or day without data is a gap, and the first and last slots
+  are drawn lighter. It replaces the stat tiles and the small timeline;
+  the figure shows "≈" when the numbers are sampled. `/dashboard/services` is
+  now an aligned matrix with a column header (workload, 14 days, availability,
+  restarts, CPU / MEM) that stacks on narrow screens. Blue is kept for the
+  inbound series and the "today" marker; healthy cells, bars, login successes
+  and the node and workload meters are grey. No data and no new dependency.
 
 ### Fixed
+
+- **Copilot data-boundary footnote and FAQ** (#165): /automation now names all
+  three documented exceptions to the EU Data Boundary (Bing web search,
+  Anthropic models if enabled, flex routing at peak load).
 
 - **Web analytics dashboard follow-ups** (#156, review of #170): the coverage
   chart groups days into weeks or months for longer ranges like section 1

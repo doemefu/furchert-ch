@@ -108,7 +108,7 @@ function Chip({ href, active, children }: { href: string; active: boolean; child
 export function ControlsBar({ ctx }: { ctx: Ctx }) {
   const { t, c } = ctx;
   const row = { display: 'flex', flexWrap: 'wrap', gap: '.4rem', alignItems: 'center' } as const;
-  const label = { ...monoLabel, fontSize: '.62rem', marginRight: '.25rem' };
+  const label = { ...monoLabel, marginRight: '.25rem' };
   return (
     <div style={{ display: 'grid', gap: '.6rem', padding: '1rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
       <div style={row}>
@@ -176,8 +176,8 @@ export function StatusStrip({ result, ctx }: { result: AnalyticsResult<StatusRes
             return (
               <div key={col.name} style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.4rem' }}>
-                  <StatusDot status={dot.status} label={t(`status.${dot.key}`)} />
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', fontWeight: 500, color: 'var(--n-100)' }}>{t('status.rollup')}</span>
+                  <StatusDot status={dot.status} />
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', fontWeight: 500, color: 'var(--n-100)' }}>{t('status.rollup')}</span>
                   <span style={{ ...noteStyle, marginLeft: 'auto' }}>{t(`status.${dot.key}`)}</span>
                 </div>
                 <p style={noteStyle}>
@@ -384,11 +384,11 @@ export function PagesSection({ result, ctx }: { result: AnalyticsResult<PagesRes
           <ul className="wa-pages-cards" style={{ listStyle: 'none', margin: 0, padding: 0, gap: '.5rem' }}>
             {rows.map((r) => (
               <li key={r.key} style={cardStyle}>
-                <p style={{ fontFamily: 'var(--mono)', fontSize: '.8rem', color: 'var(--n-100)', marginBottom: '.5rem', overflowWrap: 'anywhere' }}>{r.label}</p>
+                <p style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-13)', color: 'var(--n-100)', marginBottom: '.5rem', overflowWrap: 'anywhere' }}>{r.label}</p>
                 <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '.25rem .75rem', margin: 0 }}>
                   {r.cells.map((v, i) => (
                     <Fragment key={PAGE_COLS[i + 1]}>
-                      <dt style={{ ...monoLabel, fontSize: '.6rem' }}>{t(`pages.${PAGE_COLS[i + 1]}`)}</dt>
+                      <dt style={{ ...monoLabel }}>{t(`pages.${PAGE_COLS[i + 1]}`)}</dt>
                       <dd style={{ ...noteStyle, color: 'var(--n-80)', margin: 0, textAlign: 'right' }}>
                         {v}
                         {i === 0 && ` (${r.byLocale})`}

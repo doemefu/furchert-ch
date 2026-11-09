@@ -10,7 +10,7 @@ import { HAIRLINE, footnoteStyle, h2Style, labelMono, leadStyle, sectionStyle } 
 
 const columnTitle = {
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
+  fontSize: 'var(--fs-12)',
   letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
   marginBottom: '1rem',
@@ -28,12 +28,12 @@ export function CheckRow({ children }: { children: ReactNode }) {
         alignItems: 'flex-start',
         padding: '.5rem 0',
         borderTop: '1px solid rgba(14,60,166,.1)',
-        fontSize: '.9rem',
+        fontSize: 'var(--fs-14)',
         lineHeight: 1.5,
         color: 'var(--n-70)',
       }}
     >
-      <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.15rem' }}>
+      <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '2px' }}>
         <Icon name="check" size={16} />
       </span>
       <span>{children}</span>
@@ -75,12 +75,13 @@ export function TwoColumnChecklist({
       </h2>
       <p style={leadStyle}>{lead}</p>
       <div
+        className="cell-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '0',
-          border: HAIRLINE,
-          borderRadius: '2px',
+          borderTop: HAIRLINE,
+          borderBottom: HAIRLINE,
         }}
       >
         {left && (
@@ -96,7 +97,7 @@ export function TwoColumnChecklist({
                     alignItems: 'flex-start',
                     padding: '.5rem 0',
                     borderTop: '1px solid rgba(162,167,176,.12)',
-                    fontSize: '.9rem',
+                    fontSize: 'var(--fs-14)',
                     lineHeight: 1.5,
                     color: 'var(--n-60)',
                   }}

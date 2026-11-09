@@ -17,8 +17,8 @@ const bannerLink: CSSProperties = {
   alignItems: 'center',
   gap: '.4rem',
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   textDecoration: 'none',
   border: '1px solid rgba(255,255,255,.25)',
@@ -34,8 +34,8 @@ const actionStyle: CSSProperties = {
   border: '1px solid rgba(162,167,176,.3)',
   borderRadius: '2px',
   fontFamily: 'var(--mono)',
-  fontSize: '.7rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-80)',
   textDecoration: 'none',
@@ -103,14 +103,14 @@ export async function AuthOverview({
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.4rem' }}>
             <StatusDot status={healthStatus === null ? 'unknown' : up ? 'online' : 'offline'} />
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.7rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-30)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-30)' }}>
               auth-service · {healthStatus === null ? t('statusUnknown') : healthStatus}
             </span>
           </div>
-          <div style={{ fontFamily: 'var(--sans)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: '-.02em' }}>
+          <div style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-24)', fontWeight: 500, letterSpacing: '-.01em' }}>
             {t('overview.service')}
           </div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-40)', marginTop: '.35rem' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-40)', marginTop: '.35rem' }}>
             {t('overview.issuer', { issuer })}
           </div>
         </div>
@@ -154,7 +154,7 @@ export async function AuthOverview({
           </div>
 
           <MonoLabel mt="1.5rem" mb=".5rem">{t('overview.endpoints')}</MonoLabel>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem', fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-70)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-70)' }}>
             {ENDPOINTS.map(([m, p]) => (
               <div key={p} style={{ display: 'flex', gap: '.6rem', padding: '.3rem 0', borderBottom: '1px dashed rgba(162,167,176,.22)' }}>
                 <span style={{ width: 46, color: m === 'POST' ? '#a16207' : m === 'GET' ? '#15803d' : 'var(--n-60)' }}>{m}</span>
@@ -166,10 +166,10 @@ export async function AuthOverview({
 
         <div style={{ ...cardStyle, padding: '1.25rem' }}>
           <MonoLabel mb=".75rem">{t('overview.recentActivity')}</MonoLabel>
-          <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.55, marginBottom: '1rem' }}>{t('overview.recentActivityBody')}</p>
+          <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.55, marginBottom: '1rem' }}>{t('overview.recentActivityBody')}</p>
           <Link
             href="/dashboard/network#netmon-logins"
-            style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--blue-base)', textDecoration: 'none' }}
+            style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--blue-base)', textDecoration: 'none' }}
           >
             {t('overview.toNetwork')}
           </Link>

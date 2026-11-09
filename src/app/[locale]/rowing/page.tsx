@@ -55,7 +55,6 @@ export default async function RowingPage({
           style={{
             aspectRatio: '16/6',
             background: 'var(--n-10)',
-            borderTop: '1px solid rgba(162,167,176,.22)',
             borderBottom: '1px solid rgba(162,167,176,.22)',
             backgroundImage:
               'linear-gradient(135deg, rgba(162,167,176,.08) 25%, transparent 25%, transparent 50%, rgba(162,167,176,.08) 50%, rgba(162,167,176,.08) 75%, transparent 75%, transparent)',
@@ -68,9 +67,7 @@ export default async function RowingPage({
           <div
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.7rem',
-              letterSpacing: '.06em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
               padding: '1rem 1.25rem',
             }}

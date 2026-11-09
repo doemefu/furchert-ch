@@ -19,9 +19,9 @@ import { formatDashboardDateTime } from './datetime';
 
 const style: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
+  fontSize: 'var(--fs-12)',
   color: 'var(--n-60)',
-  letterSpacing: '.02em',
+  letterSpacing: 0,
 };
 
 export function DateTimeStrip({

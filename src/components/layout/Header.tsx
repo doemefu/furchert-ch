@@ -37,7 +37,7 @@ export function Header() {
       onClick={() => setMenuOpen(false)}
       style={{
         fontFamily: 'var(--mono)',
-        fontSize: '.72rem',
+        fontSize: 'var(--fs-12)',
         letterSpacing: '.05em',
         textTransform: 'uppercase',
         textDecoration: 'none',
@@ -56,13 +56,16 @@ export function Header() {
 
   const langBtnStyle = {
     fontFamily: 'var(--mono)',
-    fontSize: '.72rem',
+    fontSize: 'var(--fs-12)',
     letterSpacing: '.05em',
     textTransform: 'uppercase' as const,
     background: 'none',
     border: '1px solid rgba(162,167,176,.35)',
     borderRadius: '2px',
-    padding: '.25rem .5rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    height: 28,
+    padding: '0 .5rem',
     cursor: 'pointer',
     color: 'var(--n-60)',
     transition: 'color .15s',
@@ -70,17 +73,18 @@ export function Header() {
   const homelabBtnStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: '.4rem',
+    gap: '.5rem',
     background: authed ? 'var(--blue-base)' : 'none',
     border: '1px solid rgba(162,167,176,.35)',
     borderRadius: '2px',
-    padding: '.3rem .55rem',
+    height: 28,
+    padding: '0 .5rem',
     cursor: 'pointer',
     color: authed ? 'var(--white)' : 'var(--n-70)',
-    marginLeft: '.25rem',
+    marginLeft: '.5rem',
     transition: 'background .15s, color .15s',
     fontFamily: 'var(--mono)',
-    fontSize: '.68rem',
+    fontSize: 'var(--fs-12)',
     letterSpacing: '.05em',
     textTransform: 'uppercase' as const,
     textDecoration: 'none',
@@ -113,7 +117,7 @@ export function Header() {
           href="/"
           style={{
             fontFamily: 'var(--mono)',
-            fontSize: '.9rem',
+            fontSize: 'var(--fs-15)',
             fontWeight: 500,
             letterSpacing: '.04em',
             textTransform: 'uppercase',
@@ -127,7 +131,7 @@ export function Header() {
 
         <nav
           className="desktop-nav"
-          style={{ display: 'flex', gap: '.1rem', alignItems: 'center', flexWrap: 'nowrap' }}
+          style={{ display: 'flex', gap: '2px', alignItems: 'center', flexWrap: 'nowrap' }}
         >
           {NAV_KEYS.map((k) => navLink(k, t(`nav.${k}`)))}
           <span
@@ -156,12 +160,14 @@ export function Header() {
             background: 'none',
             border: '1px solid rgba(162,167,176,.35)',
             borderRadius: '2px',
-            padding: '.3rem .5rem',
+            minHeight: 44,
+            minWidth: 44,
+            padding: '0 .5rem',
             cursor: 'pointer',
             color: 'var(--n-70)',
             fontFamily: 'var(--mono)',
-            fontSize: '.7rem',
-            letterSpacing: '.04em',
+            fontSize: 'var(--fs-12)',
+            letterSpacing: '.05em',
             textTransform: 'uppercase',
           }}
         >
@@ -196,13 +202,13 @@ export function Header() {
               borderTop: '1px solid rgba(162,167,176,.15)',
             }}
           >
-            <button onClick={switchLocale} style={langBtnStyle} data-track={`lang:${locale === 'de' ? 'en' : 'de'}`}>
+            <button onClick={switchLocale} style={{ ...langBtnStyle, height: 44 }} data-track={`lang:${locale === 'de' ? 'en' : 'de'}`}>
               {locale === 'de' ? 'EN' : 'DE'}
             </button>
             <Link
               href="/dashboard"
               onClick={() => setMenuOpen(false)}
-              style={{ ...homelabBtnStyle, marginLeft: 0 }}
+              style={{ ...homelabBtnStyle, marginLeft: 0, height: 44 }}
             >
               <Icon name="lock" size={11} /> {t('common.homelab')}
             </Link>

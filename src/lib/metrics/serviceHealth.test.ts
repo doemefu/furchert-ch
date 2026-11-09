@@ -638,4 +638,17 @@ describe('buildServiceHealthReport', () => {
     expect(byName.n8n.restarts24h).toBe(0);
     expect(byName.n8n.restarts14d).toBe(0);
   });
+
+  it('S32 builds every service\'s daily dates from grid.dayKeys, in order', () => {
+    const report = buildServiceHealthReport(
+      inputs({
+        inventory: [inv('apps', 'auth-service'), inv('apps', 'n8n')],
+        availability: [avail('apps', 'auth-service', everyHour(GRID, 1))],
+      }),
+    );
+    expect(report.services).toHaveLength(2);
+    for (const svc of report.services) {
+      expect(svc.daily.map((d) => d.date)).toEqual(GRID.dayKeys);
+    }
+  });
 });

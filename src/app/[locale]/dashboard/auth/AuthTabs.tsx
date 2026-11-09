@@ -25,8 +25,8 @@ export async function AuthTabs({ tab }: { tab: AuthTab }) {
             aria-current={active ? 'page' : undefined}
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.7rem',
-              letterSpacing: '.06em',
+              fontSize: 'var(--fs-12)',
+              letterSpacing: '.05em',
               textTransform: 'uppercase',
               padding: '.7rem 1rem',
               textDecoration: 'none',

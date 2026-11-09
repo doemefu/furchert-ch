@@ -31,8 +31,8 @@ export async function generateMetadata({
 
 const labelMono = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase' as const,
   color: 'var(--n-60)',
 };
@@ -79,10 +79,10 @@ export default async function AboutPage({
             <p
               key={i}
               style={{
-                fontSize: '1rem',
+                fontSize: 'var(--fs-16)',
                 color: 'var(--n-60)',
                 lineHeight: 1.6,
-                letterSpacing: '-.01em',
+                letterSpacing: 0,
               }}
             >
               {p}
@@ -91,6 +91,7 @@ export default async function AboutPage({
         </div>
 
         <div
+          className="cell-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
@@ -105,10 +106,10 @@ export default async function AboutPage({
               <div
                 style={{
                   fontFamily: 'var(--sans)',
-                  fontSize: 'clamp(1.5rem,3vw,2.25rem)',
+                  fontSize: 'var(--fs-h2)',
                   fontVariantNumeric: 'tabular-nums',
                   fontWeight: 500,
-                  letterSpacing: '-.04em',
+                  letterSpacing: '-.02em',
                   color: 'var(--n-100)',
                   lineHeight: 1,
                 }}
@@ -117,7 +118,7 @@ export default async function AboutPage({
               </div>
               <div
                 style={{
-                  fontSize: '.875rem',
+                  fontSize: 'var(--fs-14)',
                   color: 'var(--n-60)',
                   marginTop: '.5rem',
                   lineHeight: 1.4,
@@ -151,8 +152,8 @@ export default async function AboutPage({
                     left: '-2.75rem',
                     top: '0',
                     fontFamily: 'var(--mono)',
-                    fontSize: '.75rem',
-                    letterSpacing: '.04em',
+                    fontSize: 'var(--fs-12)',
+                    letterSpacing: '.05em',
                     textTransform: 'uppercase',
                     color: 'var(--n-60)',
                     width: '2.25rem',
@@ -164,19 +165,19 @@ export default async function AboutPage({
                 <div
                   style={{
                     position: 'absolute',
-                    left: '-.35rem',
-                    top: '.35rem',
+                    left: '-3.5px',
+                    top: '4px',
                     width: 6,
                     height: 6,
                     background: 'var(--n-30)',
                     borderRadius: '50%',
                   }}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
                   {row.i18n[locale].items.map((item, ii) => (
                     <span
                       key={ii}
-                      style={{ fontSize: '.9375rem', color: 'var(--n-70)', lineHeight: 1.4 }}
+                      style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', lineHeight: 1.4 }}
                     >
                       {item}
                     </span>

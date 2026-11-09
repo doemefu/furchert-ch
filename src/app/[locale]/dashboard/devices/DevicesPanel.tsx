@@ -16,7 +16,8 @@ import { canControl, type DeviceField, type Freshness, type SwitchState } from '
 import { IDLE } from '@/lib/deviceadmin/forms';
 import { controlDeviceAction } from './actions';
 import { FormError } from './FormFeedback';
-import { BORDER, MonoLabel, Pill, btnSmall, cardStyle, hintStyle, type PillTone } from '../auth/ui';
+import { StatusLabel, type DotStatus } from '@/components/ui/StatusDot';
+import { BORDER, MonoLabel, btnSmall, cardStyle, hintStyle } from '../auth/ui';
 
 /** A device as rendered — every label pre-formatted on the server (no hydration drift). */
 export interface DeviceRow {
@@ -30,8 +31,8 @@ export interface DeviceRow {
   switches: Array<{ field: DeviceField; state: SwitchState }>;
 }
 
-const FRESHNESS_TONE: Record<Freshness, PillTone> = { live: 'ok', stale: 'warn', offline: 'err', never: 'mute' };
-const SWITCH_TONE: Record<SwitchState, PillTone> = { on: 'ok', off: 'mute', unknown: 'warn' };
+const FRESHNESS_DOT: Record<Freshness, DotStatus> = { live: 'online', stale: 'wip', offline: 'offline', never: 'unknown' };
+const SWITCH_DOT: Record<SwitchState, DotStatus> = { on: 'online', off: 'unknown', unknown: 'wip' };
 
 export function DevicesPanel({ devices }: { devices: DeviceRow[] }) {
   const t = useTranslations('dashboard.deviceAdmin.devices');
@@ -39,12 +40,12 @@ export function DevicesPanel({ devices }: { devices: DeviceRow[] }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
       <div>
         <MonoLabel>{t('count', { count: devices.length })}</MonoLabel>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>{t('source')}</span>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>{t('source')}</span>
         <p style={{ ...hintStyle, marginTop: '.4rem' }}>{t('later')}</p>
       </div>
 
       {devices.length === 0 ? (
-        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
+        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
           {t('none')}
         </div>
       ) : (
@@ -91,15 +92,15 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
           <Icon name="iot" size={14} />
         </span>
         <div style={{ minWidth: 0 }}>
-          <h2 id={headingId} style={{ fontFamily: 'var(--mono)', fontSize: '.9rem', fontWeight: 500, color: 'var(--n-100)' }}>
+          <h2 id={headingId} style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-14)', fontWeight: 500, color: 'var(--n-100)' }}>
             {d.name}
           </h2>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem' }}>
             #{d.id} ·{' '}
             {d.lastSeenAbs ? t('devices.lastSeen', { abs: d.lastSeenAbs, rel: d.lastSeenRel ?? '—' }) : t('devices.neverSeen')}
           </div>
         </div>
-        <Pill tone={FRESHNESS_TONE[d.freshness]}>{t(`freshness.${d.freshness}`)}</Pill>
+        <StatusLabel status={FRESHNESS_DOT[d.freshness]}>{t(`freshness.${d.freshness}`)}</StatusLabel>
       </div>
 
       {/* Sensor values */}
@@ -115,9 +116,9 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
             <div
               style={{
                 fontFamily: 'var(--sans)',
-                fontSize: '1.35rem',
+                fontSize: 'var(--fs-24)',
                 fontWeight: 500,
-                letterSpacing: '-.02em',
+                letterSpacing: '-.01em',
                 lineHeight: 1,
                 fontVariantNumeric: 'tabular-nums',
                 color: d.freshness === 'live' ? 'var(--n-100)' : 'var(--n-60)',
@@ -125,7 +126,7 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
             >
               {value ?? '—'}
             </div>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '.6rem', letterSpacing: '.04em', color: 'var(--n-60)', marginTop: '.35rem' }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: 0, color: 'var(--n-60)', marginTop: '.35rem' }}>
               {value ? valueNote : ' '}
             </div>
           </div>
@@ -151,9 +152,9 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
                 borderBottom: '1px dashed rgba(162,167,176,.22)',
               }}
             >
-              <span style={{ width: '6.5rem', fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-80)' }}>{fieldLabel}</span>
+              <span style={{ width: '6.5rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>{fieldLabel}</span>
               <span>
-                <Pill tone={SWITCH_TONE[current]}>{t(`switch.${current}`)}</Pill>
+                <StatusLabel status={SWITCH_DOT[current]}>{t(`switch.${current}`)}</StatusLabel>
               </span>
               <span style={{ display: 'flex', flexWrap: 'wrap', gap: '.3rem', marginLeft: 'auto', justifyContent: 'flex-end' }}>
                 {targets.map((target) => {

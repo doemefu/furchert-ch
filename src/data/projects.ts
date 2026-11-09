@@ -1,7 +1,8 @@
 // Ported from the prototype (pages.jsx PageProjects).
 // Consumed by /projects + /projects/[slug] (Phase 2).
-// DE = prototype verbatim; EN = faithful translation (per-record locale map).
+// DE/EN copy corrected in #160 (no longer prototype verbatim); per-record locale map.
 import type { Locale } from '@/i18n/routing';
+import type { DotStatus } from '@/components/ui/StatusDot';
 
 export type ProjectStatus = 'live' | 'wip' | 'planned' | 'done';
 
@@ -128,14 +129,13 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-// Status pill — colours invariant (prototype statusColor); labels per locale
-// (translated in #160, no longer the prototype's identical terms).
-// Ink tokens, not dot colours: the colour is also the pill text (#151).
-export const STATUS_COLOR: Record<ProjectStatus, string> = {
-  live: 'var(--status-online-ink)',
-  wip: 'var(--status-wip-ink)',
-  planned: 'var(--n-60)',
-  done: 'var(--n-60)',
+// Project status → status LED (#177). The colour and the ink of the label
+// come from StatusDot; labels per locale (translated in #160).
+export const PROJECT_DOT: Record<ProjectStatus, DotStatus> = {
+  live: 'online',
+  wip: 'wip',
+  planned: 'unknown',
+  done: 'repo',
 };
 
 // Labels are translated per locale (#160); the locale dimension keeps one

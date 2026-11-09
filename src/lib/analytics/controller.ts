@@ -14,6 +14,10 @@
 //   may schedule one more attempt, cancelled by an Allow.
 // - The tracker starts only while granted, not opted out, no forget pending,
 //   not on `/dashboard/**`, and `mayStart()` agrees.
+// - GPC/DNT (§4.1; WA-5 #157): with no stored choice and no opt-out, the
+//   signal is a refusal: `denied` with `by: "signal"` and the pending marker
+//   are stored at once, and the boot sends the one forget. An explicit choice
+//   from the bar (Allow, or Decline) is stored with `by: "user"` (review L11).
 import {
   CONSENT_EVENT,
   CONSENT_KEY,
@@ -44,6 +48,8 @@ export interface ControllerDeps {
   loadTracker: LoadTracker;
   /** Extra start condition (seam; the session status is handled by `setSession`). */
   mayStart?: () => boolean;
+  /** GPC or DNT is on (§4.1; WA-5). Absent = no signal. */
+  privacySignal?: () => boolean;
 }
 
 export type SessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
@@ -52,6 +58,8 @@ export interface ConsentSnapshot {
   /** False until `init()` ran; the bar never shows before. */
   ready: boolean;
   choice: ConsentChoice | null;
+  /** Who made the stored choice; `signal` shows the signal notice when reopened. */
+  by: ConsentBy | null;
   optedOut: boolean;
   suppressed: boolean;
   /** Opened from the footer link (shows the current choice). */
@@ -88,6 +96,7 @@ export interface ConsentController {
 export const SERVER_SNAPSHOT: ConsentSnapshot = Object.freeze({
   ready: false,
   choice: null,
+  by: null,
   optedOut: false,
   suppressed: false,
   reopened: false,
@@ -144,6 +153,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
     snapshot = {
       ready,
       choice: c,
+      by: record?.by ?? null,
       optedOut,
       suppressed: sup,
       reopened,
@@ -238,7 +248,8 @@ export function createConsentController(deps: ControllerDeps): ConsentController
 
   const store = (next: ConsentChoice, by: ConsentBy) => {
     const before = choice();
-    if (before !== next) {
+    // A user choice also rewrites a signal-made record with the same choice (L11).
+    if (before !== next || record?.by !== by) {
       const now = deps.now();
       if (!set(CONSENT_KEY, serializeConsent(next, by, now)) && next === 'denied') {
         remove(CONSENT_KEY); // best effort: never leave an old `granted` behind
@@ -258,6 +269,11 @@ export function createConsentController(deps: ControllerDeps): ConsentController
         ready = true;
         record = readConsent(storage, deps.now());
         optedOut = readFlag(storage, OPTOUT_KEY);
+        if (record === null && !optedOut && deps.privacySignal?.()) {
+          // GPC/DNT = refusal (§4.1): stored now, the boot sends the forget once.
+          store('denied', 'signal');
+          set(FORGET_PENDING_KEY, '1');
+        }
       }
       emit();
       if (!booted && !suppressed()) return boot();
@@ -362,6 +378,10 @@ export function getConsentController(): ConsentController {
       storage,
       fetch: (input, init) => fetch(input, init),
       now: () => new Date(),
+      privacySignal: () => {
+        const n = navigator as Navigator & { globalPrivacyControl?: boolean };
+        return n.globalPrivacyControl === true || n.doNotTrack === '1';
+      },
       events: window,
       setTimeout: (fn, ms) => window.setTimeout(fn, ms),
       clearTimeout: (handle) => window.clearTimeout(handle as number),

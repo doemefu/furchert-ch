@@ -28,14 +28,14 @@ const step = (i: number): CSSProperties => ({ ['--i' as string]: i }) as CSSProp
 
 const AMBER: CSSProperties = {
   display: 'block',
-  padding: '.15rem .5rem',
-  fontSize: '.8125rem',
+  padding: '2px .5rem',
+  fontSize: 'var(--fs-13)',
   color: 'var(--n-80)',
   background: 'color-mix(in srgb, var(--tier-mid) 16%, var(--white))',
   borderLeft: '2px solid var(--tier-mid)',
 };
 
-const smallText: CSSProperties = { fontSize: '.875rem', color: 'var(--n-70)', lineHeight: 1.5 };
+const smallText: CSSProperties = { fontSize: 'var(--fs-14)', color: 'var(--n-70)', lineHeight: 1.5 };
 
 function Step({ i, children, style }: { i: number; children: ReactNode; style?: CSSProperties }) {
   return (
@@ -62,11 +62,11 @@ function RapportBody({ p }: { p: RapportPanel }) {
             ))}
           </span>
         </p>
-        <p lang="de-CH" style={{ fontSize: '.9375rem', lineHeight: 1.55, color: 'var(--n-80)', fontStyle: 'italic' }}>
+        <p lang="de-CH" style={{ fontSize: 'var(--fs-15)', lineHeight: 1.55, color: 'var(--n-80)', fontStyle: 'italic' }}>
           {p.spoken}
         </p>
       </Step>
-      <Step i={1} style={{ ...fieldLabel, color: 'var(--blue-base)', margin: '1rem 0 .25rem' }}>
+      <Step i={1} style={{ ...fieldLabel, textTransform: 'none', letterSpacing: 0, color: 'var(--blue-base)', margin: '1rem 0 .25rem' }}>
         <span aria-hidden="true">↓</span> {p.divider}
       </Step>
       <dl style={{ margin: 0 }}>
@@ -78,11 +78,11 @@ function RapportBody({ p }: { p: RapportPanel }) {
               display: 'grid',
               gridTemplateColumns: 'minmax(5rem, 30%) 1fr',
               gap: '.75rem',
-              padding: '.45rem 0',
+              padding: '.5rem 0',
               borderTop: '1px solid rgba(14,60,166,.1)',
             }}
           >
-            <dt style={{ ...fieldLabel, paddingTop: '.15rem' }}>{row.label}</dt>
+            <dt style={{ ...fieldLabel, paddingTop: '2px' }}>{row.label}</dt>
             <dd style={{ margin: 0, ...smallText, color: 'var(--n-80)' }}>{row.value}</dd>
           </Step>
         ))}
@@ -92,11 +92,11 @@ function RapportBody({ p }: { p: RapportPanel }) {
             display: 'grid',
             gridTemplateColumns: 'minmax(5rem, 30%) 1fr',
             gap: '.75rem',
-            padding: '.45rem 0',
+            padding: '.5rem 0',
             borderTop: '1px solid rgba(14,60,166,.1)',
           }}
         >
-          <dt style={{ ...fieldLabel, paddingTop: '.15rem' }}>{p.openItem.label}</dt>
+          <dt style={{ ...fieldLabel, paddingTop: '2px' }}>{p.openItem.label}</dt>
           <dd style={{ margin: 0 }}>
             <span style={AMBER}>{p.openItem.value}</span>
           </dd>
@@ -108,7 +108,7 @@ function RapportBody({ p }: { p: RapportPanel }) {
 }
 
 function OfferBody({ p }: { p: OfferPanel }) {
-  const cell: CSSProperties = { padding: '.4rem .5rem .4rem 0', textAlign: 'left', verticalAlign: 'top' };
+  const cell: CSSProperties = { padding: '.5rem .5rem .5rem 0', textAlign: 'left', verticalAlign: 'top' };
   return (
     <>
       <Step i={0} style={{ padding: '.75rem', background: 'var(--white)', border: HAIRLINE, borderRadius: 2 }}>
@@ -116,7 +116,7 @@ function OfferBody({ p }: { p: OfferPanel }) {
           <Icon name="mail" size={14} />
           {p.mailFrom}
         </p>
-        <p style={{ ...smallText, color: 'var(--n-100)', fontWeight: 500, marginTop: '.15rem' }}>{p.mailSubject}</p>
+        <p style={{ ...smallText, color: 'var(--n-100)', fontWeight: 500, marginTop: '2px' }}>{p.mailSubject}</p>
       </Step>
       <Step i={1} style={{ marginTop: '1rem' }}>
         <p style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '.5rem', ...smallText }}>
@@ -126,8 +126,8 @@ function OfferBody({ p }: { p: OfferPanel }) {
         <p style={{ ...smallText, marginTop: '.5rem' }}>{p.memory}</p>
       </Step>
       <Step i={2} style={{ marginTop: '1rem' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.8125rem', color: 'var(--n-80)' }}>
-          <caption style={{ ...fieldLabel, textAlign: 'left', marginBottom: '.35rem' }}>{p.table.caption}</caption>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--fs-13)', color: 'var(--n-80)' }}>
+          <caption style={{ ...fieldLabel, textAlign: 'left', marginBottom: '.25rem' }}>{p.table.caption}</caption>
           <thead>
             <tr style={{ borderBottom: HAIRLINE }}>
               {p.table.columns.map((c) => (
@@ -175,7 +175,7 @@ function OfferBody({ p }: { p: OfferPanel }) {
 function OverviewBody({ p }: { p: OverviewPanel }) {
   return (
     <>
-      <Step i={0} style={{ display: 'flex', flexWrap: 'wrap', gap: '.4rem' }}>
+      <Step i={0} style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
         {p.sources.map((s) => (
           <Tag key={s} contrast>
             {s}
@@ -215,7 +215,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
           <span>{p.cardTitle}</span>
           <span>{p.cardTime}</span>
         </p>
-        <p style={{ fontSize: '.9375rem', fontWeight: 500, marginBottom: '.5rem' }}>{p.greeting}</p>
+        <p style={{ fontSize: 'var(--fs-15)', fontWeight: 500, marginBottom: '.5rem' }}>{p.greeting}</p>
         <ul role="list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {p.items.map((item, n) => (
             <li
@@ -225,7 +225,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
                 ...step(n + 2),
                 padding: '.5rem 0',
                 borderTop: '1px solid rgba(255,255,255,.12)',
-                fontSize: '.875rem',
+                fontSize: 'var(--fs-14)',
                 lineHeight: 1.5,
                 color: 'var(--n-20)',
               }}
@@ -234,7 +234,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
             </li>
           ))}
         </ul>
-        <p style={{ fontSize: '.875rem', color: 'var(--white)', marginTop: '.5rem' }}>{p.closing}</p>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--white)', marginTop: '.5rem' }}>{p.closing}</p>
       </Step>
       <p style={{ ...footnoteStyle, marginTop: '.75rem' }}>{p.footnote}</p>
     </>
@@ -260,7 +260,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
       role="list"
       style={{
         listStyle: 'none',
-        padding: 0,
+        padding: '0 .75rem',
         margin: 0,
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 18rem), 1fr))',
@@ -286,11 +286,11 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '.6rem',
+                    gap: '.5rem',
                     fontFamily: 'var(--sans)',
-                    fontSize: '1.0625rem',
+                    fontSize: 'var(--fs-18)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                   }}
                 >
@@ -303,7 +303,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                   style={{
                     display: 'block',
                     margin: '.25rem 0 .625rem',
-                    fontSize: '.9375rem',
+                    fontSize: 'var(--fs-15)',
                     lineHeight: 1.45,
                     color: 'var(--n-70)',
                   }}
@@ -325,8 +325,8 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                   <span
                     style={{
                       fontFamily: 'var(--mono)',
-                      fontSize: '.75rem',
-                      letterSpacing: '.04em',
+                      fontSize: 'var(--fs-12)',
+                      letterSpacing: '.05em',
                       textTransform: 'uppercase',
                       color: 'var(--blue-base)',
                       whiteSpace: 'nowrap',

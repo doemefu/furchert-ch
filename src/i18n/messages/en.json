@@ -84,6 +84,18 @@
     "home": {
       "areas": "Areas",
       "areasTitle": "What I work on",
+      "sheetTag": "Example with invented names",
+      "sheetTitle": "One workflow: enquiry becomes draft quote",
+      "sheetAlt": "Example of a quote drafted from a customer enquiry",
+      "status": {
+        "checking": "Checking status",
+        "allUp": "All {total} public services are running",
+        "someDown": "{down} of {total} services down right now",
+        "partial": "{up} of {total} services running, the rest unknown",
+        "unknown": "Status not available right now",
+        "facts": "Homelab · {nodes} machines in the cluster",
+        "link": "See live status"
+      },
       "metaTitle": "Dominic Furchert | Software Engineer · AI for SMEs",
       "metaDescription": "Dominic Furchert, software engineer near Zurich, sets up one AI workflow in SMEs and measures whether it is used. Plus projects, homelab, rowing."
     },
@@ -110,7 +122,7 @@
       "headerSub": "Voluntary, and at least as instructive as any computer-science module.",
       "metaTitle": "President, Rapperswil-Jona Rowing Club | Dominic Furchert",
       "metaDescription": "Dominic Furchert, president of the Rapperswil-Jona Rowing Club (about 200 members), is safety chief of the Schmerikon regatta (about 1,500 athletes).",
-      "photoCaption": "photo · regatta schmerikon"
+      "photoCaption": "Photo · Regatta Schmerikon"
     },
     "projects": {
       "headerLabel": "Projects",
@@ -191,7 +203,7 @@
       "privacyRight1": "Copilot only shows each person what they can already open today. So we first check who can access payroll and HR folders. It is about permissions, not content.",
       "privacyRight2": "I work with my own account in your Microsoft 365, with only the rights needed. You can block it at any time.",
       "privacyRight3": "Before the start you get a data sheet: which tool processes which data where, with all exceptions.",
-      "privacyFootnote": "According to Microsoft, Copilot processes prompts within the EU Data Boundary, which includes Switzerland, and does not use them for training. Exception: if web search is switched on, the boundary does not apply to the search queries sent to Bing. Microsoft does not commit to processing in Switzerland only. I do not give legal advice.",
+      "privacyFootnote": "According to Microsoft, Copilot processes prompts within the EU Data Boundary, which includes Switzerland, and does not use them for training. Exceptions: search queries sent to Bing when web search is on, Anthropic models if they are enabled (off by default in the EU and EFTA), and overflow at peak load, when prompts may also be processed in the USA, Canada or Australia (on by default for accounts created from 25 March 2026, can be switched off). Microsoft does not commit to processing in Switzerland only. I do not give legal advice.",
       "aboutMiniRole": "AI tools for SMEs · Zurich",
       "aboutMiniText": "I work in the Zurich area. I did my apprenticeship as an application developer (EFZ) at UBS and an IT audit internship at KPMG. Today I study computer science at the University of Zurich. As president I lead a rowing club with about 200 members, including a multi-million-franc infrastructure project and a national regatta. I use AI myself: an assistant may read my email and calendar, and I built the connection. I built a second one for the rowing club. I come to you, to your firm and to your sites.",
       "reliableTitle": "You can rely on me. In practice that means:",
@@ -235,7 +247,8 @@
       "accept": "Allow",
       "current": "Current choice: {state}",
       "currentGranted": "allowed",
-      "currentDenied": "declined"
+      "currentDenied": "declined",
+      "signalNotice": "Your browser sends a privacy signal (GPC/DNT), so usage statistics are declined. You can still allow them here."
     }
   },
   "dashboard": {
@@ -581,7 +594,7 @@
         "request": "of its request (no limit set)"
       },
       "usageNone": "No usage data, or no limit and no request set",
-      "daily": "14 d",
+      "workload": "Workload",
       "last24h": "Last 24 h · hourly",
       "toggleLabel": "Hourly view of the last 24 h for {name}",
       "dailyAria": "Daily availability of {name}, last 14 days",
@@ -677,6 +690,9 @@
         "requests": "Requests",
         "uniqueIps": "Unique client IPs",
         "timeline": "Requests over time",
+        "gapHint": "No bar: no data for that hour or day",
+        "ongoing": "in progress",
+        "partial": "partial",
         "topIps": "Top client IPs",
         "countries": "Countries",
         "asns": "Networks (ASN)",

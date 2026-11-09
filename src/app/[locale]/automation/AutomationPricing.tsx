@@ -26,8 +26,8 @@ import { trackAttr } from '@/data/track-ids';
 
 const subLine = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
   color: 'var(--blue-base)',
 };
@@ -35,10 +35,10 @@ const subLine = {
 function PriceLine({ c }: { c: PackageCopy }) {
   return (
     <>
-      <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.35rem' }}>{c.price}</p>
+      <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.25rem' }}>{c.price}</p>
       {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums' }}>{c.priceAlt}</p>}
       {c.priceNote && (
-        <p style={{ fontSize: '.875rem', color: 'var(--n-70)', marginTop: '.25rem' }}>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-70)', marginTop: '.25rem' }}>
           {c.priceNote}
         </p>
       )}
@@ -53,7 +53,7 @@ function Summary({ c }: { c: PackageCopy }) {
 function Terms({ c }: { c: PackageCopy }) {
   if (!c.terms?.length) return null;
   return (
-    <div style={{ display: 'grid', gap: '.6rem', marginBottom: '1rem' }}>
+    <div style={{ display: 'grid', gap: '.5rem', marginBottom: '1rem' }}>
       {c.terms.map((term) => (
         <p key={term} style={bodyText}>
           {term}
@@ -75,7 +75,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
               borderTop: '1px solid rgba(162,167,176,.12)',
               cursor: 'pointer',
               ...subLine,
-              fontSize: '.75rem',
+              fontSize: 'var(--fs-12)',
             }}
           >
             {includesLabel}
@@ -86,16 +86,16 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
                 key={item}
                 style={{
                   display: 'flex',
-                  gap: '.6rem',
+                  gap: '.5rem',
                   alignItems: 'flex-start',
-                  padding: '.45rem 0',
+                  padding: '.5rem 0',
                   borderTop: '1px solid rgba(162,167,176,.12)',
-                  fontSize: '.875rem',
+                  fontSize: 'var(--fs-14)',
                   color: 'var(--n-70)',
                   lineHeight: 1.5,
                 }}
               >
-                <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.2rem' }}>
+                <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.25rem' }}>
                   <Icon name="check" size={14} />
                 </span>
                 {item}
@@ -105,7 +105,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
         </details>
       )}
       {c.excludes && (
-        <p style={{ fontSize: '.8125rem', color: 'var(--n-60)', lineHeight: 1.5, marginTop: '.75rem' }}>
+        <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-60)', lineHeight: 1.5, marginTop: '.75rem' }}>
           {c.excludes}
         </p>
       )}
@@ -127,10 +127,13 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
       <p style={leadStyle}>{t('processLead')}</p>
       <ol
         role="list"
+        className="cell-grid"
         style={{
           listStyle: 'none',
           padding: 0,
-          margin: 0,
+          // Longhands only: an inline `margin` would cancel .cell-grid's margin-right.
+          marginBlock: 0,
+          marginLeft: 0,
           display: 'grid',
           // Up to four columns; two on tablets, one on phones.
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(15rem, 22%)), 1fr))',
@@ -144,9 +147,9 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
                 aria-hidden="true"
                 style={{
                   fontFamily: 'var(--mono)',
-                  fontSize: '2rem',
+                  fontSize: 'var(--fs-24)',
                   fontWeight: 400,
-                  letterSpacing: '-.02em',
+                  letterSpacing: '-.01em',
                   color: 'var(--n-20)',
                   lineHeight: 1,
                   marginBottom: 'clamp(.5rem, 2vw, 1rem)',
@@ -167,15 +170,15 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
         style={{
           marginTop: 'clamp(1.5rem, 4vw, 2rem)',
           padding: 'clamp(1.25rem, 5vw, 2rem)',
-          border: HAIRLINE,
-          borderRadius: '2px',
+          borderTop: HAIRLINE,
+          borderBottom: HAIRLINE,
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '0 2rem',
         }}
       >
         <div>
-          <p style={{ ...subLine, marginBottom: '.35rem' }}>{t('addonLabel')}</p>
+          <p style={{ ...subLine, marginBottom: '.25rem' }}>{t('addonLabel')}</p>
           <h3 style={cardTitle}>{addon.name}</h3>
           <PriceLine c={addon} />
           <Summary c={addon} />

@@ -37,8 +37,8 @@ const bannerLink: CSSProperties = {
   alignItems: 'center',
   gap: '.4rem',
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   textDecoration: 'none',
   border: '1px solid rgba(255,255,255,.25)',
@@ -54,8 +54,8 @@ const actionStyle: CSSProperties = {
   border: '1px solid rgba(162,167,176,.3)',
   borderRadius: '2px',
   fontFamily: 'var(--mono)',
-  fontSize: '.7rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-80)',
   textDecoration: 'none',
@@ -102,12 +102,12 @@ export async function DeviceOverview({
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.4rem' }}>
             <StatusDot status={healthStatus === null ? 'unknown' : up ? 'online' : 'offline'} />
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.7rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-30)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-30)' }}>
               device-service · {healthStatus === null ? t('statusUnknown') : healthStatus}
             </span>
           </div>
-          <div style={{ fontFamily: 'var(--sans)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: '-.02em' }}>{t('overview.service')}</div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-40)', marginTop: '.35rem' }}>{t('overview.sub')}</div>
+          <div style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-24)', fontWeight: 500, letterSpacing: '-.01em' }}>{t('overview.service')}</div>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-40)', marginTop: '.35rem' }}>{t('overview.sub')}</div>
         </div>
         <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
           <a href={`${DEVICE_PUBLIC_URL}/swagger-ui.html`} target="_blank" rel="noopener noreferrer" style={bannerLink}>
@@ -164,7 +164,7 @@ export async function DeviceOverview({
       {noLive && devices.ok && (
         <div role="status" style={{ ...cardStyle, padding: '1.1rem 1.25rem', display: 'flex', gap: '.75rem', alignItems: 'baseline', flexWrap: 'wrap' }}>
           <Pill tone="warn">{t('overview.noLiveTitle')}</Pill>
-          <p style={{ flex: '1 1 320px', fontSize: '.85rem', color: 'var(--n-70)', lineHeight: 1.55 }}>
+          <p style={{ flex: '1 1 320px', fontSize: 'var(--fs-14)', color: 'var(--n-70)', lineHeight: 1.55 }}>
             {devices.data.latest
               ? t('overview.noLiveBody', { when: devices.data.latest.abs, device: devices.data.latest.device })
               : t('overview.noLiveBodyNever')}
@@ -188,7 +188,7 @@ export async function DeviceOverview({
           <MonoLabel mt="1.5rem" mb=".5rem">
             {t('overview.endpoints')}
           </MonoLabel>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem', fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-70)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-70)' }}>
             {ENDPOINTS.map(([m, p]) => (
               <div key={p} style={{ display: 'flex', gap: '.6rem', padding: '.3rem 0', borderBottom: '1px dashed rgba(162,167,176,.22)' }}>
                 <span style={{ width: 46, color: m === 'POST' ? '#a16207' : m === 'GET' ? '#15803d' : 'var(--n-60)' }}>{m}</span>
@@ -201,9 +201,9 @@ export async function DeviceOverview({
         <div style={{ ...cardStyle, padding: '1.25rem' }}>
           <MonoLabel mb=".75rem">{t('overview.upcoming')}</MonoLabel>
           {!schedules.ok ? (
-            <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.55 }}>{t(`states.${schedules.kind}`)}</p>
+            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.55 }}>{t(`states.${schedules.kind}`)}</p>
           ) : schedules.data.upcoming.length === 0 ? (
-            <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.55 }}>{t('overview.upcomingNone')}</p>
+            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.55 }}>{t('overview.upcomingNone')}</p>
           ) : (
             <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '.1rem' }}>
               {schedules.data.upcoming.map((u) => (
@@ -216,7 +216,7 @@ export async function DeviceOverview({
                     padding: '.45rem 0',
                     borderBottom: '1px dashed rgba(162,167,176,.22)',
                     fontFamily: 'var(--mono)',
-                    fontSize: '.72rem',
+                    fontSize: 'var(--fs-12)',
                     color: 'var(--n-80)',
                   }}
                 >
@@ -224,7 +224,7 @@ export async function DeviceOverview({
                   <span>{u.label}</span>
                   <span style={{ textAlign: 'right' }}>
                     <span style={{ color: 'var(--n-100)' }}>{u.rel}</span>
-                    <span style={{ display: 'block', fontSize: '.64rem', color: 'var(--n-60)' }}>{u.abs}</span>
+                    <span style={{ display: 'block', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>{u.abs}</span>
                   </span>
                 </li>
               ))}
@@ -236,8 +236,8 @@ export async function DeviceOverview({
               display: 'inline-block',
               marginTop: '1rem',
               fontFamily: 'var(--mono)',
-              fontSize: '.65rem',
-              letterSpacing: '.06em',
+              fontSize: 'var(--fs-12)',
+              letterSpacing: '.05em',
               textTransform: 'uppercase',
               color: 'var(--blue-base)',
               textDecoration: 'none',

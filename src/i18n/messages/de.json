@@ -84,6 +84,18 @@
     "home": {
       "areas": "Bereiche",
       "areasTitle": "Woran ich arbeite",
+      "sheetTag": "Beispiel mit erfundenen Namen",
+      "sheetTitle": "Ein Ablauf: Anfrage wird Offertentwurf",
+      "sheetAlt": "Beispiel einer Offerte, die aus einer Kundenanfrage entworfen wurde",
+      "status": {
+        "checking": "Status wird geprüft",
+        "allUp": "Alle {total} öffentlichen Dienste laufen",
+        "someDown": "{down} von {total} Diensten gerade gestört",
+        "partial": "{up} von {total} Diensten in Betrieb, Rest unbekannt",
+        "unknown": "Status gerade nicht verfügbar",
+        "facts": "Homelab · {nodes} Rechner im Cluster",
+        "link": "Live-Status ansehen"
+      },
       "metaTitle": "Dominic Furchert | Software Engineer · KI für KMU",
       "metaDescription": "Dominic Furchert, Software Engineer im Zürcher Oberland, richtet in KMU einen KI-Ablauf ein und misst, ob er genutzt wird. Dazu Projekte, Homelab, Rudern."
     },
@@ -110,7 +122,7 @@
       "headerSub": "Ehrenamtlich und mindestens so lehrreich wie jedes Informatik-Modul.",
       "metaTitle": "Präsident Ruderclub Rapperswil-Jona | Dominic Furchert",
       "metaDescription": "Dominic Furchert präsidiert den Ruderclub Rapperswil-Jona (rund 200 Mitglieder) und ist Chef Sicherheit der Regatta Schmerikon mit rund 1'500 Athleten.",
-      "photoCaption": "foto · regatta schmerikon"
+      "photoCaption": "Foto · Regatta Schmerikon"
     },
     "projects": {
       "headerLabel": "Projekte",
@@ -191,7 +203,7 @@
       "privacyRight1": "Copilot zeigt jeder Person nur, was sie heute schon öffnen kann. Darum prüfen wir zuerst, wer auf Lohn- und Personalordner zugreifen kann. Es geht um die Berechtigungen, nicht um den Inhalt.",
       "privacyRight2": "Ich arbeite mit einem eigenen Konto in Ihrem Microsoft 365, nur mit den nötigen Rechten. Sie können es jederzeit sperren.",
       "privacyRight3": "Vor dem Start erhalten Sie ein Datenblatt: welches Werkzeug welche Daten wo verarbeitet, mit allen Ausnahmen.",
-      "privacyFootnote": "Copilot verarbeitet Anfragen laut Microsoft in der EU-Datengrenze, zu der die Schweiz gehört, und nutzt sie nicht zum Training. Ausnahme: Ist die Websuche eingeschaltet, gilt diese Grenze für die Suchanfragen an Bing nicht. Eine Verarbeitung nur in der Schweiz sichert Microsoft nicht zu. Rechtsberatung biete ich nicht an.",
+      "privacyFootnote": "Copilot verarbeitet Anfragen laut Microsoft in der EU-Datengrenze, zu der die Schweiz gehört, und nutzt sie nicht zum Training. Ausnahmen: Suchanfragen an Bing bei eingeschalteter Websuche, Modelle von Anthropic, falls sie freigeschaltet sind (in EU und EFTA standardmässig aus), und das Ausweichen bei Spitzenlast, bei dem Anfragen auch in den USA, Kanada oder Australien verarbeitet werden können (bei Konten, die ab dem 25. März 2026 eröffnet wurden, standardmässig eingeschaltet und abschaltbar). Eine Verarbeitung nur in der Schweiz sichert Microsoft nicht zu. Rechtsberatung biete ich nicht an.",
       "aboutMiniRole": "KI-Werkzeuge für KMU · Zürcher Oberland",
       "aboutMiniText": "Ich arbeite im Zürcher Oberland. Bei der UBS habe ich die Lehre als Applikationsentwickler EFZ gemacht, bei KPMG ein Praktikum im IT-Audit. Heute studiere ich Informatik an der Universität Zürich. Als Präsident führe ich einen Ruderclub mit rund 200 Mitgliedern; dazu gehören ein Infrastrukturprojekt im Millionenbereich und eine nationale Regatta. KI nutze ich selbst: Ein Assistent darf bei mir Mails und Kalender lesen, die Anbindung habe ich gebaut. Für den Ruderclub habe ich einen zweiten gebaut. Ich komme zu Ihnen in den Betrieb und auf die Baustelle.",
       "reliableTitle": "Auf mich ist Verlass. Das heisst konkret:",
@@ -235,7 +247,8 @@
       "accept": "Erlauben",
       "current": "Aktuelle Wahl: {state}",
       "currentGranted": "erlaubt",
-      "currentDenied": "abgelehnt"
+      "currentDenied": "abgelehnt",
+      "signalNotice": "Ihr Browser sendet ein Datenschutzsignal (GPC/DNT); die Nutzungsstatistik ist deshalb abgelehnt. Sie können sie hier trotzdem erlauben."
     }
   },
   "dashboard": {
@@ -581,7 +594,7 @@
         "request": "des Requests (kein Limit gesetzt)"
       },
       "usageNone": "Keine Nutzungsdaten oder weder Limit noch Request gesetzt",
-      "daily": "14 T",
+      "workload": "Workload",
       "last24h": "Letzte 24 h · stündlich",
       "toggleLabel": "Stundenansicht der letzten 24 h für {name}",
       "dailyAria": "Tägliche Verfügbarkeit von {name}, letzte 14 Tage",
@@ -677,6 +690,9 @@
         "requests": "Anfragen",
         "uniqueIps": "Eindeutige Client-IPs",
         "timeline": "Anfragen im Zeitverlauf",
+        "gapHint": "Kein Balken: keine Daten für diese Stunde bzw. diesen Tag",
+        "ongoing": "laufend",
+        "partial": "teilweise",
         "topIps": "Top-Client-IPs",
         "countries": "Länder",
         "asns": "Netze (ASN)",

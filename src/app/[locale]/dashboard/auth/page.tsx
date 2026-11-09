@@ -36,6 +36,7 @@ import { FailureNotice } from './FailureNotice';
 import { JwksPanel } from './JwksPanel';
 import { ReauthNotice } from './ReauthNotice';
 import { UsersPanel } from './UsersPanel';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import { BORDER, Pill, UnavailableCard } from './ui';
 
 // Reads the session (cookies) and live data → must be dynamic.
@@ -89,8 +90,8 @@ async function Header({ healthStatus }: { healthStatus: string | null }) {
     alignItems: 'center',
     gap: '.4rem',
     fontFamily: 'var(--mono)',
-    fontSize: '.7rem',
-    letterSpacing: '.04em',
+    fontSize: 'var(--fs-12)',
+    letterSpacing: '.05em',
     textTransform: 'uppercase' as const,
     textDecoration: 'none',
     color: 'var(--n-60)',
@@ -106,17 +107,19 @@ async function Header({ healthStatus }: { healthStatus: string | null }) {
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.7rem', flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: 'var(--sans)', fontSize: '1.6rem', fontWeight: 500, letterSpacing: '-.02em', color: 'var(--n-100)' }}>
+            <h1 style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-24)', fontWeight: 500, letterSpacing: '-.01em', color: 'var(--n-100)' }}>
               {t('title')}
             </h1>
             <Pill tone="info">ADMIN</Pill>
             {healthStatus === null ? (
-              <Pill tone="mute">{t('statusUnknown')}</Pill>
+              <StatusLabel status="unknown">{t('statusUnknown')}</StatusLabel>
             ) : (
-              <Pill tone={healthStatus === 'UP' ? 'ok' : 'err'}>{healthStatus === 'UP' ? t('statusUp') : t('statusDown')}</Pill>
+              <StatusLabel status={healthStatus === 'UP' ? 'online' : 'offline'}>
+                {healthStatus === 'UP' ? t('statusUp') : t('statusDown')}
+              </StatusLabel>
             )}
           </div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-60)', marginTop: '.35rem' }}>{t('meta')}</div>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.35rem' }}>{t('meta')}</div>
         </div>
         <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
           <a href="https://github.com/doemefu/homelab-auth-service" target="_blank" rel="noopener noreferrer" style={linkStyle}>

@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { OverviewResponse, PagesResponse, Range, StatusResponse } from '@/lib/analytics/read';
 import { parseControls } from './searchParams';
+import { EmphasisColumns } from './charts';
 import { ClicksSection, HeaderLine, OfferGlance, PagesSection, SourcesSection, StatusStrip, emptyText, type Ctx } from './sections';
 import { makeFormatters, type Translate } from './ui';
 
@@ -134,6 +135,10 @@ describe('states (L2, L3)', () => {
     expect(head).toContain('statusDefaulted');
     const strip = html(StatusStrip, { result: { ok: true, data: status }, ctx: ctx() });
     expect(strip).toContain('status.disabled');
+    // #191: the status is announced once (visible text); the LED is decorative.
+    expect(strip.match(/status\.disabled/g)).toHaveLength(1);
+    expect(strip).not.toContain('role="img"');
+    expect(strip).toMatch(/<span aria-hidden="true" style="display:inline-block;width:8px;height:8px/);
     expect(strip).toContain('status.provisional{&quot;day&quot;:&quot;7 Nov 2026&quot;}');
     expect(strip).toContain('status.eventsToday');
   });
@@ -142,3 +147,21 @@ describe('states (L2, L3)', () => {
     expect(html(PagesSection, { result: { ok: true, data: { range, filters: { applied: {}, ignored: ['device'] }, items: [pageItem('/automation')] } }, ctx: ctx() })).toContain('ignored{&quot;filters&quot;:&quot;device&quot;}');
   });
 });
+
+describe('#191 legend key', () => {
+  it('is a 12×2 line, hidden from screen readers (the text names the series)', () => {
+    const out = html(EmphasisColumns, {
+      title: 'chart',
+      buckets: [{ start: '2026-11-01', values: { a: 3, b: 1 }, partial: false }],
+      context: 'a',
+      subject: 'b',
+      labels: { context: 'all', subject: 'offer', start: 'start', partial: 'partial' },
+      t,
+      fmt,
+    });
+    const keys = out.match(/<span aria-hidden="true" style="width:12px;height:2px;background:[^"]+;display:inline-block"><\/span>(all|offer)/g);
+    expect(keys).toHaveLength(2);
+    expect(out).not.toMatch(/width:10px;height:10px/);
+  });
+});
+

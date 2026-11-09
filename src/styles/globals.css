@@ -23,6 +23,7 @@
   --n-100: #090e18;
   --white: #ffffff;
   --header-h: 4rem;
+  --card-px: 2rem; /* #167: card side padding; 1.25rem below 40rem */
   /* Status / tier accents (used by project status pills and the check
      marks of the /automation examples). Kept as plain tokens so the
      palette stays in one place. */
@@ -46,6 +47,18 @@
   --ease: cubic-bezier(.22,1,.36,1);
   --dur-fast: 150ms;
   --dur-enter: 400ms;
+  /* Type scale (B1): 11 steps, 12px floor. */
+  --fs-12: .75rem;    /* mono labels, nav, tags, table heads */
+  --fs-13: .8125rem;  /* buttons, section kickers, mono meta, small body */
+  --fs-14: .875rem;   /* captions, secondary text */
+  --fs-15: .9375rem;  /* compact body */
+  --fs-16: 1rem;      /* body */
+  --fs-18: 1.125rem;  /* card and panel titles */
+  --fs-24: 1.5rem;    /* dashboard titles and KPI figures */
+  --fs-lead: clamp(1rem, 1.4vw, 1.25rem);
+  --fs-h2: clamp(1.5rem, 3vw, 2.25rem);
+  --fs-title: clamp(2rem, 5vw, 3.5rem);
+  --fs-hero: clamp(2.4rem, 7vw, 4.75rem);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,21 +80,43 @@ body {
 @media (min-width: 80rem) {
   .container { max-width: min(100rem, calc(100% - 11rem)); }
 }
+/* #167: 16px page gutters and 20px card padding on phones. */
+@media (max-width: 39.99rem) {
+  :root { --card-px: 1.25rem; }
+  .container { max-width: calc(100% - 2rem); }
+}
 .border-x {
   border-left:  1px solid rgba(162,167,176,.22);
   border-right: 1px solid rgba(162,167,176,.22);
 }
+/* Cell grids inside .border-x whose cells draw border-right (#175): the grid
+   reaches 1px into the frame and that pixel is clipped, so the last column's
+   hairline never sits beside the frame line, for any auto-fit column count.
+   The clip covers all four sides: focusable content keeps >= 4px inside, and
+   focus rings inside the grid are drawn inset. No inline margin/width on these
+   grids, or the 1px reach is lost. */
+.cell-grid { margin-right: -1px; clip-path: inset(0 1px 0 0); }
+.cell-grid :focus-visible { outline-offset: -4px; }
 
 /* ── KEYFRAMES ── */
-@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ── TICKER (home) ──
-   No motion for visitors who ask for reduced motion (#145). */
-.ticker-track { animation: ticker 22s linear infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .ticker-track { animation: none; }
+/* ── HOME HERO (#178) ──
+   The hero container keeps its min-height under the header; the split row is
+   a flex child that takes free height when the content below is short. Text left, example
+   sheet right from 64rem; one column (text, buttons, sheet) below. */
+.home-hero { display: flex; flex-direction: column; min-height: calc(100svh - var(--header-h)); }
+.home-hero-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+.home-hero-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem; padding: 4rem 1.5rem; }
+.home-hero-title { font-size: var(--fs-hero); }
+@media (min-width: 64rem) {
+  .home-hero-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+  .home-hero-title { font-size: var(--fs-title); }
+}
+@media (max-width: 39.99rem) {
+  .home-hero-split { padding: 3rem 1rem; }
+  .home-sheet-extra, .home-status-facts { display: none; }
 }
 
 /* ── PAGE ENTRY ── */
@@ -99,7 +134,7 @@ body {
 /* ── RESPONSIVE NAV ── */
 @media (max-width: 820px) {
   .desktop-nav { display: none !important; }
-  .burger { display: flex !important; }
+  .burger { display: flex !important; align-items: center; justify-content: center; }
 }
 
 /* ── STAT GRID RESPONSIVE ── */
@@ -123,6 +158,30 @@ input:focus, textarea:focus {
 }
 .contact-form ::placeholder { color: var(--n-60); opacity: 1; }
 
+/* «Wer ich bin» box on /automation (#188): its left side sits on the frame
+   line, so it draws no left border; below about 44rem it spans the full
+   width and drops the right border too. */
+.about-mini-box {
+  border-top: 1px solid rgba(14,60,166,.12);
+  border-right: 1px solid rgba(14,60,166,.12);
+  border-bottom: 1px solid rgba(14,60,166,.12);
+}
+@media (max-width: 43.99rem) {
+  .about-mini-box { border-right: 0; }
+}
+
+/* Contact columns: form | direct links (#175, #188). Inset by --card-px on both
+   sides so the inputs clear the frame line; stacked below 40rem with one
+   hairline between the blocks. */
+.contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.contact-col-form { padding: 3rem var(--card-px); border-right: 1px solid rgba(162,167,176,.22); }
+.contact-col-direct { padding: 3rem var(--card-px); }
+@media (max-width: 39.99rem) {
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-col-form { border-right: 0; }
+  .contact-col-direct { border-top: 1px solid rgba(162,167,176,.22); }
+}
+
 /* ── FOCUS RING (#151) ──
    Global keyboard focus ring; white on dark surfaces (.on-dark). */
 :focus-visible { outline: 2px solid var(--blue-base); outline-offset: 2px; }
@@ -139,6 +198,8 @@ a.btn:hover { opacity: 1; }
 .btn[data-variant="dark"]:not(:disabled):hover { background-color: var(--n-80) !important; border-color: var(--n-80) !important; }
 .btn[data-variant="outline"]:not(:disabled):hover { background-color: var(--blue-wash) !important; }
 .btn[data-variant="default"]:not(:disabled):hover { background-color: var(--white) !important; }
+/* CTA strip primary on dark (#167): the inline white needs !important, as above. */
+.cta-primary:hover { background-color: var(--n-20) !important; border-color: var(--n-20) !important; }
 
 /* ── HOVER CARD ──
    Prototype teaser/project cards were <div onClick> with an inline
@@ -189,17 +250,24 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
   border-top: 1px solid rgba(162,167,176,.22);
 }
 .sticky-cta[hidden] { display: none; }
+/* #167: placed after the base rule so the 16px inset wins the cascade. */
+@media (max-width: 39.99rem) { .sticky-cta { padding-inline: 1rem; } }
 .sticky-cta-micro {
   display: flex;
   flex-direction: column;
   font-family: var(--mono);
-  font-size: .75rem;
-  letter-spacing: .04em;
+  font-size: var(--fs-12);
   line-height: 1.4;
-  text-transform: uppercase;
   color: var(--n-70);
 }
 @media (min-width: 821px) { .sticky-cta { display: none; } }
+/* #167: CTA strip actions: centred row, stacked full-width buttons on phones. */
+.cta-actions { align-items: center; }
+@media (max-width: 39.99rem) {
+  .cta-actions { flex-direction: column; align-items: stretch; width: 100%; }
+  .cta-actions > a:not(.cta-text) { justify-content: center; }
+  .cta-actions > .cta-text { align-self: flex-start; }
+}
 /* Below 360 px the micro text and the button do not fit side by side; the
    button keeps its right gutter and the microline under the hero button
    carries the same facts. */
@@ -278,4 +346,58 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 @media (max-width: 640px) {
   .wa-pages-table { display: none; }
   .wa-pages-cards { display: grid; }
+}
+
+/* ── Dashboard charts (#179) ── */
+/* /dashboard/network main inbound chart: plot height (y labels and SVG share it). */
+.netmon-chart-plot { height: 240px; }
+@media (max-width: 40rem) {
+  .netmon-chart-plot { height: 160px; }
+}
+
+/* /dashboard/services matrix: one grid for the header and every row, so the
+   columns line up. Below 64rem the cells stack and the header is hidden. */
+.svc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "name name" "days days" "a24 a14" "rst use";
+  gap: .5rem 1rem;
+  align-items: center;
+  min-width: 0;
+  padding: 1rem;
+  background: var(--white);
+  border: 1px solid rgba(162,167,176,.22);
+  border-radius: 2px;
+}
+.svc-head {
+  display: none;
+  background: transparent;
+  border-color: transparent;
+  padding-block: 0;
+}
+.svc-hourly { grid-column: 1 / -1; margin-top: .4rem; }
+.svc-mlabel {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--fs-12);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--n-60);
+  margin-bottom: .2rem;
+}
+@media (min-width: 64rem) {
+  .svc-row {
+    grid-template-columns: minmax(10rem, 1.3fr) minmax(12rem, 1.2fr) 4.5rem 4.5rem 6rem minmax(9rem, 1fr);
+    grid-template-areas: "name days a24 a14 rst use";
+  }
+  .svc-head { display: grid; }
+  .svc-mlabel { display: none; }
+  .svc-num { text-align: right; }
+}
+
+/* Services today toggle (#188): the slim 7×12 bar sits in a 24px-wide hit
+   area, 20px tall on desktop and 28px on phones. */
+.svc-day { height: 20px; }
+@media (max-width: 63.99rem) {
+  .svc-day { height: 28px; }
 }
