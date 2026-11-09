@@ -86,5 +86,5 @@ export function Analytics() {
   }, [barOpen, host]);
 
   if (!barOpen) return null;
-  return createPortal(<ConsentBar reopened={snapshot.reopened} choice={choice} />, host);
+  return createPortal(<ConsentBar reopened={snapshot.reopened} choice={choice} by={snapshot.by} />, host);
 }

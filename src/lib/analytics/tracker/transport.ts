@@ -177,9 +177,12 @@ export class Transport {
         signal: controller.signal,
       });
       if (res.status === 429) {
-        this.pausedUntil = this.deps.now() + PAUSE_429_MS;
+        // WA-5: the server's Retry-After (1..600 s), else 60 s (spec deviation D1).
+        const ra = res.headers.get('Retry-After');
+        const pause = ra && /^\d+$/.test(ra) && +ra >= 1 && +ra <= 600 ? +ra * 1000 : PAUSE_429_MS;
+        this.pausedUntil = this.deps.now() + pause;
         this.queue.unshift(...batch.items);
-        this.later(() => void this.flush(), PAUSE_429_MS);
+        this.later(() => void this.flush(), pause);
         return false;
       }
       if (res.status >= 500) return this.retry(batch.items);

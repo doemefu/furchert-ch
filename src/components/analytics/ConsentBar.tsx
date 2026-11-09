@@ -11,11 +11,11 @@ import { useEffect, useRef, type KeyboardEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Btn } from '@/components/ui/Btn';
-import type { ConsentChoice } from '@/lib/analytics/consent';
+import type { ConsentBy, ConsentChoice } from '@/lib/analytics/consent';
 import { getConsentController } from '@/lib/analytics/controller';
 import { CONSENT_BAR_ID, CONSENT_TITLE_ID, PRIVACY_SETTINGS_ID } from './ids';
 
-export function ConsentBar({ reopened, choice }: { reopened: boolean; choice: ConsentChoice | null }) {
+export function ConsentBar({ reopened, choice, by }: { reopened: boolean; choice: ConsentChoice | null; by: ConsentBy | null }) {
   const t = useTranslations('analytics.consent');
   const ref = useRef<HTMLDivElement>(null);
   const controller = getConsentController();
@@ -70,6 +70,8 @@ export function ConsentBar({ reopened, choice }: { reopened: boolean; choice: Co
           <p>
             {t('bodyMore')} <Link href="/privacy">{t('privacyLink')}</Link>
           </p>
+          {/* WA-5: a GPC/DNT refusal says so when the bar is reopened (§4.1). */}
+          {reopened && by === 'signal' && <p>{t('signalNotice')}</p>}
         </div>
         <div className="consent-side">
           {reopened && choice !== null && (

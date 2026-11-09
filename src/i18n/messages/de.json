@@ -235,7 +235,8 @@
       "accept": "Erlauben",
       "current": "Aktuelle Wahl: {state}",
       "currentGranted": "erlaubt",
-      "currentDenied": "abgelehnt"
+      "currentDenied": "abgelehnt",
+      "signalNotice": "Ihr Browser sendet ein Datenschutzsignal (GPC/DNT); die Nutzungsstatistik ist deshalb abgelehnt. Sie können sie hier trotzdem erlauben."
     }
   },
   "dashboard": {

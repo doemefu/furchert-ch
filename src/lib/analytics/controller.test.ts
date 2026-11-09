@@ -736,3 +736,95 @@ describe('WA-4a seams (#155)', () => {
     delete g[hooksKey];
   });
 });
+
+describe('GPC/DNT auto-decline (§4.1, WA-5 #157)', () => {
+  const withSignal = (opts: FakeEnvOptions = {}) => {
+    const env = fakeEnv(opts);
+    env.deps.privacySignal = () => true;
+    return env;
+  };
+  const stored = (data: Map<string, string>) => JSON.parse(data.get(CONSENT_KEY)!);
+
+  it('no stored choice + signal: stores denied by "signal", sets the marker, sends one forget, bar closed', async () => {
+    const env = withSignal();
+    const c = ctl(env.deps);
+    await c.init('/');
+    expect(stored(env.data)).toMatchObject({ choice: 'denied', by: 'signal' });
+    expect(env.data.get(FORGET_PENDING_KEY)).toBeUndefined(); // dropped after the 204
+    expect(env.fetchFn).toHaveBeenCalledTimes(1);
+    expect(c.getSnapshot()).toMatchObject({ choice: 'denied', by: 'signal', barOpen: false });
+    expect(env.loadTracker).not.toHaveBeenCalled();
+    await c.init('/about');
+    expect(env.fetchFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('a stored user choice wins over the signal; an opted-out browser stores nothing', async () => {
+    const granted = withSignal({ data: new Map([[CONSENT_KEY, record('granted')]]) });
+    const c = ctl(granted.deps);
+    await c.init('/');
+    expect(stored(granted.data)).toMatchObject({ choice: 'granted', by: 'user' });
+    expect(granted.fetchFn).not.toHaveBeenCalled();
+    await flush();
+    expect(granted.tracker.start).toHaveBeenCalled();
+
+    const opted = withSignal({ data: new Map([[OPTOUT_KEY, '1']]) });
+    await ctl(opted.deps).init('/');
+    expect(opted.data.has(CONSENT_KEY)).toBe(false);
+  });
+
+  it('on /dashboard first: the choice is stored, the forget waits for the first public path', async () => {
+    const env = withSignal();
+    const c = ctl(env.deps);
+    await c.init('/dashboard/analytics');
+    expect(stored(env.data).by).toBe('signal');
+    expect(env.fetchFn).not.toHaveBeenCalled();
+    await c.init('/');
+    expect(env.fetchFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('an expired record is declined again by the signal', async () => {
+    const env = withSignal({ data: new Map([[CONSENT_KEY, record('granted', '2025-10-01')]]) });
+    await ctl(env.deps).init('/');
+    expect(stored(env.data)).toMatchObject({ choice: 'denied', by: 'signal', at: '2026-11-08' });
+  });
+
+  it('an explicit Allow overrides the signal: by "user", the tracker runs, the goal flag is on', async () => {
+    const env = withSignal();
+    const c = ctl(env.deps);
+    await c.init('/');
+    c.reopen();
+    await c.allow();
+    await flush();
+    expect(stored(env.data)).toMatchObject({ choice: 'granted', by: 'user' });
+    expect(env.tracker.start).toHaveBeenCalled();
+    expect(c.analyticsFlag()).toBe(true);
+  });
+
+  it('L11: a user Decline after the signal rewrites the record to by "user" with a new date', async () => {
+    const env = withSignal({ data: new Map([[CONSENT_KEY, JSON.stringify({ v: 1, choice: 'denied', by: 'signal', at: '2026-11-01' })]]) });
+    const c = ctl(env.deps);
+    await c.init('/');
+    expect(c.getSnapshot().by).toBe('signal');
+    c.reopen();
+    await c.decline();
+    expect(stored(env.data)).toMatchObject({ choice: 'denied', by: 'user', at: '2026-11-08' });
+    expect(c.getSnapshot().by).toBe('user');
+  });
+
+  it('a 503 on the signal forget keeps the marker for the next load; Allow then runs the pending forget first', async () => {
+    const env = withSignal({ responses: [status(503)] });
+    const c = ctl(env.deps);
+    await c.init('/');
+    expect(env.data.get(FORGET_PENDING_KEY)).toBe('1');
+    // The next load retries once and fails again; a later Allow runs the pending forget before the tracker.
+    const next = fakeEnv({ data: env.data, responses: [status(503), status(204)] });
+    next.deps.privacySignal = () => true;
+    const c2 = ctl(next.deps);
+    await c2.init('/');
+    c2.reopen();
+    await c2.allow();
+    await flush();
+    const order = next.log.filter((l) => l.startsWith('fetch') || l === 'tracker.start');
+    expect(order).toEqual(['fetch /api/v/forget', 'fetch /api/v/forget', 'tracker.start']);
+  });
+});

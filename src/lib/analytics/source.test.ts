@@ -65,7 +65,8 @@ describe('dark launch', () => {
 
 describe('nothing before consent', () => {
   // Device properties, lifecycle hooks and transports the consent layer must
-  // never touch (§1.4, §3.9). GPC/DNT reads arrive with WA-5 (#157).
+  // never touch (§1.4, §3.9). The one exception (WA-5 #157, §4.1): the
+  // controller's browser singleton reads the GPC/DNT signal, checked below.
   const FORBIDDEN: [string, RegExp][] = [
     ['navigator', /\bnavigator\b/],
     ['screen', /\bscreen\./],
@@ -80,9 +81,18 @@ describe('nothing before consent', () => {
     ['unload listener', /['"](before)?unload['"]/],
   ];
 
+  // The only navigator use allowed: the GPC/DNT signal in the controller singleton.
+  const SIGNAL = /const n = navigator as Navigator & \{ globalPrivacyControl\?: boolean \};\s*return n\.globalPrivacyControl === true \|\| n\.doNotTrack === '1';/;
+
+  it('the controller reads navigator only for globalPrivacyControl and doNotTrack (§4.1)', () => {
+    const src = code('src/lib/analytics/controller.ts');
+    expect(src).toMatch(SIGNAL);
+    expect(src.replace(SIGNAL, '').match(/\bnavigator\b|\bn\.\w+/g)).toBeNull();
+  });
+
   for (const file of CONSENT_FILES) {
     it(`${file} reads no device property and adds no scroll/unload listener`, () => {
-      const src = code(file);
+      const src = code(file).replace(SIGNAL, '');
       for (const [name, pattern] of FORBIDDEN) expect(src, `${file}: ${name}`).not.toMatch(pattern);
     });
   }
