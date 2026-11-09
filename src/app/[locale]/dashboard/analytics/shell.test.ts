@@ -16,6 +16,10 @@ const read = {
   getPages: vi.fn(async () => ({ ok: false, kind: 'unreachable' })),
   getClicks: vi.fn(async () => ({ ok: false, kind: 'unreachable' })),
   getSources: vi.fn(async () => ({ ok: false, kind: 'unreachable' })),
+  getFunnels: vi.fn(async (q: unknown) => (log.push(`funnels ${JSON.stringify(q)}`), { ok: false, kind: 'unreachable' })),
+  getPaths: vi.fn(async () => ({ ok: false, kind: 'unreachable' })),
+  getAudience: vi.fn(async () => ({ ok: false, kind: 'unreachable' })),
+  getCoverage: vi.fn(async () => ({ ok: false, kind: 'unreachable' })),
   getPageDetail: vi.fn(async () => ({ ok: true, data: { range, filters: { applied: {}, ignored: [] }, summary: null, previous: null, next: null, clicks: [], sections: null, faqOpens: null, daily: [] } })),
 };
 vi.mock('@/lib/analytics/read', () => read);
@@ -43,6 +47,13 @@ describe('AnalyticsShell', () => {
     await AnalyticsShell({ locale: 'en', controls: parseControls({ compare: 'none', page: '/automation' }) });
     expect(log.indexOf('overview {"compare":"none"}')).toBeLessThan(log.indexOf('status done'));
     expect(read.getPageDetail).toHaveBeenCalledWith({ compare: 'none', locale: undefined, device: undefined }, '/automation');
+  });
+
+  it('WA-4b: funnels, paths, audience and coverage get the same query incl. locale/device (L5)', async () => {
+    await AnalyticsShell({ locale: 'en', controls: parseControls({ range: '7d', entry: 'en', device: 'mobile' }) });
+    const q = { from: '2026-11-01', to: '2026-11-07', compare: 'previous', locale: 'en', device: 'mobile' };
+    for (const f of [read.getFunnels, read.getPaths, read.getAudience, read.getCoverage]) expect(f).toHaveBeenCalledWith(q);
+    expect(log.indexOf(`funnels ${JSON.stringify(q)}`)).toBeGreaterThan(log.indexOf('status done'));
   });
 
   it('falls back to the API default when /status fails (M2)', async () => {

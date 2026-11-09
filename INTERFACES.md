@@ -12,7 +12,9 @@
 > but dark as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
 > and §2's data-service web analytics write API as of issue #154 (WA-2b; only
 > the enquiry count is live while the UI flag is off); §2's data-service web
-> analytics read API and the never-track switch as of issue #155 (WA-4a).
+> analytics read API and the never-track switch as of issue #155 (WA-4a), its
+> funnels, paths, audience, coverage and page-flow endpoints as of issue #156
+> (WA-4b).
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -306,18 +308,19 @@ Producer contract: data-service `INTERFACES.md` §1b and spec `../docs/100-web-a
 | Contract test | `src/lib/analytics/server/fixtures/c13-fixtures.json` is a verbatim, sha256-pinned copy of data-service's C13 fixtures (commit named in `forwardModel.test.ts`); a mirror of the producer's per-event rules classifies all cases and accepts every event furchert-ch builds |
 | Logging | at most one `[analytics] forward summary` line a minute, counts only |
 
-#### Web analytics read API — `GET /api/webanalytics/*` (#155, WA-4a)
+#### Web analytics read API — `GET /api/webanalytics/*` (#155 WA-4a, #156 WA-4b)
 
 Producer contract: data-service `INTERFACES.md` §1c and spec `../docs/100-web-analytics.md` §8. Only `/dashboard/analytics` calls it, server-side after the ADMIN check (`src/lib/analytics/read.ts`).
 
 | Item | furchert-ch behaviour |
 |------|-----------------------|
 | Token | `client_credentials`, scope `analytics:read` only, same `furchert-ch` client, own cache (`createClientCredentialsToken`) |
-| Endpoints | `/status`, `/overview`, `/pages` (`limit=100`), `/pages/detail?path=` (registry paths only), `/clicks?kind=` (`limit=100`), `/sources` (`limit=100`); WA-4b adds `/funnels`, `/paths`, `/audience`, `/coverage` |
+| Endpoints | `/status`, `/overview`, `/pages` (`limit=100`), `/pages/detail?path=` (registry paths only, `limit=5` for previous/next), `/clicks?kind=` (`limit=100`), `/sources` (`limit=100`); WA-4b: `/funnels`, `/paths`, `/audience`, `/coverage` (`limit=100` on the last three). All get the same range, compare, `locale` and `device`; endpoints that ignore a filter echo it under `filters.ignored`, shown as "ignored here" |
+| Definition date | `/funnels`, `/paths`, `/audience` and previous/next count from `definitionFrom` (definition 2, spec §8.5). The page resolves one date (from `/paths`, else `/funnels`) and marks a clamped range, a date after the range, or no date yet; `/coverage` counts from `baselineFrom` (the go-live date, null before WA-6), its data-quality table always covers the full range |
 | Parameters | `from`/`to` (Zurich dates; 7d/90d/12m end at `/status.lastCompleteDay`, 28d and custom ranges use the API default or the given dates), `compare=previous\|none`, `locale` (entry locale, URL param `entry`), `device`; all validated before they leave the server |
 | Failure | `no-store`, 5 s timeout, one retry after 401; a result union per section (`disabled`, `unreachable`, `problem`, `malformed`) rendered as a fixed text; `/status` failing falls back to the API default range with a note |
-| Numbers | the API returns counts only; rates, Wilson intervals, deltas, medians and the small-number rules come from `src/lib/analytics/stats.ts` (spec §8.3, §8.6) |
-| Rendering | every API value as text; drilldown links only for registry paths; "Data through" = the echoed `range.lastCompleteDay` (never a provisional day) |
+| Numbers | the API returns counts only; rates, Wilson intervals, deltas, medians, funnel step rates, the coverage band and the small-number rules come from `src/lib/analytics/stats.ts` (spec §8.3, §8.6). Open lists fold rows below 3 into "other (n)", fixed categories show "< 3"; coverage by page lists registry paths only |
+| Rendering | every API value as text; known values (funnel steps, page groups, seen-before values, devices, locales) through allowlisted labels, anything else raw; drilldown links only for registry paths; "Data through" = the echoed `range.lastCompleteDay` (never a provisional day) |
 
 ## 3. Outbound: iCloud SMTP (contact form; #46, callback and attribution #145)
 

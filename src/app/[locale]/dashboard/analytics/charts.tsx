@@ -123,11 +123,28 @@ export interface RankedRow {
   label: ReactNode;
   value: number;
   note?: string;
+  /** A fixed-category value below 3: shown as "< 3", no bar length (§8.6, WA-4b H1). */
+  small?: boolean;
 }
 
 /** Ranked horizontal bars, one hue, largest first (dataviz part-to-whole). */
-export function RankedBars({ title, rows, fmt, emptyText, badge }: { title: string; rows: RankedRow[]; fmt: Formatters; emptyText: string; badge?: { index: number | null; text: string } }) {
-  const max = rows.reduce((m, r) => Math.max(m, r.value), 0);
+export function RankedBars({
+  title,
+  rows,
+  fmt,
+  emptyText,
+  badge,
+  small,
+}: {
+  title: string;
+  rows: RankedRow[];
+  fmt: Formatters;
+  emptyText: string;
+  badge?: { index: number | null; text: string };
+  /** Texts for a small cell: shown and announced (L9). */
+  small?: { shown: string; spoken: string };
+}) {
+  const max = rows.reduce((m, r) => Math.max(m, r.small ? 0 : r.value), 0);
   return (
     <div style={cardStyle}>
       <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{title}</p>
@@ -136,7 +153,7 @@ export function RankedBars({ title, rows, fmt, emptyText, badge }: { title: stri
       ) : (
         <ul style={{ listStyle: 'none', display: 'grid', gap: '.5rem' }}>
           {rows.map((r, i) => {
-            const pct = max > 0 ? (r.value / max) * 100 : 0;
+            const pct = max > 0 && !r.small ? (r.value / max) * 100 : 0;
             return (
               <li key={r.key}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.5rem', fontFamily: 'var(--mono)', fontSize: '.68rem', color: 'var(--n-70)', marginBottom: '.2rem' }}>
@@ -145,11 +162,11 @@ export function RankedBars({ title, rows, fmt, emptyText, badge }: { title: stri
                     {badge && badge.index === i && <span style={{ marginLeft: '.4rem', color: 'var(--n-90)' }}>· {badge.text}</span>}
                   </span>
                   <span style={{ color: 'var(--n-60)', flexShrink: 0 }}>
-                    {fmt.num(r.value)}
+                    {r.small && small ? <span aria-label={small.spoken}>{small.shown}</span> : fmt.num(r.value)}
                     {r.note ? ` · ${r.note}` : ''}
                   </span>
                 </div>
-                <div style={{ height: 4, background: 'var(--n-20)', borderRadius: '2px', overflow: 'hidden' }}>
+                <div aria-hidden="true" style={{ height: 4, background: 'var(--n-20)', borderRadius: '2px', overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${pct}%`, background: ACCENT, borderRadius: '2px' }} />
                 </div>
               </li>
@@ -158,5 +175,60 @@ export function RankedBars({ title, rows, fmt, emptyText, badge }: { title: stri
         </ul>
       )}
     </div>
+  );
+}
+
+/**
+ * Two counts per day on one axis, side by side (WA-4b coverage, L3): the
+ * subject series in the accent, the reference series in grey, never drawn
+ * as a subset of each other. Sampled days are marked in the tooltip and the
+ * table.
+ */
+export function SideBySideColumns({
+  title,
+  days,
+  labels,
+  t,
+  fmt,
+}: {
+  title: string;
+  days: { day: string; subject: number; reference: number; sampled: boolean }[];
+  labels: { subject: string; reference: string; start: string; sampled: string };
+  t: Translate;
+  fmt: Formatters;
+}) {
+  const max = days.reduce((m, d) => Math.max(m, d.subject, d.reference), 0);
+  const w = 12;
+  const h = 96;
+  const col = (v: number) => (max > 0 ? Math.max((v / max) * h, v > 0 ? 1 : 0) : 0);
+  return (
+    <figure style={cardStyle}>
+      <figcaption style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '.75rem' }}>
+        <span style={{ ...monoLabel, fontSize: '.62rem' }}>{title}</span>
+        <Legend color={ACCENT} text={labels.subject} />
+        <Legend color={CONTEXT} text={labels.reference} />
+      </figcaption>
+      <svg role="img" aria-label={title} viewBox={`0 0 ${Math.max(days.length, 1) * w} ${h}`} preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: h }}>
+        {days.map((d, i) => (
+          <g key={d.day}>
+            <title>{`${fmt.day(d.day)}${d.sampled ? ` (${labels.sampled})` : ''}: ${labels.subject} ${fmt.num(d.subject)}, ${labels.reference} ${fmt.num(d.reference)}`}</title>
+            <rect x={i * w + 1} y={h - col(d.subject)} width={(w - 3) / 2} height={col(d.subject)} fill={ACCENT} />
+            <rect x={i * w + 1 + (w - 3) / 2 + 1} y={h - col(d.reference)} width={(w - 3) / 2} height={col(d.reference)} fill={CONTEXT} opacity={d.sampled ? 0.5 : 1} />
+          </g>
+        ))}
+      </svg>
+      {days.length > 0 && (
+        <div style={{ ...noteStyle, display: 'flex', justifyContent: 'space-between', marginTop: '.35rem' }}>
+          <span>{fmt.day(days[0].day)}</span>
+          <span>{fmt.day(days[days.length - 1].day)}</span>
+        </div>
+      )}
+      <TableView
+        summary={t('table')}
+        caption={title}
+        head={[labels.start, labels.subject, labels.reference]}
+        rows={days.map((d) => [fmt.day(d.day), fmt.num(d.subject), `${d.sampled ? '≈ ' : ''}${fmt.num(d.reference)}`])}
+      />
+    </figure>
   );
 }

@@ -4,17 +4,31 @@
 // 12m) wait for /status; the 28-day default and custom ranges fetch /status
 // and every section in parallel. When /status fails, the sections use the
 // API default (28 days) and the header says so.
+// WA-4b #156: funnels, paths, audience and coverage are fetched in the same
+// round; one definition date (from /paths, else /funnels) is resolved here and
+// passed to every definition-bound block (review M2).
 import type { CSSProperties } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { LazyNeverTrackSwitch } from '@/components/analytics/lazySwitch';
 import { ANALYTICS_UI_ENABLED } from '@/lib/analytics/flags';
-import { getClicks, getOverview, getPageDetail, getPages, getSources, getStatus, type RangeQuery } from '@/lib/analytics/read';
+import {
+  getAudience,
+  getClicks,
+  getCoverage,
+  getFunnels,
+  getOverview,
+  getPageDetail,
+  getPages,
+  getPaths,
+  getSources,
+  getStatus,
+  type RangeQuery,
+} from '@/lib/analytics/read';
 import { needsStatus, rangeQuery, type Controls } from './searchParams';
 import {
   ClicksSection,
   ControlsBar,
   HeaderLine,
-  LaterSection,
   OfferGlance,
   PageDrilldown,
   PagesSection,
@@ -22,6 +36,7 @@ import {
   StatusStrip,
   type Ctx,
 } from './sections';
+import { AudienceSection, CoverageSection, FunnelsSection, PageFlow, PathsSection, resolveDefinition } from './sections-flow';
 import { Section, makeFormatters, monoLabel, type Translate } from './ui';
 
 const titleStyle: CSSProperties = { fontFamily: 'var(--sans)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)' };
@@ -40,14 +55,19 @@ export async function AnalyticsShell({ locale, controls }: { locale: string; con
     else statusDefaulted = true;
   }
   const q: RangeQuery = { ...range, compare: controls.compare ? 'previous' : 'none', locale: controls.entry, device: controls.device };
-  const [status, overview, pages, clicks, sources, detail] = await Promise.all([
+  const [status, overview, pages, clicks, sources, detail, funnels, paths, audience, coverage] = await Promise.all([
     statusPromise,
     getOverview(q),
     getPages(q),
     getClicks(q, controls.kind),
     getSources(q),
     controls.page ? getPageDetail(q, controls.page) : Promise.resolve(null),
+    getFunnels(q),
+    getPaths(q),
+    getAudience(q),
+    getCoverage(q),
   ]);
+  const def = resolveDefinition(paths, funnels, overview);
 
   const ctx: Ctx = { t, fmt, c: controls, locale };
   return (
@@ -61,14 +81,14 @@ export async function AnalyticsShell({ locale, controls }: { locale: string; con
       <ControlsBar ctx={ctx} />
       <StatusStrip result={status} ctx={ctx} />
       <OfferGlance result={overview} ctx={ctx} />
-      <LaterSection id="funnels" ctx={ctx} />
+      <FunnelsSection result={funnels} def={def} ctx={ctx} />
       <PagesSection result={pages} ctx={ctx} />
-      {controls.page && detail && <PageDrilldown result={detail} path={controls.page} ctx={ctx} />}
+      {controls.page && detail && <PageDrilldown result={detail} path={controls.page} flow={<PageFlow result={detail} def={def} ctx={ctx} />} ctx={ctx} />}
       <ClicksSection result={clicks} ctx={ctx} />
       <SourcesSection result={sources} ctx={ctx} />
-      <LaterSection id="paths" ctx={ctx} />
-      <LaterSection id="audience" ctx={ctx} />
-      <LaterSection id="coverage" ctx={ctx} />
+      <PathsSection result={paths} def={def} ctx={ctx} />
+      <AudienceSection result={audience} def={def} ctx={ctx} />
+      <CoverageSection result={coverage} ctx={ctx} />
       <Section id="wa-browser" title={t('browser.title')}>
         <LazyNeverTrackSwitch uiEnabled={ANALYTICS_UI_ENABLED} />
       </Section>

@@ -98,4 +98,38 @@ describe('read client', () => {
     expect(read.isClicks({ range, filters, items: [{ ...row, path: 7 }] })).toBe(false);
     expect([row, specShape, mainShape, { ...row, kind: 'nav', target: '(other)' }].map(read.isClickRemainder)).toEqual([false, true, true, false]);
   });
+
+  it('WA-3b: fetches funnels, paths, audience and coverage with filters and limit=100; detail with limit=5 (L5)', async () => {
+    const read = await import('./read');
+    replies = Array(5).fill({ status: 200, body: {} });
+    const q = { from: '2026-10-12', to: '2026-11-08', compare: 'previous' as const, locale: 'de' as const, device: 'mobile' as const };
+    await read.getFunnels(q);
+    await read.getPaths(q);
+    await read.getAudience(q);
+    await read.getCoverage(q);
+    await read.getPageDetail(q, '/automation');
+    const base = 'from=2026-10-12&to=2026-11-08&compare=previous&locale=de&device=mobile';
+    expect(calls.map((c) => c.url.replace('http://ds.test/api/webanalytics', ''))).toEqual([
+      `/funnels?${base}`, `/paths?${base}&limit=100`, `/audience?${base}&limit=100`, `/coverage?${base}&limit=100`, `/pages/detail?${base}&path=%2Fautomation&limit=5`,
+    ]);
+  });
+
+  it('WA-3b guards accept nullable keys and reject drift (M5)', async () => {
+    const read = await import('./read');
+    const steps = [{ index: 0, key: 'visit', visits: 10 }, { index: 1, key: null, visits: 2 }];
+    expect(read.isFunnels({ range, filters, definitionVersion: 2, definitionFrom: null, funnels: [{ id: 'offer', steps, previous: null }] })).toBe(true);
+    expect(read.isFunnels({ range, filters, definitionVersion: '2', definitionFrom: null, funnels: [] })).toBe(false);
+    const paths = { range, filters, definitionFrom: '2026-10-01', groupPaths: [{ path: null, visits: 3, convertingVisits: 0 }], entryExit: [{ entry: '/', exit: null, visits: 3 }], seenBeforeContacting: { intentVisits: 4, items: [{ seen: 'about', visits: 2 }] }, transitions: [{ fromPath: '/', toPath: '/it', count: 3 }] };
+    expect(read.isPaths(paths)).toBe(true);
+    expect(read.isPaths({ ...paths, transitions: [{ fromPath: '/', toPath: '/it', count: '3' }] })).toBe(false);
+    const audience = { range, filters, newVsReturning: { newVisits: 1, returningVisits: 2 }, repeatOfferViewers: { value: null, basis: null }, deviceClass: [{ value: null, visits: 1 }], entryLocale: [], dimensions: { country: [], browserFamily: [], osFamily: [], viewport: [], visitorType: [] } };
+    expect(read.isAudience(audience)).toBe(true);
+    expect(read.isAudience({ ...audience, dimensions: { ...audience.dimensions, viewport: undefined } })).toBe(false);
+    const coverage = { range, filters, baselineFrom: null, daily: [], byPage: [], enquiries: { consentedSubmits: 0, totalSubmits: 0 }, dataQuality: { edge: { bot: 0 }, secondLine: {}, duplicates: 0, cappedDays: null } };
+    expect(read.isCoverage(coverage)).toBe(true);
+    expect(read.isCoverage({ ...coverage, dataQuality: { ...coverage.dataQuality, edge: { bot: 'x' } } })).toBe(false);
+    const detail = { range, filters, summary: null, previous: [{ path: '(entrance)', count: 3 }], next: null, clicks: [], sections: null, faqOpens: null, daily: [] };
+    expect(read.isPageDetail(detail)).toBe(true);
+    expect(read.isPageDetail({ ...detail, previous: [{ path: 3, count: 1 }] })).toBe(false);
+  });
 });

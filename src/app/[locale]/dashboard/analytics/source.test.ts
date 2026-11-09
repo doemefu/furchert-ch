@@ -29,6 +29,10 @@ describe('/dashboard/analytics sources', () => {
     }
   });
 
+  it('the dashboard files are server components without client state (L2)', () => {
+    for (const f of files.filter((x) => x.startsWith(DIR))) expect(read(f), f).not.toMatch(/'use client'|useState|useEffect/);
+  });
+
   it('the read client is server-only and asks for analytics:read only', () => {
     const src = read('src/lib/analytics/read.ts');
     expect(src).toMatch(/^import 'server-only';/m);

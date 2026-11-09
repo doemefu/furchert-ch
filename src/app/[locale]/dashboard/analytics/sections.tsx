@@ -4,6 +4,7 @@
 // text (C16): no dangerouslySetInnerHTML, no href built from an API value;
 // drilldown links exist only for registry paths and use the registry
 // constant (review M1).
+import { Fragment, type ReactNode } from 'react';
 import { StatusDot, type DotStatus } from '@/components/ui/StatusDot';
 import { TRACKED_PATHS, isTracked } from '@/lib/analytics/registry';
 import { isClickRemainder } from '@/lib/analytics/read';
@@ -66,7 +67,7 @@ interface Ctx {
 const kindLabel = (kind: string | null, t: Translate) => (kind !== null && (CLICK_KINDS as readonly string[]).includes(kind) ? t(`clicks.${kind}`) : (kind ?? '—'));
 
 const linkTo = (ctx: Ctx, change: Partial<Controls>, hash?: string) => `/${ctx.locale}${hrefFor(ctx.c, change, hash)}`;
-const grid = (min: number) => ({ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gap: '.75rem' }) as const;
+export const grid = (min: number) => ({ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gap: '.75rem' }) as const;
 
 /** Empty-state text for a section's echoed range, or null when there is data (L2). */
 export function emptyText(range: Range, t: Translate, fmt: Formatters): string | null {
@@ -75,7 +76,7 @@ export function emptyText(range: Range, t: Translate, fmt: Formatters): string |
   return null;
 }
 
-function Ignored({ filters, t }: { filters: Filters; t: Translate }) {
+export function Ignored({ filters, t }: { filters: Filters; t: Translate }) {
   if (filters.ignored.length === 0) return null;
   return <span style={noteStyle}>{t('ignored', { filters: filters.ignored.join(', ') })}</span>;
 }
@@ -293,6 +294,8 @@ export function OfferGlance({ result, ctx }: { result: AnalyticsResult<OverviewR
 
 // ── 3 Pages + drilldown ────────────────────────────────────────────────────
 
+const PAGE_COLS = ['path', 'pageviews', 'entries', 'exitRate', 'bounce', 'medianTime', 'scroll50', 'scroll90'] as const;
+
 function medianText(hist: number[], samples: number, t: Translate): string {
   const m = medianBucket(hist, samples);
   return m.kind === 'few' ? t('pages.medianFew', { n: m.n }) : HISTOGRAM_BUCKETS[m.index];
@@ -310,6 +313,30 @@ export function PagesSection({ result, ctx }: { result: AnalyticsResult<PagesRes
   const d = result.data;
   const empty = emptyText(d.range, t, fmt);
   const folded = foldRows(d.items, (p) => p.pageviews, (p) => p.path === '(other)');
+  const rows = folded.kept.map((p) => {
+    // M1: a link only for registry paths, built from the registry constant.
+    const known = isTracked(p.path) ? TRACKED_PATHS.find((x) => x === p.path) : undefined;
+    return {
+      key: p.path,
+      label: known ? (
+        <a href={linkTo(ctx, { page: known }, 'wa-detail')} style={linkStyle}>
+          {known}
+        </a>
+      ) : (
+        p.path
+      ),
+      byLocale: t('pages.byLocale', { de: fmt.num(p.pageviewsByLocale.de), en: fmt.num(p.pageviewsByLocale.en) }),
+      cells: [
+        fmt.num(p.pageviews),
+        fmt.num(p.entries),
+        rateText(exitRate(p.exits, p.visitsViewed), t, fmt),
+        rateText(bounce(p.entries, p.landingEngagedVisits), t, fmt),
+        medianText(p.engagedHistogram, p.engagementSamples, t),
+        rateText(scrollReach(p.scrollReached.p50, p.scrollSamples), t, fmt),
+        rateText(scrollReach(p.scrollReached.p90, p.scrollSamples), t, fmt),
+      ],
+    };
+  });
   return (
     <Section id="wa-pages" title={t('pages.title')} aside={<Ignored filters={d.filters} t={t} />}>
       {empty ? (
@@ -317,59 +344,68 @@ export function PagesSection({ result, ctx }: { result: AnalyticsResult<PagesRes
       ) : d.items.length === 0 ? (
         <Note>{t('pages.noRows')}</Note>
       ) : (
-        <TableWrap>
-          <thead>
-            <tr>
-              {['path', 'pageviews', 'entries', 'exitRate', 'bounce', 'medianTime', 'scroll50', 'scroll90'].map((k, i) => (
-                <th key={k} scope="col" style={{ ...thStyle, textAlign: i === 0 ? 'left' : 'right' }}>
-                  {t(`pages.${k}`)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {folded.kept.map((p) => {
-              // M1: a link only for registry paths, built from the registry constant.
-              const known = isTracked(p.path) ? TRACKED_PATHS.find((x) => x === p.path) : undefined;
-              return (
-                <tr key={p.path}>
-                  <td style={tdStyle}>
-                    {known ? (
-                      <a href={linkTo(ctx, { page: known }, 'wa-detail')} style={linkStyle}>
-                        {known}
-                      </a>
-                    ) : (
-                      p.path
-                    )}
-                  </td>
-                  <td style={numTd}>
-                    {fmt.num(p.pageviews)}
-                    <div style={noteStyle}>{t('pages.byLocale', { de: fmt.num(p.pageviewsByLocale.de), en: fmt.num(p.pageviewsByLocale.en) })}</div>
-                  </td>
-                  <td style={numTd}>{fmt.num(p.entries)}</td>
-                  <td style={numTd}>{rateText(exitRate(p.exits, p.visitsViewed), t, fmt)}</td>
-                  <td style={numTd}>{rateText(bounce(p.entries, p.landingEngagedVisits), t, fmt)}</td>
-                  <td style={numTd}>{medianText(p.engagedHistogram, p.engagementSamples, t)}</td>
-                  <td style={numTd}>{rateText(scrollReach(p.scrollReached.p50, p.scrollSamples), t, fmt)}</td>
-                  <td style={numTd}>{rateText(scrollReach(p.scrollReached.p90, p.scrollSamples), t, fmt)}</td>
-                </tr>
-              );
-            })}
-            {folded.other !== null && (
+        <>
+          <TableWrap className="wa-pages-table">
+            <thead>
               <tr>
-                <td style={tdStyle} colSpan={8}>
-                  {t('other', { n: fmt.num(folded.other) })}
-                </td>
+                {PAGE_COLS.map((k, i) => (
+                  <th key={k} scope="col" style={{ ...thStyle, textAlign: i === 0 ? 'left' : 'right' }}>
+                    {t(`pages.${k}`)}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </TableWrap>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.key}>
+                  <td style={tdStyle}>{r.label}</td>
+                  <td style={numTd}>
+                    {r.cells[0]}
+                    <div style={noteStyle}>{r.byLocale}</div>
+                  </td>
+                  {r.cells.slice(1).map((v, i) => (
+                    <td key={PAGE_COLS[i + 2]} style={numTd}>
+                      {v}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              {folded.other !== null && (
+                <tr>
+                  <td style={tdStyle} colSpan={8}>
+                    {t('other', { n: fmt.num(folded.other) })}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </TableWrap>
+          {/* Phone layout (WA-4a review carry-over): the same rows as cards; globals.css switches at 640px. */}
+          <ul className="wa-pages-cards" style={{ listStyle: 'none', margin: 0, padding: 0, gap: '.5rem' }}>
+            {rows.map((r) => (
+              <li key={r.key} style={cardStyle}>
+                <p style={{ fontFamily: 'var(--mono)', fontSize: '.8rem', color: 'var(--n-100)', marginBottom: '.5rem', overflowWrap: 'anywhere' }}>{r.label}</p>
+                <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '.25rem .75rem', margin: 0 }}>
+                  {r.cells.map((v, i) => (
+                    <Fragment key={PAGE_COLS[i + 1]}>
+                      <dt style={{ ...monoLabel, fontSize: '.6rem' }}>{t(`pages.${PAGE_COLS[i + 1]}`)}</dt>
+                      <dd style={{ ...noteStyle, color: 'var(--n-80)', margin: 0, textAlign: 'right' }}>
+                        {v}
+                        {i === 0 && ` (${r.byLocale})`}
+                      </dd>
+                    </Fragment>
+                  ))}
+                </dl>
+              </li>
+            ))}
+            {folded.other !== null && <li style={{ ...cardStyle, ...noteStyle }}>{t('other', { n: fmt.num(folded.other) })}</li>}
+          </ul>
+        </>
       )}
     </Section>
   );
 }
 
-export function PageDrilldown({ result, path, ctx }: { result: AnalyticsResult<PageDetailResponse>; path: string; ctx: Ctx }) {
+export function PageDrilldown({ result, path, flow, ctx }: { result: AnalyticsResult<PageDetailResponse>; path: string; flow?: ReactNode; ctx: Ctx }) {
   const { t, fmt } = ctx;
   const title = t('pages.detail', { path });
   if (!result.ok) {
@@ -424,7 +460,7 @@ export function PageDrilldown({ result, path, ctx }: { result: AnalyticsResult<P
               emptyText={t('sources.noRows')}
             />
           )}
-          <Note>{t('pages.prevNext')}</Note>
+          {flow}
         </div>
       )}
     </Section>
@@ -605,16 +641,6 @@ export function SourcesSection({ result, ctx }: { result: AnalyticsResult<Source
           </div>
         </div>
       )}
-    </Section>
-  );
-}
-
-// ── 2, 6, 7, 8 placeholders (WA-4b) ────────────────────────────────────────
-
-export function LaterSection({ id, ctx }: { id: 'funnels' | 'paths' | 'audience' | 'coverage'; ctx: Ctx }) {
-  return (
-    <Section id={`wa-${id}`} title={ctx.t(`later.${id}`)}>
-      <Note>{ctx.t('notYetAvailable')}</Note>
     </Section>
   );
 }

@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { OverviewResponse, PagesResponse, Range, StatusResponse } from '@/lib/analytics/read';
 import { parseControls } from './searchParams';
-import { ClicksSection, HeaderLine, LaterSection, OfferGlance, PagesSection, SourcesSection, StatusStrip, emptyText, type Ctx } from './sections';
+import { ClicksSection, HeaderLine, OfferGlance, PagesSection, SourcesSection, StatusStrip, emptyText, type Ctx } from './sections';
 import { makeFormatters, type Translate } from './ui';
 
 const t: Translate = (key, values) => (values ? `${key}${JSON.stringify(values)}` : key);
@@ -34,7 +34,10 @@ describe('C16: stored values render as text, never as markup or links', () => {
     const out = html(PagesSection, { result: { ok: true, data }, ctx: ctx() });
     expect(out).not.toContain('<img');
     expect(out).toContain('&lt;img src=x onerror=alert(1)&gt;');
-    expect(hrefs(out)).toEqual(['/en/dashboard/analytics?page=%2Fautomation#wa-detail']);
+    // Table and phone cards (WA-4b carry-over) render the same rows, so the one registry link appears twice.
+    expect(hrefs(out)).toEqual(['/en/dashboard/analytics?page=%2Fautomation#wa-detail', '/en/dashboard/analytics?page=%2Fautomation#wa-detail']);
+    expect(out).toContain('class="wa-pages-table"');
+    expect(out).toContain('class="wa-pages-cards"');
     expect(out).toContain('other{&quot;n&quot;:&quot;4&quot;}');
   });
 
@@ -134,9 +137,8 @@ describe('states (L2, L3)', () => {
     expect(strip).toContain('status.provisional{&quot;day&quot;:&quot;7 Nov 2026&quot;}');
     expect(strip).toContain('status.eventsToday');
   });
-  it('failures and ignored filters are shown; WA-4b sections are placeholders', () => {
+  it('failures and ignored filters are shown', () => {
     expect(html(PagesSection, { result: { ok: false, kind: 'problem', status: 400, code: 'invalid_window' }, ctx: ctx() })).toContain('problem{&quot;status&quot;:400,&quot;code&quot;:&quot;invalid_window&quot;}');
     expect(html(PagesSection, { result: { ok: true, data: { range, filters: { applied: {}, ignored: ['device'] }, items: [pageItem('/automation')] } }, ctx: ctx() })).toContain('ignored{&quot;filters&quot;:&quot;device&quot;}');
-    expect(html(LaterSection, { id: 'funnels', ctx: ctx() })).toContain('notYetAvailable');
   });
 });
