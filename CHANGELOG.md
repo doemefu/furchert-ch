@@ -198,6 +198,9 @@ All notable changes per milestone. Newest first.
   Roles, scopes, failure kinds and other labels stay pills. The home page
   bullets are small round dots and the login legend keys are short lines, so
   nothing else looks like the LED.
+- **Services day strip packed again**: the 14 day bars sit 3 px apart as
+  before #186 instead of spreading across the column; the header names the
+  date range.
 - **Services matrix colours**: healthy days are green again and no-data days
   light grey, drawn as the original slim 7×12 bars, now centred in the aligned
   day columns (the grey of #186 read worse).

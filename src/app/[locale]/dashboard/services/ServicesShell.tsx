@@ -12,7 +12,6 @@ import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
 import { getServiceHealth } from '@/lib/metrics/services';
 import {
-  DAY_GRID,
   HOURS_SHOWN,
   SERVICE_HEALTH_TZ,
   formatAvailability,
@@ -98,7 +97,6 @@ const pillStyle: CSSProperties = {
 interface Formatters {
   tag: string;
   day: (ms: number) => string;
-  dayNum: (ms: number) => string;
   time: (ms: number) => string;
   int: (n: number) => string;
 }
@@ -111,13 +109,11 @@ function makeFormatters(locale: Locale): Formatters {
     month: '2-digit',
     timeZone: SERVICE_HEALTH_TZ,
   });
-  const dayNumFmt = new Intl.DateTimeFormat(tag, { day: '2-digit', timeZone: SERVICE_HEALTH_TZ });
   const timeFmt = new Intl.DateTimeFormat(tag, { hour: '2-digit', minute: '2-digit', timeZone: SERVICE_HEALTH_TZ });
   const intFmt = new Intl.NumberFormat(tag);
   return {
     tag,
     day: (ms) => dayFmt.format(ms),
-    dayNum: (ms) => dayNumFmt.format(ms),
     time: (ms) => timeFmt.format(ms),
     int: (n) => intFmt.format(n),
   };
@@ -351,22 +347,10 @@ function MatrixHeader({ days, fmt, t }: { days: DailyAvailability[]; fmt: Format
   return (
     <div className="svc-row svc-head" aria-hidden="true">
       <div style={{ ...microLabel, gridArea: 'name', marginBottom: 0 }}>{t('workload')}</div>
-      <div style={{ gridArea: 'days', display: 'grid', gridTemplateColumns: DAY_GRID, gap: 2 }}>
-        {days.map((d) => (
-          <span
-            key={d.date}
-            title={fmt.day(d.startMs)}
-            style={{
-              ...microLabel,
-              marginBottom: 0,
-              textAlign: 'center',
-              letterSpacing: 0,
-              color: d.isToday ? 'var(--blue-base)' : 'var(--n-60)',
-            }}
-          >
-            {fmt.dayNum(d.startMs)}
-          </span>
-        ))}
+      {/* The packed 7px strip has no room for per-day numbers: the header
+          names the range instead (first day – today). */}
+      <div style={{ ...microLabel, gridArea: 'days', marginBottom: 0, letterSpacing: 0 }}>
+        {days.length > 0 ? `${fmt.day(days[0].startMs)} – ${fmt.day(days[days.length - 1].startMs)}` : null}
       </div>
       <div style={{ ...microLabel, gridArea: 'a24', marginBottom: 0, textAlign: 'right' }} title={t('availability')}>
         {t('span24h')}

@@ -387,7 +387,7 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 }
 @media (min-width: 64rem) {
   .svc-row {
-    grid-template-columns: minmax(10rem, 1.3fr) minmax(18rem, 2.4fr) 4.5rem 4.5rem 6rem minmax(9rem, 1fr);
+    grid-template-columns: minmax(10rem, 1.3fr) minmax(12rem, 1.2fr) 4.5rem 4.5rem 6rem minmax(9rem, 1fr);
     grid-template-areas: "name days a24 a14 rst use";
   }
   .svc-head { display: grid; }
