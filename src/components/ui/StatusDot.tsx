@@ -61,7 +61,8 @@ export function StatusLabel({
           fontSize: 'var(--fs-12)',
           letterSpacing: 0,
           color: onDark ? 'var(--n-20)' : STATUS_INK[status],
-          whiteSpace: 'nowrap',
+          // Dark bands hold sentences (home status line) that must wrap on phones.
+          whiteSpace: onDark ? 'normal' : 'nowrap',
         }}
       >
         {children}
