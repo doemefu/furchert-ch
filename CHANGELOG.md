@@ -6,6 +6,13 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Usage statistics live** (#158, WA-6 of Epic doemefu/homelab#348,
+  2026-11-09): the consent bar, the footer "Privacy settings" button and the
+  consented tracker are turned on (`ANALYTICS_UI_ENABLED = true`), together
+  with the privacy section "Nutzungsstatistik (nur mit Einwilligung)" /
+  "Usage statistics (only with consent)" and the corrected cookie list. Data
+  appears on `/dashboard/analytics` once a day is final (the next morning).
+
 - **Web analytics abuse limits, durable erasure and GPC/DNT, shipped dark**
   (#157, WA-5 of Epic doemefu/homelab#348). Everything below stays off
   until `ANALYTICS_UI_ENABLED` flips in WA-6, except the forward-queue

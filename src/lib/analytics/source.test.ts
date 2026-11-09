@@ -26,9 +26,9 @@ const CONSENT_FILES = [
   'src/components/analytics/PrivacySettingsLink.tsx',
 ];
 
-describe('dark launch', () => {
-  it('keeps ANALYTICS_UI_ENABLED false until the WA-6 go-live PR (#158) flips it and this test', () => {
-    expect(code('src/lib/analytics/flags.ts')).toMatch(/export const ANALYTICS_UI_ENABLED: boolean = false;/);
+describe('go-live switch', () => {
+  it('ANALYTICS_UI_ENABLED is true since the WA-6 go-live (#158); a rollback changes it and this test together', () => {
+    expect(code('src/lib/analytics/flags.ts')).toMatch(/export const ANALYTICS_UI_ENABLED: boolean = true;/);
   });
 
   it('renders the analytics components only behind the flag', () => {

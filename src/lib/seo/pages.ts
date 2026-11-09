@@ -24,7 +24,7 @@ export const PAGE_LAST_MODIFIED = {
   '/contact': '2026-11-07',
   // Legal pages (#16); bump when the copy in src/data/legal.ts changes.
   '/imprint': '2026-11-05',
-  '/privacy': '2026-11-07',
+  '/privacy': '2026-11-09',
   '/projects/iot-platform': '2026-11-08',
   // The page shows this date itself ("Stand der Beschreibung").
   '/projects/homelab': LAB_CONTENT_UPDATED,

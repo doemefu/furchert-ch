@@ -9,13 +9,13 @@
 > issue #63; its logins endpoints (NM-4) as of issue #64. §2's Prometheus
 > service-health queries (`/dashboard/services`) are implemented as of issue #47.
 > §4 (browser consent contract for first-party web analytics) is implemented
-> but dark as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
-> and §2's data-service web analytics write API as of issue #154 (WA-2b; only
-> the enquiry count is live while the UI flag is off); §2's data-service web
+> as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
+> and §2's data-service web analytics write API as of issue #154 (WA-2b); §2's data-service web
 > analytics read API and the never-track switch as of issue #155 (WA-4a), its
 > funnels, paths, audience, coverage and page-flow endpoints as of issue #156
 > (WA-4b); the abuse limits, durable forget erasure and GPC/DNT handling as of
-> issue #157 (WA-5, dark until WA-6).
+> issue #157 (WA-5). All of it is live since the WA-6 go-live on 2026-11-09
+> (#158).
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -361,9 +361,9 @@ renders "sent" when the action returns `{ok:true}`, which happens only after
 `sendMail()` resolves with at least one accepted recipient and none
 rejected.
 
-## 4. Browser: usage-statistics consent (WA-2a #153; dark until WA-6)
+## 4. Browser: usage-statistics consent (WA-2a #153; live since 2026-11-09, #158)
 
-Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-analytics.md`) §4 and §10.1. Rendered only while `ANALYTICS_UI_ENABLED` (`src/lib/analytics/flags.ts`) is `true`; it is `false` until the go-live PR (#158).
+Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-analytics.md`) §4 and §10.1. Rendered only while `ANALYTICS_UI_ENABLED` (`src/lib/analytics/flags.ts`) is `true`, which it is since the WA-6 go-live (#158, 2026-11-09).
 
 | Item | Contract |
 |------|----------|
