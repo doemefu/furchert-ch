@@ -387,7 +387,7 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 }
 @media (min-width: 64rem) {
   .svc-row {
-    grid-template-columns: minmax(10rem, 1.3fr) minmax(18rem, 2.4fr) 4.5rem 4.5rem 6rem minmax(9rem, 1fr);
+    grid-template-columns: minmax(10rem, 1.3fr) minmax(12rem, 1.2fr) 4.5rem 4.5rem 6rem minmax(9rem, 1fr);
     grid-template-areas: "name days a24 a14 rst use";
   }
   .svc-head { display: grid; }
@@ -395,8 +395,8 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
   .svc-num { text-align: right; }
 }
 
-/* Services today toggle (#188): the slim 7×12 bar sits in a taller hit area,
-   28px on phones where the 14 day columns are under 20px wide. */
+/* Services today toggle (#188): the slim 7×12 bar sits in a 24px-wide hit
+   area, 20px tall on desktop and 28px on phones. */
 .svc-day { height: 20px; }
 @media (max-width: 63.99rem) {
   .svc-day { height: 28px; }

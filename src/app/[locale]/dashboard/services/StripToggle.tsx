@@ -6,7 +6,7 @@
 // The hourly panel is always in the SSR output (`hidden`), so
 // `aria-controls` always resolves; without JS it stays collapsed.
 import { useState, type ReactNode } from 'react';
-import { DAY_GRID } from '@/lib/metrics/serviceHealth';
+import { DAY_GAP, DAY_GRID } from '@/lib/metrics/serviceHealth';
 import type { BucketStyle } from './buckets';
 
 export function StripToggle({
@@ -35,7 +35,7 @@ export function StripToggle({
       <div
         role="group"
         aria-label={groupLabel}
-        style={{ gridArea: 'days', display: 'grid', gridTemplateColumns: DAY_GRID, gap: 2, minWidth: 0 }}
+        style={{ gridArea: 'days', display: 'grid', gridTemplateColumns: DAY_GRID, gap: DAY_GAP, alignItems: 'center', minWidth: 0 }}
       >
         {pastBars}
         {/* No inline `outline`, so the browser's default focus ring stays visible. */}
@@ -47,7 +47,9 @@ export function StripToggle({
           title={todayTitle}
           onClick={() => setOpen((v) => !v)}
           className="svc-day"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
+          // Today is the last 7px track: the 24px-wide hit area overflows to the
+          // right into empty space, while the visible 7×12 bar stays in the strip.
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', justifySelf: 'start', width: 24, padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
         >
           <span
             aria-hidden="true"
