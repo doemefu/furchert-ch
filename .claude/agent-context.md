@@ -28,7 +28,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 
 Review in addition to the generic checklist:
 - OIDC access tokens never reach the browser; OIDC-gated routes enforced server-side; admin write actions gated on `role=ADMIN` per the service `INTERFACES.md` files.
-- Pixel fidelity: the UI matches the prototype source for the touched page (tokens, spacing, `.border-x` grid) in DE and EN.
+- Design: the UI is consistent with the live ETHON system (tokens, `--fs-*`, `.border-x` grid) in DE and EN; craft fixes are welcome, bigger direction changes need a proposal; where the live code deliberately deviates from the prototype, the live code wins.
 - Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules"); surfaces without a real endpoint are labelled placeholders, never fabricated "live" data.
 - `/automation` stays a static offer page: no outbound network calls, no AI or scan API routes, no fake success; its examples are labelled as illustrative.
 - Server vs. client components used appropriately; data fetched server-side.
