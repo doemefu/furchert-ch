@@ -158,8 +158,8 @@ function Bar({ status, title, width, height }: { status: BucketStatus; title: st
       style={{
         display: 'block',
         flex: width ? `0 0 ${width}px` : undefined,
-        // Day bars keep the original slim look (7×12) and sit centred in
-        // their matrix column, so the columns still line up with the header.
+        // Day bars keep the original slim look (7×12), one per 7px track of
+        // the packed day strip (DAY_GRID).
         width: width ?? 7,
         height: height ?? 12,
         justifySelf: 'center',

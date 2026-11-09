@@ -47,7 +47,9 @@ export function StripToggle({
           title={todayTitle}
           onClick={() => setOpen((v) => !v)}
           className="svc-day"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
+          // Today is the last 7px track: the 24px-wide hit area overflows to the
+          // right into empty space, while the visible 7×12 bar stays in the strip.
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', justifySelf: 'start', width: 24, padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
         >
           <span
             aria-hidden="true"
