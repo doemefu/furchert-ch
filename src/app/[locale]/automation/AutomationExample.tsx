@@ -93,11 +93,12 @@ export async function AutomationExample({
         <Tag blue>{ex.tag}</Tag>
       </div>
       <div
+        className="cell-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
-          border: HAIRLINE,
-          borderRadius: '2px',
+          borderTop: HAIRLINE,
+          borderBottom: HAIRLINE,
         }}
       >
         <div style={{ padding: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--n-10)', borderRight: HAIRLINE }}>

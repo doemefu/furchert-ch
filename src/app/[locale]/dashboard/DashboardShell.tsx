@@ -188,6 +188,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: '.75rem',
+              paddingInline: '.75rem',
             }}
           >
             {nodes.map((node) => (

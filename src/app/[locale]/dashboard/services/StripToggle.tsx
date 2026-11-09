@@ -46,14 +46,15 @@ export function StripToggle({
           aria-label={label}
           title={todayTitle}
           onClick={() => setOpen((v) => !v)}
-          style={{ display: 'block', width: '100%', height: 20, padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
+          className="svc-day"
+          style={{ display: 'block', width: '100%', padding: 0, border: 0, background: 'transparent', cursor: 'pointer' }}
         >
           <span
             aria-hidden="true"
             style={{
               display: 'block',
               width: '100%',
-              height: 20,
+              height: '100%',
               borderRadius: 2,
               background: todayStyle.background,
               opacity: todayStyle.opacity,

@@ -75,12 +75,13 @@ export function TwoColumnChecklist({
       </h2>
       <p style={leadStyle}>{lead}</p>
       <div
+        className="cell-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '0',
-          border: HAIRLINE,
-          borderRadius: '2px',
+          borderTop: HAIRLINE,
+          borderBottom: HAIRLINE,
         }}
       >
         {left && (

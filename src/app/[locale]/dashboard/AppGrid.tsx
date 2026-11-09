@@ -159,6 +159,7 @@ export function AppGrid({
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
           gap: '.75rem',
+          paddingInline: '.75rem',
         }}
       >
         {filtered.map((app) => {
