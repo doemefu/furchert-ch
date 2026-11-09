@@ -54,7 +54,7 @@ export default async function ContactPage({
     ...CONTACTS,
     { label: t('contact.labelLocation'), value: t('footer.location'), href: null },
   ];
-  const linkStyle = { fontSize: '.9375rem', color: 'var(--blue-base)', textDecoration: 'none' };
+  const linkStyle = { fontSize: 'var(--fs-15)', color: 'var(--blue-base)', textDecoration: 'none' };
 
   return (
     <div>
@@ -72,8 +72,8 @@ export default async function ContactPage({
             <p
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.8125rem',
-                letterSpacing: '.06em',
+                fontSize: 'var(--fs-13)',
+                letterSpacing: '.04em',
                 textTransform: 'uppercase',
                 color: 'var(--n-60)',
                 marginBottom: '1.5rem',
@@ -87,7 +87,7 @@ export default async function ContactPage({
                   <div
                     style={{
                       fontFamily: 'var(--mono)',
-                      fontSize: '.72rem',
+                      fontSize: 'var(--fs-12)',
                       letterSpacing: '.05em',
                       textTransform: 'uppercase',
                       color: 'var(--n-60)',
@@ -108,7 +108,7 @@ export default async function ContactPage({
                       {c.value}
                     </a>
                   ) : (
-                    <span style={{ fontSize: '.9375rem', color: 'var(--n-70)' }}>{c.value}</span>
+                    <span style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)' }}>{c.value}</span>
                   )}
                 </div>
               ))}

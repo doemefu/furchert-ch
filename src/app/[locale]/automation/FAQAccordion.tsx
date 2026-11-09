@@ -53,9 +53,9 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
               <span
                 style={{
                   fontFamily: 'var(--sans)',
-                  fontSize: '1rem',
+                  fontSize: 'var(--fs-16)',
                   fontWeight: 500,
-                  letterSpacing: '-.02em',
+                  letterSpacing: 0,
                   color: 'var(--n-100)',
                 }}
               >
@@ -65,7 +65,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 aria-hidden="true"
                 style={{
                   fontFamily: 'var(--mono)',
-                  fontSize: '.9rem',
+                  fontSize: 'var(--fs-14)',
                   color: 'var(--n-60)',
                   transition: 'transform .2s',
                   transform: isOpen ? 'rotate(45deg)' : 'none',
@@ -82,7 +82,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
               hidden={!isOpen}
               style={{
                 paddingBottom: '1.25rem',
-                fontSize: '.9375rem',
+                fontSize: 'var(--fs-15)',
                 color: 'var(--n-60)',
                 lineHeight: 1.55,
                 maxWidth: '64ch',

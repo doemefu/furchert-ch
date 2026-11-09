@@ -161,6 +161,16 @@ All notable changes per milestone. Newest first.
   painting over the frame. Two horizontal double lines are gone (projects
   header, rowing photo). The contact page stacks below 640 px with equal
   20 px insets and one divider instead of uneven insets.
+- **Type scale and uppercase on public pages** (#176): 11 type tokens (`--fs-12`
+  to `--fs-hero`) in `globals.css` replace about 40 ad-hoc font sizes across
+  the public pages, layout and shared components; nothing renders below a
+  12 px floor any more. Uppercase now stays only on short structural labels
+  (nav, buttons, section labels, table heads, status pills); sentences, meta
+  lines, tech names and form labels use normal case, and tracking is never
+  negative below 24 px. Dashboard tags (`Tag`, used on the network page) now
+  show their raw lowercase values (block/allow, outcomes). The rowing photo
+  caption got proper capitalisation, and the unused DM Sans weight 300 is no
+  longer loaded. The dashboard and the consent bar follow in later steps.
 
 ### Fixed
 

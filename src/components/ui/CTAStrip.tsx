@@ -30,8 +30,8 @@ export function CTAStrip({
     alignItems: 'center',
     gap: '.5rem',
     fontFamily: 'var(--mono)',
-    fontSize: '.8125rem',
-    letterSpacing: '.02em',
+    fontSize: 'var(--fs-13)',
+    letterSpacing: '.04em',
     textTransform: 'uppercase' as const,
     textDecoration: 'none',
     minHeight: 48,
@@ -45,9 +45,7 @@ export function CTAStrip({
     gap: '.5rem',
     minHeight: 44,
     fontFamily: 'var(--mono)',
-    fontSize: '.75rem',
-    letterSpacing: '.04em',
-    textTransform: 'uppercase' as const,
+    fontSize: 'var(--fs-12)',
     color: 'var(--white)',
     textDecoration: 'underline',
     textUnderlineOffset: '.25em',
@@ -81,15 +79,15 @@ export function CTAStrip({
           <h3
             style={{
               fontFamily: 'var(--sans)',
-              fontSize: 'clamp(1.4rem, 2.5vw, 2.25rem)',
+              fontSize: 'var(--fs-h2)',
               fontWeight: 500,
-              letterSpacing: '-.03em',
+              letterSpacing: '-.02em',
               color: 'var(--white)',
             }}
           >
             {together}
           </h3>
-          <p style={{ color: 'var(--n-40)', marginTop: '.5rem', fontSize: '1rem' }}>{togsub}</p>
+          <p style={{ color: 'var(--n-40)', marginTop: '.5rem', fontSize: 'var(--fs-16)' }}>{togsub}</p>
           {examples && (
             <Link
               href={examples.href}
@@ -98,9 +96,7 @@ export function CTAStrip({
                 alignItems: 'center',
                 minHeight: 44,
                 fontFamily: 'var(--mono)',
-                fontSize: '.75rem',
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
+                fontSize: 'var(--fs-12)',
                 color: 'var(--white)',
                 textDecoration: 'underline',
                 textUnderlineOffset: '.25em',

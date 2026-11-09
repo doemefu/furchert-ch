@@ -29,13 +29,13 @@ const step = (i: number): CSSProperties => ({ ['--i' as string]: i }) as CSSProp
 const AMBER: CSSProperties = {
   display: 'block',
   padding: '2px .5rem',
-  fontSize: '.8125rem',
+  fontSize: 'var(--fs-13)',
   color: 'var(--n-80)',
   background: 'color-mix(in srgb, var(--tier-mid) 16%, var(--white))',
   borderLeft: '2px solid var(--tier-mid)',
 };
 
-const smallText: CSSProperties = { fontSize: '.875rem', color: 'var(--n-70)', lineHeight: 1.5 };
+const smallText: CSSProperties = { fontSize: 'var(--fs-14)', color: 'var(--n-70)', lineHeight: 1.5 };
 
 function Step({ i, children, style }: { i: number; children: ReactNode; style?: CSSProperties }) {
   return (
@@ -62,11 +62,11 @@ function RapportBody({ p }: { p: RapportPanel }) {
             ))}
           </span>
         </p>
-        <p lang="de-CH" style={{ fontSize: '.9375rem', lineHeight: 1.55, color: 'var(--n-80)', fontStyle: 'italic' }}>
+        <p lang="de-CH" style={{ fontSize: 'var(--fs-15)', lineHeight: 1.55, color: 'var(--n-80)', fontStyle: 'italic' }}>
           {p.spoken}
         </p>
       </Step>
-      <Step i={1} style={{ ...fieldLabel, color: 'var(--blue-base)', margin: '1rem 0 .25rem' }}>
+      <Step i={1} style={{ ...fieldLabel, textTransform: 'none', letterSpacing: 0, color: 'var(--blue-base)', margin: '1rem 0 .25rem' }}>
         <span aria-hidden="true">↓</span> {p.divider}
       </Step>
       <dl style={{ margin: 0 }}>
@@ -126,7 +126,7 @@ function OfferBody({ p }: { p: OfferPanel }) {
         <p style={{ ...smallText, marginTop: '.5rem' }}>{p.memory}</p>
       </Step>
       <Step i={2} style={{ marginTop: '1rem' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.8125rem', color: 'var(--n-80)' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--fs-13)', color: 'var(--n-80)' }}>
           <caption style={{ ...fieldLabel, textAlign: 'left', marginBottom: '.25rem' }}>{p.table.caption}</caption>
           <thead>
             <tr style={{ borderBottom: HAIRLINE }}>
@@ -215,7 +215,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
           <span>{p.cardTitle}</span>
           <span>{p.cardTime}</span>
         </p>
-        <p style={{ fontSize: '.9375rem', fontWeight: 500, marginBottom: '.5rem' }}>{p.greeting}</p>
+        <p style={{ fontSize: 'var(--fs-15)', fontWeight: 500, marginBottom: '.5rem' }}>{p.greeting}</p>
         <ul role="list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {p.items.map((item, n) => (
             <li
@@ -225,7 +225,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
                 ...step(n + 2),
                 padding: '.5rem 0',
                 borderTop: '1px solid rgba(255,255,255,.12)',
-                fontSize: '.875rem',
+                fontSize: 'var(--fs-14)',
                 lineHeight: 1.5,
                 color: 'var(--n-20)',
               }}
@@ -234,7 +234,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
             </li>
           ))}
         </ul>
-        <p style={{ fontSize: '.875rem', color: 'var(--white)', marginTop: '.5rem' }}>{p.closing}</p>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--white)', marginTop: '.5rem' }}>{p.closing}</p>
       </Step>
       <p style={{ ...footnoteStyle, marginTop: '.75rem' }}>{p.footnote}</p>
     </>
@@ -288,9 +288,9 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                     alignItems: 'center',
                     gap: '.5rem',
                     fontFamily: 'var(--sans)',
-                    fontSize: '1.0625rem',
+                    fontSize: 'var(--fs-18)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                   }}
                 >
@@ -303,7 +303,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                   style={{
                     display: 'block',
                     margin: '.25rem 0 .625rem',
-                    fontSize: '.9375rem',
+                    fontSize: 'var(--fs-15)',
                     lineHeight: 1.45,
                     color: 'var(--n-70)',
                   }}
@@ -325,8 +325,8 @@ export async function WowTiles({ locale }: { locale: Locale }) {
                   <span
                     style={{
                       fontFamily: 'var(--mono)',
-                      fontSize: '.75rem',
-                      letterSpacing: '.04em',
+                      fontSize: 'var(--fs-12)',
+                      letterSpacing: '.05em',
                       textTransform: 'uppercase',
                       color: 'var(--blue-base)',
                       whiteSpace: 'nowrap',

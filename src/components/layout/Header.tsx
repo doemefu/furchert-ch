@@ -37,7 +37,7 @@ export function Header() {
       onClick={() => setMenuOpen(false)}
       style={{
         fontFamily: 'var(--mono)',
-        fontSize: '.72rem',
+        fontSize: 'var(--fs-12)',
         letterSpacing: '.05em',
         textTransform: 'uppercase',
         textDecoration: 'none',
@@ -56,7 +56,7 @@ export function Header() {
 
   const langBtnStyle = {
     fontFamily: 'var(--mono)',
-    fontSize: '.72rem',
+    fontSize: 'var(--fs-12)',
     letterSpacing: '.05em',
     textTransform: 'uppercase' as const,
     background: 'none',
@@ -84,7 +84,7 @@ export function Header() {
     marginLeft: '.5rem',
     transition: 'background .15s, color .15s',
     fontFamily: 'var(--mono)',
-    fontSize: '.68rem',
+    fontSize: 'var(--fs-12)',
     letterSpacing: '.05em',
     textTransform: 'uppercase' as const,
     textDecoration: 'none',
@@ -117,7 +117,7 @@ export function Header() {
           href="/"
           style={{
             fontFamily: 'var(--mono)',
-            fontSize: '.9rem',
+            fontSize: 'var(--fs-15)',
             fontWeight: 500,
             letterSpacing: '.04em',
             textTransform: 'uppercase',
@@ -166,8 +166,8 @@ export function Header() {
             cursor: 'pointer',
             color: 'var(--n-70)',
             fontFamily: 'var(--mono)',
-            fontSize: '.7rem',
-            letterSpacing: '.04em',
+            fontSize: 'var(--fs-12)',
+            letterSpacing: '.05em',
             textTransform: 'uppercase',
           }}
         >

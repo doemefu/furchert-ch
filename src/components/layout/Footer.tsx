@@ -14,17 +14,15 @@ export async function Footer() {
 
   const colTitle = {
     fontFamily: 'var(--mono)',
-    fontSize: '.72rem',
-    letterSpacing: '.06em',
+    fontSize: 'var(--fs-12)',
+    letterSpacing: '.05em',
     textTransform: 'uppercase' as const,
     color: 'var(--n-50)',
     marginBottom: '.75rem',
   };
   const linkStyle = {
     fontFamily: 'var(--mono)',
-    fontSize: '.75rem',
-    letterSpacing: '.04em',
-    textTransform: 'uppercase' as const,
+    fontSize: 'var(--fs-12)',
     textDecoration: 'none',
     color: 'var(--n-50)',
     cursor: 'pointer',
@@ -53,7 +51,7 @@ export async function Footer() {
             <div
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.9rem',
+                fontSize: 'var(--fs-15)',
                 fontWeight: 500,
                 letterSpacing: '.04em',
                 textTransform: 'uppercase',
@@ -63,7 +61,7 @@ export async function Footer() {
             >
               furchert.ch
             </div>
-            <p style={{ fontSize: '.875rem', color: 'var(--n-40)', lineHeight: 1.5 }}>
+            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-40)', lineHeight: 1.5 }}>
               {t('footer.role')}
             </p>
           </div>
@@ -83,7 +81,7 @@ export async function Footer() {
             <div style={colTitle}>{t('footer.contact')}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
               {/* The address is rendered only in the browser (#147). */}
-              <ContactEmail style={{ ...linkStyle, textTransform: 'none' }} />
+              <ContactEmail style={linkStyle} />
               <span style={{ ...linkStyle, color: 'var(--n-40)', cursor: 'default' }}>
                 {t('footer.location')}
               </span>
@@ -121,7 +119,7 @@ export async function Footer() {
             alignItems: 'center',
             gap: '1rem',
             paddingTop: '1.5rem',
-            fontSize: '.8125rem',
+            fontSize: 'var(--fs-13)',
             color: 'var(--n-40)',
           }}
         >

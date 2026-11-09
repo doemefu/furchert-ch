@@ -100,8 +100,8 @@ export default async function ProjectDetailPage({
             data-track={trackAttr('link', 'project-back')}
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
-              letterSpacing: '.04em',
+              fontSize: 'var(--fs-12)',
+              letterSpacing: '.05em',
               textTransform: 'uppercase',
               color: 'var(--blue-base)',
               textDecoration: 'none',
@@ -113,9 +113,7 @@ export default async function ProjectDetailPage({
           <span
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
             }}
           >
@@ -136,7 +134,7 @@ export default async function ProjectDetailPage({
             <h1
               style={{
                 fontFamily: 'var(--sans)',
-                fontSize: 'clamp(1.8rem,4vw,2.75rem)',
+                fontSize: 'var(--fs-title)',
                 fontWeight: 500,
                 letterSpacing: '-.03em',
                 color: 'var(--n-100)',
@@ -147,8 +145,8 @@ export default async function ProjectDetailPage({
             <span
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.7rem',
-                letterSpacing: '.06em',
+                fontSize: 'var(--fs-12)',
+                letterSpacing: '.05em',
                 textTransform: 'uppercase',
                 padding: '.25rem .5rem',
                 background: 'transparent',
@@ -160,7 +158,7 @@ export default async function ProjectDetailPage({
               {STATUS_LABEL[locale][p.status]}
             </span>
           </div>
-          <p style={{ fontSize: '1.1rem', color: 'var(--n-60)', lineHeight: 1.55, maxWidth: '60ch' }}>
+          <p style={{ fontSize: 'var(--fs-lead)', color: 'var(--n-60)', lineHeight: 1.55, maxWidth: '60ch' }}>
             {p.i18n[locale].detail}
           </p>
         </div>
@@ -169,8 +167,8 @@ export default async function ProjectDetailPage({
           <p
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.8125rem',
-              letterSpacing: '.06em',
+              fontSize: 'var(--fs-13)',
+              letterSpacing: '.04em',
               textTransform: 'uppercase',
               color: 'var(--n-60)',
               marginBottom: '1rem',

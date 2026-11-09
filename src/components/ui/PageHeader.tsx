@@ -14,8 +14,8 @@ export function PageHeader({
         <p
           style={{
             fontFamily: 'var(--mono)',
-            fontSize: '.8125rem',
-            letterSpacing: '.06em',
+            fontSize: 'var(--fs-13)',
+            letterSpacing: '.04em',
             textTransform: 'uppercase',
             color: 'var(--n-60)',
             marginBottom: '1rem',
@@ -27,7 +27,7 @@ export function PageHeader({
       <h1
         style={{
           fontFamily: 'var(--sans)',
-          fontSize: 'clamp(2rem, 5vw, 3.375rem)',
+          fontSize: 'var(--fs-title)',
           fontWeight: 500,
           letterSpacing: '-.03em',
           lineHeight: 1.09,
@@ -42,11 +42,11 @@ export function PageHeader({
         <p
           style={{
             marginTop: '1.25rem',
-            fontSize: 'clamp(1rem, 1.4vw, 1.25rem)',
+            fontSize: 'var(--fs-lead)',
             color: 'var(--n-60)',
             maxWidth: '58ch',
             lineHeight: 1.4,
-            letterSpacing: '-.01em',
+            letterSpacing: 0,
             textWrap: 'balance',
           }}
         >

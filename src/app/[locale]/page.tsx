@@ -21,8 +21,8 @@ const DOTS =
 
 const labelMono = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase' as const,
   color: 'var(--n-60)',
 };
@@ -100,13 +100,13 @@ export default async function HomePage({
                 backgroundSize: '1.125rem',
               }}
             />
-            <p style={{ ...labelMono, position: 'relative' }}>{t('hero.label')}</p>
+            <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0, position: 'relative' }}>{t('hero.label')}</p>
             <h1
               style={{
                 fontFamily: 'var(--sans)',
-                fontSize: 'clamp(2.4rem, 7vw, 4.75rem)',
+                fontSize: 'var(--fs-hero)',
                 fontWeight: 500,
-                letterSpacing: '-.04em',
+                letterSpacing: '-.03em',
                 lineHeight: 1,
                 maxWidth: '22ch',
                 textWrap: 'balance',
@@ -120,12 +120,12 @@ export default async function HomePage({
             <p
               style={{
                 fontFamily: 'var(--sans)',
-                fontSize: 'clamp(1rem, 1.4vw, 1.375rem)',
+                fontSize: 'var(--fs-lead)',
                 color: 'var(--n-60)',
                 maxWidth: '52ch',
                 textWrap: 'balance',
                 lineHeight: 1.45,
-                letterSpacing: '-.02em',
+                letterSpacing: 0,
                 position: 'relative',
                 marginTop: '1.5rem',
               }}
@@ -191,11 +191,11 @@ export default async function HomePage({
                     <div>
                       <div
                         style={{
-                          fontSize: '1rem',
+                          fontSize: 'var(--fs-16)',
                           fontWeight: 500,
                           color: 'var(--n-100)',
                           lineHeight: 1.2,
-                          letterSpacing: '-.02em',
+                          letterSpacing: 0,
                         }}
                       >
                         {e.title}
@@ -203,9 +203,7 @@ export default async function HomePage({
                       <div
                         style={{
                           fontFamily: 'var(--mono)',
-                          fontSize: '.72rem',
-                          textTransform: 'uppercase',
-                          letterSpacing: '.04em',
+                          fontSize: 'var(--fs-12)',
                           color: 'var(--n-60)',
                           marginTop: '.25rem',
                         }}
@@ -248,11 +246,11 @@ export default async function HomePage({
                     <div>
                       <div
                         style={{
-                          fontSize: '1rem',
+                          fontSize: 'var(--fs-16)',
                           fontWeight: 500,
                           color: 'var(--n-100)',
                           lineHeight: 1.2,
-                          letterSpacing: '-.02em',
+                          letterSpacing: 0,
                         }}
                       >
                         {e.title}
@@ -260,9 +258,7 @@ export default async function HomePage({
                       <div
                         style={{
                           fontFamily: 'var(--mono)',
-                          fontSize: '.72rem',
-                          textTransform: 'uppercase',
-                          letterSpacing: '.04em',
+                          fontSize: 'var(--fs-12)',
                           color: 'var(--n-60)',
                           marginTop: '.25rem',
                         }}
@@ -287,9 +283,9 @@ export default async function HomePage({
             <h2
               style={{
                 fontFamily: 'var(--sans)',
-                fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                fontSize: 'var(--fs-h2)',
                 fontWeight: 500,
-                letterSpacing: '-.03em',
+                letterSpacing: '-.02em',
                 color: 'var(--n-100)',
                 maxWidth: '22ch',
               }}
@@ -333,9 +329,9 @@ export default async function HomePage({
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: '1.125rem',
+                    fontSize: 'var(--fs-18)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                     marginBottom: '.5rem',
                   }}
@@ -344,10 +340,10 @@ export default async function HomePage({
                 </div>
                 <p
                   style={{
-                    fontSize: '.9375rem',
+                    fontSize: 'var(--fs-15)',
                     color: 'var(--n-60)',
                     lineHeight: 1.5,
-                    letterSpacing: '-.01em',
+                    letterSpacing: 0,
                   }}
                 >
                   {t(`teasers.${key}.text`)}
@@ -356,8 +352,8 @@ export default async function HomePage({
                   style={{
                     marginTop: '1.5rem',
                     fontFamily: 'var(--mono)',
-                    fontSize: '.75rem',
-                    letterSpacing: '.04em',
+                    fontSize: 'var(--fs-12)',
+                    letterSpacing: '.05em',
                     textTransform: 'uppercase',
                     color: 'var(--blue-base)',
                   }}
@@ -388,23 +384,23 @@ export default async function HomePage({
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}
               >
-                <div style={{ ...labelMono, fontSize: '.75rem', letterSpacing: '.05em', marginBottom: '.25rem' }}>
+                <div style={{ ...labelMono, fontSize: 'var(--fs-12)', letterSpacing: '.05em', marginBottom: '.25rem' }}>
                   {s.i18n[locale].unit}
                 </div>
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    fontSize: 'var(--fs-title)',
                     fontVariantNumeric: 'tabular-nums',
                     fontWeight: 500,
-                    letterSpacing: '-.04em',
+                    letterSpacing: '-.03em',
                     color: 'var(--n-100)',
                     lineHeight: 1,
                   }}
                 >
                   {s.value}
                 </div>
-                <div style={{ fontSize: '.875rem', color: 'var(--n-60)', marginTop: '.5rem' }}>
+                <div style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', marginTop: '.5rem' }}>
                   {s.i18n[locale].label}
                 </div>
               </div>

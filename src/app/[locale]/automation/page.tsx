@@ -125,13 +125,13 @@ export default async function AutomationPage({
             paddingBottom: 'clamp(2.5rem, 6.5vw, 5rem)',
           }}
         >
-          <p style={{ ...labelMono, marginBottom: 'clamp(.75rem, 2vw, 1.5rem)' }}>{t('heroLabel')}</p>
+          <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0, marginBottom: 'clamp(.75rem, 2vw, 1.5rem)' }}>{t('heroLabel')}</p>
           <h1
             style={{
               fontFamily: 'var(--sans)',
-              fontSize: 'clamp(2rem, 5vw, 3.75rem)',
+              fontSize: 'var(--fs-title)',
               fontWeight: 500,
-              letterSpacing: '-.04em',
+              letterSpacing: '-.03em',
               lineHeight: 1.05,
               color: 'var(--n-100)',
               maxWidth: '22ch',
@@ -144,7 +144,7 @@ export default async function AutomationPage({
             {t('heroTitlePost')}
           </h1>
           <WowTiles locale={locale} />
-          <p style={{ marginTop: '.75rem', fontSize: '.875rem', color: 'var(--n-60)', lineHeight: 1.5 }}>
+          <p style={{ marginTop: '.75rem', fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5 }}>
             {t('heroTilesNote')}
           </p>
           <div style={{ marginTop: '1.25rem' }}>
@@ -156,9 +156,7 @@ export default async function AutomationPage({
             style={{
               marginTop: '.75rem',
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
             }}
           >
@@ -174,7 +172,7 @@ export default async function AutomationPage({
           <p
             style={{
               marginTop: '.5rem',
-              fontSize: '1rem',
+              fontSize: 'var(--fs-16)',
               color: 'var(--n-70)',
               lineHeight: 1.55,
               maxWidth: '62ch',
@@ -220,9 +218,9 @@ export default async function AutomationPage({
             id="about-heading"
             style={{
               fontFamily: 'var(--sans)',
-              fontSize: '1.125rem',
+              fontSize: 'var(--fs-18)',
               fontWeight: 500,
-              letterSpacing: '-.02em',
+              letterSpacing: 0,
               color: 'var(--n-100)',
             }}
           >
@@ -231,16 +229,14 @@ export default async function AutomationPage({
           <p
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
               margin: '.25rem 0 .75rem',
             }}
           >
             {t('aboutMiniRole')}
           </p>
-          <p style={{ fontSize: '.9375rem', color: 'var(--n-70)', lineHeight: 1.55, maxWidth: '62ch' }}>
+          <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', lineHeight: 1.55, maxWidth: '62ch' }}>
             {t('aboutMiniText')}
           </p>
           <div
@@ -256,10 +252,8 @@ export default async function AutomationPage({
             <h3
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.75rem',
+                fontSize: 'var(--fs-12)',
                 fontWeight: 400,
-                letterSpacing: '.05em',
-                textTransform: 'uppercase',
                 color: 'var(--blue-base)',
                 marginBottom: '.75rem',
               }}
@@ -302,9 +296,9 @@ export default async function AutomationPage({
             id="faq-heading"
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.8125rem',
+              fontSize: 'var(--fs-13)',
               fontWeight: 400,
-              letterSpacing: '.06em',
+              letterSpacing: '.04em',
               textTransform: 'uppercase',
               color: 'var(--n-60)',
               marginBottom: '1.5rem',
@@ -317,7 +311,7 @@ export default async function AutomationPage({
             style={{
               marginTop: '2rem',
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
+              fontSize: 'var(--fs-12)',
               letterSpacing: '.04em',
               color: 'var(--n-60)',
             }}
@@ -337,9 +331,9 @@ export default async function AutomationPage({
             id="final-heading"
             style={{
               fontFamily: 'var(--sans)',
-              fontSize: 'clamp(1.4rem,3vw,2.25rem)',
+              fontSize: 'var(--fs-h2)',
               fontWeight: 500,
-              letterSpacing: '-.03em',
+              letterSpacing: '-.02em',
               color: 'var(--n-100)',
               maxWidth: '42ch',
               margin: '0 auto 1rem',
@@ -350,7 +344,7 @@ export default async function AutomationPage({
           </h2>
           <p
             style={{
-              fontSize: '1rem',
+              fontSize: 'var(--fs-16)',
               color: 'var(--n-70)',
               lineHeight: 1.55,
               maxWidth: '56ch',
@@ -361,7 +355,7 @@ export default async function AutomationPage({
           </p>
           <p
             style={{
-              fontSize: '.9375rem',
+              fontSize: 'var(--fs-15)',
               color: 'var(--n-60)',
               lineHeight: 1.55,
               maxWidth: '60ch',

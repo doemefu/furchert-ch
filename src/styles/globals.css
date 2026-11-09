@@ -47,6 +47,18 @@
   --ease: cubic-bezier(.22,1,.36,1);
   --dur-fast: 150ms;
   --dur-enter: 400ms;
+  /* Type scale (B1): 11 steps, 12px floor. */
+  --fs-12: .75rem;    /* mono labels, nav, tags, table heads */
+  --fs-13: .8125rem;  /* buttons, section kickers, mono meta, small body */
+  --fs-14: .875rem;   /* captions, secondary text */
+  --fs-15: .9375rem;  /* compact body */
+  --fs-16: 1rem;      /* body */
+  --fs-18: 1.125rem;  /* card and panel titles */
+  --fs-24: 1.5rem;    /* dashboard titles and KPI figures */
+  --fs-lead: clamp(1rem, 1.4vw, 1.25rem);
+  --fs-h2: clamp(1.5rem, 3vw, 2.25rem);
+  --fs-title: clamp(2rem, 5vw, 3.5rem);
+  --fs-hero: clamp(2.4rem, 7vw, 4.75rem);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -222,10 +234,8 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
   display: flex;
   flex-direction: column;
   font-family: var(--mono);
-  font-size: .75rem;
-  letter-spacing: .04em;
+  font-size: var(--fs-12);
   line-height: 1.4;
-  text-transform: uppercase;
   color: var(--n-70);
 }
 @media (min-width: 821px) { .sticky-cta { display: none; } }
