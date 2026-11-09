@@ -74,6 +74,9 @@ async function redirects() {
     // The scan demo is retired (#143, #145).
     { source: '/:locale(de|en)/automation/scan', destination: '/:locale/automation', permanent: true },
     { source: '/automation/scan', destination: '/de/automation', permanent: true },
+    // Removed project page (#160, #163): the project will not return.
+    { source: '/:locale(de|en)/projects/aemtlifyer', destination: '/:locale/projects', permanent: true },
+    { source: '/projects/aemtlifyer', destination: '/de/projects', permanent: true },
   ];
 }
 

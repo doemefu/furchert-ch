@@ -29,6 +29,10 @@ const BUDGET = {
   bar: 1_000, // ConsentBar, loaded only while the bar is open
   link: 750, // footer "Privacy settings" button
   tracker: 4_265, // tracker chunk, fetched only after Allow
+  // Never-track switch on /dashboard/analytics (ADMIN, dynamic page) with its
+  // own copy of the controller module: measured 3 077 B on 2026-11-08 (WA-4a
+  // #155), cap + 10 % (lead ruling). The controller is a globalThis singleton.
+  neverTrack: 3_385,
 };
 
 const chunkFiles = () => readdirSync(CHUNKS).filter((f) => f.endsWith('.js'));
@@ -49,7 +53,9 @@ describe('consent layer bundle', () => {
 
   describe.runIf(required && built)('built chunks', () => {
     // Markers: strings that only these modules contain.
-    const controller = () => withMarker('fa_forget_pending');
+    // The public controller chunk is the one without the switch marker (M8).
+    const neverTrack = () => withMarker('fa-never-track');
+    const controller = () => withMarker('fa_forget_pending').filter((f) => !neverTrack().includes(f));
     const bar = () => withMarker('consent-inner').filter((f) => !controller().includes(f));
     const link = () => withMarker('fa-privacy-settings').filter((f) => !controller().includes(f));
     const tracker = () => withMarker('fa-first-flush');
@@ -59,6 +65,7 @@ describe('consent layer bundle', () => {
       expect(bar()).toHaveLength(1);
       expect(link()).toHaveLength(1);
       expect(tracker()).toHaveLength(1);
+      expect(neverTrack()).toHaveLength(1);
       // The tracker is its own chunk: no controller code in it, no tracker code in the controller.
       expect(controller().some((f) => tracker().includes(f))).toBe(false);
     });
@@ -69,6 +76,7 @@ describe('consent layer bundle', () => {
         bar: gzipSize(bar()[0]),
         link: gzipSize(link()[0]),
         tracker: gzipSize(tracker()[0]),
+        neverTrack: gzipSize(neverTrack()[0]),
       };
       for (const key of Object.keys(BUDGET) as (keyof typeof BUDGET)[]) {
         expect(sizes[key], `${key}: ${sizes[key]} B gzip`).toBeLessThanOrEqual(BUDGET[key]);
@@ -76,7 +84,7 @@ describe('consent layer bundle', () => {
     });
 
     it('references none of these chunks from a prerendered page', () => {
-      const names = [...controller(), ...bar(), ...link(), ...tracker()];
+      const names = [...controller(), ...bar(), ...link(), ...tracker(), ...neverTrack()];
       const pages = htmlFiles(join(NEXT, 'server', 'app'));
       expect(pages.length).toBeGreaterThan(0);
       for (const page of pages) {

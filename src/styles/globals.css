@@ -272,3 +272,10 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 /* Footer "Privacy settings" button: looks like the legal links beside it. */
 .footer-settings { background: none; border: 0; padding: 0; text-align: left; }
 .footer-settings:hover { opacity: .85; }
+
+/* /dashboard/analytics pages table: the same rows as cards on phones (WA-4b #156). */
+.wa-pages-cards { display: none; }
+@media (max-width: 640px) {
+  .wa-pages-table { display: none; }
+  .wa-pages-cards { display: grid; }
+}

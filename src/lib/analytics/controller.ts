@@ -68,8 +68,8 @@ export interface ConsentController {
   decline(by?: ConsentBy): Promise<void>;
   /** Serialised forget; WA-2b and the WA-4a never-track switch use it too. */
   forget(): Promise<ForgetResult>;
-  /** The never-track switch (§9.3). */
-  optOut(on: boolean): Promise<void>;
+  /** The never-track switch (§9.3). Resolves false when the switch could not be stored (blocked storage). */
+  optOut(on: boolean): Promise<boolean>;
   /** Auth.js session status: `loading` holds the first pageview, `authenticated` stops tracking (§3.4, D8). */
   setSession(status: SessionStatus): void;
   /** §5.9: whether the contact form may ask for a goal (tracking allowed). */
@@ -275,8 +275,9 @@ export function createConsentController(deps: ControllerDeps): ConsentController
       if (forgetInFlight) await forgetInFlight;
       else if (pending()) await forget();
       clearRetry();
-      // A Decline during the await keeps its own marker.
-      if (choice() === 'granted' && pending()) remove(FORGET_PENDING_KEY);
+      // A Decline during the await keeps its own marker, and so does an
+      // opted-out browser: its opt-out forget is retried (#159 N1).
+      if (trackingAllowed() && pending()) remove(FORGET_PENDING_KEY);
       maybeStart();
     },
     async decline(by = 'user') {
@@ -288,18 +289,25 @@ export function createConsentController(deps: ControllerDeps): ConsentController
     forget,
     async optOut(on) {
       if (on) {
-        set(OPTOUT_KEY, '1');
+        const stored = set(OPTOUT_KEY, '1');
         optedOut = true;
         emit();
         halt();
         set(FORGET_PENDING_KEY, '1');
         await forget();
-      } else {
-        remove(OPTOUT_KEY);
-        optedOut = false;
-        emit();
-        maybeStart();
+        return stored;
       }
+      let removed = true;
+      try {
+        storage?.removeItem(OPTOUT_KEY);
+        if (!storage) removed = false;
+      } catch {
+        removed = false;
+      }
+      optedOut = false;
+      emit();
+      maybeStart();
+      return removed;
     },
     dismiss() {
       dismissed = true;
@@ -335,9 +343,14 @@ export function createConsentController(deps: ControllerDeps): ConsentController
 // One controller per document, shared by the bar, the footer link and (from
 // WA-2b) the tracker; it survives client-side navigation.
 
-let instance: ConsentController | null = null;
+// On `globalThis`, not module scope: a second bundled copy of this module
+// (the dashboard's never-track switch chunk) must reuse the same controller
+// (review H1).
+const CONTROLLER_KEY = Symbol.for('furchert.analytics.consentController');
 
 export function getConsentController(): ConsentController {
+  const g = globalThis as Record<symbol, ConsentController | undefined>;
+  let instance = g[CONTROLLER_KEY];
   if (!instance) {
     let storage: StorageLike | null = null;
     try {
@@ -355,6 +368,7 @@ export function getConsentController(): ConsentController {
       // The tracker is its own async chunk, fetched only after Allow.
       loadTracker: (hooks) => import('./tracker').then((m) => m.createBrowserTracker(hooks)),
     });
+    g[CONTROLLER_KEY] = instance;
     const controller = instance;
     const hooks: FormHooks = {
       analyticsFlag: () => controller.analyticsFlag(),
