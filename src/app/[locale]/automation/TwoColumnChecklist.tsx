@@ -10,7 +10,7 @@ import { HAIRLINE, footnoteStyle, h2Style, labelMono, leadStyle, sectionStyle } 
 
 const columnTitle = {
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
+  fontSize: 'var(--fs-12)',
   letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
   marginBottom: '1rem',
@@ -28,7 +28,7 @@ export function CheckRow({ children }: { children: ReactNode }) {
         alignItems: 'flex-start',
         padding: '.5rem 0',
         borderTop: '1px solid rgba(14,60,166,.1)',
-        fontSize: '.9rem',
+        fontSize: 'var(--fs-14)',
         lineHeight: 1.5,
         color: 'var(--n-70)',
       }}
@@ -96,7 +96,7 @@ export function TwoColumnChecklist({
                     alignItems: 'flex-start',
                     padding: '.5rem 0',
                     borderTop: '1px solid rgba(162,167,176,.12)',
-                    fontSize: '.9rem',
+                    fontSize: 'var(--fs-14)',
                     lineHeight: 1.5,
                     color: 'var(--n-60)',
                   }}

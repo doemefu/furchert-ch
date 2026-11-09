@@ -26,8 +26,8 @@ import { trackAttr } from '@/data/track-ids';
 
 const subLine = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
   color: 'var(--blue-base)',
 };
@@ -38,7 +38,7 @@ function PriceLine({ c }: { c: PackageCopy }) {
       <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.25rem' }}>{c.price}</p>
       {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums' }}>{c.priceAlt}</p>}
       {c.priceNote && (
-        <p style={{ fontSize: '.875rem', color: 'var(--n-70)', marginTop: '.25rem' }}>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-70)', marginTop: '.25rem' }}>
           {c.priceNote}
         </p>
       )}
@@ -75,7 +75,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
               borderTop: '1px solid rgba(162,167,176,.12)',
               cursor: 'pointer',
               ...subLine,
-              fontSize: '.75rem',
+              fontSize: 'var(--fs-12)',
             }}
           >
             {includesLabel}
@@ -90,7 +90,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
                   alignItems: 'flex-start',
                   padding: '.5rem 0',
                   borderTop: '1px solid rgba(162,167,176,.12)',
-                  fontSize: '.875rem',
+                  fontSize: 'var(--fs-14)',
                   color: 'var(--n-70)',
                   lineHeight: 1.5,
                 }}
@@ -105,7 +105,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
         </details>
       )}
       {c.excludes && (
-        <p style={{ fontSize: '.8125rem', color: 'var(--n-60)', lineHeight: 1.5, marginTop: '.75rem' }}>
+        <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-60)', lineHeight: 1.5, marginTop: '.75rem' }}>
           {c.excludes}
         </p>
       )}
@@ -147,9 +147,9 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
                 aria-hidden="true"
                 style={{
                   fontFamily: 'var(--mono)',
-                  fontSize: '2rem',
+                  fontSize: 'var(--fs-24)',
                   fontWeight: 400,
-                  letterSpacing: '-.02em',
+                  letterSpacing: '-.01em',
                   color: 'var(--n-20)',
                   lineHeight: 1,
                   marginBottom: 'clamp(.5rem, 2vw, 1rem)',

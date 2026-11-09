@@ -86,8 +86,8 @@ export default async function ProjectsPage({
                 <span
                   style={{
                     fontFamily: 'var(--mono)',
-                    fontSize: '.65rem',
-                    letterSpacing: '.06em',
+                    fontSize: 'var(--fs-12)',
+                    letterSpacing: '.05em',
                     textTransform: 'uppercase',
                     padding: '.25rem .5rem',
                     border: `1px solid ${STATUS_COLOR[p.status]}`,
@@ -102,9 +102,9 @@ export default async function ProjectsPage({
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: '1.05rem',
+                    fontSize: 'var(--fs-18)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                     marginBottom: '.5rem',
                   }}
@@ -113,10 +113,10 @@ export default async function ProjectsPage({
                 </div>
                 <p
                   style={{
-                    fontSize: '.875rem',
+                    fontSize: 'var(--fs-14)',
                     color: 'var(--n-60)',
                     lineHeight: 1.5,
-                    letterSpacing: '-.01em',
+                    letterSpacing: 0,
                   }}
                 >
                   {p.i18n[locale].summary}
@@ -131,8 +131,8 @@ export default async function ProjectsPage({
               <div
                 style={{
                   fontFamily: 'var(--mono)',
-                  fontSize: '.72rem',
-                  letterSpacing: '.04em',
+                  fontSize: 'var(--fs-12)',
+                  letterSpacing: '.05em',
                   textTransform: 'uppercase',
                   color: 'var(--blue-base)',
                 }}
@@ -154,9 +154,7 @@ export default async function ProjectsPage({
               flexDirection: 'column',
               gap: '1rem',
               fontFamily: 'var(--mono)',
-              fontSize: '.8125rem',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-13)',
               color: 'var(--blue-base)',
             }}
           >

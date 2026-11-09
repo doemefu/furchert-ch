@@ -30,9 +30,7 @@ export function Ticker() {
             key={i}
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.8125rem',
-              letterSpacing: '.06em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-13)',
               color: 'var(--n-50)',
               flexShrink: 0,
             }}

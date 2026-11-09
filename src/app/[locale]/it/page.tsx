@@ -53,8 +53,8 @@ export default async function ITPage({
           <p
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.8125rem',
-              letterSpacing: '.06em',
+              fontSize: 'var(--fs-13)',
+              letterSpacing: '.04em',
               textTransform: 'uppercase',
               color: 'var(--n-60)',
               marginBottom: '1.5rem',
@@ -74,7 +74,7 @@ export default async function ITPage({
                 <div
                   style={{
                     fontFamily: 'var(--mono)',
-                    fontSize: '.72rem',
+                    fontSize: 'var(--fs-12)',
                     letterSpacing: '.05em',
                     textTransform: 'uppercase',
                     color: 'var(--n-60)',
@@ -85,7 +85,7 @@ export default async function ITPage({
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
                   {s.items.map((it) => (
-                    <span key={it} style={{ fontSize: '.9rem', color: 'var(--n-70)' }}>
+                    <span key={it} style={{ fontSize: 'var(--fs-14)', color: 'var(--n-70)' }}>
                       {it}
                     </span>
                   ))}

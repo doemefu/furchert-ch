@@ -39,7 +39,7 @@ const POLL_MS = 60_000;
 const DOT: Record<LiveStatus, DotStatus> = { up: 'online', down: 'offline', unknown: 'unknown' };
 const mono = {
   fontFamily: 'var(--mono)',
-  letterSpacing: '.04em',
+  letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
 };
 
@@ -110,9 +110,9 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
         aria-live="polite"
         style={{
           fontFamily: 'var(--sans)',
-          fontSize: '1.05rem',
+          fontSize: 'var(--fs-18)',
           fontWeight: 500,
-          letterSpacing: '-.02em',
+          letterSpacing: 0,
           color: 'var(--n-100)',
           marginBottom: '1.25rem',
         }}
@@ -120,7 +120,7 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
         {summaryText}
       </p>
       <noscript>
-        <p style={{ fontSize: '.875rem', color: 'var(--n-60)', marginBottom: '1rem' }}>{strings.noscript}</p>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', marginBottom: '1rem' }}>{strings.noscript}</p>
       </noscript>
       <ul
         style={{
@@ -156,25 +156,25 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
                 <div
                   style={{
                     fontFamily: 'var(--sans)',
-                    fontSize: '1rem',
+                    fontSize: 'var(--fs-16)',
                     fontWeight: 500,
-                    letterSpacing: '-.02em',
+                    letterSpacing: 0,
                     color: 'var(--n-100)',
                   }}
                 >
                   {row.label}
                 </div>
-                <div style={{ fontSize: '.875rem', color: 'var(--n-60)', lineHeight: 1.5 }}>{row.desc}</div>
+                <div style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5 }}>{row.desc}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
                   <StatusDot status={live === null ? 'unknown' : DOT[status]} />
-                  <span style={{ ...mono, fontSize: '.75rem', color: 'var(--n-80)' }}>
+                  <span style={{ ...mono, fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>
                     {statusText}
                   </span>
                 </span>
                 {uptime && (
-                  <span style={{ ...mono, fontSize: '.72rem', color: 'var(--n-60)', fontVariantNumeric: 'tabular-nums' }}>{uptime}</span>
+                  <span style={{ ...mono, textTransform: 'none', letterSpacing: 0, fontSize: 'var(--fs-12)', color: 'var(--n-60)', fontVariantNumeric: 'tabular-nums' }}>{uptime}</span>
                 )}
               </div>
             </li>

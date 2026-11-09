@@ -67,9 +67,7 @@ export default async function RowingPage({
           <div
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.7rem',
-              letterSpacing: '.06em',
-              textTransform: 'uppercase',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
               padding: '1rem 1.25rem',
             }}

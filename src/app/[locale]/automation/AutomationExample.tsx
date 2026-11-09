@@ -18,10 +18,8 @@ const panelTitle = {
   alignItems: 'center',
   gap: '.5rem',
   fontFamily: 'var(--mono)',
-  fontSize: '.75rem',
+  fontSize: 'var(--fs-12)',
   fontWeight: 400,
-  letterSpacing: '.05em',
-  textTransform: 'uppercase' as const,
   marginBottom: '1rem',
 };
 
@@ -43,7 +41,7 @@ function Fields({ fields }: { fields: ExampleField[] }) {
           }}
         >
           <dt style={{ ...fieldLabel, paddingTop: '.25rem' }}>{field.label}</dt>
-          <dd style={{ margin: 0, fontSize: '.9rem', color: 'var(--n-80)', lineHeight: 1.5 }}>
+          <dd style={{ margin: 0, fontSize: 'var(--fs-14)', color: 'var(--n-80)', lineHeight: 1.5 }}>
             {field.lines.map((line) => (
               <div key={line.text} style={{ marginBottom: '2px' }}>
                 {line.text}
@@ -53,7 +51,7 @@ function Fields({ fields }: { fields: ExampleField[] }) {
                       display: 'block',
                       margin: '.25rem 0 .25rem',
                       padding: '2px .5rem',
-                      fontSize: '.8125rem',
+                      fontSize: 'var(--fs-13)',
                       color: 'var(--n-80)',
                       background: 'color-mix(in srgb, var(--tier-mid) 16%, var(--white))',
                       borderLeft: '2px solid var(--tier-mid)',
@@ -110,7 +108,7 @@ export async function AutomationExample({
           <blockquote
             style={{
               margin: 0,
-              fontSize: 'clamp(.9375rem, 2.5vw, 1rem)',
+              fontSize: 'var(--fs-15)',
               lineHeight: 1.65,
               color: 'var(--n-80)',
               maxWidth: '60ch',
@@ -135,8 +133,8 @@ export async function AutomationExample({
                   borderTop: '1px solid rgba(14,60,166,.1)',
                   cursor: 'pointer',
                   fontFamily: 'var(--mono)',
-                  fontSize: '.75rem',
-                  letterSpacing: '.04em',
+                  fontSize: 'var(--fs-12)',
+                  letterSpacing: '.05em',
                   textTransform: 'uppercase',
                   color: 'var(--blue-base)',
                 }}
@@ -151,7 +149,7 @@ export async function AutomationExample({
       <p
         style={{
           marginTop: 'clamp(1rem, 3vw, 1.5rem)',
-          fontSize: '.9375rem',
+          fontSize: 'var(--fs-15)',
           color: 'var(--n-70)',
           lineHeight: 1.55,
           maxWidth: '68ch',

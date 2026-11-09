@@ -43,9 +43,9 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
           <div
             style={{
               fontFamily: 'var(--sans)',
-              fontSize: '1.1rem',
+              fontSize: 'var(--fs-18)',
               fontWeight: 500,
-              letterSpacing: '-.02em',
+              letterSpacing: 0,
               color: 'var(--n-100)',
               lineHeight: 1.2,
             }}
@@ -55,9 +55,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
           <div
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
-              textTransform: 'uppercase',
-              letterSpacing: '.04em',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
               marginTop: '.25rem',
             }}
@@ -70,10 +68,10 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
       {text && (
         <p
           style={{
-            fontSize: '.9375rem',
+            fontSize: 'var(--fs-15)',
             color: 'var(--n-60)',
             lineHeight: 1.55,
-            letterSpacing: '-.01em',
+            letterSpacing: 0,
             marginBottom: items || learning ? '1rem' : 0,
           }}
         >
@@ -97,7 +95,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
                 display: 'flex',
                 gap: '.75rem',
                 alignItems: 'flex-start',
-                fontSize: '.9rem',
+                fontSize: 'var(--fs-14)',
                 color: 'var(--n-60)',
               }}
             >
@@ -123,7 +121,7 @@ export function ExpCard({ icon, title, org, since, text, items, learning, tags }
             paddingLeft: '1rem',
             margin: '1rem 0',
             color: 'var(--n-70)',
-            fontSize: '.9rem',
+            fontSize: 'var(--fs-14)',
             fontStyle: 'italic',
             lineHeight: 1.55,
           }}

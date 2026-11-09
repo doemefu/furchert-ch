@@ -17,22 +17,22 @@ import { LabLiveStatus } from './LabLiveStatus';
 
 const label = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase' as const,
   color: 'var(--n-60)',
   marginBottom: '1rem',
 };
 const h2 = {
   fontFamily: 'var(--sans)',
-  fontSize: 'clamp(1.5rem,3vw,2.25rem)',
+  fontSize: 'var(--fs-h2)',
   fontWeight: 500,
-  letterSpacing: '-.03em',
+  letterSpacing: '-.02em',
   color: 'var(--n-100)',
   marginBottom: '1rem',
 };
 const lead = {
-  fontSize: '1rem',
+  fontSize: 'var(--fs-16)',
   color: 'var(--n-70)',
   lineHeight: 1.55,
   maxWidth: '62ch',
@@ -87,15 +87,15 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
               <h3
                 style={{
                   fontFamily: 'var(--sans)',
-                  fontSize: '1.05rem',
+                  fontSize: 'var(--fs-18)',
                   fontWeight: 500,
-                  letterSpacing: '-.02em',
+                  letterSpacing: 0,
                   color: 'var(--n-100)',
                 }}
               >
                 {item.i18n[locale].title}
               </h3>
-              <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.55 }}>{item.i18n[locale].text}</p>
+              <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.55 }}>{item.i18n[locale].text}</p>
               {item.repos.length > 0 && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem 1rem', marginTop: 'auto' }}>
                   {item.repos.map((repo) => (
@@ -110,7 +110,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
                         alignItems: 'center',
                         gap: '.5rem',
                         fontFamily: 'var(--mono)',
-                        fontSize: '.72rem',
+                        fontSize: 'var(--fs-12)',
                         letterSpacing: '.04em',
                         textDecoration: 'none',
                         color: 'var(--blue-base)',
@@ -128,7 +128,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
           style={{
             marginTop: '1.5rem',
             fontFamily: 'var(--mono)',
-            fontSize: '.75rem',
+            fontSize: 'var(--fs-12)',
             letterSpacing: '.04em',
             color: 'var(--n-60)',
           }}
@@ -160,7 +160,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
             noscript: t('noscript'),
           }}
         />
-        <p style={{ marginTop: '1.5rem', fontSize: '.875rem', color: 'var(--n-60)', lineHeight: 1.55, maxWidth: '68ch' }}>
+        <p style={{ marginTop: '1.5rem', fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.55, maxWidth: '68ch' }}>
           {t('statusNote')}
         </p>
       </section>
