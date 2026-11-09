@@ -179,10 +179,11 @@ export function RankedBars({
 }
 
 /**
- * Two counts per day on one axis, side by side (WA-4b coverage, L3): the
+ * Two counts per bucket on one axis, side by side (WA-4b coverage, L3): the
  * subject series in the accent, the reference series in grey, never drawn
- * as a subset of each other. Sampled days are marked in the tooltip and the
- * table.
+ * as a subset of each other. Buckets follow §8.6 (bucketSeries). Sampled
+ * buckets are marked in the tooltip and the table; partial buckets are faded
+ * and starred like the section 1 chart.
  */
 export function SideBySideColumns({
   title,
@@ -192,12 +193,13 @@ export function SideBySideColumns({
   fmt,
 }: {
   title: string;
-  days: { day: string; subject: number; reference: number; sampled: boolean }[];
-  labels: { subject: string; reference: string; start: string; sampled: string };
+  days: { day: string; subject: number; reference: number; sampled: boolean; partial?: boolean }[];
+  labels: { subject: string; reference: string; start: string; sampled: string; partial: string };
   t: Translate;
   fmt: Formatters;
 }) {
   const max = days.reduce((m, d) => Math.max(m, d.subject, d.reference), 0);
+  const hasPartial = days.some((d) => d.partial);
   const w = 12;
   const h = 96;
   const col = (v: number) => (max > 0 ? Math.max((v / max) * h, v > 0 ? 1 : 0) : 0);
@@ -210,8 +212,8 @@ export function SideBySideColumns({
       </figcaption>
       <svg role="img" aria-label={title} viewBox={`0 0 ${Math.max(days.length, 1) * w} ${h}`} preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: h }}>
         {days.map((d, i) => (
-          <g key={d.day}>
-            <title>{`${fmt.day(d.day)}${d.sampled ? ` (${labels.sampled})` : ''}: ${labels.subject} ${fmt.num(d.subject)}, ${labels.reference} ${fmt.num(d.reference)}`}</title>
+          <g key={d.day} opacity={d.partial ? 0.45 : 1}>
+            <title>{`${fmt.day(d.day)}${d.partial ? ` (${labels.partial})` : ''}${d.sampled ? ` (${labels.sampled})` : ''}: ${labels.subject} ${fmt.num(d.subject)}, ${labels.reference} ${fmt.num(d.reference)}`}</title>
             <rect x={i * w + 1} y={h - col(d.subject)} width={(w - 3) / 2} height={col(d.subject)} fill={ACCENT} />
             <rect x={i * w + 1 + (w - 3) / 2 + 1} y={h - col(d.reference)} width={(w - 3) / 2} height={col(d.reference)} fill={CONTEXT} opacity={d.sampled ? 0.5 : 1} />
           </g>
@@ -223,11 +225,12 @@ export function SideBySideColumns({
           <span>{fmt.day(days[days.length - 1].day)}</span>
         </div>
       )}
+      {hasPartial && <p style={{ ...noteStyle, marginTop: '.35rem' }}>{labels.partial}</p>}
       <TableView
         summary={t('table')}
         caption={title}
         head={[labels.start, labels.subject, labels.reference]}
-        rows={days.map((d) => [fmt.day(d.day), fmt.num(d.subject), `${d.sampled ? '≈ ' : ''}${fmt.num(d.reference)}`])}
+        rows={days.map((d) => [`${fmt.day(d.day)}${d.partial ? ' *' : ''}`, fmt.num(d.subject), `${d.sampled ? '≈ ' : ''}${fmt.num(d.reference)}`])}
       />
     </figure>
   );

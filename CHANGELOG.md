@@ -129,6 +129,12 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **Web analytics dashboard follow-ups** (#156, review of #170): the coverage
+  chart groups days into weeks or months for longer ranges like section 1
+  (sampled and partial buckets marked); funnel comparisons skip steps that
+  rest on a cell below 3; new and returning visit tiles show "< 3" at 1–2;
+  every visitor-count basis (7 days, 28 days, month) gets its label.
+
 - **Accessibility and tokens pass** (#151): small text on light surfaces is
   never lighter than `--n-60` (5.26:1; `--n-50`/`--n-40` labels were 3.47 and
   2.32:1), footer text on navy moves to `--n-40`. Status colours are split

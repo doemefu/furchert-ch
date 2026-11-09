@@ -35,6 +35,7 @@ import {
   winner,
 } from '@/lib/analytics/stats';
 import { EmphasisColumns, RankedBars, TableView } from './charts';
+import { basisLabel } from './labels';
 import { CLICK_KINDS, PRESETS, hrefFor, type Controls } from './searchParams';
 import {
   Failure,
@@ -272,7 +273,7 @@ export function OfferGlance({ result, ctx }: { result: AnalyticsResult<OverviewR
               value={visitors && visitors.value !== null ? fmt.num(visitors.value) : t('none')}
               sub={
                 visitors && visitors.value !== null
-                  ? t(`glance.basis${visitors.basis === 'month' ? 'Month' : visitors.basis}`)
+                  ? basisLabel(visitors.basis, t)
                   : t('glance.visitorsNone')
               }
             />
