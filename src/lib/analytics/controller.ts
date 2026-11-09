@@ -18,6 +18,10 @@
 //   signal is a refusal: `denied` with `by: "signal"` and the pending marker
 //   are stored at once, and the boot sends the one forget. An explicit choice
 //   from the bar (Allow, or Decline) is stored with `by: "user"` (review L11).
+// - The bar first appears on the visitor's first interaction (pointerdown,
+//   keydown, wheel, touchstart, scroll or focusin; owner decision 2026-11-09, WA-6
+//   #158), so it never becomes the page's LCP element. The footer link opens
+//   it at once; a bfcache restore with the bar pending counts as interaction.
 import {
   CONSENT_EVENT,
   CONSENT_KEY,
@@ -50,6 +54,11 @@ export interface ControllerDeps {
   mayStart?: () => boolean;
   /** GPC or DNT is on (§4.1; WA-5). Absent = no signal. */
   privacySignal?: () => boolean;
+  /**
+   * Calls `cb` once on the first user interaction and returns a cleanup
+   * (WA-6). Absent = the bar may show at once (tests of the other rules).
+   */
+  onFirstInteraction?: (cb: () => void) => () => void;
 }
 
 export type SessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
@@ -111,6 +120,9 @@ export function createConsentController(deps: ControllerDeps): ConsentController
   let record: ConsentRecord | null = null;
   let optedOut = false;
   let dismissed = false;
+  // WA-6: the automatic bar waits for the first interaction (true without the seam).
+  let interacted = !deps.onFirstInteraction;
+  let stopWaiting: (() => void) | null = null;
   let reopened = false;
   let snapshot = SERVER_SNAPSHOT;
   const listeners = new Set<() => void>();
@@ -157,7 +169,7 @@ export function createConsentController(deps: ControllerDeps): ConsentController
       optedOut,
       suppressed: sup,
       reopened,
-      barOpen: ready && !sup && (reopened || (c === null && !optedOut && !dismissed)),
+      barOpen: ready && !sup && (reopened || (interacted && c === null && !optedOut && !dismissed)),
     };
     listeners.forEach((l) => l());
   };
@@ -274,6 +286,14 @@ export function createConsentController(deps: ControllerDeps): ConsentController
           store('denied', 'signal');
           set(FORGET_PENDING_KEY, '1');
         }
+        // Only a pending first-time bar waits; a stored choice or opt-out shows nothing.
+        if (!interacted && record === null && !optedOut && deps.onFirstInteraction) {
+          stopWaiting = deps.onFirstInteraction(() => {
+            stopWaiting = null;
+            interacted = true;
+            emit();
+          });
+        }
       }
       emit();
       if (!booted && !suppressed()) return boot();
@@ -341,6 +361,12 @@ export function createConsentController(deps: ControllerDeps): ConsentController
     },
     onPageShow(persisted) {
       if (!ready || !persisted) return;
+      if (!interacted) {
+        // Back from the bfcache with the bar pending: the visitor came back on purpose.
+        stopWaiting?.();
+        stopWaiting = null;
+        interacted = true;
+      }
       reread();
       // M1: the tracker hears about a bfcache restore only if tracking is still allowed.
       if (started) tracker?.onPageShow();
@@ -353,6 +379,26 @@ export function createConsentController(deps: ControllerDeps): ConsentController
     analyticsFlag: () => trackingAllowed(),
     awaitFirstFlush: (maxMs) => (started && tracker ? tracker.awaitFirstFlush(maxMs) : Promise.resolve()),
   };
+}
+
+/** The events that count as a first interaction (WA-6). Keyboard users: keydown covers Tab; focusin covers screen readers in browse mode (#174 review). */
+export const FIRST_INTERACTION_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll', 'focusin'] as const;
+
+/**
+ * Calls `cb` once on the first of FIRST_INTERACTION_EVENTS on `target`
+ * (passive, capture), then removes every listener. Returns a cleanup.
+ */
+export function onFirstInteraction(target: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>, cb: () => void): () => void {
+  const opts = { capture: true, passive: true } as const;
+  const stop = () => {
+    for (const type of FIRST_INTERACTION_EVENTS) target.removeEventListener(type, fire, opts);
+  };
+  function fire() {
+    stop();
+    cb();
+  }
+  for (const type of FIRST_INTERACTION_EVENTS) target.addEventListener(type, fire, opts);
+  return stop;
 }
 
 // ── Browser singleton ──────────────────────────────────────────────────────
@@ -383,6 +429,7 @@ export function getConsentController(): ConsentController {
         return n.globalPrivacyControl === true || n.doNotTrack === '1';
       },
       events: window,
+      onFirstInteraction: (cb) => onFirstInteraction(window, cb),
       setTimeout: (fn, ms) => window.setTimeout(fn, ms),
       clearTimeout: (handle) => window.clearTimeout(handle as number),
       // The tracker is its own async chunk, fetched only after Allow.

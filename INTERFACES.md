@@ -9,13 +9,13 @@
 > issue #63; its logins endpoints (NM-4) as of issue #64. §2's Prometheus
 > service-health queries (`/dashboard/services`) are implemented as of issue #47.
 > §4 (browser consent contract for first-party web analytics) is implemented
-> but dark as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
-> and §2's data-service web analytics write API as of issue #154 (WA-2b; only
-> the enquiry count is live while the UI flag is off); §2's data-service web
+> as of issue #153 (WA-2a); the tracker, `/api/v`, `/api/v/forget`
+> and §2's data-service web analytics write API as of issue #154 (WA-2b); §2's data-service web
 > analytics read API and the never-track switch as of issue #155 (WA-4a), its
 > funnels, paths, audience, coverage and page-flow endpoints as of issue #156
 > (WA-4b); the abuse limits, durable forget erasure and GPC/DNT handling as of
-> issue #157 (WA-5, dark until WA-6).
+> issue #157 (WA-5). All of it is live since the WA-6 go-live on 2026-11-09
+> (#158).
 
 ## 1. OIDC client (auth.furchert.ch) — implemented (Phase 4)
 
@@ -361,13 +361,14 @@ renders "sent" when the action returns `{ok:true}`, which happens only after
 `sendMail()` resolves with at least one accepted recipient and none
 rejected.
 
-## 4. Browser: usage-statistics consent (WA-2a #153; dark until WA-6)
+## 4. Browser: usage-statistics consent (WA-2a #153; live since 2026-11-09, #158)
 
-Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-analytics.md`) §4 and §10.1. Rendered only while `ANALYTICS_UI_ENABLED` (`src/lib/analytics/flags.ts`) is `true`; it is `false` until the go-live PR (#158).
+Spec: `../docs/100-web-analytics.md` (canonical `../infrastructure/docs/100-web-analytics.md`) §4 and §10.1. Rendered only while `ANALYTICS_UI_ENABLED` (`src/lib/analytics/flags.ts`) is `true`, which it is since the WA-6 go-live (#158, 2026-11-09).
 
 | Item | Contract |
 |------|----------|
 | `fa_consent` (`localStorage`) | `{"v": 1, "choice": "granted" \| "denied", "by": "user" \| "signal", "at": "YYYY-MM-DD"}` (UTC day). Valid while `consentExpired(at, today)` is false: from `at` + 365 days on, for a malformed date or a date more than one day ahead it counts as no choice. Another `v` (`ANALYTICS_CONSENT_VERSION`) asks again. Never written or removed before a choice; a valid record is not rewritten when the same choice is made again (fixed expiry) |
+| Bar timing (#158) | With no valid choice and no opt-out, the bar first appears on the visitor's first interaction: `pointerdown`, `keydown` (covers Tab), `wheel`, `touchstart`, `scroll` or `focusin` (screen readers in browse mode) (passive capture listeners on `window`, removed after the first one; no timer). A bfcache restore with the bar pending counts as interaction. The footer link opens it at once. Owner decision 2026-11-09: a bar painted at hydration became the mobile LCP element on `/de/automation`. Nothing is tracked before Allow either way. The tap that opens the bar cannot choose: a click on Allow/Decline counts only if its pointerdown started inside the bar (keyboard and assistive-tech activation, `detail` 0, always counts). Accepted: the first Tab moves focus past the bar (it is no longer first in focus order on that pass); scroll restoration or an anchor jump can open the bar without a deliberate gesture |
 | GPC/DNT (#157) | With no valid stored choice and no `fa_optout`, `navigator.globalPrivacyControl === true` or `navigator.doNotTrack === '1'` is a refusal: `denied` with `by: "signal"` and `fa_forget_pending` are stored at once, and the first public page load sends the one forget. The bar stays closed; reopened from the footer it shows `analytics.consent.signalNotice`. An explicit Allow stores `by: "user"` and overrides the signal (also for the contact goal flag); an explicit Decline rewrites the record to `by: "user"` with a new `at` |
 | `fa_forget_pending` (`localStorage`) | `"1"` from just before a forget until it answers 204. Retried once per page load while tracking is not allowed (choice not `granted`, or `fa_optout` on), never on `/dashboard/**`; a 429 with `Retry-After` (1 to 600 s) schedules one more attempt (fires only under the same conditions), cancelled by an Allow. With neither a stored choice nor `fa_optout` nothing is sent; the next choice sends it. When tracking is allowed at load (granted, switch off) the pending forget is sent once, the marker is dropped whatever the answer, then the tracker may start; an Allow does the same before starting |
 | `fa_optout` (`localStorage`) | `"1"` while the never-track switch (WA-4a #155) is on; hides the bar and keeps the tracker off. The controller's `optOut()` is the seam |

@@ -248,7 +248,7 @@ the old pod keeps serving traffic throughout.
 
 ## Web analytics: collect route, forward queue, kill switch (#154)
 
-Spec `../docs/100-web-analytics.md` (canonical in `../infrastructure/docs/`), Epic doemefu/homelab#348. The browser side stays dark (`ANALYTICS_UI_ENABLED = false` in code) until the WA-6 go-live (#158); the **enquiry count is live from this rollout on**: every successful contact submission without a session cookie forwards one id-free `enquiry` event.
+Spec `../docs/100-web-analytics.md` (canonical in `../infrastructure/docs/`), Epic doemefu/homelab#348. The browser side is live since the WA-6 go-live (#158, 2026-11-09; `ANALYTICS_UI_ENABLED = true` in code), and the **enquiry count** has been live since #154: every successful contact submission without a session cookie forwards one id-free `enquiry` event. **Rollback (#158 plan):** set `ANALYTICS_COLLECT_ENABLED: "false"` in `k8s/deployment.yaml` first (stops collecting and the enquiry count, withdrawal keeps working, the privacy text stays true); set the flag back to `false` only when the consent bar itself is broken, with an owner purge-or-fix decision on #158; never revert the privacy text.
 
 - **Rollout order:** data-service WA-1 (`POST /api/webanalytics/events`, doemefu/homelab-data-service#53) must be live first, and auth-service must grant the `furchert-ch` client the scope `analytics:write` (WA-0). Otherwise forwarding fails: events are retried, then dropped after 60 min, and one `[analytics] forward summary` line a minute shows the failures.
 - **Env:** `ANALYTICS_COLLECT_ENABLED` (plain, `"true"` in `k8s/deployment.yaml`). Forwarding reuses `DATA_SERVICE_URL`, `DATA_SERVICE_TOKEN_URL` and `OIDC_CLIENT_ID`/`OIDC_CLIENT_SECRET`; no new secret.

@@ -50,7 +50,7 @@ export default async function LocaleLayout({
               {children}
             </main>
             <Footer />
-            {/* Dark until the WA-6 go-live (#158); see src/lib/analytics/flags.ts. */}
+            {/* Live since the WA-6 go-live (#158); rollback: src/lib/analytics/flags.ts. */}
             {ANALYTICS_UI_ENABLED && <LazyAnalytics />}
           </Providers>
         </NextIntlClientProvider>
