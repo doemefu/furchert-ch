@@ -58,9 +58,10 @@ const PAUSE_MAX_MS = 25 * 60 * 60_000;
 export const ERASED_TTL_MS = 2 * 60 * 60_000;
 export const ERASED_CAP = 10_000;
 export const PURGE_WAIT_MS = 10_500;
-// A1 (WA-5 plan): data-service #56 stores nothing of a capped batch, edgeDrops
-// included (all-or-nothing), so the drops are put back. Re-checked against the
-// merged producer before PR A merges.
+// A1 (WA-5 plan): verified against data-service PR #66 — a capped 429 rolls
+// the batch back and counts none of its edgeDrops (IngestController; test
+// hourCapAnswers429WithTheExactBodyAndStoresAndCountsNothing), so they are put
+// back.
 const RESTORE_DROPS_ON_CAPPED = true;
 
 export interface QueueDeps {

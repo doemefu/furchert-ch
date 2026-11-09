@@ -427,7 +427,7 @@ describe('POST /api/v/forget (§5.4, WA-5)', () => {
   });
 
   it('W2: an unexpected error after the guard queues the ids for the background retry', async () => {
-    const { d, log } = fdeps();
+    const { d, log, counts } = fdeps();
     d.eraser.eraseNow = async () => {
       throw new Error('boom');
     };
@@ -435,6 +435,7 @@ describe('POST /api/v/forget (§5.4, WA-5)', () => {
     expect(res.status).toBe(503);
     expect(cookies(res)).toEqual([CLEAR, SET_F(A, VID)]);
     expect(log).toContain(`retry ${A},${VID}`);
+    expect(counts.failed).toBe(2);
   });
 
   it('integration: queued events never sent, in-flight batch answered before the DELETE, data-service down then up', async () => {

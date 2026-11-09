@@ -244,6 +244,7 @@ export async function handleForget(req: Request, deps: ForgetDeps): Promise<Resp
   } catch {
     if (pendingIds.length === 0) return withCookies(400, [clearVid]);
     // Review W2: err towards erasure; the browser and the server retry the ids.
+    deps.count('failed', pendingIds.length);
     try {
       deps.eraser.queueRetry(pendingIds);
     } catch {

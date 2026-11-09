@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCounterLog, createEraser, RETRY_FOR_MS, type EraseDeps } from './erase';
 
-
 const A = '1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f';
 const B = '2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6a';
 
