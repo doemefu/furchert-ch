@@ -1,12 +1,15 @@
 // Source guard for the status signature (#177): a status colour used as a
 // background (the LED) belongs in StatusDot. Anything else needs an entry here.
+// Best-effort, single-line check: it does not follow colours held in variables
+// or maps, nor multi-line values. Whole-file entries let any later hand-rolled
+// LED in that file pass, so keep them narrow.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const ALLOWED = [
   'src/components/ui/StatusDot.tsx',
-  'src/app/[locale]/dashboard/devices/SchedulesPanel.tsx', // toggle track
+  'src/app/[locale]/dashboard/devices/SchedulesPanel.tsx', // toggle track only; status dots there use StatusDot
   'src/app/[locale]/dashboard/services/', // bucket bars and StripToggle
   'src/app/[locale]/dashboard/network/NetworkShell.tsx', // LOGIN_COLORS
   'src/app/[locale]/dashboard/analytics/',

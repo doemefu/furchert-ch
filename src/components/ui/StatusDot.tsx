@@ -1,4 +1,4 @@
-// Ported verbatim from the prototype (shared.jsx StatusDot).
+// From the prototype (shared.jsx StatusDot); square LED since unslop B2 (#177).
 // Colours via --status-* design tokens (globals.css).
 import type { ReactNode } from 'react';
 
