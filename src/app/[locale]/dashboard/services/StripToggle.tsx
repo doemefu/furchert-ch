@@ -27,7 +27,7 @@ export function StripToggle({
   hourly: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  // The blue ring marks today; it joins the no-data hairline when there is one.
+  // The blue ring marks today (2px while the hourly panel is open).
   const ring = `0 0 0 ${open ? 2 : 1}px var(--blue-base)`;
 
   return (
@@ -58,7 +58,7 @@ export function StripToggle({
               borderRadius: 1,
               background: todayStyle.background,
               opacity: todayStyle.opacity,
-              boxShadow: todayStyle.boxShadow ? `${todayStyle.boxShadow}, ${ring}` : ring,
+              boxShadow: ring,
             }}
           />
         </button>
