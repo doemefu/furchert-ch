@@ -35,6 +35,7 @@ import { DevSubnav } from '../Subnav';
 import { NoAccess } from '../NoAccess';
 import { LOCALE_TAG } from '../datetime';
 import { ReauthNotice } from '../auth/ReauthNotice';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import { BORDER, Pill } from '../auth/ui';
 import { DeviceOverview, type DeviceSummary, type ScheduleSummary, type Section } from './DeviceOverview';
 import { DeviceTabs, parseTab, type DeviceTab } from './DeviceTabs';
@@ -91,9 +92,11 @@ async function Header({ healthStatus }: { healthStatus: string | null }) {
             </h1>
             <Pill tone="info">ADMIN</Pill>
             {healthStatus === null ? (
-              <Pill tone="mute">{t('statusUnknown')}</Pill>
+              <StatusLabel status="unknown">{t('statusUnknown')}</StatusLabel>
             ) : (
-              <Pill tone={healthStatus === 'UP' ? 'ok' : 'err'}>{healthStatus === 'UP' ? t('statusUp') : t('statusDown')}</Pill>
+              <StatusLabel status={healthStatus === 'UP' ? 'online' : 'offline'}>
+                {healthStatus === 'UP' ? t('statusUp') : t('statusDown')}
+              </StatusLabel>
             )}
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.35rem' }}>{t('meta')}</div>

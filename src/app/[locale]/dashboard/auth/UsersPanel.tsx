@@ -16,6 +16,7 @@ import type { UserRole, UserStatus } from '@/lib/authadmin/userFields';
 import { createUserAction, deleteUserAction, resetPasswordAction, updateUserAction } from './actions';
 import { useFocusTrap, useReturnFocus } from '../useDrawerFocus';
 import { FieldError, FormError, inputAria } from './FormFeedback';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import { MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle, BORDER } from './ui';
 
 /** A user row as rendered — timestamps pre-formatted on the server (no hydration drift). */
@@ -181,7 +182,7 @@ export function UsersPanel({
                 <Pill tone={u.role === 'ADMIN' ? 'info' : 'mute'}>{u.role}</Pill>
               </span>
               <span>
-                <Pill tone={u.status === 'ACTIVE' ? 'ok' : 'warn'}>{u.status}</Pill>
+                <StatusLabel status={u.status === 'ACTIVE' ? 'online' : 'wip'}>{u.status}</StatusLabel>
               </span>
               <span style={{ color: 'var(--n-60)', fontSize: 'var(--fs-12)' }}>{u.updatedLabel}</span>
               <span style={{ display: 'flex', gap: '.3rem', justifyContent: 'flex-end' }}>

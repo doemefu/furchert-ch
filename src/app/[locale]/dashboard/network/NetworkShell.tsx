@@ -517,7 +517,7 @@ function StatusStrip({ result, fmt, t }: { result: NetmonResult<{ collectors: Co
             return (
               <div key={c.name} style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.4rem' }}>
-                  <StatusDot status={dot.status} label={t(`status.${dot.key}`)} />
+                  <StatusDot status={dot.status} />
                   <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', fontWeight: 500, color: 'var(--n-100)' }}>{c.name}</span>
                   <span style={{ ...noteStyle, marginLeft: 'auto' }}>{t(`status.${dot.key}`)}</span>
                 </div>
@@ -1324,7 +1324,7 @@ function LoginTimeline({ points, daily, fmt, t }: { points: LoginTimelineBucket[
       <div style={{ ...noteStyle, display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '.35rem' }}>
         {LOGIN_OUTCOMES.map((o) => (
           <span key={o} style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem' }}>
-            <span aria-hidden style={{ width: 8, height: 8, background: LOGIN_COLORS[o], display: 'inline-block' }} />
+            <span aria-hidden style={{ width: 12, height: 2, background: LOGIN_COLORS[o], display: 'inline-block' }} />
             {t(`logins.${o}`)}
           </span>
         ))}

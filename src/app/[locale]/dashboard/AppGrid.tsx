@@ -7,7 +7,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon, type IconName } from '@/components/ui/Icon';
-import { StatusDot, STATUS_INK } from '@/components/ui/StatusDot';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import type { HomelabApp } from '@/data/homelab-apps';
 import { Link } from '@/i18n/navigation';
 
@@ -186,20 +186,7 @@ export function AppGrid({
                 <div style={iconBoxStyle}>
                   <Icon name={iconName} size={14} />
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                  <StatusDot status={app.status} />
-                  <span
-                    style={{
-                      fontFamily: 'var(--mono)',
-                      fontSize: 'var(--fs-12)',
-                      letterSpacing: '.05em',
-                      textTransform: 'uppercase',
-                      color: STATUS_INK[app.status],
-                    }}
-                  >
-                    {t(`status.${app.status}`)}
-                  </span>
-                </div>
+                <StatusLabel status={app.status}>{t(`status.${app.status}`)}</StatusLabel>
               </div>
 
               <div>

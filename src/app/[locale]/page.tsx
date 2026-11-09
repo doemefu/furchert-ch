@@ -182,10 +182,11 @@ export default async function HomePage({
                     <span
                       style={{
                         flexShrink: 0,
-                        marginTop: '6px',
-                        width: '.5rem',
-                        height: '.5rem',
-                        background: 'var(--n-30)',
+                        marginTop: '8px',
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: 'var(--n-40)',
                       }}
                     />
                     <div>
@@ -237,10 +238,11 @@ export default async function HomePage({
                     <span
                       style={{
                         flexShrink: 0,
-                        marginTop: '6px',
-                        width: '.5rem',
-                        height: '.5rem',
-                        background: 'var(--n-30)',
+                        marginTop: '8px',
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: 'var(--n-40)',
                       }}
                     />
                     <div>
