@@ -201,7 +201,7 @@ describe('6 Paths', () => {
   it('group paths: translated tokens, < 3 folded with the API (other) row, converting 1–2 as "< 3" (H1, L4)', () => {
     expect(out).toContain('paths.groups.home › paths.groups.offer › paths.groups.contact › paths.groups.exit');
     expect(out).toContain(q('other{"n":"5"}')); // proof (2) + (other) (3)
-    expect(out).toContain('<td style="font-family:var(--mono);font-size:.72rem;color:var(--n-80);padding:.45rem .75rem;border-bottom:1px solid rgba(162,167,176,.15);vertical-align:top;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap"><span aria-label="lt3Spoken">lt3</span></td>');
+    expect(out).toMatch(/<td style="[^"]*text-align:right[^"]*"><span aria-label="lt3Spoken">lt3<\/span><\/td>/);
   });
 
   it('entry × exit and transitions fold (other) and < 3; (entrance)/(exit) labelled', () => {
@@ -282,7 +282,7 @@ describe('8 Coverage', () => {
   it('H2: byPage lists registry paths only; scanner paths and small rows fold into other (n)', () => {
     const many = Array.from({ length: 120 }, (_, i) => ({ path: `/scan-${i}`, locale: 'de', consentedPageviews: 0, cloudflareRequests: 1, sampled: false }));
     const out = html(CoverageSection, { result: ok(coverageData({ byPage: [...coverageData().byPage, ...many] })), ctx: ctx() });
-    expect(out).toContain('<td style="font-family:var(--mono);font-size:.72rem;color:var(--n-80);padding:.45rem .75rem;border-bottom:1px solid rgba(162,167,176,.15);vertical-align:top">/automation</td>');
+    expect(out).toMatch(/<td style="[^"]*vertical-align:top">\/automation<\/td>/);
     expect(out).not.toContain('wp-login');
     expect(out).not.toContain('/scan-');
     expect(out).toContain(q('other{"n":"169"}')); // 2 + 40 + 7 + 120
@@ -343,7 +343,7 @@ describe('#170 review follow-ups (N1–N4)', () => {
     const out = html(CoverageSection, { result: ok(coverageData({ range: r, baselineFrom: '2026-08-01', daily })), ctx: ctx() });
     expect(out).toContain(q('coverage.chart{"unit":"glance.unitWeek"}'));
     expect(out.match(/<g opacity=/g)).toHaveLength(13);
-    expect(out).toContain('<td style="font-family:var(--mono);font-size:.72rem;color:var(--n-80);padding:.45rem .75rem;border-bottom:1px solid rgba(162,167,176,.15);vertical-align:top;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap">210</td>');
+    expect(out).toMatch(/<td style="[^"]*text-align:right[^"]*">210<\/td>/);
     expect(out.match(/≈ 210/g)).toHaveLength(1); // only the week holding the sampled day (24 Aug)
     expect(out).toContain('2 Nov 2026 *');
     expect(out).toContain('glance.partial');

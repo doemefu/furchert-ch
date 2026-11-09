@@ -105,7 +105,7 @@ function Head({ keys, left, t }: { keys: string[]; left: number; t: Translate })
 }
 
 function SubTitle({ children }: { children: ReactNode }) {
-  return <h3 style={{ ...monoLabel, fontSize: '.62rem', fontWeight: 400, margin: '.25rem 0 .5rem' }}>{children}</h3>;
+  return <h3 style={{ ...monoLabel, fontWeight: 400, margin: '.25rem 0 .5rem' }}>{children}</h3>;
 }
 
 /** Fixed-category counts as ranked rows; values below 3 are flagged small (H1). */
@@ -149,7 +149,7 @@ function StepBars({ steps, ctx }: { steps: StepView[]; ctx: Ctx }) {
         const pct = !s.small && first > 0 ? Math.min((s.visits / first) * 100, 100) : 0;
         return (
           <li key={s.index}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.75rem', fontFamily: 'var(--mono)', fontSize: '.72rem', marginBottom: '.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '.75rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', marginBottom: '.25rem' }}>
               <span style={{ color: 'var(--n-90)' }}>{stepLabel(s.key, t)}</span>
               <span style={{ color: 'var(--n-60)', flexShrink: 0 }}>{s.small ? <span aria-label={t('lt3Spoken')}>{t('lt3')}</span> : fmt.num(s.visits)}</span>
             </div>
@@ -207,7 +207,7 @@ export function FunnelsSection({ result, def, ctx }: { result: AnalyticsResult<F
               const name = funnelLabel(f.id, t);
               return (
                 <figure key={`${f.id ?? 'unknown'}-${fi}`} style={cardStyle}>
-                  <figcaption style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{name}</figcaption>
+                  <figcaption style={{ ...monoLabel, marginBottom: '.75rem' }}>{name}</figcaption>
                   <StepBars steps={steps} ctx={ctx} />
                   {deltas && (
                     <ul style={{ ...noteStyle, listStyle: 'none', padding: 0, margin: '.6rem 0 0', display: 'grid', gap: '.2rem' }}>

@@ -40,7 +40,7 @@ export function NeverTrackSwitch({ uiEnabled }: { uiEnabled: boolean }) {
 
   return (
     <div id="fa-never-track" style={{ ...cardStyle, display: 'grid', gap: '.6rem', maxWidth: '40rem' }}>
-      <p style={{ fontSize: '.9rem', color: 'var(--n-90)' }}>{snap.ready ? (on ? t('on') : t('off')) : '…'}</p>
+      <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-90)' }}>{snap.ready ? (on ? t('on') : t('off')) : '…'}</p>
       <div>
         {/* A constant label with aria-pressed: "pressed" = never tracked (review N3). */}
         <button type="button" aria-pressed={on} disabled={!snap.ready || pending} onClick={() => void toggle()} style={on ? chipActive : chipBase}>

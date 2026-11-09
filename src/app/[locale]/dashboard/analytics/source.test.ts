@@ -29,6 +29,16 @@ describe('/dashboard/analytics sources', () => {
     }
   });
 
+  it('#191: every fontSize uses an --fs-* token (the fluid page title is the one exception), incl. NeverTrackSwitch', () => {
+    const allowed = new Set(["'clamp(1.6rem, 3vw, 2.2rem)'"]);
+    for (const f of files) {
+      for (const m of read(f).matchAll(/fontSize:\s*('[^']*'|[^,}\n]+)/g)) {
+        const value = m[1].trim();
+        expect(value.startsWith("'var(--fs-") || allowed.has(value), `${f}: fontSize ${value}`).toBe(true);
+      }
+    }
+  });
+
   it('the dashboard files are server components without client state (L2)', () => {
     for (const f of files.filter((x) => x.startsWith(DIR))) expect(read(f), f).not.toMatch(/'use client'|useState|useEffect/);
   });

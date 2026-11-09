@@ -75,7 +75,7 @@ export async function AnalyticsShell({ locale, controls }: { locale: string; con
       <header style={{ padding: '2rem 0 1rem' }}>
         <p style={{ ...monoLabel, marginBottom: '.5rem' }}>{t('kicker')}</p>
         <h1 style={titleStyle}>{t('title')}</h1>
-        <p style={{ fontSize: '.95rem', color: 'var(--n-70)', marginTop: '.5rem', maxWidth: '60ch' }}>{t('subtitle')}</p>
+        <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', marginTop: '.5rem', maxWidth: '60ch' }}>{t('subtitle')}</p>
         <HeaderLine overview={overview} statusDefaulted={statusDefaulted} ctx={ctx} />
       </header>
       <ControlsBar ctx={ctx} />
