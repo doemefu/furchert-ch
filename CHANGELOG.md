@@ -131,6 +131,10 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **Copilot data-boundary footnote and FAQ** (#165): /automation now names all
+  three documented exceptions to the EU Data Boundary (Bing web search,
+  Anthropic models if enabled, flex routing at peak load).
+
 - **Web analytics dashboard follow-ups** (#156, review of #170): the coverage
   chart groups days into weeks or months for longer ranges like section 1
   (sampled and partial buckets marked); funnel comparisons skip steps that
