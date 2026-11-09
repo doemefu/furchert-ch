@@ -31,24 +31,24 @@ const FALLBACK_NODES: LiveNode[] = Object.entries(NODE_HARDWARE).map(([name, har
 
 const monoKicker: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const monoLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.15rem .5rem',
   background: 'var(--blue-wash)',
@@ -62,8 +62,8 @@ const externalBtnStyle: CSSProperties = {
   alignItems: 'center',
   gap: '.4rem',
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   textDecoration: 'none',
   color: 'var(--n-60)',
@@ -140,8 +140,8 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
             <span
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.72rem',
-                letterSpacing: '.04em',
+                fontSize: 'var(--fs-12)',
+                letterSpacing: 0,
                 color: 'var(--n-60)',
                 whiteSpace: 'nowrap',
               }}
@@ -174,8 +174,8 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
             <p
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.68rem',
-                letterSpacing: '.03em',
+                fontSize: 'var(--fs-12)',
+                letterSpacing: 0,
                 color: 'var(--n-60)',
                 marginBottom: '.75rem',
               }}
@@ -213,9 +213,9 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                     <span
                       style={{
                         fontFamily: 'var(--mono)',
-                        fontSize: '.75rem',
+                        fontSize: 'var(--fs-12)',
                         fontWeight: 500,
-                        letterSpacing: '.04em',
+                        letterSpacing: 0,
                         color: 'var(--n-100)',
                       }}
                     >
@@ -225,9 +225,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                   <span
                     style={{
                       fontFamily: 'var(--mono)',
-                      fontSize: '.65rem',
-                      letterSpacing: '.04em',
-                      textTransform: 'uppercase',
+                      fontSize: 'var(--fs-12)',
                       padding: '.1rem .4rem',
                       border: '1px solid rgba(162,167,176,.3)',
                       borderRadius: '2px',
@@ -240,8 +238,8 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                 <div
                   style={{
                     fontFamily: 'var(--mono)',
-                    fontSize: '.68rem',
-                    letterSpacing: '.03em',
+                    fontSize: 'var(--fs-12)',
+                    letterSpacing: 0,
                     color: 'var(--n-60)',
                     marginBottom: '.75rem',
                   }}
@@ -266,8 +264,8 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                         <div
                           style={{
                             fontFamily: 'var(--mono)',
-                            fontSize: '.6rem',
-                            letterSpacing: '.06em',
+                            fontSize: 'var(--fs-12)',
+                            letterSpacing: '.05em',
                             textTransform: 'uppercase',
                             color: 'var(--n-60)',
                             marginBottom: '.2rem',
@@ -286,7 +284,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                             }}
                           />
                         </div>
-                        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem', fontVariantNumeric: 'tabular-nums' }}>
+                        <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem', fontVariantNumeric: 'tabular-nums' }}>
                           {displayLabel}
                         </div>
                       </div>
@@ -333,9 +331,7 @@ export async function DashboardShell({ locale, userName }: { locale: Locale; use
                   alignItems: 'center',
                   gap: '.4rem',
                   fontFamily: 'var(--mono)',
-                  fontSize: '.72rem',
-                  letterSpacing: '.04em',
-                  textTransform: 'uppercase',
+                  fontSize: 'var(--fs-12)',
                   textDecoration: 'none',
                   border: '1px solid rgba(162,167,176,.3)',
                   borderRadius: '2px',

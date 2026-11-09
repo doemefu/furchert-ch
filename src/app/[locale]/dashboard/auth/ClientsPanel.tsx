@@ -51,7 +51,7 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem', flexWrap: 'wrap', gap: '.5rem' }}>
         <div>
           <MonoLabel>{t('registered', { count: clients.length })}</MonoLabel>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)' }}>{t('source')}</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>{t('source')}</span>
         </div>
         {!creating && (
           <button type="button" onClick={() => setCreating(true)} style={btnPrimary}>
@@ -66,17 +66,17 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
         <div role="status" style={{ padding: '1rem', background: 'var(--blue-wash)', border: '1px solid rgba(14,60,166,.2)', borderRadius: '2px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginBottom: '.4rem' }}>
             <Icon name="lock" size={11} />
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--blue-base)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--blue-base)' }}>
               {t('secretTitle', { clientId: secret.clientId })}
             </span>
           </div>
-          <p style={{ fontSize: '.78rem', color: 'var(--n-80)', lineHeight: 1.5, marginBottom: '.6rem' }}>{t('secretBody')}</p>
+          <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-80)', lineHeight: 1.5, marginBottom: '.6rem' }}>{t('secretBody')}</p>
           <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <code
               style={{
                 flex: '1 1 260px',
                 fontFamily: 'var(--mono)',
-                fontSize: '.75rem',
+                fontSize: 'var(--fs-12)',
                 padding: '.45rem .6rem',
                 background: 'var(--white)',
                 border: '1px solid rgba(162,167,176,.35)',
@@ -143,7 +143,7 @@ export function ClientsPanel({ clients }: { clients: ClientRow[] }) {
       )}
 
       {clients.length === 0 && (
-        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
+        <div style={{ ...cardStyle, padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
           {t('none')}
         </div>
       )}
@@ -196,13 +196,13 @@ function ClientItem({ client: c, isOpen, onToggle }: { client: ClientRow; isOpen
           <Icon name="chip" size={13} />
         </span>
         <span>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.85rem', fontWeight: 500, color: 'var(--n-100)' }}>{c.clientId}</div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-14)', fontWeight: 500, color: 'var(--n-100)' }}>{c.clientId}</div>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem' }}>
             {c.scopes.join(' · ')} · {c.description ?? t('noDescription')}
           </div>
         </span>
         <Pill tone="info">device</Pill>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '.85rem', color: 'var(--n-60)' }}>{isOpen ? '−' : '+'}</span>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-14)', color: 'var(--n-60)' }}>{isOpen ? '−' : '+'}</span>
       </button>
 
       {isOpen && (
@@ -219,20 +219,20 @@ function ClientItem({ client: c, isOpen, onToggle }: { client: ClientRow; isOpen
             <MonoLabel mb=".4rem">{t('scopes')}</MonoLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.3rem' }}>
               {c.scopes.map((s) => (
-                <Pill key={s} tone="mute">
+                <Pill key={s} tone="mute" plain>
                   {s}
                 </Pill>
               ))}
             </div>
             <MonoLabel mt="1rem" mb=".4rem">{t('createdAt')}</MonoLabel>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)' }}>{c.createdLabel}</div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>{c.createdLabel}</div>
           </div>
           <div style={{ paddingTop: '1rem' }}>
             <MonoLabel mb=".4rem">{t('description')}</MonoLabel>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)' }}>{c.description ?? t('noDescription')}</div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>{c.description ?? t('noDescription')}</div>
             <form action={revokeAction} onSubmit={confirmRevoke} style={{ marginTop: '1rem' }}>
               <input type="hidden" name="clientId" value={c.clientId} />
-              <button type="submit" disabled={revoking} style={{ ...btnDanger, fontSize: '.65rem', padding: '.4rem .7rem' }}>
+              <button type="submit" disabled={revoking} style={{ ...btnDanger, fontSize: 'var(--fs-12)', padding: '.4rem .7rem' }}>
                 {t('revoke')}
               </button>
             </form>

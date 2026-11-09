@@ -73,9 +73,9 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
             <span
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.72rem',
+                fontSize: 'var(--fs-12)',
                 fontWeight: 500,
-                letterSpacing: '.06em',
+                letterSpacing: '.05em',
                 textTransform: 'uppercase',
                 color: 'var(--n-100)',
               }}
@@ -87,16 +87,16 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
           <h2
             style={{
               fontFamily: 'var(--sans)',
-              fontSize: '1.25rem',
+              fontSize: 'var(--fs-18)',
               fontWeight: 500,
-              letterSpacing: '-.03em',
+              letterSpacing: 0,
               color: 'var(--n-100)',
               marginBottom: '.5rem',
             }}
           >
             {t('gate')}
           </h2>
-          <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, marginBottom: '1.75rem' }}>
+          <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, marginBottom: '1.75rem' }}>
             {t('gatesub')}
           </p>
 
@@ -105,8 +105,8 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
               role="alert"
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.7rem',
-                letterSpacing: '.04em',
+                fontSize: 'var(--fs-12)',
+                letterSpacing: 0,
                 color: 'var(--status-offline-ink)',
                 background: '#fef2f2',
                 border: '1px solid #fecaca',
@@ -131,7 +131,7 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
               borderRadius: '2px',
               cursor: 'pointer',
               fontFamily: 'var(--mono)',
-              fontSize: '.8125rem',
+              fontSize: 'var(--fs-13)',
               letterSpacing: '.04em',
               textTransform: 'uppercase',
               display: 'flex',
@@ -149,9 +149,7 @@ export function SignInGate({ locale, returnPath = '/dashboard' }: { locale: stri
             <p
               style={{
                 fontFamily: 'var(--mono)',
-                fontSize: '.65rem',
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
+                fontSize: 'var(--fs-12)',
                 color: 'var(--n-60)',
               }}
             >

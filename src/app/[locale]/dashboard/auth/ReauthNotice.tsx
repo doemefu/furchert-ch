@@ -46,14 +46,14 @@ export function ReauthNotice({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '1.5rem', color: 'var(--n-70)' }}>
           <Icon name="lock" size={13} />
-          <span style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', fontWeight: 500, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-100)' }}>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', fontWeight: 500, letterSpacing: '.05em', textTransform: 'uppercase', color: 'var(--n-100)' }}>
             {t('kicker')}
           </span>
         </div>
-        <h2 style={{ fontFamily: 'var(--sans)', fontSize: '1.25rem', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)', marginBottom: '.5rem' }}>
+        <h2 style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-18)', fontWeight: 500, letterSpacing: 0, color: 'var(--n-100)', marginBottom: '.5rem' }}>
           {t('title')}
         </h2>
-        <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, marginBottom: '1.5rem' }}>{t('body')}</p>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, marginBottom: '1.5rem' }}>{t('body')}</p>
         <button type="button" onClick={onSignIn} style={btnPrimary}>
           {t('button')}
         </button>

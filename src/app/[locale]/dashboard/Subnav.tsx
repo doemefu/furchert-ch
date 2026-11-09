@@ -22,8 +22,8 @@ const rowStyle = {
 
 const devAreaLabelStyle = {
   fontFamily: 'var(--mono)',
-  fontSize: '.65rem',
-  letterSpacing: '.08em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
   color: 'var(--n-60)',
   paddingRight: '1rem',
@@ -33,8 +33,8 @@ const devAreaLabelStyle = {
 
 const tabBase = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase' as const,
   background: 'none',
   border: 'none',

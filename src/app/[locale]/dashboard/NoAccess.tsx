@@ -36,9 +36,9 @@ export async function NoAccess() {
           <span
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.72rem',
+              fontSize: 'var(--fs-12)',
               fontWeight: 500,
-              letterSpacing: '.06em',
+              letterSpacing: '.05em',
               textTransform: 'uppercase',
               color: 'var(--n-100)',
             }}
@@ -49,16 +49,16 @@ export async function NoAccess() {
         <h2
           style={{
             fontFamily: 'var(--sans)',
-            fontSize: '1.25rem',
+            fontSize: 'var(--fs-18)',
             fontWeight: 500,
-            letterSpacing: '-.03em',
+            letterSpacing: 0,
             color: 'var(--n-100)',
             marginBottom: '.5rem',
           }}
         >
           {t('title')}
         </h2>
-        <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, marginBottom: '1.5rem' }}>{t('body')}</p>
+        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, marginBottom: '1.5rem' }}>{t('body')}</p>
         <Link
           href="/dashboard"
           style={{
@@ -66,8 +66,8 @@ export async function NoAccess() {
             alignItems: 'center',
             gap: '.4rem',
             fontFamily: 'var(--mono)',
-            fontSize: '.72rem',
-            letterSpacing: '.04em',
+            fontSize: 'var(--fs-12)',
+            letterSpacing: '.05em',
             textTransform: 'uppercase',
             textDecoration: 'none',
             color: 'var(--n-60)',

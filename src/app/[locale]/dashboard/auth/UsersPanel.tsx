@@ -94,7 +94,7 @@ export function UsersPanel({
             onChange={(e) => setQ(e.target.value)}
             placeholder={t('search')}
             aria-label={t('searchLabel')}
-            style={{ ...fieldStyle, flex: '1 1 220px', maxWidth: 340, width: 'auto', fontSize: '.78rem' }}
+            style={{ ...fieldStyle, flex: '1 1 220px', maxWidth: 340, width: 'auto', fontSize: 'var(--fs-13)' }}
           />
           <div style={{ display: 'flex', gap: '.25rem', flexWrap: 'wrap' }}>
             {chips.map(([k, label]) => (
@@ -105,8 +105,8 @@ export function UsersPanel({
                 onClick={() => setFilter(k)}
                 style={{
                   fontFamily: 'var(--mono)',
-                  fontSize: '.65rem',
-                  letterSpacing: '.04em',
+                  fontSize: 'var(--fs-12)',
+                  letterSpacing: '.05em',
                   textTransform: 'uppercase',
                   padding: '.35rem .65rem',
                   borderRadius: '2px',
@@ -128,7 +128,7 @@ export function UsersPanel({
 
       {/* Table */}
       <div style={{ ...cardStyle, overflowX: 'auto' }}>
-        <div style={{ minWidth: 720 }}>
+        <div style={{ minWidth: 780 }}>
           <div
             style={{
               display: 'grid',
@@ -139,8 +139,8 @@ export function UsersPanel({
               background: 'var(--n-10)',
               borderBottom: BORDER,
               fontFamily: 'var(--mono)',
-              fontSize: '.62rem',
-              letterSpacing: '.06em',
+              fontSize: 'var(--fs-12)',
+              letterSpacing: '.05em',
               textTransform: 'uppercase',
               color: 'var(--n-60)',
             }}
@@ -154,7 +154,7 @@ export function UsersPanel({
             <span />
           </div>
           {filtered.length === 0 && (
-            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-60)' }}>
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
               {t('none')}
             </div>
           )}
@@ -169,7 +169,7 @@ export function UsersPanel({
                 padding: '.7rem 1rem',
                 borderBottom: i < filtered.length - 1 ? '1px solid rgba(162,167,176,.18)' : 'none',
                 fontFamily: 'var(--mono)',
-                fontSize: '.78rem',
+                fontSize: 'var(--fs-13)',
                 color: 'var(--n-90)',
               }}
             >
@@ -183,7 +183,7 @@ export function UsersPanel({
               <span>
                 <Pill tone={u.status === 'ACTIVE' ? 'ok' : 'warn'}>{u.status}</Pill>
               </span>
-              <span style={{ color: 'var(--n-60)', fontSize: '.7rem' }}>{u.updatedLabel}</span>
+              <span style={{ color: 'var(--n-60)', fontSize: 'var(--fs-12)' }}>{u.updatedLabel}</span>
               <span style={{ display: 'flex', gap: '.3rem', justifyContent: 'flex-end' }}>
                 <button type="button" onClick={(e) => openDrawer(u.id, e.currentTarget)} style={btnSmall}>
                   {t('edit')}
@@ -196,7 +196,7 @@ export function UsersPanel({
 
       {/* Paging — only when auth-service holds more than one page */}
       {(pages > 1 || page > 0) && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.75rem', fontFamily: 'var(--mono)', fontSize: '.68rem', color: 'var(--n-60)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.75rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
           <span>
             {total > page * size && <>{t('pageInfo', { from: page * size + 1, to: Math.min((page + 1) * size, total), total })} · </>}
             {t('pageOnlyFilter')}
@@ -303,23 +303,23 @@ function UserDrawer({
       >
         <div style={{ padding: '1.5rem', borderBottom: BORDER, background: 'var(--white)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-60)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)' }}>
               {isNew ? 'POST /api/v1/users' : `PUT /api/v1/users/${user.id}`}
             </span>
             <button
               type="button"
               onClick={onClose}
               aria-label={t('close')}
-              style={{ fontFamily: 'var(--mono)', fontSize: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--n-60)' }}
+              style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-16)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--n-60)' }}
             >
               ×
             </button>
           </div>
-          <div id="user-drawer-title" style={{ fontFamily: 'var(--sans)', fontSize: '1.25rem', fontWeight: 500, letterSpacing: '-.02em', color: 'var(--n-100)' }}>
+          <div id="user-drawer-title" style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-18)', fontWeight: 500, letterSpacing: 0, color: 'var(--n-100)' }}>
             {isNew ? t('newTitle') : user.username}
           </div>
           {!isNew && (
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '.7rem', color: 'var(--n-60)', marginTop: '.25rem' }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.25rem' }}>
               {t('created', { id: user.id, created: user.createdLabel })}
             </div>
           )}
