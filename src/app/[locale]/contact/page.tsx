@@ -64,23 +64,11 @@ export default async function ContactPage({
           title={t('contact.title')}
           sub={t('contact.sub')}
         />
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-            gap: '0',
-            borderTop: '1px solid rgba(162,167,176,.22)',
-          }}
-        >
-          <div
-            style={{
-              padding: '3rem 2rem 3rem 0',
-              borderRight: '1px solid rgba(162,167,176,.22)',
-            }}
-          >
+        <div className="contact-grid">
+          <div className="contact-col-form">
             <ContactForm />
           </div>
-          <div style={{ padding: '3rem 0 3rem 3rem' }}>
+          <div className="contact-col-direct">
             <p
               style={{
                 fontFamily: 'var(--mono)',

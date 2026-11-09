@@ -52,6 +52,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
         <h2 style={h2}>{t('showcaseHeading')}</h2>
         <p style={lead}>{t('showcaseLead')}</p>
         <div
+          className="cell-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(260px, 30%)), 1fr))',

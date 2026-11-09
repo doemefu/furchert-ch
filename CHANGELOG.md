@@ -154,6 +154,13 @@ All notable changes per milestone. Newest first.
   with the GitHub link as its sixth cell; 16 px page gutters and 20 px card
   padding on phones; fractional rem spacing moved to the 4 px grid; the CTA
   strip has a filled primary button and a quiet GitHub text link.
+- **Grid seams and contact on mobile** (#175): where a grid's last column met
+  the vertical frame line, two hairlines sat side by side; the grid now
+  reaches into the frame pixel and clips it (home, about, projects, homelab
+  showcase, automation price steps), which also stops hover backgrounds from
+  painting over the frame. Two horizontal double lines are gone (projects
+  header, rowing photo). The contact page stacks below 640 px with equal
+  20 px insets and one divider instead of uneven insets.
 
 ### Fixed
 
