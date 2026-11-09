@@ -23,7 +23,6 @@ const TEMPLATES: Record<string, string[]> = {
   'pages.${PAGE_COLS[i + 1]}': ['pageviews', 'entries', 'exitRate', 'bounce', 'medianTime', 'scroll50', 'scroll90'].map((k) => `pages.${k}`),
   'pages.${k}': ['path', 'pageviews', 'entries', 'exitRate', 'bounce', 'medianTime', 'scroll50', 'scroll90'].map((k) => `pages.${k}`),
   'sources.${k}': ['source', 'medium', 'campaign', 'visits', 'converting'].map((k) => `sources.${k}`),
-  "glance.basis${visitors.basis === 'month' ? 'Month' : visitors.basis}": ['glance.basis7d', 'glance.basis28d', 'glance.basisMonth'],
 };
 
 function usedKeys(src: string): string[] {

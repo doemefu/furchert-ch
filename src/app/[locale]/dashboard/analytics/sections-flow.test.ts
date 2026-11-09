@@ -329,3 +329,51 @@ describe('Drilldown page flow', () => {
     expect(html(PageFlow, { result: ok(detail({ previous: null, next: null })), def: full, ctx: ctx() })).toContain('flow.unavailable');
   });
 });
+
+describe('#170 review follow-ups (N1–N4)', () => {
+  it('N1: the coverage chart buckets 90 days by week; a bucket is sampled when any day is, partial buckets are starred', () => {
+    // 90 days from Mon 2026-08-10 → 13 ISO weeks, the last one partial (Mon 2026-11-02 … Sun 2026-11-08, data through 7 Nov).
+    const daily = Array.from({ length: 90 }, (_, i) => ({
+      day: new Date(Date.parse('2026-08-10T00:00:00Z') + i * 86_400_000).toISOString().slice(0, 10),
+      consentedPageviews: 10,
+      cloudflareRequests: 30,
+      sampled: i === 15,
+    }));
+    const r: Range = { from: '2026-08-10', to: '2026-11-07', days: 90, lastCompleteDay: '2026-11-07', previous: null };
+    const out = html(CoverageSection, { result: ok(coverageData({ range: r, baselineFrom: '2026-08-01', daily })), ctx: ctx() });
+    expect(out).toContain(q('coverage.chart{"unit":"glance.unitWeek"}'));
+    expect(out.match(/<g opacity=/g)).toHaveLength(13);
+    expect(out).toContain('<td style="font-family:var(--mono);font-size:.72rem;color:var(--n-80);padding:.45rem .75rem;border-bottom:1px solid rgba(162,167,176,.15);vertical-align:top;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap">210</td>');
+    expect(out.match(/≈ 210/g)).toHaveLength(1); // only the week holding the sampled day (24 Aug)
+    expect(out).toContain('2 Nov 2026 *');
+    expect(out).toContain('glance.partial');
+  });
+
+  it('N2: no rate delta when a previous-period cell is below 3', () => {
+    const f = funnelsData({
+      funnels: [
+        {
+          id: 'offer',
+          steps: [{ index: 1, key: 'visit', visits: 400 }, { index: 2, key: 'offer_visit', visits: 120 }, { index: 3, key: 'reached_prices', visits: 60 }],
+          previous: [{ index: 1, key: 'visit', visits: 380 }, { index: 2, key: 'offer_visit', visits: 100 }, { index: 3, key: 'reached_prices', visits: 2 }],
+        },
+      ],
+    });
+    const out = html(FunnelsSection, { result: ok(f), def: full, ctx: ctx() });
+    expect(out.match(/glance\.ppChange/g)).toHaveLength(1);
+    expect(out).toContain('funnels.deltaSmall');
+  });
+
+  it('N3: new/returning tiles show "< 3" and no share at 1–2', () => {
+    const out = html(AudienceSection, { result: ok(audienceData({ newVsReturning: { newVisits: 2, returningVisits: 70 } })), def: full, ctx: ctx() });
+    expect(out).toMatch(/audience\.new<\/p><p[^>]*>lt3<\/p>/);
+    expect(out).not.toContain(q('fraction{"x":"2"'));
+  });
+
+  it('N4: every known basis gets its label; anything else stays raw text', () => {
+    expect(html(AudienceSection, { result: ok(audienceData({ repeatOfferViewers: { value: 4, basis: '7d' } })), def: full, ctx: ctx() })).toContain('glance.basis7d');
+    const odd = html(AudienceSection, { result: ok(audienceData({ repeatOfferViewers: { value: 4, basis: '14d' } })), def: full, ctx: ctx() });
+    expect(odd).toContain('>14d<');
+    expect(odd).not.toContain('glance.basis14d');
+  });
+});

@@ -487,7 +487,7 @@
         "excludedDays": "Nicht in der Schätzung (keine Cloudflare-Daten): {n, plural, one {# Tag} other {# Tage}}.",
         "enquiries": "Anfragen aus Besuchen mit Zustimmung",
         "enquiriesSub": "Nach Absendetag. Abschnitt 1 zählt nach dem Starttag des Besuchs, darum können die Summen um Mitternacht abweichen.",
-        "chart": "Seitenaufrufe pro Tag: mit Zustimmung vs. Cloudflare",
+        "chart": "Seitenaufrufe pro {unit}: mit Zustimmung vs. Cloudflare",
         "consented": "Seitenaufrufe mit Zustimmung",
         "cloudflare": "Cloudflare-Seitenabrufe",
         "sampled": "Stichprobe",

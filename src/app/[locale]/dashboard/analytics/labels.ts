@@ -36,6 +36,8 @@ export const seenLabel = allow({ about: 'paths.seenValues.about', projects: 'pat
 export const visitorTypeLabel = allow({ new: 'audience.new', returning: 'audience.returning' });
 export const flowLabel = allow({ '(entrance)': 'flow.entrance', '(exit)': 'flow.exit' });
 export const deviceLabel = allow({ desktop: 'controls.desktop', mobile: 'controls.mobile', tablet: 'controls.tablet', other: 'audience.otherDevice' });
+/** Visitor-count basis (overview visitors, repeat offer viewers); review N4. */
+export const basisLabel = allow({ '7d': 'glance.basis7d', '28d': 'glance.basis28d', month: 'glance.basisMonth' });
 export const localeLabel = allow({ de: 'controls.de', en: 'controls.en' });
 /** Open dimension values (country, browser, OS, viewport): raw text, null → unknown. */
 export const rawLabel = (value: string | null, t: Translate): string => (value === null ? t('unknown') : value);

@@ -19,9 +19,9 @@ import type {
   Range,
   ValueCount,
 } from '@/lib/analytics/read';
-import { coverageBand, foldRows, funnelSteps, isSmall, rate, rateDelta, spansMatch, type Rate, type StepView } from '@/lib/analytics/stats';
+import { bucketSeries, coverageBand, foldRows, funnelSteps, isSmall, rate, rateDelta, spansMatch, type Rate, type StepView } from '@/lib/analytics/stats';
 import { RankedBars, SideBySideColumns, TableView, type RankedRow } from './charts';
-import { deviceLabel, flowLabel, funnelLabel, groupPathText, localeLabel, rawLabel, seenLabel, stepLabel, visitorTypeLabel } from './labels';
+import { basisLabel, deviceLabel, flowLabel, funnelLabel, groupPathText, localeLabel, rawLabel, seenLabel, stepLabel, visitorTypeLabel } from './labels';
 import { Ignored, emptyText, grid, type Ctx } from './sections';
 import { Failure, Note, Section, StatTile, TableWrap, cardStyle, monoLabel, noteStyle, numTd, rateText, tdStyle, thStyle, type Formatters, type Translate } from './ui';
 
@@ -173,7 +173,11 @@ function deltaRows(steps: StepView[], previous: { index: number; visits: number 
   const prev = [...previous].sort((a, b) => a.index - b.index);
   return steps.map((s, i) => {
     if (i === 0) return null;
-    const d = rateDelta(s.visits, steps[i - 1].visits, prev[i]?.visits ?? 0, prev[i - 1]?.visits ?? 0);
+    const p1 = prev[i]?.visits ?? 0;
+    const p0 = prev[i - 1]?.visits ?? 0;
+    // N2: no delta when a cell it rests on is below 3, current or previous (same rule as funnelSteps).
+    if (s.small || steps[i - 1].small || isSmall(p1) || isSmall(p0)) return '';
+    const d = rateDelta(s.visits, steps[i - 1].visits, p1, p0);
     return d.kind === 'change' ? ctx.t('glance.ppChange', { pp: `${d.pp > 0 ? '+' : ''}${d.pp}` }) : '';
   });
 }
@@ -355,8 +359,11 @@ export function PathsSection({ result, def, ctx }: { result: AnalyticsResult<Pat
 
 // ── 7 Audience ─────────────────────────────────────────────────────────────
 
+const isSmallCell = (n: number) => n > 0 && isSmall(n);
+const smallTile = (n: number, ctx: Ctx) => (isSmallCell(n) ? ctx.t('lt3') : ctx.fmt.num(n));
+
 function repeatSub(r: AudienceResponse['repeatOfferViewers'], def: Definition, t: Translate): string {
-  if (r.value !== null) return r.basis === 'month' ? t('glance.basisMonth') : r.basis === '28d' ? t('glance.basis28d') : (r.basis ?? t('none'));
+  if (r.value !== null) return basisLabel(r.basis, t);
   // M2: a clamped range has no 28-day or month basis; otherwise the range is not 28 days or a whole month.
   if (def.kind === 'clamped') return t('audience.repeatClamped');
   return r.basis === null ? t('audience.repeatBasis') : t('audience.repeatNoData');
@@ -382,8 +389,9 @@ export function AudienceSection({ result, def, ctx }: { result: AnalyticsResult<
         <div style={{ display: 'grid', gap: '.75rem' }}>
           <DefinitionNote def={def} ctx={ctx} />
           <div style={grid(170)}>
-            <StatTile label={t('audience.new')} value={fmt.num(nv.newVisits)} sub={rateText(rate(nv.newVisits, total), t, fmt)} />
-            <StatTile label={t('audience.returning')} value={fmt.num(nv.returningVisits)} sub={rateText(rate(nv.returningVisits, total), t, fmt)} />
+            {/* N3: 1–2 show "< 3" and no share, as in the visitor-type list (H1). */}
+            <StatTile label={t('audience.new')} value={smallTile(nv.newVisits, ctx)} sub={isSmallCell(nv.newVisits) ? undefined : rateText(rate(nv.newVisits, total), t, fmt)} />
+            <StatTile label={t('audience.returning')} value={smallTile(nv.returningVisits, ctx)} sub={isSmallCell(nv.returningVisits) ? undefined : rateText(rate(nv.returningVisits, total), t, fmt)} />
             <StatTile
               label={t('audience.repeatOffer')}
               value={d.repeatOfferViewers.value !== null ? fmt.num(d.repeatOfferViewers.value) : t('none')}
@@ -473,6 +481,11 @@ export function CoverageSection({ result, ctx }: { result: AnalyticsResult<Cover
   else if (r.to !== null && base > r.to) state = <Note>{t('coverage.baselineAfter', { day: fmt.day(base) })}</Note>;
   const since = base !== null && r.from !== null ? (base > r.from ? base : r.from) : null;
   const band = state === null ? bandText(d.daily, t) : null;
+  // N1: §8.6 buckets (daily ≤ 31 days, weekly, monthly); a bucket is sampled when any of its days is.
+  const chart = bucketSeries(
+    d.daily.map((x) => ({ ...x, sampledDays: x.sampled ? 1 : 0 })),
+    ['consentedPageviews', 'cloudflareRequests', 'sampledDays'],
+  );
   const pages = coveragePages(d.byPage);
   const x = Math.min(d.enquiries.consentedSubmits, d.enquiries.totalSubmits);
   return (
@@ -491,9 +504,15 @@ export function CoverageSection({ result, ctx }: { result: AnalyticsResult<Cover
             </div>
             {band!.excluded > 0 && <Note>{t('coverage.excludedDays', { n: band!.excluded })}</Note>}
             <SideBySideColumns
-              title={t('coverage.chart')}
-              days={d.daily.map((x) => ({ day: x.day, subject: x.consentedPageviews, reference: x.cloudflareRequests, sampled: x.sampled }))}
-              labels={{ subject: t('coverage.consented'), reference: t('coverage.cloudflare'), start: t('glance.start'), sampled: t('coverage.sampled') }}
+              title={t('coverage.chart', { unit: t(chart.unit === 'day' ? 'glance.unitDay' : chart.unit === 'week' ? 'glance.unitWeek' : 'glance.unitMonth') })}
+              days={chart.buckets.map((b) => ({
+                day: b.start,
+                subject: b.values.consentedPageviews,
+                reference: b.values.cloudflareRequests,
+                sampled: b.values.sampledDays > 0,
+                partial: b.partial,
+              }))}
+              labels={{ subject: t('coverage.consented'), reference: t('coverage.cloudflare'), start: t('glance.start'), sampled: t('coverage.sampled'), partial: t('glance.partial') }}
               t={t}
               fmt={fmt}
             />

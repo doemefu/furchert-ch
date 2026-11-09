@@ -487,7 +487,7 @@
         "excludedDays": "Left out of the estimate (no Cloudflare data): {n, plural, one {# day} other {# days}}.",
         "enquiries": "Enquiries from consented visits",
         "enquiriesSub": "By submission day. Section 1 counts by the day a visit started, so totals can differ around midnight.",
-        "chart": "Page views per day: consented vs. Cloudflare",
+        "chart": "Page views per {unit}: consented vs. Cloudflare",
         "consented": "consented page views",
         "cloudflare": "Cloudflare page requests",
         "sampled": "sampled",
