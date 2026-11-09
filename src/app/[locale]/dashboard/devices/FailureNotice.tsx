@@ -10,7 +10,7 @@ export async function FailureNotice({ kind }: { kind: DeviceAdminFailureKind }) 
   return (
     <div role="status" style={{ ...cardStyle, padding: '1.25rem', display: 'flex', gap: '.75rem', alignItems: 'baseline' }}>
       <Pill tone={tone}>{kind.replaceAll('_', ' ')}</Pill>
-      <p style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-70)', lineHeight: 1.5 }}>{t(kind)}</p>
+      <p style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-70)', lineHeight: 1.5 }}>{t(kind)}</p>
     </div>
   );
 }

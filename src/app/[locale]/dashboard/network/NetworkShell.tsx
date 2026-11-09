@@ -177,24 +177,24 @@ const requestLinkState = cache((): { lgOutcome?: LoginOutcome } => ({}));
 
 const monoKicker: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const monoLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.15rem .5rem',
   background: 'var(--blue-wash)',
@@ -213,8 +213,8 @@ const cardStyle: CSSProperties = {
 
 const noteStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.03em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: 0,
   color: 'var(--n-60)',
 };
 
@@ -222,8 +222,8 @@ const sectionStyle: CSSProperties = { borderBottom: '1px solid rgba(162,167,176,
 
 const chipBase: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   textDecoration: 'none',
   border: '1px solid rgba(162,167,176,.3)',
@@ -241,7 +241,7 @@ const chipActive: CSSProperties = {
 
 const thStyle: CSSProperties = {
   ...monoLabel,
-  fontSize: '.62rem',
+  fontSize: 'var(--fs-12)',
   textAlign: 'left',
   fontWeight: 400,
   padding: '.5rem .75rem',
@@ -251,7 +251,7 @@ const thStyle: CSSProperties = {
 
 const tdStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.72rem',
+  fontSize: 'var(--fs-12)',
   color: 'var(--n-80)',
   padding: '.45rem .75rem',
   borderBottom: '1px solid rgba(162,167,176,.15)',
@@ -262,8 +262,8 @@ const ipLinkStyle: CSSProperties = { color: 'var(--blue-base)', textDecoration: 
 
 const flagStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.6rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.05rem .35rem',
   borderRadius: '2px',
@@ -321,7 +321,7 @@ function BarList({ title, rows, fmt, emptyText }: { title: string; rows: BarRow[
   const max = rows.reduce((m, r) => Math.max(m, Number.isFinite(r.value) ? r.value : 0), 0);
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{title}</p>
+      <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.75rem' }}>{title}</p>
       {rows.length === 0 ? (
         <p style={noteStyle}>{emptyText}</p>
       ) : (
@@ -336,7 +336,7 @@ function BarList({ title, rows, fmt, emptyText }: { title: string; rows: BarRow[
                     justifyContent: 'space-between',
                     gap: '.5rem',
                     fontFamily: 'var(--mono)',
-                    fontSize: '.68rem',
+                    fontSize: 'var(--fs-12)',
                     color: 'var(--n-70)',
                     marginBottom: '.2rem',
                   }}
@@ -359,8 +359,8 @@ function BarList({ title, rows, fmt, emptyText }: { title: string; rows: BarRow[
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.35rem' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--sans)', fontSize: '1.5rem', fontWeight: 500, letterSpacing: '-.03em', color: 'var(--n-100)', fontVariantNumeric: 'tabular-nums' }}>
+      <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.35rem' }}>{label}</p>
+      <p style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-24)', fontWeight: 500, letterSpacing: '-.01em', color: 'var(--n-100)', fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </p>
     </div>
@@ -382,7 +382,7 @@ function Timeline({
   const height = 64;
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{label}</p>
+      <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.75rem' }}>{label}</p>
       <svg
         role="img"
         aria-label={label}
@@ -518,7 +518,7 @@ function StatusStrip({ result, fmt, t }: { result: NetmonResult<{ collectors: Co
               <div key={c.name} style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.4rem' }}>
                   <StatusDot status={dot.status} label={t(`status.${dot.key}`)} />
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', fontWeight: 500, color: 'var(--n-100)' }}>{c.name}</span>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', fontWeight: 500, color: 'var(--n-100)' }}>{c.name}</span>
                   <span style={{ ...noteStyle, marginLeft: 'auto' }}>{t(`status.${dot.key}`)}</span>
                 </div>
                 <p style={noteStyle}>
@@ -607,21 +607,21 @@ function IpPanel({
             <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '.35rem .75rem' }}>
               {facts.map(([k, v]) => (
                 <div key={k} style={{ display: 'contents' }}>
-                  <dt style={{ ...monoLabel, fontSize: '.62rem' }}>{k}</dt>
-                  <dd style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-80)', overflowWrap: 'anywhere' }}>{v}</dd>
+                  <dt style={{ ...monoLabel, fontSize: 'var(--fs-12)' }}>{k}</dt>
+                  <dd style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)', overflowWrap: 'anywhere' }}>{v}</dd>
                 </div>
               ))}
             </dl>
           </div>
           <div style={cardStyle}>
-            <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.5rem' }}>{t('ip.blocklists')}</p>
+            <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.5rem' }}>{t('ip.blocklists')}</p>
             {d.blocklists.length === 0 ? (
               <p style={noteStyle}>{t('ip.noBlocklists')}</p>
             ) : (
               <ul style={{ listStyle: 'none', display: 'grid', gap: '.35rem' }}>
                 {d.blocklists.map((b) => (
-                  <li key={`${b.list}-${b.cidr}`} style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-80)' }}>
-                    <span style={flagStyle}>{b.list}</span> {b.cidr}
+                  <li key={`${b.list}-${b.cidr}`} style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>
+                    <span style={{ ...flagStyle, textTransform: 'none', letterSpacing: 0 }}>{b.list}</span> {b.cidr}
                     <span style={{ ...noteStyle, marginLeft: '.5rem' }}>{fmt.time(b.fetchedAt)}</span>
                   </li>
                 ))}
@@ -651,7 +651,7 @@ function IpPanel({
             />
           </div>
         )}
-        <p style={{ ...monoLabel, fontSize: '.62rem' }}>{t('inbound.firewall.title')}</p>
+        <p style={{ ...monoLabel, fontSize: 'var(--fs-12)' }}>{t('inbound.firewall.title')}</p>
         <FirewallTable items={d.firewallEvents} range={range} fmt={fmt} t={t} />
       </div>
     );
@@ -663,7 +663,7 @@ function IpPanel({
       title={t('ip.title')}
       aside={
         <>
-          {ip && <span style={{ fontFamily: 'var(--mono)', fontSize: '.8rem', color: 'var(--n-100)' }}>{ip}</span>}
+          {ip && <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-13)', color: 'var(--n-100)' }}>{ip}</span>}
           {close}
         </>
       }
@@ -687,7 +687,7 @@ const LAN_PORT_NAMES: Record<number, string> = {
 
 const POD_CIDR_LABEL = '10.42.0.0/16';
 
-const subheadStyle: CSSProperties = { ...monoLabel, fontSize: '.62rem', fontWeight: 400 };
+const subheadStyle: CSSProperties = { ...monoLabel, fontSize: 'var(--fs-12)', fontWeight: 400 };
 
 // `srcIp` is not always an address (§5.2): the pod CIDR and the overflow
 // bucket `other` are rendered as labels; only real IPs link to the IP panel.
@@ -755,7 +755,7 @@ function LanConnectionsBlock({
           const name = LAN_PORT_NAMES[port];
           return (
             <div key={port} style={{ display: 'grid', gap: '.35rem' }}>
-              <p style={{ fontFamily: 'var(--mono)', fontSize: '.75rem', fontWeight: 500, color: 'var(--n-100)' }}>
+              <p style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', fontWeight: 500, color: 'var(--n-100)' }}>
                 {name ? `${port} · ${name}` : String(port)}
               </p>
               <TableWrap>
@@ -999,7 +999,7 @@ function LanSection({
   }
   return (
     <Section id="netmon-lan" title={t('lan.title')}>
-      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('lan.subtitle')}</p>
+      <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('lan.subtitle')}</p>
       {body}
     </Section>
   );
@@ -1222,7 +1222,7 @@ function EgressSection({
   }
   return (
     <Section id="netmon-egress" title={t('egress.title')}>
-      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('egress.subtitle')}</p>
+      <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('egress.subtitle')}</p>
       {body}
     </Section>
   );
@@ -1289,7 +1289,7 @@ function LoginTimeline({ points, daily, fmt, t }: { points: LoginTimelineBucket[
   const label = t('logins.timeline');
   return (
     <div style={cardStyle}>
-      <p style={{ ...monoLabel, fontSize: '.62rem', marginBottom: '.75rem' }}>{label}</p>
+      <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginBottom: '.75rem' }}>{label}</p>
       <svg
         role="img"
         aria-label={label}
@@ -1681,7 +1681,7 @@ function LoginsSection({
   }
   return (
     <Section id="netmon-logins" title={t('logins.title')} aside={partial ? <Tag>{t('status.warning.partial')}</Tag> : undefined}>
-      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('logins.subtitle')}</p>
+      <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('logins.subtitle')}</p>
       {partial && <p style={noteStyle}>{t('status.warningHint.partial')}</p>}
       {credentials && <p style={noteStyle}>{t('logins.credentialsHint')}</p>}
       {body}
@@ -1769,10 +1769,10 @@ export async function NetworkShell({
               <h1 style={{ ...monoKicker, fontWeight: 400 }}>{t('kicker')}</h1>
               <span style={privatePillStyle}>{t('adminOnly')}</span>
             </div>
-            <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
+            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
           </div>
           <nav aria-label={t('window.label')} style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-            <span style={{ ...monoLabel, fontSize: '.62rem' }}>{t('window.label')}</span>
+            <span style={{ ...monoLabel, fontSize: 'var(--fs-12)' }}>{t('window.label')}</span>
             {NETWORK_RANGES.map((r) => (
               <Link
                 key={r}
@@ -1810,7 +1810,7 @@ export async function NetworkShell({
               </div>
               <Timeline points={summary.data.timeline} fmt={fmt} label={t('inbound.timeline')} />
 
-              <p style={{ ...monoLabel, fontSize: '.62rem', marginTop: '.5rem' }}>{t('inbound.topIps')}</p>
+              <p style={{ ...monoLabel, fontSize: 'var(--fs-12)', marginTop: '.5rem' }}>{t('inbound.topIps')}</p>
               {summary.data.topClientIps.length === 0 ? (
                 <p style={noteStyle}>{t('empty')}</p>
               ) : (

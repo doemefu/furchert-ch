@@ -50,16 +50,16 @@ function bucketOpacity(status: BucketStatus): number {
 
 const monoKicker: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.8125rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-13)',
+  letterSpacing: '.04em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
 };
 
 const privatePillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.15rem .5rem',
   background: 'var(--blue-wash)',
@@ -70,16 +70,16 @@ const privatePillStyle: CSSProperties = {
 
 const noteStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
-  letterSpacing: '.03em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: 0,
   color: 'var(--n-60)',
   marginBottom: '.75rem',
 };
 
 const microLabel: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.6rem',
-  letterSpacing: '.06em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   color: 'var(--n-60)',
   marginBottom: '.2rem',
@@ -87,16 +87,16 @@ const microLabel: CSSProperties = {
 
 const smallMono: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.65rem',
-  letterSpacing: '.02em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: 0,
   color: 'var(--n-60)',
   overflowWrap: 'anywhere',
 };
 
 const pillStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.65rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   padding: '.1rem .4rem',
   border: '1px solid rgba(162,167,176,.3)',
@@ -215,7 +215,7 @@ function Meter({ label, usage, fmt, t }: { label: string; usage: ResourceUsage |
           }}
         />
       </div>
-      <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', color: 'var(--n-60)', marginTop: '.15rem' }}>
+      <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.15rem' }}>
         {displayLabel}
       </div>
     </div>
@@ -250,7 +250,7 @@ function HourlyStrip({
               display: 'flex',
               justifyContent: 'space-between',
               fontFamily: 'var(--mono)',
-              fontSize: '.6rem',
+              fontSize: 'var(--fs-12)',
               color: 'var(--n-60)',
               marginTop: '.15rem',
             }}
@@ -306,9 +306,9 @@ function ServiceRow({
           <span
             style={{
               fontFamily: 'var(--mono)',
-              fontSize: '.75rem',
+              fontSize: 'var(--fs-12)',
               fontWeight: 500,
-              letterSpacing: '.04em',
+              letterSpacing: 0,
               color: 'var(--n-100)',
               overflowWrap: 'anywhere',
             }}
@@ -318,7 +318,7 @@ function ServiceRow({
           <span style={pillStyle}>{svc.kind}</span>
           {svc.desiredReplicas === 0 && <span style={pillStyle}>{t('scaledToZero')}</span>}
         </div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-60)' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: 0, color: 'var(--n-60)' }}>
           {svc.namespace}
         </div>
       </div>
@@ -382,8 +382,8 @@ function Legend({ t }: { t: Translate }) {
         flexWrap: 'wrap',
         gap: '.5rem 1.25rem',
         fontFamily: 'var(--mono)',
-        fontSize: '.65rem',
-        letterSpacing: '.03em',
+        fontSize: 'var(--fs-12)',
+        letterSpacing: 0,
         color: 'var(--n-60)',
         marginBottom: '1rem',
       }}
@@ -476,9 +476,9 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
               <h1 style={{ ...monoKicker, fontWeight: 400 }}>{t('kicker')}</h1>
               <span style={privatePillStyle}>{t('adminOnly')}</span>
             </div>
-            <p style={{ fontSize: '.9rem', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
+            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5, maxWidth: '44rem' }}>{t('subtitle')}</p>
           </div>
-          <p style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.03em', color: 'var(--n-60)' }}>
+          <p style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: 0, color: 'var(--n-60)' }}>
             {t('meta', { time })}
           </p>
         </div>

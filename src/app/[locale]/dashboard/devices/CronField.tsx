@@ -58,7 +58,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
   }
 
   const radio = (value: Mode, label: string) => (
-    <label style={{ display: 'flex', alignItems: 'center', gap: '.45rem', fontFamily: 'var(--mono)', fontSize: '.75rem', color: 'var(--n-80)', minWidth: '9.5rem' }}>
+    <label style={{ display: 'flex', alignItems: 'center', gap: '.45rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)', minWidth: '9.5rem' }}>
       <input type="radio" name="cronMode" value={value} checked={mode === value} onChange={() => setMode(value)} />
       {label}
     </label>
@@ -138,7 +138,7 @@ export function CronField({ initial, nowMs, state }: { initial: string | null; n
         style={{ padding: '.6rem .75rem', background: 'var(--white)', border: '1px dashed rgba(162,167,176,.4)', borderRadius: '2px' }}
       >
         {expr && (
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', color: 'var(--n-90)' }}>{t('stored', { expr })}</div>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-90)' }}>{t('stored', { expr })}</div>
         )}
         {means && <p style={{ ...hintStyle, color: 'var(--n-70)', lineHeight: 1.5 }}>{means}</p>}
         {shift && <p style={{ ...hintStyle, color: 'var(--status-wip-ink)', lineHeight: 1.5 }}>{shift}</p>}

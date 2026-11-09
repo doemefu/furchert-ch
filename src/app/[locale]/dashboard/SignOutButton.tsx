@@ -16,15 +16,15 @@ export function SignOutButton({ compact = false }: { compact?: boolean }) {
   // so any future call site that needs it doesn't break.
   const sizing = compact
     ? {
-        fontSize: '.72rem',
-        letterSpacing: '.04em',
+        fontSize: 'var(--fs-12)',
+        letterSpacing: '.05em',
         padding: '.35rem .75rem',
         color: 'var(--n-60)',
         border: '1px solid rgba(162,167,176,.3)',
       }
     : {
-        fontSize: '.8125rem',
-        letterSpacing: '.02em',
+        fontSize: 'var(--fs-13)',
+        letterSpacing: '.04em',
         padding: '.875rem 1.375rem',
         color: 'var(--n-100)',
         border: '1px solid rgba(162,167,176,.35)',

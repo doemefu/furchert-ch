@@ -18,8 +18,8 @@ export function MonoLabel({ children, mt = 0, mb = 0 }: { children: ReactNode; m
     <p
       style={{
         fontFamily: 'var(--mono)',
-        fontSize: '.72rem',
-        letterSpacing: '.06em',
+        fontSize: 'var(--fs-12)',
+        letterSpacing: '.05em',
         textTransform: 'uppercase',
         color: 'var(--n-60)',
         marginTop: mt,
@@ -42,15 +42,16 @@ const PILL: Record<PillTone, { bg: string; bd: string; fg: string }> = {
   mute: { bg: 'var(--n-10)', bd: 'rgba(162,167,176,.3)', fg: 'var(--n-60)' },
 };
 
-export function Pill({ tone, children }: { tone: PillTone; children: ReactNode }) {
+// `plain` shows case-sensitive identifiers (e.g. OAuth scopes) in their real case.
+export function Pill({ tone, plain = false, children }: { tone: PillTone; plain?: boolean; children: ReactNode }) {
   const p = PILL[tone];
   return (
     <span
       style={{
         fontFamily: 'var(--mono)',
-        fontSize: '.62rem',
-        letterSpacing: '.06em',
-        textTransform: 'uppercase',
+        fontSize: 'var(--fs-12)',
+        letterSpacing: plain ? 0 : '.05em',
+        textTransform: plain ? 'none' : 'uppercase',
         padding: '.15rem .5rem',
         borderRadius: '2px',
         background: p.bg,
@@ -81,8 +82,8 @@ export function MetaCard({
         <span
           style={{
             fontFamily: 'var(--mono)',
-            fontSize: '.62rem',
-            letterSpacing: '.06em',
+            fontSize: 'var(--fs-12)',
+            letterSpacing: '.05em',
             textTransform: 'uppercase',
             color: 'var(--n-60)',
           }}
@@ -94,10 +95,10 @@ export function MetaCard({
       <div
         style={{
           fontFamily: 'var(--sans)',
-          fontSize: '1.5rem',
+          fontSize: 'var(--fs-24)',
           fontVariantNumeric: 'tabular-nums',
           fontWeight: 500,
-          letterSpacing: '-.02em',
+          letterSpacing: '-.01em',
           color: 'var(--n-100)',
           lineHeight: 1,
         }}
@@ -105,7 +106,7 @@ export function MetaCard({
         {value}
       </div>
       {sub && (
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '.65rem', letterSpacing: '.04em', color: 'var(--n-60)', marginTop: '.4rem' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: 0, color: 'var(--n-60)', marginTop: '.4rem' }}>
           {sub}
         </div>
       )}
@@ -115,8 +116,8 @@ export function MetaCard({
 
 const btnBase: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.7rem',
-  letterSpacing: '.04em',
+  fontSize: 'var(--fs-12)',
+  letterSpacing: '.05em',
   textTransform: 'uppercase',
   borderRadius: '2px',
   cursor: 'pointer',
@@ -152,7 +153,7 @@ export const btnDanger: CSSProperties = {
 
 export const btnSmall: CSSProperties = {
   ...btnBase,
-  fontSize: '.62rem',
+  fontSize: 'var(--fs-12)',
   padding: '.3rem .55rem',
   background: 'transparent',
   color: 'var(--n-70)',
@@ -166,20 +167,20 @@ export const fieldStyle: CSSProperties = {
   borderRadius: '2px',
   background: 'var(--white)',
   fontFamily: 'var(--mono)',
-  fontSize: '.8rem',
+  fontSize: 'var(--fs-13)',
   color: 'var(--n-100)',
 };
 
 export const hintStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.62rem',
+  fontSize: 'var(--fs-12)',
   color: 'var(--n-60)',
   marginTop: '.3rem',
 };
 
 export const errorTextStyle: CSSProperties = {
   fontFamily: 'var(--mono)',
-  fontSize: '.68rem',
+  fontSize: 'var(--fs-12)',
   color: 'var(--status-offline-ink)',
   marginTop: '.3rem',
 };
@@ -190,11 +191,11 @@ export function UnavailableCard({ title, body }: { title: string; body: ReactNod
     <div style={{ ...cardStyle, padding: '1.5rem', borderStyle: 'dashed' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.5rem' }}>
         <Pill tone="mute">n/a</Pill>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '.72rem', letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--n-80)' }}>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', letterSpacing: '.05em', textTransform: 'uppercase', color: 'var(--n-80)' }}>
           {title}
         </span>
       </div>
-      <p style={{ fontSize: '.85rem', color: 'var(--n-60)', lineHeight: 1.55 }}>{body}</p>
+      <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.55 }}>{body}</p>
     </div>
   );
 }
