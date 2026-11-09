@@ -6,6 +6,26 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Web analytics abuse limits, durable erasure and GPC/DNT, shipped dark**
+  (#157, WA-5 of Epic doemefu/homelab#348). Everything below stays off
+  until `ANALYTICS_UI_ENABLED` flips in WA-6, except the forward-queue
+  change, which the live enquiry count already uses.
+  - `POST /api/v` drops bots and prefetch requests and is rate-limited per
+    client (IPv6 /64) and globally (429 with `Retry-After`); at most 5 new
+    visitor ids per hour and client.
+  - `POST /api/v/forget` has its own limits and now erases the visitor's
+    events in data-service. If data-service is down, the answer is 503 and
+    the `fa_forget` cookie keeps the ids for a later retry; failed ids are
+    also retried in the background for 24 h.
+  - The forward queue gives goal and enquiry their own lane, keeps sending
+    them while data-service caps analytics events, and never resends an
+    erased visitor's events.
+  - Browsers with Global Privacy Control or Do Not Track are declined
+    automatically, with one forget; an explicit Allow overrides the signal.
+  - The tracker honours `Retry-After` on a rate-limited collect.
+
+  Needs data-service #56 to be live. No new dependency.
+
 - **Web analytics dashboard, remaining sections** (#156, WA-4b of Epic
   doemefu/homelab#348): `/dashboard/analytics` gains funnels (offer and
   contact form, step rates, "< 3" for small steps, rate comparison only on a

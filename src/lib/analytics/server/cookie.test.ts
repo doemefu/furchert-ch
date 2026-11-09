@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  anyVisitorId,
+  clearForgetCookie,
+  parseForgetCookie,
+  setForgetCookie,
   clearVisitorCookie,
   currentVisitorId,
   hasSessionCookie,
@@ -35,5 +39,26 @@ describe('fa_vid', () => {
     expect(hasSessionCookie('x=1; authjs.session-token.0=abc')).toBe(true);
     expect(hasSessionCookie('authjs.csrf-token=abc; fa_vid=x')).toBe(false);
     expect(hasSessionCookie(null)).toBe(false);
+  });
+});
+
+describe('fa_forget (§4.2, WA-5 M5, L12)', () => {
+  const b = '9b1d2c3e-4f5a-4b6c-8d7e-0f1a2b3c4d5e';
+  const c = '0a1b2c3d-4e5f-4a6b-9c7d-8e9f0a1b2c3d';
+  const d = '1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f';
+  const e = '2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6a';
+  it('parses one to four lowercase UUID v4 values joined by "."', () => {
+    expect(parseForgetCookie(id)).toEqual([id]);
+    expect(parseForgetCookie(`${id}.${b}.${c}.${d}`)).toEqual([id, b, c, d]);
+    for (const v of [`${id}.${b}.${c}.${d}.${e}`, `${id}.`, `${id.toUpperCase()}`, `${id}.1`, '', 'x', `${id},${b}`]) expect(parseForgetCookie(v), v).toBeNull();
+  });
+  it('erases any consent version of fa_vid', () => {
+    expect(anyVisitorId(`${id}.1`)).toBe(id);
+    expect(anyVisitorId(`${id}.7`)).toBe(id);
+    expect(anyVisitorId(`${id}`)).toBeNull();
+  });
+  it('sets and clears with the exact attributes', () => {
+    expect(setForgetCookie([id, b], true)).toBe(`fa_forget=${id}.${b}; Path=/api/v/forget; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`);
+    expect(clearForgetCookie(false)).toBe('fa_forget=; Path=/api/v/forget; Max-Age=0; HttpOnly; SameSite=Strict');
   });
 });

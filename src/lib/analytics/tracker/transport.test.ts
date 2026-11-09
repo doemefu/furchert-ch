@@ -145,6 +145,26 @@ describe('Transport (§3.9)', () => {
     expect((bodies[1].events as ClientEvent[]).map((x) => x.eventId)).toEqual(['e1', 'e2']);
   });
 
+  it('honours Retry-After on a 429 (1..600 s); anything else falls back to 60 s (WA-5)', async () => {
+    const r = (v: string) => () => Promise.resolve(new Response(null, { status: 429, headers: { 'Retry-After': v } }));
+    const short = setup([r('7')]);
+    short.t.push(e(1), true);
+    await settle();
+    await short.clock.advance(6_999);
+    expect(short.bodies).toHaveLength(1);
+    await short.clock.advance(1);
+    expect(short.bodies).toHaveLength(2);
+    for (const bad of ['0', '601', 'Wed, 21 Oct 2026 07:28:00 GMT', '-1']) {
+      const s = setup([r(bad)]);
+      s.t.push(e(1), true);
+      await settle();
+      await s.clock.advance(59_999);
+      expect(s.bodies, bad).toHaveLength(1);
+      await s.clock.advance(1);
+      expect(s.bodies, bad).toHaveLength(2);
+    }
+  });
+
   it('abortInFlight aborts every in-flight request and does not retry them', async () => {
     const { t, inits, clock, bodies } = setup([
       () => new Promise((_r, reject) => inits[0].signal!.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))),

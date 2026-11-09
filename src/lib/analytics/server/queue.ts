@@ -1,28 +1,40 @@
-// Ordered in-memory forward queue to data-service (spec 100 §5.10, C12, C17;
-// WA-2b #154). One per process on `globalThis`, shared by `/api/v` and the
-// contact Server Action (verified in a production build, worklog A4).
-// Delivery is at-most-once: events are lost on a pod restart or when the
-// queue gives up (documented, accepted).
+// In-memory forward queue to data-service (spec 100 §5.10, C12, C17; WA-2b
+// #154, two lanes and erasure support WA-5 #157). One per process on
+// `globalThis`, shared by `/api/v` and the contact Server Action. Delivery is
+// at-most-once: events are lost on a pod restart or when the queue gives up
+// (documented, accepted).
 //
-// - Capacity 2 000 analytics events (overflow counted); goal and enquiry are
-//   always taken (bounded by the contact form's own limits).
-// - Batches: ≤ 200 events and ≤ 48 KiB of the serialised envelope; a timer
-//   flushes every 5 s; one request in flight; 10 s timeout.
+// - Two lanes (WA-5 review H1): `priority` (goal, enquiry; always taken) and
+//   `analytics` (capacity 2 000, overflow counted). A fresh batch takes the
+//   priority lane first, then the analytics lane, each in arrival order.
+//   Order across lanes does not matter (data-service dedupes by eventId).
+// - Batches are objects that hold their own item references; removal is by
+//   identity, never by queue position. ≤ 200 events and ≤ 48 KiB of the
+//   serialised envelope; a timer flushes every 5 s; one request in flight;
+//   10 s timeout.
 // - `edgeDrops` (nine keys, each ≤ 1 000 000) ride on a batch's first attempt
-//   only; a retry sends them zeroed. After a 413 or a failed token request
-//   (nothing counted) they go back into the pending counts; after a network
-//   error, timeout or 5xx they do not, since the request may have been counted
-//   (accepted residual). With no events, a drops-only batch goes out at most
-//   once a minute.
-// - 413: split in halves and retry, order kept; a single event that still
-//   gets 413 is dropped and counted `invalid`. 400: drop the batch (logged).
-//   401: drop the token and retry once; a second 401 drops the batch. 403:
-//   drop and log a configuration hint. Network, timeout, 5xx or a failed token
-//   request: keep the events; the circuit opens for 60 s after 3 consecutive
-//   failures. Events older than 60 min are dropped (`expired`) before each
-//   attempt.
-// - Logging: at most one `[analytics]` summary line a minute, counts only;
-//   never a body, IP, UA, visitor id, referrer, URL with query or an error text.
+//   only; a retried batch sends them zeroed. After a 413, a failed token
+//   request or a capped 429 (nothing counted) they go back into the pending
+//   counts; after a network error, timeout or 5xx they do not (accepted
+//   residual).
+// - 413: the batch is split in halves (order kept) and each half is retried;
+//   a single event that still gets 413 is dropped and counted `invalid`.
+//   400: drop the batch. 401: drop the token and retry once; a second 401
+//   drops the batch. 403: drop and log a configuration hint. Network, timeout,
+//   5xx or a failed token request: the same batch is retried next (review N5);
+//   the circuit opens for 60 s after 3 consecutive failures. Events older
+//   than 60 min are dropped (`expired`) before each attempt.
+// - Capped 429 (§5.10, §6.3; WA-5): data-service's daily or hourly cap.
+//   Until `retryAt` (clamped to now + 1 s … now + 25 h) only the priority
+//   lane is sent; analytics events wait and age out. Split and retry batches
+//   are discarded (their items stay in their lanes, review N1). A 429 on a
+//   priority-only batch, or without a valid body, counts as a failure.
+// - Erasure (§5.4; WA-5 review M3): `purgeVisitors` removes an erased id's
+//   events that are not in flight, waits (bounded) for the in-flight attempt
+//   and removes what is left; the id stays in an erased set for 2 h, so its
+//   events are never enqueued or resent.
+// - Logging: at most one `[analytics] forward summary` line a minute, counts
+//   only; never a body, IP, UA, visitor id, referrer, URL or error text.
 import {
   EDGE_DROP_MAX,
   EDGE_DROP_REASONS,
@@ -41,6 +53,15 @@ const FAILURES_TO_OPEN = 3;
 const DROPS_ONLY_EVERY_MS = 60_000;
 const LOG_EVERY_MS = 60_000;
 const TIMEOUT_MS = 10_000;
+const PAUSE_MIN_MS = 1_000;
+const PAUSE_MAX_MS = 25 * 60 * 60_000;
+export const ERASED_TTL_MS = 2 * 60 * 60_000;
+export const ERASED_CAP = 10_000;
+export const PURGE_WAIT_MS = 10_500;
+// A1 (WA-5 plan): data-service #56 stores nothing of a capped batch, edgeDrops
+// included (all-or-nothing), so the drops are put back. Re-checked against the
+// merged producer before PR A merges.
+const RESTORE_DROPS_ON_CAPPED = true;
 
 export interface QueueDeps {
   fetch: typeof fetch;
@@ -50,6 +71,8 @@ export interface QueueDeps {
   eventsUrl: () => string;
   log: (line: string) => void;
   timeoutMs?: number;
+  /** Bounded wait in `purgeVisitors`; tests inject a fake. */
+  sleep?: (ms: number) => Promise<void>;
 }
 
 interface Item {
@@ -58,7 +81,12 @@ interface Item {
   bytes: number;
   enqueuedAt: number;
   priority: boolean;
-  attempts: number;
+}
+
+/** A batch keeps its own items; `retry` = it was attempted before (edgeDrops zeroed). */
+interface Batch {
+  items: Item[];
+  retry: boolean;
 }
 
 type Stats = Record<'sent' | 'accepted' | 'duplicates' | 'rejected' | 'dropped400' | 'dropped401' | 'dropped403' | 'failures', number>;
@@ -71,55 +99,102 @@ export interface ForwardQueue {
   flush(): Promise<void>;
   /** Flushes until the queue is empty or an attempt fails (tests, shutdown). */
   flushAll(): Promise<void>;
+  /**
+   * §5.4 erasure: marks the ids erased (2 h), removes their events that are not
+   * in flight, waits for the in-flight attempt (at most `maxWaitMs`) and
+   * removes what is left. `settled` is false when the wait timed out.
+   */
+  purgeVisitors(ids: string[], maxWaitMs?: number): Promise<{ settled: boolean }>;
+  /** Runs `cb` once the current attempt has settled (at once when none is in flight). */
+  onInFlightSettled(cb: () => void): void;
   size(): number;
   pendingDrops(): EdgeDrops;
 }
 
 const byteLength = (s: string) => new TextEncoder().encode(s).byteLength;
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
 export function createForwardQueue(deps: QueueDeps): ForwardQueue {
-  const items: Item[] = [];
-  let analyticsCount = 0;
+  const priority: Item[] = [];
+  const analytics: Item[] = [];
+  const queued = new Set<Item>();
+  let pendingSplits: Batch[] = [];
+  let retryBatch: Batch | null = null;
   let drops = zeroDrops();
   let inFlight: Promise<boolean> | null = null;
+  let inFlightItems = new Set<Item>();
   let failures = 0;
   let circuitUntil = 0;
+  let pausedUntil = 0;
+  let pausedScope = '';
   let lastDropsOnly = -Infinity;
   let lastLog = -Infinity;
-  let splits: number[] = [];
   let stats = zeroStats();
+  const erased = new Map<string, number>();
+  const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
 
   const countDrop = (reason: EdgeDropReason, n = 1) => {
     drops[reason] = Math.min(EDGE_DROP_MAX, drops[reason] + Math.max(0, Math.floor(n)));
   };
   const hasDrops = () => EDGE_DROP_REASONS.some((r) => drops[r] > 0);
 
-  const removeHead = (n: number) => {
-    for (const it of items.splice(0, n)) if (!it.priority) analyticsCount -= 1;
+  const isErased = (visitorId: unknown): boolean => {
+    if (typeof visitorId !== 'string') return false;
+    const until = erased.get(visitorId);
+    if (until === undefined) return false;
+    if (until > deps.now()) return true;
+    erased.delete(visitorId);
+    return false;
   };
 
-  const expire = () => {
-    const cutoff = deps.now() - MAX_AGE_MS;
-    let i = 0;
-    while (i < items.length) {
-      if (items[i].enqueuedAt < cutoff) {
-        if (!items[i].priority) analyticsCount -= 1;
-        items.splice(i, 1);
-        countDrop('expired');
-      } else i += 1;
+  /** Removes the given items from their lanes (identity). */
+  const removeWhere = (match: (it: Item) => boolean) => {
+    for (const lane of [priority, analytics]) {
+      let w = 0;
+      for (const it of lane) {
+        if (match(it)) queued.delete(it);
+        else lane[w++] = it;
+      }
+      lane.length = w;
     }
   };
+  const removeItems = (items: Item[]) => {
+    const set = new Set(items);
+    removeWhere((it) => set.has(it));
+  };
+
+  /** Drops expired items and the items of erased ids from the lanes. */
+  const prune = () => {
+    const cutoff = deps.now() - MAX_AGE_MS;
+    removeWhere((it) => {
+      if (inFlightItems.has(it)) return false;
+      if (it.enqueuedAt < cutoff) {
+        countDrop('expired');
+        return true;
+      }
+      return isErased(it.event.visitorId);
+    });
+  };
+
+  /** A kept batch without the items that left their lane (erased, expired; review N1). */
+  const live = (b: Batch): Batch | null => {
+    const items = b.items.filter((it) => queued.has(it));
+    return items.length > 0 ? { items, retry: b.retry } : null;
+  };
+
+  const paused = () => deps.now() < pausedUntil;
 
   const maybeLog = () => {
     const now = deps.now();
     if (now - lastLog < LOG_EVERY_MS) return;
     const parts = Object.entries(stats).filter(([, v]) => v > 0);
-    if (parts.length === 0 && failures === 0) return;
+    if (parts.length === 0 && failures === 0 && !paused()) return;
     lastLog = now;
     // §5.10: a 403 means configuration, not data (N6).
     const hint = stats.dropped403 > 0 ? ' hint=check-analytics-write-scope-and-webanalytics.api.write-clients' : '';
+    const cap = paused() ? ` capped=${pausedScope} pausedFor=${Math.ceil((pausedUntil - now) / 1000)}` : '';
     deps.log(
-      `[analytics] forward summary: ${parts.map(([k, v]) => `${k}=${v}`).join(' ')} queued=${items.length} circuit=${now < circuitUntil ? 'open' : 'closed'}${hint}`.replace('  ', ' '),
+      `[analytics] forward summary: ${parts.map(([k, v]) => `${k}=${v}`).join(' ')} queued=${queued.size} circuit=${now < circuitUntil ? 'open' : 'closed'}${cap}${hint}`.replace('  ', ' '),
     );
     stats = zeroStats();
   };
@@ -133,19 +208,43 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
     }
   };
 
-  // Picks the head batch: ≤ the current split size, ≤ 200 events, ≤ 48 KiB.
-  function pickBatch(edgeDrops: EdgeDrops): { n: number; body: string } {
-    const limit = Math.min(splits[0] ?? MAX_EVENTS, MAX_EVENTS);
+  const bodyOf = (items: Item[], edgeDrops: EdgeDrops) =>
+    `{"events":[${items.map((it) => it.json).join(',')}],"edgeDrops":${JSON.stringify(edgeDrops)}}`;
+
+  /** A fresh batch: priority lane first, then (unless paused) analytics; ≤ 200 events, ≤ 48 KiB. */
+  function freshBatch(edgeDrops: EdgeDrops): Batch {
     const tail = `],"edgeDrops":${JSON.stringify(edgeDrops)}}`;
     let size = byteLength('{"events":[') + byteLength(tail);
-    let n = 0;
-    while (n < items.length && n < limit) {
-      const add = items[n].bytes + (n > 0 ? 1 : 0);
-      if (n > 0 && size + add > MAX_BYTES) break;
-      size += add;
-      n += 1;
+    const items: Item[] = [];
+    for (const lane of paused() ? [priority] : [priority, analytics]) {
+      for (const it of lane) {
+        if (items.length >= MAX_EVENTS) break;
+        const add = it.bytes + (items.length > 0 ? 1 : 0);
+        if (items.length > 0 && size + add > MAX_BYTES) break;
+        size += add;
+        items.push(it);
+      }
     }
-    return { n, body: `{"events":[${items.slice(0, n).map((it) => it.json).join(',')}${tail}` };
+    return { items, retry: false };
+  }
+
+  type Source = 'retry' | 'split' | 'fresh';
+
+  /** The next batch: a kept retry batch, then pending split halves, then a fresh one. */
+  function nextBatch(): { batch: Batch; source: Source } {
+    if (retryBatch) {
+      retryBatch = live(retryBatch);
+      if (retryBatch) return { batch: retryBatch, source: 'retry' };
+    }
+    while (pendingSplits.length > 0) {
+      const head = live(pendingSplits[0]);
+      if (head) {
+        pendingSplits[0] = head;
+        return { batch: head, source: 'split' };
+      }
+      pendingSplits.shift();
+    }
+    return { batch: freshBatch(hasDrops() ? drops : zeroDrops()), source: 'fresh' };
   }
 
   async function post(body: string, token: string): Promise<Response> {
@@ -158,24 +257,49 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
     });
   }
 
+  /** A valid capped-429 body (§6.3), or null. */
+  async function cappedBody(res: Response): Promise<{ scope: string; retryAt: number } | null> {
+    try {
+      const b: unknown = await res.json();
+      if (!isRecord(b) || b.capped !== true || (b.capScope !== 'hour' && b.capScope !== 'day') || typeof b.retryAt !== 'string') return null;
+      const t = Date.parse(b.retryAt);
+      return Number.isNaN(t) ? null : { scope: b.capScope, retryAt: t };
+    } catch {
+      return null;
+    }
+  }
+
   // One attempt; resolves true when it made progress (sent or dropped a batch).
   async function attempt(): Promise<boolean> {
     try {
       const now = deps.now();
       if (now < circuitUntil) return false;
-      expire();
-      if (items.length === 0 && !(hasDrops() && now - lastDropsOnly >= DROPS_ONLY_EVERY_MS)) return false;
+      prune();
+      const { batch, source } = nextBatch();
+      const n = batch.items.length;
+      if (n === 0 && !(hasDrops() && now - lastDropsOnly >= DROPS_ONLY_EVERY_MS)) return false;
 
-      const retry = items.length > 0 && items[0].attempts > 0;
-      const edgeDrops = retry ? zeroDrops() : drops;
-      const { n, body } = pickBatch(edgeDrops);
-      if (!retry) drops = zeroDrops();
+      const edgeDrops = batch.retry ? zeroDrops() : drops;
+      if (!batch.retry) drops = zeroDrops();
       // Put the counts back when data-service provably counted nothing (N5).
       const restoreDrops = () => {
-        if (!retry) for (const r of EDGE_DROP_REASONS) countDrop(r, edgeDrops[r]);
+        if (!batch.retry) for (const r of EDGE_DROP_REASONS) countDrop(r, edgeDrops[r]);
       };
+      const body = bodyOf(batch.items, edgeDrops);
       if (n === 0) lastDropsOnly = now;
-      for (let i = 0; i < n; i += 1) items[i].attempts += 1;
+      inFlightItems = new Set(batch.items);
+
+      // The batch is done (sent or dropped): its items leave their lanes.
+      const done = () => {
+        removeItems(batch.items);
+        if (source === 'split') pendingSplits.shift();
+        if (source === 'retry') retryBatch = null;
+      };
+      // Keep the same batch as the next one (review N5).
+      const keep = () => {
+        batch.retry = true;
+        if (source === 'fresh' && n > 0) retryBatch = batch;
+      };
 
       let res: Response;
       let token: string;
@@ -183,6 +307,8 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
         token = await deps.getToken();
       } catch {
         restoreDrops(); // nothing was sent
+        batch.retry = false;
+        if (source === 'fresh' && n > 0) retryBatch = batch;
         fail();
         return false;
       }
@@ -193,14 +319,14 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
           res = await post(body, await deps.getToken());
           if (res.status === 401) {
             stats.dropped401 += n;
-            removeHead(n);
-            splits.shift();
+            done();
             return true;
           }
         }
       } catch {
-        // Network or timeout: keep the events. The request may have been
+        // Network or timeout: keep the batch. The request may have been
         // counted, so its edgeDrops are not re-sent (§5.10, accepted residual).
+        keep();
         fail();
         return false;
       }
@@ -216,28 +342,49 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
         } catch {
           // body not needed for delivery
         }
-        removeHead(n);
-        splits.shift();
+        done();
         return true;
       }
       if (res.status === 413) {
         restoreDrops(); // a 413 is never processed
         if (n <= 1) {
-          removeHead(n);
-          splits.shift();
+          done();
           countDrop('invalid', n);
         } else {
-          splits = [Math.ceil(n / 2), Math.floor(n / 2), ...splits.slice(1)];
+          const half = Math.ceil(n / 2);
+          const halves: Batch[] = [
+            { items: batch.items.slice(0, half), retry: true },
+            { items: batch.items.slice(half), retry: true },
+          ];
+          if (source === 'split') pendingSplits.shift();
+          if (source === 'retry') retryBatch = null;
+          pendingSplits = [...halves, ...pendingSplits];
         }
         return true;
       }
+      if (res.status === 429) {
+        const capped = await cappedBody(res);
+        if (capped && batch.items.some((it) => !it.priority)) {
+          pausedUntil = Math.min(Math.max(capped.retryAt, now + PAUSE_MIN_MS), now + PAUSE_MAX_MS);
+          pausedScope = capped.scope;
+          // Review N1: split and retry batches go; their items stay in their lanes.
+          pendingSplits = [];
+          retryBatch = null;
+          if (RESTORE_DROPS_ON_CAPPED) restoreDrops();
+          failures = 0;
+          return false; // no hot loop in flushAll (review M2)
+        }
+        keep(); // malformed body, or a priority-only batch (exempt): a failure
+        fail();
+        return false;
+      }
       if (res.status === 400 || res.status === 403) {
         stats[res.status === 400 ? 'dropped400' : 'dropped403'] += n;
-        removeHead(n);
-        splits.shift();
+        done();
         return true;
       }
-      fail(); // 5xx and anything else: retry later
+      keep(); // 5xx and anything else: retry the same batch later
+      fail();
       return false;
     } catch {
       return false;
@@ -249,21 +396,33 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
   const flushOnce = (): Promise<boolean> => {
     inFlight ??= attempt().finally(() => {
       inFlight = null;
+      inFlightItems = new Set();
     });
     return inFlight;
   };
 
+  const markErased = (id: string) => {
+    erased.delete(id);
+    if (erased.size >= ERASED_CAP) {
+      const oldest = erased.keys().next().value;
+      if (oldest !== undefined) erased.delete(oldest);
+    }
+    erased.set(id, deps.now() + ERASED_TTL_MS);
+  };
+
   return {
     enqueue(events, opts = {}) {
-      const priority = opts.priority === true;
+      const isPriority = opts.priority === true;
       for (const event of events) {
-        if (!priority && analyticsCount >= QUEUE_CAPACITY) {
+        if (isErased(event.visitorId)) continue; // never re-collect an erased id (M3)
+        if (!isPriority && analytics.length >= QUEUE_CAPACITY) {
           countDrop('overflow');
           continue;
         }
         const json = JSON.stringify(event);
-        items.push({ event, json, bytes: byteLength(json), enqueuedAt: deps.now(), priority, attempts: 0 });
-        if (!priority) analyticsCount += 1;
+        const it: Item = { event, json, bytes: byteLength(json), enqueuedAt: deps.now(), priority: isPriority };
+        (isPriority ? priority : analytics).push(it);
+        queued.add(it);
       }
     },
     countDrop,
@@ -271,9 +430,26 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
       await flushOnce();
     },
     async flushAll() {
-      for (let i = 0; i < 1_000 && (await flushOnce()) && items.length > 0; i += 1);
+      for (let i = 0; i < 1_000 && (await flushOnce()) && queued.size > 0; i += 1);
     },
-    size: () => items.length,
+    async purgeVisitors(ids, maxWaitMs = PURGE_WAIT_MS) {
+      const set = new Set(ids);
+      for (const id of set) markErased(id);
+      const match = (it: Item) => typeof it.event.visitorId === 'string' && set.has(it.event.visitorId);
+      removeWhere((it) => match(it) && !inFlightItems.has(it));
+      let settled = true;
+      if (inFlight) {
+        const current = inFlight.then(() => 'settled' as const);
+        settled = (await Promise.race([current, sleep(maxWaitMs).then(() => 'timeout' as const)])) === 'settled';
+      }
+      removeWhere((it) => match(it) && !inFlightItems.has(it));
+      return { settled };
+    },
+    onInFlightSettled(cb) {
+      if (!inFlight) cb();
+      else void inFlight.then(cb, cb);
+    },
+    size: () => queued.size,
     pendingDrops: () => ({ ...drops }),
   };
 }

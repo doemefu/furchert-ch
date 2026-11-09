@@ -235,7 +235,8 @@
       "accept": "Allow",
       "current": "Current choice: {state}",
       "currentGranted": "allowed",
-      "currentDenied": "declined"
+      "currentDenied": "declined",
+      "signalNotice": "Your browser sends a privacy signal (GPC/DNT), so usage statistics are declined. You can still allow them here."
     }
   },
   "dashboard": {
