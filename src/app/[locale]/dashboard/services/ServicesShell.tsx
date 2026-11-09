@@ -153,12 +153,13 @@ function hourTitle(hour: HourlyAvailability, fmt: Formatters, t: Translate): str
 // ── Building blocks ────────────────────────────────────────────────────────
 
 // Fixed `width` for the hourly strip; without it the bar fills its grid column.
-function Bar({ status, title, width, height }: { status: BucketStatus; title: string; width?: number; height: number }) {
+function Bar({ status, title, width, height }: { status: BucketStatus; title: string; width?: number; height?: number }) {
   return (
     <span
       role="img"
       aria-label={title}
       title={title}
+      className={height === undefined ? 'svc-day' : undefined}
       style={{
         display: 'block',
         flex: width ? `0 0 ${width}px` : undefined,
@@ -312,7 +313,7 @@ function ServiceRow({
         todayStyle={bucketStyle(todayStatus)}
         todayTitle={todayTitle}
         pastBars={past.map((d) => (
-          <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} height={20} />
+          <Bar key={d.date} status={d.status} title={dayTitle(d, fmt, t)} />
         ))}
         hourly={<HourlyStrip svc={svc} generatedAtMs={generatedAtMs} fmt={fmt} t={t} />}
       />
@@ -450,6 +451,7 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
         ) : (
           <>
             <Legend t={t} />
+            <div style={{ paddingInline: '.75rem' }}>
             <MatrixHeader days={report.services[0].daily} fmt={fmt} t={t} />
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.5rem', minWidth: 0 }}>
               {report.services.map((svc) => (
@@ -463,6 +465,7 @@ export async function ServicesShell({ locale }: { locale: Locale }) {
                 />
               ))}
             </ul>
+            </div>
           </>
         )}
       </>

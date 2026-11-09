@@ -148,6 +148,11 @@ All notable changes per milestone. Newest first.
   the never-track switch use the `--fs-*` type tokens (small labels now 12 px);
   the status strip announces each collector status once; chart legends use the
   12×2 line key of `/dashboard/network`.
+- **Frame-line doubles and touch targets** (#188): full-width boxes on
+  `/automation` use the page frame as their sides, gapped card rows on
+  `/automation` and `/dashboard` inset by their gap, the contact columns
+  inset by the card padding, and the services day cells are 28px tall on
+  phones.
 - **Copy pass** (#160): new home hero, corrected project cards, German status
   labels, unified numbers; Aemtlifyer card removed.
 - **Copy pass follow-ups** (#163): `/projects/aemtlifyer` redirects (308) to
