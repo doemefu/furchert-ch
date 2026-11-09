@@ -67,8 +67,12 @@ export function ConsentBar({ reopened, choice, by }: { reopened: boolean; choice
           <p>
             <strong id={CONSENT_TITLE_ID}>{t('title')}</strong> {t('body')}
           </p>
+          {/* Two short paragraphs, not one long one: on phones a single block grew
+              larger than the page's own content and became the LCP element
+              (WA-6 #158). The words are unchanged (src/i18n/consentCopy.test.ts). */}
+          <p>{t('bodyMore')}</p>
           <p>
-            {t('bodyMore')} <Link href="/privacy">{t('privacyLink')}</Link>
+            {t('bodySettings')} <Link href="/privacy">{t('privacyLink')}</Link>
           </p>
           {/* WA-5: a GPC/DNT refusal says so when the bar is reopened (§4.1). */}
           {reopened && by === 'signal' && <p>{t('signalNotice')}</p>}

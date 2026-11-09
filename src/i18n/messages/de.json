@@ -241,7 +241,8 @@
     "consent": {
       "title": "Nutzungsstatistik.",
       "body": "Darf diese Website messen, wie sie genutzt wird? Mit Ihrer Einwilligung speichert Ihr Browser eine zufällige Kennung für 12 Monate.",
-      "bodyMore": "Seitenaufrufe, Klicks und das erfolgreiche Absenden des Kontaktformulars (ohne Inhalte) wertet dann der Betreiber selbst aus, ohne externe Analyse- oder Werbedienste. Ihre Wahl können Sie jederzeit unter «Datenschutz-Einstellungen» am Seitenende ändern.",
+      "bodyMore": "Seitenaufrufe, Klicks und das erfolgreiche Absenden des Kontaktformulars (ohne Inhalte) wertet dann der Betreiber selbst aus, ohne externe Analyse- oder Werbedienste.",
+      "bodySettings": "Ihre Wahl können Sie jederzeit unter «Datenschutz-Einstellungen» am Seitenende ändern.",
       "privacyLink": "Datenschutz",
       "decline": "Ablehnen",
       "accept": "Erlauben",

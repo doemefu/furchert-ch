@@ -241,7 +241,8 @@
     "consent": {
       "title": "Usage statistics.",
       "body": "May this website measure how it is used? With your consent, your browser stores a random ID for 12 months.",
-      "bodyMore": "Page views, clicks and successful contact-form submissions (never their content) are then analysed by the site owner only, with no external analytics or advertising services. You can change your choice at any time via \"Privacy settings\" at the bottom of the page.",
+      "bodyMore": "Page views, clicks and successful contact-form submissions (never their content) are then analysed by the site owner only, with no external analytics or advertising services.",
+      "bodySettings": "You can change your choice at any time via \"Privacy settings\" at the bottom of the page.",
       "privacyLink": "Privacy",
       "decline": "Decline",
       "accept": "Allow",
