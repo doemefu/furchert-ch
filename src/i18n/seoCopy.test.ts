@@ -9,7 +9,6 @@ import { LAB_SERVICES, LAB_SHOWCASE } from '@/data/homelab-lab';
 import { IT_CARDS, TECH_STACK } from '@/data/it';
 import { PROJECTS } from '@/data/projects';
 import { ROWING_CARDS } from '@/data/rowing';
-import { TICKER_ITEMS } from '@/data/ticker';
 import { FAQS } from '@/data/automation-faqs';
 import { EXAMPLE } from '@/data/automation-example';
 import { PRICE_ADDON, PRICE_STEPS } from '@/data/automation-packages';
@@ -110,7 +109,7 @@ describe('public copy', () => {
   };
   const data = {
     BIO, FACTS, TIMELINE, INTERESTS, ENGAGEMENT, EXPERIENCE, HOME_STATS, LAB_SERVICES, LAB_SHOWCASE,
-    IT_CARDS, TECH_STACK, PROJECTS, ROWING_CARDS, TICKER_ITEMS,
+    IT_CARDS, TECH_STACK, PROJECTS, ROWING_CARDS,
     FAQS, EXAMPLE, PRICE_STEPS, PRICE_ADDON, WOW_TILES, CALC,
   };
 

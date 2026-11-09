@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { LAB_SERVICE_IDS } from '@/data/homelab-lab';
-import { parseLabStatus, summarize } from './parseStatus';
+import { countLab, parseLabStatus, summarize } from './parseStatus';
 
 const good = (status: string, uptime: unknown = 99.9) => ({
   services: LAB_SERVICE_IDS.map((id) => ({ id, status, uptime })),
@@ -49,5 +49,28 @@ describe('summarize', () => {
   it('is unknown without data or with unknown services', () => {
     expect(summarize(new Map())).toBe('unknown');
     expect(summarize(parseLabStatus(good('unknown')))).toBe('unknown');
+  });
+});
+
+describe('countLab', () => {
+  const total = LAB_SERVICE_IDS.length;
+
+  it('counts all up', () => {
+    expect(countLab(parseLabStatus(good('up')))).toEqual({ summary: 'allUp', up: total, down: 0, total });
+  });
+
+  it('counts one down', () => {
+    const rows = parseLabStatus(good('up'));
+    rows.set(LAB_SERVICE_IDS[0], { status: 'down', uptime: null });
+    expect(countLab(rows)).toEqual({ summary: 'someDown', up: total - 1, down: 1, total });
+  });
+
+  it('counts up plus unknown as partial', () => {
+    const rows = parseLabStatus({ services: [{ id: LAB_SERVICE_IDS[0], status: 'up' }] });
+    expect(countLab(rows)).toEqual({ summary: 'partial', up: 1, down: 0, total });
+  });
+
+  it('treats an empty map as unknown with the full total', () => {
+    expect(countLab(new Map())).toEqual({ summary: 'unknown', up: 0, down: 0, total: 6 });
   });
 });

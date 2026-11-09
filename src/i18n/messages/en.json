@@ -84,6 +84,18 @@
     "home": {
       "areas": "Areas",
       "areasTitle": "What I work on",
+      "sheetTag": "Example with invented names",
+      "sheetTitle": "One workflow: enquiry becomes draft quote",
+      "sheetAlt": "Example of a quote drafted from a customer enquiry",
+      "status": {
+        "checking": "Checking status",
+        "allUp": "All {total} public services are running",
+        "someDown": "{down} of {total} services down right now",
+        "partial": "{up} of {total} services running, the rest unknown",
+        "unknown": "Status not available right now",
+        "facts": "Homelab · {nodes} machines in the cluster",
+        "link": "See live status"
+      },
       "metaTitle": "Dominic Furchert | Software Engineer · AI for SMEs",
       "metaDescription": "Dominic Furchert, software engineer near Zurich, sets up one AI workflow in SMEs and measures whether it is used. Plus projects, homelab, rowing."
     },

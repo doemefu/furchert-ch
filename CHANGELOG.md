@@ -189,6 +189,12 @@ All notable changes per milestone. Newest first.
   Roles, scopes, failure kinds and other labels stay pills. The home page
   bullets are small round dots and the login legend keys are short lines, so
   nothing else looks like the LED.
+- **Home first screen** (#178): the hero is now a split with the headline,
+  text and buttons on the left and one invented example quote on the right
+  (an enquiry becomes a draft quote; prices come from the customer's own
+  costing, none are shown). The endless ticker is replaced by a static status
+  line with the live state of the public services, a short fallback text when
+  no data is available, and a link to the live status.
 
 ### Fixed
 
