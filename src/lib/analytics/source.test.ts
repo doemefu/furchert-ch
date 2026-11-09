@@ -84,6 +84,17 @@ describe('nothing before consent', () => {
   // The only navigator use allowed: the GPC/DNT signal in the controller singleton.
   const SIGNAL = /const n = navigator as Navigator & \{ globalPrivacyControl\?: boolean \};\s*return n\.globalPrivacyControl === true \|\| n\.doNotTrack === '1';/;
 
+  // WA-6 (#158, owner decision): the bar waits for the first interaction. The only
+  // scroll listener allowed is this one-shot list (passive, removed after firing,
+  // never sends anything; behaviour pinned in controller.test.ts).
+  const FIRST_INTERACTION = /export const FIRST_INTERACTION_EVENTS = \['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'\] as const;/;
+
+  it('the controller listens for scroll only in the one-shot first-interaction list (WA-6)', () => {
+    const src = code('src/lib/analytics/controller.ts');
+    expect(src).toMatch(FIRST_INTERACTION);
+    expect(src.replace(FIRST_INTERACTION, '').match(/['"]scroll['"]/g)).toBeNull();
+  });
+
   it('the controller reads navigator only for globalPrivacyControl and doNotTrack (§4.1)', () => {
     const src = code('src/lib/analytics/controller.ts');
     expect(src).toMatch(SIGNAL);
@@ -92,7 +103,7 @@ describe('nothing before consent', () => {
 
   for (const file of CONSENT_FILES) {
     it(`${file} reads no device property and adds no scroll/unload listener`, () => {
-      const src = code(file).replace(SIGNAL, '');
+      const src = code(file).replace(SIGNAL, '').replace(FIRST_INTERACTION, '');
       for (const [name, pattern] of FORBIDDEN) expect(src, `${file}: ${name}`).not.toMatch(pattern);
     });
   }

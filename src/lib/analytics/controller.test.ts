@@ -3,7 +3,7 @@
 // assert the exact order of operations on Decline and withdrawal.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ANALYTICS_CONSENT_VERSION, CONSENT_KEY, FORGET_PENDING_KEY, OPTOUT_KEY, type StorageLike } from './consent';
-import { createConsentController, type ControllerDeps } from './controller';
+import { createConsentController, FIRST_INTERACTION_EVENTS, onFirstInteraction, type ControllerDeps } from './controller';
 import type { TrackerHooks, TrackerPort } from './trackerPort';
 
 const NOW = new Date('2026-11-08T12:00:00Z');
@@ -828,3 +828,98 @@ describe('GPC/DNT auto-decline (§4.1, WA-5 #157)', () => {
     expect(order).toEqual(['fetch /api/v/forget', 'fetch /api/v/forget', 'tracker.start']);
   });
 });
+
+describe('bar on the first interaction (WA-6 #158, owner decision)', () => {
+  const withGate = (opts: FakeEnvOptions = {}) => {
+    const env = fakeEnv(opts);
+    const gate = { cb: null as null | (() => void), stopped: 0, armed: 0 };
+    env.deps.onFirstInteraction = (cb) => {
+      gate.armed += 1;
+      gate.cb = cb;
+      return () => void (gate.stopped += 1);
+    };
+    return { env, gate };
+  };
+
+  it('the bar is not open before the first interaction and opens after it; nothing is sent or loaded', async () => {
+    const { env, gate } = withGate();
+    const c = ctl(env.deps);
+    await c.init('/');
+    expect(c.getSnapshot()).toMatchObject({ ready: true, choice: null, barOpen: false });
+    expect(gate.armed).toBe(1);
+    gate.cb!();
+    expect(c.getSnapshot().barOpen).toBe(true);
+    expect(env.fetchFn).not.toHaveBeenCalled();
+    expect(env.loadTracker).not.toHaveBeenCalled();
+  });
+
+  it('the footer link opens the bar without any interaction', async () => {
+    const { env } = withGate();
+    const c = ctl(env.deps);
+    await c.init('/');
+    c.reopen();
+    expect(c.getSnapshot()).toMatchObject({ reopened: true, barOpen: true });
+  });
+
+  it('a stored choice, an opt-out or a GPC/DNT signal arm no listener and show no bar', async () => {
+    for (const setup of [
+      (e: ReturnType<typeof withGate>) => e.env.data.set(CONSENT_KEY, record('denied')),
+      (e: ReturnType<typeof withGate>) => e.env.data.set(OPTOUT_KEY, '1'),
+      (e: ReturnType<typeof withGate>) => (e.env.deps.privacySignal = () => true),
+    ]) {
+      const e = withGate();
+      setup(e);
+      const c = ctl(e.env.deps);
+      await c.init('/');
+      expect(e.gate.armed).toBe(0);
+      expect(c.getSnapshot().barOpen).toBe(false);
+    }
+  });
+
+  it('a bfcache restore with the bar pending counts as interaction and removes the listeners', async () => {
+    const { env, gate } = withGate();
+    const c = ctl(env.deps);
+    await c.init('/');
+    c.onPageShow(true);
+    expect(gate.stopped).toBe(1);
+    expect(c.getSnapshot().barOpen).toBe(true);
+  });
+
+  it('nothing is tracked before Allow, also after the interaction', async () => {
+    const { env, gate } = withGate();
+    const c = ctl(env.deps);
+    await c.init('/');
+    gate.cb!();
+    await flush();
+    expect(env.loadTracker).not.toHaveBeenCalled();
+    await c.allow();
+    await flush();
+    expect(env.loadTracker).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('onFirstInteraction (WA-6)', () => {
+  it.each(FIRST_INTERACTION_EVENTS)('fires once on "%s" and removes every listener (passive, capture)', (type) => {
+    const target = new EventTarget();
+    const add = vi.spyOn(target, 'addEventListener');
+    const remove = vi.spyOn(target, 'removeEventListener');
+    const cb = vi.fn();
+    onFirstInteraction(target, cb);
+    expect(add.mock.calls.map((c) => c[0])).toEqual([...FIRST_INTERACTION_EVENTS]);
+    for (const call of add.mock.calls) expect(call[2]).toEqual({ capture: true, passive: true });
+    target.dispatchEvent(new Event(type));
+    for (const other of FIRST_INTERACTION_EVENTS) target.dispatchEvent(new Event(other));
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(remove.mock.calls.map((c) => c[0])).toEqual([...FIRST_INTERACTION_EVENTS]);
+  });
+
+  it('the cleanup removes the listeners without firing', () => {
+    const target = new EventTarget();
+    const cb = vi.fn();
+    const stop = onFirstInteraction(target, cb);
+    stop();
+    target.dispatchEvent(new Event('pointerdown'));
+    expect(cb).not.toHaveBeenCalled();
+  });
+});
+

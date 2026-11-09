@@ -12,6 +12,9 @@ All notable changes per milestone. Newest first.
   with the privacy section "Nutzungsstatistik (nur mit Einwilligung)" /
   "Usage statistics (only with consent)" and the corrected cookie list. Data
   appears on `/dashboard/analytics` once a day is final (the next morning).
+  The bar appears on the visitor's first interaction (tap, click, key, wheel
+  or scroll), not while the page loads, and its text is split into two
+  paragraphs, so it never becomes the largest paint on phones.
 
 - **Web analytics abuse limits, durable erasure and GPC/DNT, shipped dark**
   (#157, WA-5 of Epic doemefu/homelab#348). Everything below stays off
