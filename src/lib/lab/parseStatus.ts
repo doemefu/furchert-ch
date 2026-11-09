@@ -37,3 +37,20 @@ export function summarize(rows: ReadonlyMap<LabServiceId, LiveRow>): LabSummary 
   if (statuses.includes('up')) return 'partial';
   return 'unknown';
 }
+
+// Counts for the home status line. `total` is always the number of public
+// services, so missing rows read as "unknown", never as up.
+export function countLab(rows: ReadonlyMap<LabServiceId, LiveRow>): {
+  summary: LabSummary;
+  up: number;
+  down: number;
+  total: number;
+} {
+  const statuses = LAB_SERVICE_IDS.map((id) => rows.get(id)?.status ?? 'unknown');
+  return {
+    summary: summarize(rows),
+    up: statuses.filter((s) => s === 'up').length,
+    down: statuses.filter((s) => s === 'down').length,
+    total: LAB_SERVICE_IDS.length,
+  };
+}

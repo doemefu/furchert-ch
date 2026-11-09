@@ -42,7 +42,16 @@ export function StatusDot({ status, label }: { status: DotStatus; label?: string
 }
 
 // LED plus the status text. The LED is decorative; the text names the status.
-export function StatusLabel({ status, children }: { status: DotStatus; children: ReactNode }) {
+// `onDark` is for dark bands: the label uses --n-20 for every status; the LED keeps its dot colour.
+export function StatusLabel({
+  status,
+  onDark = false,
+  children,
+}: {
+  status: DotStatus;
+  onDark?: boolean;
+  children: ReactNode;
+}) {
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
       <StatusDot status={status} />
@@ -51,8 +60,9 @@ export function StatusLabel({ status, children }: { status: DotStatus; children:
           fontFamily: 'var(--mono)',
           fontSize: 'var(--fs-12)',
           letterSpacing: 0,
-          color: STATUS_INK[status],
-          whiteSpace: 'nowrap',
+          color: onDark ? 'var(--n-20)' : STATUS_INK[status],
+          // Dark bands hold sentences (home status line) that must wrap on phones.
+          whiteSpace: onDark ? 'normal' : 'nowrap',
         }}
       >
         {children}

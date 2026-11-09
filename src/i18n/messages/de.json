@@ -84,6 +84,18 @@
     "home": {
       "areas": "Bereiche",
       "areasTitle": "Woran ich arbeite",
+      "sheetTag": "Beispiel mit erfundenen Namen",
+      "sheetTitle": "Ein Ablauf: Anfrage wird Offertentwurf",
+      "sheetAlt": "Beispiel einer Offerte, die aus einer Kundenanfrage entworfen wurde",
+      "status": {
+        "checking": "Status wird geprüft",
+        "allUp": "Alle {total} öffentlichen Dienste laufen",
+        "someDown": "{down} von {total} Diensten gerade gestört",
+        "partial": "{up} von {total} Diensten in Betrieb, Rest unbekannt",
+        "unknown": "Status gerade nicht verfügbar",
+        "facts": "Homelab · {nodes} Rechner im Cluster",
+        "link": "Live-Status ansehen"
+      },
       "metaTitle": "Dominic Furchert | Software Engineer · KI für KMU",
       "metaDescription": "Dominic Furchert, Software Engineer im Zürcher Oberland, richtet in KMU einen KI-Ablauf ein und misst, ob er genutzt wird. Dazu Projekte, Homelab, Rudern."
     },

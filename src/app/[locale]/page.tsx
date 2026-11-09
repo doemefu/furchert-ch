@@ -6,7 +6,8 @@ import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { CTAStrip } from '@/components/ui/CTAStrip';
-import { Ticker } from '@/components/layout/Ticker';
+import { HomeStatusLine } from '@/components/layout/HomeStatusLine';
+import { HomeOfferSheet } from './HomeOfferSheet';
 import { EXPERIENCE } from '@/data/experience';
 import { ENGAGEMENT } from '@/data/engagement';
 import { HOME_STATS } from '@/data/home-stats';
@@ -78,76 +79,78 @@ export default async function HomePage({
       {/* HERO — note: layout <main> already supplies paddingTop:var(--header-h),
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
       <section style={{ background: 'var(--n-10)' }}>
-        <div className="container border-x" style={{ minHeight: 'calc(100svh - var(--header-h))' }}>
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: 0,
-              padding: '5rem 1.5rem 4rem',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                pointerEvents: 'none',
-                backgroundImage: DOTS,
-                backgroundRepeat: 'repeat',
-                backgroundSize: '1.125rem',
-              }}
-            />
-            <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0, position: 'relative' }}>{t('hero.label')}</p>
-            <h1
-              style={{
-                fontFamily: 'var(--sans)',
-                fontSize: 'var(--fs-hero)',
-                fontWeight: 500,
-                letterSpacing: '-.03em',
-                lineHeight: 1,
-                maxWidth: '22ch',
-                textWrap: 'balance',
-                position: 'relative',
-                marginTop: '1rem',
-              }}
-            >
-              <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
-              <span style={{ color: 'var(--n-50)' }}>{t('hero.title2')}</span>
-            </h1>
-            <p
-              style={{
-                fontFamily: 'var(--sans)',
-                fontSize: 'var(--fs-lead)',
-                color: 'var(--n-60)',
-                maxWidth: '52ch',
-                textWrap: 'balance',
-                lineHeight: 1.45,
-                letterSpacing: 0,
-                position: 'relative',
-                marginTop: '1.5rem',
-              }}
-            >
-              {t('hero.sub')}
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                gap: '.75rem',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                position: 'relative',
-                marginTop: '2.5rem',
-              }}
-            >
-              <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
-                {t('hero.cta2')} <Icon name="arrow" size={12} />
-              </Btn>
-              <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
-                {t('hero.cta1')} <Icon name="arrow" size={12} />
-              </Btn>
+        <div className="container border-x home-hero">
+          <div className="home-hero-body">
+            <div className="home-hero-split" style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  backgroundImage: DOTS,
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '1.125rem',
+                }}
+              />
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  textAlign: 'left',
+                  minWidth: 0,
+                }}
+              >
+                <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0 }}>{t('hero.label')}</p>
+                <h1
+                  className="home-hero-title"
+                  style={{
+                    fontFamily: 'var(--sans)',
+                    fontWeight: 500,
+                    letterSpacing: '-.03em',
+                    lineHeight: 1,
+                    textWrap: 'balance',
+                    marginTop: '1rem',
+                  }}
+                >
+                  <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
+                  <span style={{ color: 'var(--n-50)' }}>{t('hero.title2')}</span>
+                </h1>
+                <p
+                  style={{
+                    fontFamily: 'var(--sans)',
+                    fontSize: 'var(--fs-lead)',
+                    color: 'var(--n-60)',
+                    maxWidth: '52ch',
+                    textWrap: 'balance',
+                    lineHeight: 1.45,
+                    letterSpacing: 0,
+                    marginTop: '1.5rem',
+                  }}
+                >
+                  {t('hero.sub')}
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '.75rem',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-start',
+                    marginTop: '2.5rem',
+                  }}
+                >
+                  <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
+                    {t('hero.cta2')} <Icon name="arrow" size={12} />
+                  </Btn>
+                  <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
+                    {t('hero.cta1')} <Icon name="arrow" size={12} />
+                  </Btn>
+                </div>
+              </div>
+              <div style={{ position: 'relative', minWidth: 0 }}>
+                <HomeOfferSheet locale={locale} />
+              </div>
             </div>
           </div>
 
@@ -276,7 +279,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      <Ticker />
+      <HomeStatusLine />
 
       <section style={{ background: 'var(--white)' }}>
         <div className="container border-x">

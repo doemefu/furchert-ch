@@ -39,6 +39,8 @@ const FILES: Record<string, string> = {
   'src/app/[locale]/contact/ContactForm.tsx': 'contact',
   'src/app/[locale]/contact/page.tsx': '',
   'src/app/[locale]/page.tsx': '',
+  'src/app/[locale]/HomeOfferSheet.tsx': 'pages.home',
+  'src/components/layout/HomeStatusLine.tsx': 'pages.home.status',
   'src/components/layout/Header.tsx': '',
   'src/components/layout/Footer.tsx': '',
   'src/components/ui/ContactEmail.tsx': 'contact',
