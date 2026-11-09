@@ -46,6 +46,16 @@ describe('two-bucket sliding counter (§5.8, M6)', () => {
     expect(l.wouldExceed('c', 1, T0)).toBe(true);
   });
 
+  it('S3: charging refreshes a key, so eviction drops the least recently charged key', () => {
+    const l = createLimiter({ limit: 5, windowMs: 60_000, maxKeys: 2 });
+    l.charge('a', 1, T0);
+    l.charge('b', 1, T0);
+    l.charge('a', 1, T0); // a is active again
+    l.charge('c', 1, T0); // evicts b, not a
+    expect(l.wouldExceed('a', 4, T0)).toBe(true);
+    expect(l.wouldExceed('b', 5, T0)).toBe(false);
+  });
+
   it('checkAll checks every window first and charges none when one would be exceeded', () => {
     const perKey = createLimiter({ limit: 20, windowMs: 60_000 });
     const global = createLimiter({ limit: 1, windowMs: 60_000 });

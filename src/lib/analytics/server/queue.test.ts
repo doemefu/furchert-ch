@@ -521,3 +521,61 @@ describe('purgeVisitors (§5.4, M3)', () => {
   });
 });
 
+describe('#172 review: W1, S4, S5', () => {
+  it('W1: a valid capped 429 puts the drops back also for a priority-only or drops-only batch (still a failure)', async () => {
+    const prio = setup([capped('2026-11-08T15:30:00Z')]);
+    prio.q.countDrop('bot', 3);
+    prio.q.enqueue([enquiry()], { priority: true });
+    await prio.q.flush();
+    expect(prio.q.pendingDrops().bot).toBe(3);
+    expect(prio.q.size()).toBe(1);
+
+    const only = setup([capped('2026-11-08T15:30:00Z')]);
+    only.q.countDrop('consent', 2);
+    await only.q.flush(); // drops-only batch
+    expect(only.calls[0].events).toEqual([]);
+    expect(only.q.pendingDrops().consent).toBe(2);
+  });
+
+  it('S5: the pause is clamped against the time of the response, not of the attempt start', async () => {
+    const holder: { clock?: { t: number } } = {};
+    let calls = 0;
+    const s = setup([], {
+      fetch: (async () => {
+        calls += 1;
+        if (calls > 1) return new Response('{}', { status: 200 });
+        holder.clock!.t += 5_000; // the first POST takes 5 s
+        return new Response(JSON.stringify(capped('2020-01-01T00:00:00Z').body), { status: 429 });
+      }) as unknown as typeof fetch,
+    });
+    holder.clock = s.clock;
+    s.q.enqueue(ev(1));
+    await s.q.flush(); // retryAt in the past → pause until response time + 1 s
+    s.clock.t += 999;
+    s.q.enqueue([enquiry()], { priority: true });
+    await s.q.flush();
+    // Still paused: the priority-only batch goes out alone.
+    expect(s.q.size()).toBe(1);
+  });
+
+  it('S4: the purge wait timer is cancelled when the in-flight attempt settles first', async () => {
+    const aborted: boolean[] = [];
+    let release: (r: Response) => void = () => {};
+    const { q } = setup([], {
+      fetch: (async () => new Promise<Response>((r) => (release = r))) as unknown as typeof fetch,
+      sleep: (_ms, signal) =>
+        new Promise<void>((resolve) => {
+          signal.addEventListener('abort', () => (aborted.push(true), resolve()), { once: true });
+        }),
+    });
+    q.enqueue(visitor('a', 1));
+    const flushing = q.flush();
+    await Promise.resolve();
+    const purge = q.purgeVisitors(['a']);
+    release(new Response('{}', { status: 200 }));
+    await flushing;
+    expect(await purge).toEqual({ settled: true });
+    expect(aborted).toEqual([true]);
+  });
+});
+

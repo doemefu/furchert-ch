@@ -391,7 +391,10 @@ describe('POST /api/v/forget (§5.4, WA-5)', () => {
     d.queue.purgeVisitors = async () => {
       throw new Error('boom');
     };
-    expect((await handleForget(forget({ cookie: `fa_vid=${VID}.1` }), d)).status).toBe(400);
+    // Review W2: an unexpected error after the guard keeps the ids pending (503 + fa_forget).
+    const err = await handleForget(forget({ cookie: `fa_vid=${VID}.1` }), d);
+    expect(err.status).toBe(503);
+    expect(cookies(err)).toEqual([CLEAR, SET_F(VID)]);
     expect(slots()).toBe(0);
   });
 
@@ -423,11 +426,15 @@ describe('POST /api/v/forget (§5.4, WA-5)', () => {
     expect(log).toEqual([]);
   });
 
-  it('the collect limits never apply to forget', async () => {
-    const c = deps();
-    for (let i = 0; i < 25; i += 1) await handleCollect(req(envelope([pageview()]), { cookie: `fa_vid=${VID}.1` }), c.d);
-    const { d } = fdeps();
-    expect((await handleForget(forget({ cookie: `fa_vid=${VID}.1` }), d)).status).toBe(204);
+  it('W2: an unexpected error after the guard queues the ids for the background retry', async () => {
+    const { d, log } = fdeps();
+    d.eraser.eraseNow = async () => {
+      throw new Error('boom');
+    };
+    const res = await handleForget(forget({ cookie: `fa_vid=${VID}.1; fa_forget=${A}` }), d);
+    expect(res.status).toBe(503);
+    expect(cookies(res)).toEqual([CLEAR, SET_F(A, VID)]);
+    expect(log).toContain(`retry ${A},${VID}`);
   });
 
   it('integration: queued events never sent, in-flight batch answered before the DELETE, data-service down then up', async () => {

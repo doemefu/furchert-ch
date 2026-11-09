@@ -190,6 +190,8 @@ const newest = (ids: string[]) => ids.slice(-FORGET_COOKIE_MAX_IDS);
  */
 export async function handleForget(req: Request, deps: ForgetDeps): Promise<Response> {
   const clearVid = clearVisitorCookie(deps.secureCookies);
+  // Set once the guard passed: an unexpected error afterwards keeps the ids pending (review W2).
+  let pendingIds: string[] = [];
   try {
     const cookies = req.headers.get('cookie');
     const forgetRaw = readCookie(cookies, FORGET_COOKIE);
@@ -209,6 +211,7 @@ export async function handleForget(req: Request, deps: ForgetDeps): Promise<Resp
       const keep = (checked.status === 408 || checked.status === 413) && ids.length > 0;
       return withCookies(checked.status, keep ? [clearVid, setForgetCookie(newest(ids), deps.secureCookies)] : [clearVid]);
     }
+    pendingIds = ids;
     if (!deps.eraser.tryAcquire()) {
       deps.count('concurrency');
       return limited(2); // nothing charged, fa_vid kept (N4)
@@ -239,6 +242,13 @@ export async function handleForget(req: Request, deps: ForgetDeps): Promise<Resp
       deps.eraser.release();
     }
   } catch {
-    return withCookies(400, [clearVid]);
+    if (pendingIds.length === 0) return withCookies(400, [clearVid]);
+    // Review W2: err towards erasure; the browser and the server retry the ids.
+    try {
+      deps.eraser.queueRetry(pendingIds);
+    } catch {
+      // best effort
+    }
+    return withCookies(503, [clearVid, setForgetCookie(newest(pendingIds), deps.secureCookies)]);
   }
 }

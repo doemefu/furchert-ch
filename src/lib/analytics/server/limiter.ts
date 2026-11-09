@@ -46,7 +46,8 @@ export function createLimiter(opts: { limit: number; windowMs: number; maxKeys?:
     charge(key, cost, now) {
       const s = { ...view(key, now) };
       s.current += cost;
-      if (!states.has(key) && states.size >= maxKeys) {
+      // Review S3: delete + set keeps the Map in charge order, so eviction drops the least recently charged key.
+      if (!states.delete(key) && states.size >= maxKeys) {
         const oldest = states.keys().next().value;
         if (oldest !== undefined) states.delete(oldest);
       }

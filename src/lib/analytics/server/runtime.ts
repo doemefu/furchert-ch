@@ -58,7 +58,11 @@ function edge(): Edge {
   const g = globalThis as typeof globalThis & { [EDGE_KEY]?: Edge };
   if (!g[EDGE_KEY]) {
     const log = (line: string) => console.info(line);
-    const forgetCount = createCounterLog('[analytics] forget summary', log, Date.now).count;
+    const forgetLog = createCounterLog('[analytics] forget summary', log, Date.now, 60_000, {
+      forbidden: 'check-analytics-write-scope-for-visitor-delete',
+    });
+    const collectLog = createCounterLog('[analytics] collect summary', log, Date.now);
+    const forgetCount = forgetLog.count;
     const eraser = createEraser({
       fetch: (input, init) => fetch(input, init),
       now: () => Date.now(),
@@ -67,7 +71,11 @@ function edge(): Edge {
       visitorUrl: (id) => ANALYTICS_ENV.visitorUrl(id),
       count: forgetCount,
     });
-    const sweep = setInterval(() => void eraser.sweep(), SWEEP_EVERY_MS);
+    const sweep = setInterval(() => {
+      void eraser.sweep();
+      forgetLog.flush(); // review S7: pending counts are written even without new events
+      collectLog.flush();
+    }, SWEEP_EVERY_MS);
     sweep.unref?.();
     g[EDGE_KEY] = {
       collectLimits: {
@@ -82,7 +90,7 @@ function edge(): Edge {
         global: createLimiter({ limit: 120, windowMs: MINUTE }),
       },
       eraser,
-      collectCount: createCounterLog('[analytics] collect summary', log, Date.now).count,
+      collectCount: collectLog.count,
       forgetCount,
     };
   }

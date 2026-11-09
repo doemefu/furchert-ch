@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCounterLog, createEraser, RETRY_FOR_MS, type EraseDeps } from './erase';
 
+
 const A = '1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f';
 const B = '2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6a';
 
@@ -144,6 +145,60 @@ describe('background retry (M7, N2)', () => {
   });
 });
 
+describe('#172 review: S1, S2, S8, N2', () => {
+  it('S1: a user forget that erases an id removes it from the background retry set', async () => {
+    const { e } = setup();
+    e.queueRetry([A, B]);
+    const p = e.eraseNow([A]);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(await p).toEqual([]);
+    expect(e.retrySize()).toBe(1);
+  });
+
+  it('S2: a sweep that fails moves the id to the end, so the next sweep starts with the others', async () => {
+    const { e, calls } = setup({ [A]: [503, 204], [B]: [204] });
+    e.queueRetry([A, B]);
+    await e.sweep();
+    expect(calls.map((c) => c.id)).toEqual([A]);
+    await e.sweep();
+    expect(calls.map((c) => c.id)).toEqual([A, B, A]);
+    expect(e.retrySize()).toBe(0);
+  });
+
+  it('S2: the moved id keeps its first-failure time (still given up after 24 h)', async () => {
+    const { e, calls } = setup({ [A]: [503] });
+    e.queueRetry([A]);
+    await e.sweep();
+    vi.setSystemTime(Date.now() + RETRY_FOR_MS);
+    await e.sweep();
+    expect(calls).toHaveLength(1);
+    expect(e.retrySize()).toBe(0);
+  });
+
+  it('S8: a DELETE 403 is counted as "forbidden" (configuration), not as a plain failure', async () => {
+    const { e, counts } = setup({ [A]: [403, 403, 403] });
+    const p = e.eraseNow([A]);
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(await p).toEqual([A]);
+    expect(counts.forbidden).toBe(3);
+  });
+
+  it('N2 (S6): background DELETEs that hang never delay a user forget beyond 12 s', async () => {
+    const ids = Array.from({ length: 5 }, (_, i) => `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`);
+    const plan: Record<string, Reply[]> = Object.fromEntries(ids.map((id) => [id, ['hang']]));
+    plan[A] = [503, 503, 503];
+    const { e } = setup(plan);
+    e.queueRetry(ids);
+    void e.sweep();
+    const started = Date.now();
+    let ended = 0;
+    const p = e.eraseNow([A]).then((r) => ((ended = Date.now()), r));
+    await vi.advanceTimersByTimeAsync(12_000);
+    expect(await p).toEqual([A]);
+    expect(ended - started).toBeLessThanOrEqual(12_000);
+  });
+});
+
 describe('createCounterLog (C17)', () => {
   it('logs at most once a minute, counts only', () => {
     const lines: string[] = [];
@@ -154,5 +209,26 @@ describe('createCounterLog (C17)', () => {
     t = 61_000;
     c.count('erased');
     expect(lines).toEqual(['[analytics] forget summary: erased=2', '[analytics] forget summary: failed=1 erased=1']);
+  });
+
+  it('S7: flush() writes pending counts once the minute has passed, without a new count', () => {
+    const lines: string[] = [];
+    let t = 0;
+    const c = createCounterLog('[analytics] forget summary', (l) => lines.push(l), () => t);
+    c.count('erased');
+    c.count('failed');
+    c.flush();
+    expect(lines).toHaveLength(1);
+    t = 61_000;
+    c.flush();
+    c.flush();
+    expect(lines).toEqual(['[analytics] forget summary: erased=1', '[analytics] forget summary: failed=1']);
+  });
+
+  it('S8: adds a configuration hint when a forbidden DELETE was counted', () => {
+    const lines: string[] = [];
+    const c = createCounterLog('[analytics] forget summary', (l) => lines.push(l), () => 0, 60_000, { forbidden: 'check-analytics-write-scope-for-visitor-delete' });
+    c.count('forbidden');
+    expect(lines[0]).toBe('[analytics] forget summary: forbidden=1 hint=check-analytics-write-scope-for-visitor-delete');
   });
 });

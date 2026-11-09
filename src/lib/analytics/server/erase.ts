@@ -77,7 +77,7 @@ export function createEraser(deps: EraseDeps): Eraser {
   let background: Promise<void> = Promise.resolve();
   let sweepQueued = false;
 
-  /** One DELETE; 'done', 'auth' (401) or 'failed'. */
+  /** One DELETE; 'done', 'auth' (401) or 'failed'. A 403 is a configuration problem, counted apart (review S8). */
   async function deleteOnce(id: string, token: string, signal: AbortSignal): Promise<'done' | 'auth' | 'failed'> {
     try {
       const res = await deps.fetch(deps.visitorUrl(id), {
@@ -87,6 +87,7 @@ export function createEraser(deps: EraseDeps): Eraser {
         signal,
       });
       if (res.status === 204 || res.status === 400) return 'done';
+      if (res.status === 403) deps.count('forbidden');
       return res.status === 401 ? 'auth' : 'failed';
     } catch {
       return 'failed';
@@ -116,6 +117,8 @@ export function createEraser(deps: EraseDeps): Eraser {
         return false;
       };
       const results = await Promise.all(ids.map((id) => one(id)));
+      // Review S1: an id erased now needs no background retry any more.
+      ids.forEach((id, i) => results[i] && retry.delete(id));
       return ids.filter((_, i) => !results[i]);
     } catch {
       return [...ids]; // no token within the deadline
@@ -168,7 +171,11 @@ export function createEraser(deps: EraseDeps): Eraser {
         continue;
       }
       done += 1;
-      if (!(await backgroundDelete(id))) break; // stop at the first failure (N2)
+      if (!(await backgroundDelete(id))) {
+        // Review S2: to the end, same first-failure time, so the next sweep starts with the others.
+        if (retry.delete(id)) retry.set(id, since);
+        break; // stop at the first failure (N2)
+      }
       retry.delete(id);
       deps.count('retryDone');
     }
@@ -207,18 +214,29 @@ export function createEraser(deps: EraseDeps): Eraser {
   };
 }
 
-/** At most one `<prefix>` summary line a minute with counts only (C17). */
-export function createCounterLog(prefix: string, log: (line: string) => void, now: () => number, everyMs = 60_000) {
+/**
+ * At most one `<prefix>` summary line a minute with counts only (C17). `flush`
+ * writes pending counts once the minute has passed (the runtime calls it from
+ * its sweep timer, review S7). `hints` add a fixed text when a key was counted.
+ */
+export function createCounterLog(prefix: string, log: (line: string) => void, now: () => number, everyMs = 60_000, hints: Record<string, string> = {}) {
   let counts: Record<string, number> = {};
   let last = -Infinity;
+  const write = () => {
+    const keys = Object.keys(counts);
+    if (keys.length === 0) return;
+    const t = now();
+    if (t - last < everyMs) return;
+    last = t;
+    const hint = keys.filter((k) => hints[k]).map((k) => ` hint=${hints[k]}`).join('');
+    log(`${prefix}: ${Object.entries(counts).map(([k, v]) => `${k}=${v}`).join(' ')}${hint}`);
+    counts = {};
+  };
   return {
     count(key: string, n = 1) {
       counts[key] = (counts[key] ?? 0) + n;
-      const t = now();
-      if (t - last < everyMs) return;
-      last = t;
-      log(`${prefix}: ${Object.entries(counts).map(([k, v]) => `${k}=${v}`).join(' ')}`);
-      counts = {};
+      write();
     },
+    flush: write,
   };
 }

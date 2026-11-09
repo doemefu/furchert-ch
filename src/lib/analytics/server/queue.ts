@@ -71,8 +71,8 @@ export interface QueueDeps {
   eventsUrl: () => string;
   log: (line: string) => void;
   timeoutMs?: number;
-  /** Bounded wait in `purgeVisitors`; tests inject a fake. */
-  sleep?: (ms: number) => Promise<void>;
+  /** Bounded wait in `purgeVisitors`, cancelled through `signal` (review S4); tests inject a fake. */
+  sleep?: (ms: number, signal: AbortSignal) => Promise<void>;
 }
 
 interface Item {
@@ -131,7 +131,13 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
   let lastLog = -Infinity;
   let stats = zeroStats();
   const erased = new Map<string, number>();
-  const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
+  const sleep =
+    deps.sleep ??
+    ((ms: number, signal: AbortSignal) =>
+      new Promise<void>((resolve) => {
+        const h = setTimeout(resolve, ms);
+        signal.addEventListener('abort', () => (clearTimeout(h), resolve()), { once: true });
+      }));
 
   const countDrop = (reason: EdgeDropReason, n = 1) => {
     drops[reason] = Math.min(EDGE_DROP_MAX, drops[reason] + Math.max(0, Math.floor(n)));
@@ -364,17 +370,19 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
       }
       if (res.status === 429) {
         const capped = await cappedBody(res);
+        // Review W1: a valid capped body means nothing of the batch was counted (A1), whatever it held.
+        if (capped && RESTORE_DROPS_ON_CAPPED) restoreDrops();
         if (capped && batch.items.some((it) => !it.priority)) {
-          pausedUntil = Math.min(Math.max(capped.retryAt, now + PAUSE_MIN_MS), now + PAUSE_MAX_MS);
+          const at = deps.now(); // review S5: clamp against the response time
+          pausedUntil = Math.min(Math.max(capped.retryAt, at + PAUSE_MIN_MS), at + PAUSE_MAX_MS);
           pausedScope = capped.scope;
           // Review N1: split and retry batches go; their items stay in their lanes.
           pendingSplits = [];
           retryBatch = null;
-          if (RESTORE_DROPS_ON_CAPPED) restoreDrops();
           failures = 0;
           return false; // no hot loop in flushAll (review M2)
         }
-        keep(); // malformed body, or a priority-only batch (exempt): a failure
+        keep(); // malformed body, or a priority-only / drops-only batch (exempt): a failure
         fail();
         return false;
       }
@@ -439,8 +447,10 @@ export function createForwardQueue(deps: QueueDeps): ForwardQueue {
       removeWhere((it) => match(it) && !inFlightItems.has(it));
       let settled = true;
       if (inFlight) {
+        const stop = new AbortController();
         const current = inFlight.then(() => 'settled' as const);
-        settled = (await Promise.race([current, sleep(maxWaitMs).then(() => 'timeout' as const)])) === 'settled';
+        settled = (await Promise.race([current, sleep(maxWaitMs, stop.signal).then(() => 'timeout' as const)])) === 'settled';
+        stop.abort(); // review S4: no timer left behind when the attempt settled first
       }
       removeWhere((it) => match(it) && !inFlightItems.has(it));
       return { settled };
