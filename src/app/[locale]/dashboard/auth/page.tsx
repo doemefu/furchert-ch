@@ -36,6 +36,7 @@ import { FailureNotice } from './FailureNotice';
 import { JwksPanel } from './JwksPanel';
 import { ReauthNotice } from './ReauthNotice';
 import { UsersPanel } from './UsersPanel';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import { BORDER, Pill, UnavailableCard } from './ui';
 
 // Reads the session (cookies) and live data → must be dynamic.
@@ -111,9 +112,11 @@ async function Header({ healthStatus }: { healthStatus: string | null }) {
             </h1>
             <Pill tone="info">ADMIN</Pill>
             {healthStatus === null ? (
-              <Pill tone="mute">{t('statusUnknown')}</Pill>
+              <StatusLabel status="unknown">{t('statusUnknown')}</StatusLabel>
             ) : (
-              <Pill tone={healthStatus === 'UP' ? 'ok' : 'err'}>{healthStatus === 'UP' ? t('statusUp') : t('statusDown')}</Pill>
+              <StatusLabel status={healthStatus === 'UP' ? 'online' : 'offline'}>
+                {healthStatus === 'UP' ? t('statusUp') : t('statusDown')}
+              </StatusLabel>
             )}
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-60)', marginTop: '.35rem' }}>{t('meta')}</div>

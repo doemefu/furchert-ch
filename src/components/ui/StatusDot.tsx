@@ -1,9 +1,11 @@
 // Ported verbatim from the prototype (shared.jsx StatusDot).
 // Colours via --status-* design tokens (globals.css).
+import type { ReactNode } from 'react';
+
 export type DotStatus = 'online' | 'wip' | 'repo' | 'offline' | 'unknown';
 
 // Single source for status→dot colour.
-export const STATUS_COLOR: Record<DotStatus, string> = {
+const STATUS_COLOR: Record<DotStatus, string> = {
   online: 'var(--status-online)',
   wip: 'var(--status-wip)',
   repo: 'var(--status-repo)',
@@ -20,21 +22,41 @@ export const STATUS_INK: Record<DotStatus, string> = {
   unknown: 'var(--n-60)',
 };
 
-// `label` makes the dot non-decorative for screen readers (role="img").
+// Square 8x8 LED: the status signature (#177). `label` makes the dot non-decorative for screen readers (role="img").
 // Pass it where the status is conveyed by colour alone (e.g. cluster nodes);
 // omit it where adjacent visible text already names the status.
 export function StatusDot({ status, label }: { status: DotStatus; label?: string }) {
   return (
     <span
-      {...(label ? { role: 'img', 'aria-label': label } : {})}
+      {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
       style={{
         display: 'inline-block',
-        width: 7,
-        height: 7,
-        borderRadius: '50%',
+        width: 8,
+        height: 8,
+        borderRadius: 0,
         background: STATUS_COLOR[status],
         flexShrink: 0,
       }}
     />
+  );
+}
+
+// LED plus the status text. The LED is decorative; the text names the status.
+export function StatusLabel({ status, children }: { status: DotStatus; children: ReactNode }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
+      <StatusDot status={status} />
+      <span
+        style={{
+          fontFamily: 'var(--mono)',
+          fontSize: 'var(--fs-12)',
+          letterSpacing: 0,
+          color: STATUS_INK[status],
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {children}
+      </span>
+    </span>
   );
 }

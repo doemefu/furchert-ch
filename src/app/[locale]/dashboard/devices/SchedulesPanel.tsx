@@ -20,6 +20,7 @@ import { CronField } from './CronField';
 import { FieldError, FormError, inputAria, useErrorText } from './FormFeedback';
 import { useFocusTrap, useReturnFocus } from '../useDrawerFocus';
 import { makeFormatters } from './format';
+import { StatusDot } from '@/components/ui/StatusDot';
 import { BORDER, MonoLabel, Pill, btnDanger, btnPrimary, btnSecondary, btnSmall, cardStyle, fieldStyle, hintStyle } from '../auth/ui';
 
 /** A schedule as rendered — `nextRun` labels and the cron description come from the server. */
@@ -199,7 +200,7 @@ export function SchedulesPanel({
               }}
             >
               <span style={{ color: 'var(--n-60)' }}>#{s.id}</span>
-              <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: '50%', background: s.active ? 'var(--status-online)' : 'var(--status-unknown)' }} />
+              <StatusDot status={s.active ? 'online' : 'unknown'} />
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.deviceName ?? '—'}</span>
               <span>
                 {s.state !== null && isDeviceField(s.field) ? (

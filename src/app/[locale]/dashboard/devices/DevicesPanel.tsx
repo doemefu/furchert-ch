@@ -16,7 +16,8 @@ import { canControl, type DeviceField, type Freshness, type SwitchState } from '
 import { IDLE } from '@/lib/deviceadmin/forms';
 import { controlDeviceAction } from './actions';
 import { FormError } from './FormFeedback';
-import { BORDER, MonoLabel, Pill, btnSmall, cardStyle, hintStyle, type PillTone } from '../auth/ui';
+import { StatusLabel, type DotStatus } from '@/components/ui/StatusDot';
+import { BORDER, MonoLabel, btnSmall, cardStyle, hintStyle } from '../auth/ui';
 
 /** A device as rendered — every label pre-formatted on the server (no hydration drift). */
 export interface DeviceRow {
@@ -30,8 +31,8 @@ export interface DeviceRow {
   switches: Array<{ field: DeviceField; state: SwitchState }>;
 }
 
-const FRESHNESS_TONE: Record<Freshness, PillTone> = { live: 'ok', stale: 'warn', offline: 'err', never: 'mute' };
-const SWITCH_TONE: Record<SwitchState, PillTone> = { on: 'ok', off: 'mute', unknown: 'warn' };
+const FRESHNESS_DOT: Record<Freshness, DotStatus> = { live: 'online', stale: 'wip', offline: 'offline', never: 'unknown' };
+const SWITCH_DOT: Record<SwitchState, DotStatus> = { on: 'online', off: 'unknown', unknown: 'wip' };
 
 export function DevicesPanel({ devices }: { devices: DeviceRow[] }) {
   const t = useTranslations('dashboard.deviceAdmin.devices');
@@ -99,7 +100,7 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
             {d.lastSeenAbs ? t('devices.lastSeen', { abs: d.lastSeenAbs, rel: d.lastSeenRel ?? '—' }) : t('devices.neverSeen')}
           </div>
         </div>
-        <Pill tone={FRESHNESS_TONE[d.freshness]}>{t(`freshness.${d.freshness}`)}</Pill>
+        <StatusLabel status={FRESHNESS_DOT[d.freshness]}>{t(`freshness.${d.freshness}`)}</StatusLabel>
       </div>
 
       {/* Sensor values */}
@@ -153,7 +154,7 @@ function DeviceCard({ device: d }: { device: DeviceRow }) {
             >
               <span style={{ width: '6.5rem', fontFamily: 'var(--mono)', fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>{fieldLabel}</span>
               <span>
-                <Pill tone={SWITCH_TONE[current]}>{t(`switch.${current}`)}</Pill>
+                <StatusLabel status={SWITCH_DOT[current]}>{t(`switch.${current}`)}</StatusLabel>
               </span>
               <span style={{ display: 'flex', flexWrap: 'wrap', gap: '.3rem', marginLeft: 'auto', justifyContent: 'flex-end' }}>
                 {targets.map((target) => {

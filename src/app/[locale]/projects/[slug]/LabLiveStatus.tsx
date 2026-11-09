@@ -8,7 +8,7 @@
 // stops when hidden or unmounted, and treats any failure as "Unknown" (no
 // error text). The status is always text next to the dot, never colour alone.
 import { useEffect, useState } from 'react';
-import { StatusDot, type DotStatus } from '@/components/ui/StatusDot';
+import { StatusLabel, type DotStatus } from '@/components/ui/StatusDot';
 import type { LabServiceId } from '@/data/homelab-lab';
 import { LOCALE_TAG } from '@/app/[locale]/dashboard/datetime';
 import type { Locale } from '@/i18n/routing';
@@ -167,12 +167,7 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
                 <div style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5 }}>{row.desc}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
-                  <StatusDot status={live === null ? 'unknown' : DOT[status]} />
-                  <span style={{ ...mono, fontSize: 'var(--fs-12)', color: 'var(--n-80)' }}>
-                    {statusText}
-                  </span>
-                </span>
+                <StatusLabel status={live === null ? 'unknown' : DOT[status]}>{statusText}</StatusLabel>
                 {uptime && (
                   <span style={{ ...mono, textTransform: 'none', letterSpacing: 0, fontSize: 'var(--fs-12)', color: 'var(--n-60)', fontVariantNumeric: 'tabular-nums' }}>{uptime}</span>
                 )}

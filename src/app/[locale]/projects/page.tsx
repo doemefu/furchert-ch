@@ -5,9 +5,10 @@ import { isLocale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { Icon } from '@/components/ui/Icon';
+import { StatusLabel } from '@/components/ui/StatusDot';
 import { Tag } from '@/components/ui/Tag';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { PROJECTS, STATUS_COLOR, STATUS_LABEL } from '@/data/projects';
+import { PROJECTS, PROJECT_DOT, STATUS_LABEL } from '@/data/projects';
 import { trackAttr } from '@/data/track-ids';
 
 export async function generateMetadata({
@@ -83,20 +84,7 @@ export default async function ProjectsPage({
                 >
                   <Icon name={p.icon} size={14} />
                 </div>
-                <span
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: 'var(--fs-12)',
-                    letterSpacing: '.05em',
-                    textTransform: 'uppercase',
-                    padding: '.25rem .5rem',
-                    border: `1px solid ${STATUS_COLOR[p.status]}`,
-                    borderRadius: '2px',
-                    color: STATUS_COLOR[p.status],
-                  }}
-                >
-                  {STATUS_LABEL[locale][p.status]}
-                </span>
+                <StatusLabel status={PROJECT_DOT[p.status]}>{STATUS_LABEL[locale][p.status]}</StatusLabel>
               </div>
               <div>
                 <div

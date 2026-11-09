@@ -181,6 +181,14 @@ All notable changes per milestone. Newest first.
   roles) are shown in their real case instead of uppercase. The users table
   scroll floor grew from 720 to 780 px. The web analytics pages follow
   separately.
+- **Status signature** (#177): a status is now an 8 px square LED plus plain
+  text instead of a coloured pill. This covers project status on the
+  projects pages, the live status of the homelab lab, the dashboard app tiles,
+  device freshness and switch state, user status and the service health
+  badges. The LED is hidden from screen readers where text names the status.
+  Roles, scopes, failure kinds and other labels stay pills. The home page
+  bullets are small round dots and the login legend keys are short lines, so
+  nothing else looks like the LED.
 
 ### Fixed
 
