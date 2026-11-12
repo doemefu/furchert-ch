@@ -405,7 +405,7 @@ curl -sI https://furchert.ch                  # bare `/` — proxy locale redire
 curl -sI https://furchert.ch/de               # rendered page — all 7 headers from "Security headers" above
 curl -sI https://furchert.ch/api/health       # API route — all 7 headers (the case that justified next.config.js over proxy.ts)
 curl -sI https://furchert.ch/de | grep -i strict-transport-security    # every line: max-age=31536000; includeSubDomains (an identical second line from the edge is fine)
-curl -sI https://auth.furchert.ch/login | grep -i strict-transport-security   # informational, not a gate: auth-service's own header, if any (record it)
+curl -sI https://auth.furchert.ch/.well-known/openid-configuration | grep -i strict-transport-security   # informational, not a gate: auth-service's own header, if any (record it)
 curl -sI https://furchert.ch/de | grep -ci x-powered-by                # 0
 ```
 
