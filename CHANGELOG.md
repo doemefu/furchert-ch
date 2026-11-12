@@ -256,6 +256,12 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **HSTS covers subdomains** (#200): `Strict-Transport-Security` is now
+  `max-age=31536000; includeSubDomains` (still no `preload`), so a browser
+  that has visited the apex uses HTTPS for every `*.furchert.ch` name.
+  Deploy only after the owner's zone DNS-record check (`DEPLOYMENT.md`
+  "HSTS rollout"); the Cloudflare zone HSTS setting follows once this is
+  live. Rollback: the app header without `includeSubDomains`.
 - **Contact e-mail kept out of the server HTML and the RSC payload** (#147):
   Cloudflare's Email Obfuscation (#125) only rewrote the HTML; the RSC payload
   still carried the owner's address in plain text on every page. The footer,
