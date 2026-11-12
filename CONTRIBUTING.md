@@ -34,7 +34,9 @@ hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §
 (#41). On pull requests a second job, `image`, builds the container image
 (amd64, never pushed, base pulled via `mirror.gcr.io`) and checks that
 `/api/health` answers (#118); it reuses main's layer cache and takes a few
-minutes.
+minutes. The `pin-check` job fails if any `uses:` in
+`.github/workflows/` is not a local action, a full 40-hex commit SHA or a
+`docker://` image pinned by `sha256` digest.
 
 Local OIDC (Auth.js v5): copy `.env.local.example` → `.env.local` (never
 committed) and set `AUTH_SECRET` (`openssl rand -base64 33`) and the plaintext

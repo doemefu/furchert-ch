@@ -327,6 +327,12 @@ The image is built by CI and rolled out by Flux; there is no manual `kubectl app
    anonymous ECR Public and Docker Hub pulls from shared runners hit `429`.
    PRs build and smoke-test the amd64 image with the same mirror (`ci.yml`
    job `image`, never pushed).
+   The `build` and `merge` jobs push only when the run is on `refs/heads/main`
+   (job-level branch guard). Every action is pinned by full commit SHA
+   (`ci.yml` job `pin-check` fails on anything else; Dependabot bumps actions
+   only after a 7-day cooldown), and every `setup-buildx-action` step runs a
+   BuildKit image pinned by tag + digest (`driver-opts`), which Dependabot does
+   not track — bump tag and digest together by hand in `build.yml` and `ci.yml`.
 2. **Image automation (automatic).** Flux `ImageRepository`/`ImagePolicy`
    (`infrastructure/cluster/apps/furchert-ch/`) pick the newest `main-<ts>` tag and
    `ImageUpdateAutomation` writes it back into `k8s/deployment.yaml` on `main`.

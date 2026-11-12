@@ -42,6 +42,8 @@ jobs:
 
   build:
     name: build (${{ matrix.platform }})
+    # Branch guard: images are pushed only from main, whatever the trigger.
+    if: github.ref == 'refs/heads/main'
     needs: verify
     strategy:
       fail-fast: false
@@ -67,6 +69,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
         with:
+          # The BuildKit image the builder runs is pinned by tag + index digest
+          # (Dependabot does not track it; bump tag and digest together by hand,
+          # in every setup-buildx step of build.yml and ci.yml).
+          driver-opts: image=docker.io/moby/buildkit:v0.34.2@sha256:c5f8862f52499773af85bc07695b2379ef08e8002352b0df2c4864c91d78dabe
           # Pull docker.io content (the digest-pinned node base, the Dockerfile
           # syntax frontend) through Google's Docker Hub mirror first; BuildKit
           # falls back to docker.io. Anonymous ECR Public / Docker Hub pulls
@@ -116,7 +122,8 @@ jobs:
 
   merge:
     # Runs only when every matrix leg succeeded, so a tag is never published
-    # for a single-platform image.
+    # for a single-platform image. Same branch guard as the build job.
+    if: github.ref == 'refs/heads/main'
     needs: [verify, build]
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -132,6 +139,9 @@ jobs:
           merge-multiple: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        with:
+          # Same pinned BuildKit image as the build job. Keep in sync.
+          driver-opts: image=docker.io/moby/buildkit:v0.34.2@sha256:c5f8862f52499773af85bc07695b2379ef08e8002352b0df2c4864c91d78dabe
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
