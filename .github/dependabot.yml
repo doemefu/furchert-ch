@@ -14,11 +14,15 @@ updates:
       minor-and-patch:
         update-types: ["minor", "patch"]
 
+  # Actions are pinned by commit SHA with a version comment; Dependabot updates
+  # both. The cooldown keeps a release out of a PR until it is 7 days old.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore(ci)"

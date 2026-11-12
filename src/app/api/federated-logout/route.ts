@@ -11,8 +11,14 @@
 // Authorization Server signs with `exp = iat + 30 min` (not configurable via
 // TokenSettings; auth-service's token customizer does not override it). Only
 // a logout within 30 min of sign-in exposes an unexpired token; later the
-// hint is expired and is useful only as a logout hint. See DEPLOYMENT.md
-// "Federated logout — id_token exposure".
+// hint is expired and is useful only as a logout hint.
+//
+// Even inside those 30 min the trade-off rests on a fleet-wide invariant
+// (#199): no resource server accepts an ID token as a bearer token, so its
+// only use is this hint. Each resource server enforces that itself (e.g.
+// auth-service#117, device-service#115); the per-service list lives in
+// DEPLOYMENT.md "Federated logout — id_token exposure" → "Invariant &
+// prerequisites". This route validates no tokens and needs no change for it.
 import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { AUTH_ENV } from '@/auth.env';
