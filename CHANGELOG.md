@@ -259,7 +259,10 @@ All notable changes per milestone. Newest first.
 - **CI supply-chain hardening** (security review follow-up,
   doemefu/homelab-device-service#126): a new `ci.yml` job `pin-check` fails
   unless every `uses:` is a local action, a full commit SHA or a
-  digest-pinned `docker://` image; the `build` and `merge` jobs of
+  digest-pinned `docker://` image (it parses the workflow YAML with
+  `.github/scripts/check_action_pins.py`, the same check as the sibling
+  repos, so quoted, flow-style and anchored keys count and comments are
+  ignored); the `build` and `merge` jobs of
   `build.yml` push only on a push to `refs/heads/main`; every `setup-buildx-action`
   step runs a BuildKit image pinned by tag + digest; Dependabot waits 7 days
   before proposing a new action release.

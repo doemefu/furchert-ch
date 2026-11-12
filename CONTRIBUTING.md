@@ -36,7 +36,10 @@ hang or regression, not a slow-but-normal run — see `DEPLOYMENT.md` §
 `/api/health` answers (#118); it reuses main's layer cache and takes a few
 minutes. The `pin-check` job fails if any `uses:` in
 `.github/workflows/` is not a local action, a full 40-hex commit SHA or a
-`docker://` image pinned by `sha256` digest.
+`docker://` image pinned by `sha256` digest. It runs
+`.github/scripts/check_action_pins.py` (YAML-parsed, with a `--self-test`
+step first); run the same locally with
+`python3 .github/scripts/check_action_pins.py .github/workflows/*.yml`.
 
 Local OIDC (Auth.js v5): copy `.env.local.example` → `.env.local` (never
 committed) and set `AUTH_SECRET` (`openssl rand -base64 33`) and the plaintext
