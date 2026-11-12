@@ -54,8 +54,11 @@ jobs:
 
   # Every `uses:` must be a local action, `owner/repo[/path]@<full 40-hex
   # commit SHA>` or `docker://…@sha256:<digest>`; tags, branches and short
-  # SHAs fail. Commented-out lines are ignored; a step written as a flow map
-  # (`{…}`) must put `uses` first, or the check fails closed.
+  # SHAs fail. The check parses the workflow YAML
+  # (.github/scripts/check_action_pins.py, the same script as the sibling
+  # repos), so block, flow and quoted `uses` keys all count and comments can
+  # neither hide nor satisfy a reference. Runs with the runner's python3 and
+  # its system PyYAML; nothing is installed.
   pin-check:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -63,11 +66,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Check that every action is pinned by full commit SHA
+      - name: Self-test the pin check
+        run: python3 .github/scripts/check_action_pins.py --self-test
+      - name: Require full-SHA or digest pins
         run: |
-          bad=$(grep -rnE '^[^#]*([{ ,]|^)uses:' .github/workflows/ \
-            | grep -vE "^[^:]+:[0-9]+:\s*-?\s*\{?\s*uses:\s+[\"']?(\./[^ \"']*|[^ @\"']+@[0-9a-f]{40}|docker://[^ \"']+@sha256:[0-9a-f]{64})[\"']?\}?(\s+#.*)?$") \
-            && { echo "$bad"; echo "::error::action refs must be pinned by full commit SHA"; exit 1; } || true
+          set -euo pipefail
+          shopt -s nullglob
+          python3 .github/scripts/check_action_pins.py .github/workflows/*.yml .github/workflows/*.yaml
 
   # Builds the container image (amd64 only, never pushed) and smoke-tests
   # /api/health, so Dockerfile and base-image bumps fail on the PR instead of
