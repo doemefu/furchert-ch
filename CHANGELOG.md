@@ -260,7 +260,7 @@ All notable changes per milestone. Newest first.
   doemefu/homelab-device-service#126): a new `ci.yml` job `pin-check` fails
   unless every `uses:` is a local action, a full commit SHA or a
   digest-pinned `docker://` image; the `build` and `merge` jobs of
-  `build.yml` push only from `refs/heads/main`; every `setup-buildx-action`
+  `build.yml` push only on a push to `refs/heads/main`; every `setup-buildx-action`
   step runs a BuildKit image pinned by tag + digest; Dependabot waits 7 days
   before proposing a new action release.
 - **Contact e-mail kept out of the server HTML and the RSC payload** (#147):

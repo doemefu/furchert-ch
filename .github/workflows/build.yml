@@ -42,8 +42,9 @@ jobs:
 
   build:
     name: build (${{ matrix.platform }})
-    # Branch guard: images are pushed only from main, whatever the trigger.
-    if: github.ref == 'refs/heads/main'
+    # Guard: images are pushed only from push events on refs/heads/main, even
+    # if another trigger is added to this workflow later.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
     strategy:
       fail-fast: false
@@ -122,8 +123,8 @@ jobs:
 
   merge:
     # Runs only when every matrix leg succeeded, so a tag is never published
-    # for a single-platform image. Same branch guard as the build job.
-    if: github.ref == 'refs/heads/main'
+    # for a single-platform image. Same guard as the build job.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [verify, build]
     runs-on: ubuntu-24.04
     timeout-minutes: 10

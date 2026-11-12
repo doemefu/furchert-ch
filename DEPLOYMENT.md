@@ -327,8 +327,8 @@ The image is built by CI and rolled out by Flux; there is no manual `kubectl app
    anonymous ECR Public and Docker Hub pulls from shared runners hit `429`.
    PRs build and smoke-test the amd64 image with the same mirror (`ci.yml`
    job `image`, never pushed).
-   The `build` and `merge` jobs push only when the run is on `refs/heads/main`
-   (job-level branch guard). Every action is pinned by full commit SHA
+   The `build` and `merge` jobs push only on a `push` event to
+   `refs/heads/main` (job-level guard). Every action is pinned by full commit SHA
    (`ci.yml` job `pin-check` fails on anything else; Dependabot bumps actions
    only after a 7-day cooldown), and every `setup-buildx-action` step runs a
    BuildKit image pinned by tag + digest (`driver-opts`), which Dependabot does

@@ -54,7 +54,8 @@ jobs:
 
   # Every `uses:` must be a local action, `owner/repo[/path]@<full 40-hex
   # commit SHA>` or `docker://…@sha256:<digest>`; tags, branches and short
-  # SHAs fail. Commented-out lines are ignored.
+  # SHAs fail. Commented-out lines are ignored; a step written as a flow map
+  # (`{…}`) must put `uses` first, or the check fails closed.
   pin-check:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -64,9 +65,9 @@ jobs:
           persist-credentials: false
       - name: Check that every action is pinned by full commit SHA
         run: |
-          bad=$(grep -rnE '^\s*-?\s*\{?\s*uses:' .github/workflows/ \
-            | grep -vE "uses:\s+[\"']?(\./[^ \"']*|[^ @\"']+@[0-9a-f]{40}|docker://[^ \"']+@sha256:[0-9a-f]{64})[\"']?\}?(\s+#.*)?$") \
-            && { echo "$bad"; echo "::error::unpinned uses: (pin by full commit SHA)"; exit 1; } || true
+          bad=$(grep -rnE '^[^#]*([{ ,]|^)uses:' .github/workflows/ \
+            | grep -vE "^[^:]+:[0-9]+:\s*-?\s*\{?\s*uses:\s+[\"']?(\./[^ \"']*|[^ @\"']+@[0-9a-f]{40}|docker://[^ \"']+@sha256:[0-9a-f]{64})[\"']?\}?(\s+#.*)?$") \
+            && { echo "$bad"; echo "::error::action refs must be pinned by full commit SHA"; exit 1; } || true
 
   # Builds the container image (amd64 only, never pushed) and smoke-tests
   # /api/health, so Dockerfile and base-image bumps fail on the PR instead of
