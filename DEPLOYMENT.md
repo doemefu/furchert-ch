@@ -34,7 +34,7 @@ If a future Next upgrade or a new dependency logs `EROFS`/`EACCES`, add an `empt
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `X-Frame-Options` | `DENY` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
-| `Strict-Transport-Security` | `max-age=31536000` (1 year, apex only — see "HSTS rollout" below) |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` (1 year, apex and every subdomain, no `preload` — see "HSTS rollout" below) |
 | `Content-Security-Policy` (enforced) | `frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://auth.furchert.ch` |
 | `Content-Security-Policy-Report-Only` | `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'` |
 
@@ -54,7 +54,12 @@ POSTs a form that is redirected to the IdP — it needs the IdP origin too. Admi
 forms whose action is a client closure are intercepted by React before hydration
 and replayed afterwards, so `form-action` never sees them.
 
-**HSTS rollout.** This domain never sent `Strict-Transport-Security` before #51 (neither app nor Cloudflare edge). It started at `max-age=86400` (1 day, 2026-09-04) and was raised to `max-age=31536000` (1 year) on 2026-11-03 after two months without HTTPS-access problems (#42). `includeSubDomains`/`preload` are deliberately omitted — several sibling homelab services share this apex (`auth`/`device`/`club`/`n8n`/`grafana.furchert.ch`, see the parent `CLAUDE.md`) and are separate repos this app has no mandate to declare HSTS-safe for, and this app cannot vouch that every name under the apex is HTTPS-only. Rollback: every STS header a returning browser receives replaces its stored `max-age`, so serving `max-age=0` (or a shorter value) shortens the policy for every visitor who comes back; only visitors who never return keep the old window. The Cloudflare edge must not add its own HSTS header (exactly one `strict-transport-security` line in the verify step below).
+**HSTS rollout.** This domain never sent `Strict-Transport-Security` before #51 (neither app nor Cloudflare edge). It started at `max-age=86400` (1 day, 2026-09-04) and was raised to `max-age=31536000` (1 year) on 2026-11-03 after two months without HTTPS-access problems (#42), apex only. Since #200 the value adds `includeSubDomains` (still no `preload`): a browser that has visited the apex refuses plain HTTP for every `*.furchert.ch` name for a year, whether or not it has visited that name.
+
+- **Pre-check (owner, before this change is deployed).** List every DNS record of the zone in the Cloudflare dashboard and confirm that each name is proxied and served over HTTPS only: no DNS-only record pointing at a home or LAN address, no mail or autoconfig host serving HTTP, and no router or split-horizon override that maps a `*.furchert.ch` name to a LAN `http://` service (Home Assistant, for example, is reached by node IP, not by a `furchert.ch` name). The apex header alone pins every subdomain for apex visitors, so this check comes before the app change, not only before the zone setting below. Two-level names such as `x.club.furchert.ch` already fail TLS under Universal SSL, so HSTS breaks nothing new there.
+- **Order.** (A) this app header first; (B) the Cloudflare zone setting (SSL/TLS → Edge Certificates → HSTS: 12 months, include subdomains, no preload) only after A is live.
+- **More than one STS line is fine if the values agree.** Once B is on, the edge may emit its own header next to the app's on the apex (whether Cloudflare replaces or appends an origin header is not documented), and auth-service very likely already sends Spring Security's default `max-age=31536000 ; includeSubDomains` on `auth.furchert.ch`. Browsers use the first header, so accept one line or several semantically identical lines (one year, `includeSubDomains`, no `preload`), and record which layer emits on which host. Two lines with different values are a defect.
+- **Rollback.** Every STS header a returning browser receives replaces its stored policy, including the `includeSubDomains` flag. So the lever is the apex header, not the zone setting: first revert the app header to `max-age=31536000` without `includeSubDomains` (or serve `max-age=0` to drop the policy entirely), then turn B off. Turning B off alone stops the edge header but leaves the subdomain pin cached in every browser that already received it, for up to a year; only visitors who never return keep the old window either way.
 
 **CSP graduation gate.** Since 2026-11-03 (#42) the directives that do not depend on inline scripts or styles (`frame-ancestors`, `object-src`, `base-uri`, `form-action`) are enforced. There is no `report-uri`/`report-to` collector yet, so a violation of the enforced part (e.g. a future cross-origin form target) only shows in the visiting browser's DevTools console — accepted until the collector decision below. `default-src`/`script-src`/`style-src`/`img-src`/`font-src`/`connect-src` stay Report-Only: enforcing them needs an owner decision on #42 (nonces vs. hashes vs. keeping `'unsafe-inline'`, plus a report collector). To graduate them:
 1. Open each main public route and a signed-in `/dashboard` load in a real browser.
@@ -399,7 +404,8 @@ delete it. A USER account sees "no access".
 curl -sI https://furchert.ch                  # bare `/` — proxy locale redirect; should carry the headers too
 curl -sI https://furchert.ch/de               # rendered page — all 7 headers from "Security headers" above
 curl -sI https://furchert.ch/api/health       # API route — all 7 headers (the case that justified next.config.js over proxy.ts)
-curl -sI https://furchert.ch/de | grep -ci strict-transport-security   # 1 (2 = Cloudflare HSTS turned on too)
+curl -sI https://furchert.ch/de | grep -i strict-transport-security    # every line: max-age=31536000; includeSubDomains (an identical second line from the edge is fine)
+curl -sI https://auth.furchert.ch/.well-known/openid-configuration | grep -i strict-transport-security   # informational, not a gate: auth-service's own header, if any (record it)
 curl -sI https://furchert.ch/de | grep -ci x-powered-by                # 0
 ```
 

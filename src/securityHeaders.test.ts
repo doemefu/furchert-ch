@@ -24,9 +24,9 @@ describe('security headers (next.config.mjs)', () => {
     expect(h.get('Permissions-Policy')).toBe('camera=(), microphone=(), geolocation=()');
   });
 
-  it('sends HSTS for one year, apex only (no includeSubDomains, no preload)', async () => {
+  it('sends HSTS for one year including subdomains, without preload (#200)', async () => {
     const h = await headerMap();
-    expect(h.get('Strict-Transport-Security')).toBe('max-age=31536000');
+    expect(h.get('Strict-Transport-Security')).toBe('max-age=31536000; includeSubDomains');
   });
 
   it('enforces only the directives that do not depend on inline scripts or styles', async () => {

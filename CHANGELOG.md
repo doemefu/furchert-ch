@@ -256,6 +256,12 @@ All notable changes per milestone. Newest first.
 
 ### Security
 
+- **HSTS covers subdomains** (#200): `Strict-Transport-Security` is now
+  `max-age=31536000; includeSubDomains` (still no `preload`), so a browser
+  that has visited the apex uses HTTPS for every `*.furchert.ch` name.
+  Deploy only after the owner's zone DNS-record check (`DEPLOYMENT.md`
+  "HSTS rollout"); the Cloudflare zone HSTS setting follows once this is
+  live. Rollback: the app header without `includeSubDomains`.
 - **CI supply-chain hardening** (security review follow-up,
   doemefu/homelab-device-service#126): a new `ci.yml` job `pin-check` fails
   unless every `uses:` is a local action, a full commit SHA or a
