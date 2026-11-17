@@ -56,7 +56,7 @@ export function checkEmail(v: string): string | null {
   return v.length <= 100 && EMAIL.test(v) ? null : 'email';
 }
 export function checkPassword(v: string): string | null {
-  // auth-service policy (#150): 15 to 72 (bytes there; characters here, the server re-checks).
+  // auth-service policy (doemefu/homelab-auth-service#150): 15 to 72 (bytes there; characters here, the server re-checks).
   return v.length >= 15 && v.length <= 72 ? null : 'password';
 }
 export function checkClientId(v: string): string | null {

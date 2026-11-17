@@ -29,6 +29,10 @@ describe('parseCreateUser', () => {
     if (!r.ok) expect(Object.keys(r.fieldErrors).sort()).toEqual(['email', 'password', 'role', 'username']);
   });
 
+  it('rejects a password shorter than 15 characters', () => {
+    expect(parseCreateUser(fd({ username: 'alice', email: 'a@x.ch', password: 'x'.repeat(14), role: 'USER' })).ok).toBe(false);
+  });
+
   it('enforces the 72-character bcrypt password limit', () => {
     const r = parseCreateUser(fd({ username: 'alice', email: 'a@x.ch', password: 'x'.repeat(73), role: 'USER' }));
     expect(r.ok).toBe(false);
