@@ -56,7 +56,8 @@ export function checkEmail(v: string): string | null {
   return v.length <= 100 && EMAIL.test(v) ? null : 'email';
 }
 export function checkPassword(v: string): string | null {
-  return v.length >= 8 && v.length <= 72 ? null : 'password';
+  // auth-service policy (#150): 15 to 72 (bytes there; characters here, the server re-checks).
+  return v.length >= 15 && v.length <= 72 ? null : 'password';
 }
 export function checkClientId(v: string): string | null {
   return CLIENT_ID.test(v) ? null : 'clientId';

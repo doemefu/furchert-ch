@@ -384,7 +384,7 @@ function UserDrawer({
           {isNew && (
             <label>
               <MonoLabel mb=".3rem">{t('password')}</MonoLabel>
-              <input name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" style={fieldStyle} {...inputAria(saveState, 'password')} />
+              <input name="password" type="password" required minLength={15} maxLength={72} autoComplete="new-password" style={fieldStyle} {...inputAria(saveState, 'password')} />
               <p style={hintStyle}>{t('passwordHint')}</p>
               <FieldError state={saveState} field="password" />
             </label>
@@ -405,7 +405,7 @@ function UserDrawer({
                     name="newPassword"
                     type="password"
                     required
-                    minLength={8}
+                    minLength={15}
                     maxLength={72}
                     placeholder={t('newPassword')}
                     aria-label={t('newPassword')}

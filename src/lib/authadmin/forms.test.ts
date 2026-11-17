@@ -18,7 +18,7 @@ describe('parseId', () => {
 describe('parseCreateUser', () => {
   it('accepts a valid user and trims username/email but not the password', () => {
     // Synthetic value built at runtime (no credential-looking literal for secret scanners).
-    const padded = ` ${'x'.repeat(8)} `;
+    const padded = ` ${'x'.repeat(14)} `;
     const r = parseCreateUser(fd({ username: ' alice ', email: ' a@x.ch ', password: padded, role: 'ADMIN' }));
     expect(r).toEqual({ ok: true, value: { username: 'alice', email: 'a@x.ch', password: padded, role: 'ADMIN' } });
   });
@@ -47,7 +47,8 @@ describe('parseUpdateUser', () => {
 
 describe('parseResetPassword', () => {
   it('validates the new password length', () => {
-    expect(parseResetPassword(fd({ id: '1', newPassword: 'longenough' })).ok).toBe(true);
+    expect(parseResetPassword(fd({ id: '1', newPassword: 'x'.repeat(15) })).ok).toBe(true);
+    expect(parseResetPassword(fd({ id: '1', newPassword: 'x'.repeat(14) })).ok).toBe(false);
     expect(parseResetPassword(fd({ id: '1', newPassword: 'short' })).ok).toBe(false);
   });
 });
