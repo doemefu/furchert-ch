@@ -26,7 +26,7 @@ const fd = (o: Record<string, string>) => {
   for (const [k, v] of Object.entries(o)) f.set(k, v);
   return f;
 };
-const validUser = { username: 'alice', email: 'a@x.ch', password: 'x'.repeat(10), role: 'USER' };
+const validUser = { username: 'alice', email: 'a@x.ch', password: 'x'.repeat(15), role: 'USER' };
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -157,8 +157,8 @@ describe('mutations', () => {
 
   it('does not revalidate after a password reset', async () => {
     client.resetPassword.mockResolvedValue({ ok: true, data: null });
-    expect(await actions.resetPasswordAction(IDLE, fd({ id: '2', newPassword: 'longenough' }))).toEqual({ status: 'ok' });
-    expect(client.resetPassword).toHaveBeenCalledWith('admin-token', 2, 'longenough');
+    expect(await actions.resetPasswordAction(IDLE, fd({ id: '2', newPassword: 'x'.repeat(15) }))).toEqual({ status: 'ok' });
+    expect(client.resetPassword).toHaveBeenCalledWith('admin-token', 2, 'x'.repeat(15));
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 });
