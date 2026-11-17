@@ -18,7 +18,7 @@ describe('parseId', () => {
 describe('parseCreateUser', () => {
   it('accepts a valid user and trims username/email but not the password', () => {
     // Synthetic value built at runtime (no credential-looking literal for secret scanners).
-    const padded = ` ${'x'.repeat(8)} `;
+    const padded = ` ${'x'.repeat(14)} `;
     const r = parseCreateUser(fd({ username: ' alice ', email: ' a@x.ch ', password: padded, role: 'ADMIN' }));
     expect(r).toEqual({ ok: true, value: { username: 'alice', email: 'a@x.ch', password: padded, role: 'ADMIN' } });
   });
@@ -27,6 +27,10 @@ describe('parseCreateUser', () => {
     const r = parseCreateUser(fd({ username: 'ab', email: 'nope', password: 'short', role: 'ROOT' }));
     expect(r.ok).toBe(false);
     if (!r.ok) expect(Object.keys(r.fieldErrors).sort()).toEqual(['email', 'password', 'role', 'username']);
+  });
+
+  it('rejects a password shorter than 15 characters', () => {
+    expect(parseCreateUser(fd({ username: 'alice', email: 'a@x.ch', password: 'x'.repeat(14), role: 'USER' })).ok).toBe(false);
   });
 
   it('enforces the 72-character bcrypt password limit', () => {
@@ -47,7 +51,8 @@ describe('parseUpdateUser', () => {
 
 describe('parseResetPassword', () => {
   it('validates the new password length', () => {
-    expect(parseResetPassword(fd({ id: '1', newPassword: 'longenough' })).ok).toBe(true);
+    expect(parseResetPassword(fd({ id: '1', newPassword: 'x'.repeat(15) })).ok).toBe(true);
+    expect(parseResetPassword(fd({ id: '1', newPassword: 'x'.repeat(14) })).ok).toBe(false);
     expect(parseResetPassword(fd({ id: '1', newPassword: 'short' })).ok).toBe(false);
   });
 });
