@@ -46,14 +46,14 @@ export const IT_CARDS: ItCard[] = [
         title: 'Application Development',
         org: 'UBS',
         since: 'Applikationsentwickler EFZ',
-        text: 'COBOL-Batch-Systeme im Core Cash Accounting modernisiert. IBM Mainframe, JCL, DB2. Cloud-Infrastruktur mit Ansible automatisiert.',
+        text: 'COBOL-Batch-Systeme im Core Cash Accounting modernisiert und viel in COBOL programmiert. IBM Mainframe, JCL, DB2. Cloud-Infrastruktur mit Ansible automatisiert.',
         learning: '"Produktionssysteme einer Grossbank verzeihen keine Fehler. Hier habe ich gelernt, was \'business-critical\' wirklich bedeutet."',
       },
       en: {
         title: 'Application Development',
         org: 'UBS',
         since: 'Application Developer (EFZ)',
-        text: 'Modernised COBOL batch systems in Core Cash Accounting. IBM mainframe, JCL, DB2. Automated cloud infrastructure with Ansible.',
+        text: 'Modernised COBOL batch systems in Core Cash Accounting and did a lot of COBOL batch programming. IBM mainframe, JCL, DB2. Automated cloud infrastructure with Ansible.',
         learning: '"The production systems of a major bank forgive no mistakes. This is where I learned what \'business-critical\' really means."',
       },
     },
@@ -63,14 +63,14 @@ export const IT_CARDS: ItCard[] = [
     tags: ['ERP', 'SAP', 'IT Audit', 'ITGC', 'Compliance'],
     i18n: {
       de: {
-        title: 'IT Audit',
+        title: 'Praktikum IT-Audit',
         org: 'KPMG',
         since: 'Assurance Technology Group',
         text: 'IT-Audits von ERP-Systemen. Zugriffs- und Änderungsmanagement-Kontrollen geprüft. Schnittstelle zwischen IT und Finanzprozessen.',
         learning: '"IT-Systeme aus der Aussenperspektive zu prüfen hat mir gezeigt, wie Unternehmen wirklich mit Technologie arbeiten und wo sie scheitern."',
       },
       en: {
-        title: 'IT Audit',
+        title: 'IT Audit Intern',
         org: 'KPMG',
         since: 'Assurance Technology Group',
         text: 'IT audits of ERP systems. Reviewed access and change-management controls. The interface between IT and financial processes.',

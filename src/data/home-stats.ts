@@ -19,8 +19,8 @@ export const HOME_STATS: HomeStat[] = [
   {
     value: "~1'500",
     i18n: {
-      de: { unit: 'Athleten', label: 'Chef Sicherheit, Regatta Schmerikon 2026' },
-      en: { unit: 'Athletes', label: 'Head of safety, Schmerikon regatta 2026' },
+      de: { unit: 'Athleten', label: 'Chef Sicherheit, Regatta Schmerikon, seit 2023' },
+      en: { unit: 'Athletes', label: 'Head of safety, Schmerikon regatta, since 2023' },
     },
   },
   {

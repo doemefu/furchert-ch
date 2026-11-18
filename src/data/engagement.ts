@@ -8,5 +8,5 @@ export const ENGAGEMENT: EngagementItem[] = [
   { title: 'Präsident', org: 'Ruderclub Rapperswil-Jona · rund 200 Mitglieder' },
   { title: 'Feuerwehrmann', org: 'Freiwillige Feuerwehr' },
   { title: 'J+S Sportcoach', org: 'Jugend + Sport · Bundesamt für Sport' },
-  { title: 'Chef Sicherheit', org: 'Nationale Ruderregatta Schmerikon 2026' },
+  { title: 'Chef Sicherheit', org: 'Nationale Ruderregatta Schmerikon · seit 2023' },
 ];

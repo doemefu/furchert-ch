@@ -26,10 +26,11 @@ export const ROWING_CARDS: RowingCard[] = [
       de: {
         title: 'Präsident & Vorstand',
         org: 'Ruderclub Rapperswil-Jona',
-        since: 'seit 2025',
+        since: 'seit 2024',
         text: 'Führung eines Vereins mit rund 200 Mitgliedern. Verantwortlich für Vorstand, Budget, strategische Ausrichtung.',
         items: [
-          'Leitung des WSZ 2.0 Infrastrukturprojekts (CHF ~5M, Stadt + externe Partner)',
+          'Erstmals in der Vereinsgeschichte einen Cheftrainer angestellt und führe diesen',
+          'Verantwortung für das WSZ 2.0 Infrastrukturprojekt (aktueller Kostenvoranschlag rund CHF 5 Mio., mit Stadt und externen Partnern)',
           'Stakeholder-Prozess mit Stadt und Partnern koordiniert',
           'Digitalisierung der Vereinskommunikation angestossen (→ Club Assist)',
         ],
@@ -38,10 +39,11 @@ export const ROWING_CARDS: RowingCard[] = [
       en: {
         title: 'President & Board',
         org: 'Rapperswil-Jona Rowing Club',
-        since: 'since 2025',
+        since: 'since 2024',
         text: 'Leading a club with around 200 members. Responsible for the board, budget and strategic direction.',
         items: [
-          'Leading the WSZ 2.0 infrastructure project (CHF ~5M, city + external partners)',
+          'Hired a head coach for the first time in the club\'s history and lead him',
+          'Responsible for the WSZ 2.0 infrastructure project (current cost estimate about CHF 5 million, with the city and external partners)',
           'Coordinated the stakeholder process with the city and partners',
           'Initiated the digitalisation of club communication (→ Club Assist)',
         ],
@@ -56,15 +58,15 @@ export const ROWING_CARDS: RowingCard[] = [
       de: {
         title: 'Chef Sicherheit: Nationale Regatta',
         org: 'Ruderregatta Schmerikon',
-        since: 'Mai 2026',
-        text: "Chef Sicherheit im OK der nationalen Ruderregatta mit rund 1'500 Athleten: verantwortlich für das Sicherheitskonzept (nautisch + Land), Permits, Koordination mit Behörden und Rettungsdiensten.",
+        since: 'seit 2023',
+        text: "Chef Sicherheit im OK der nationalen Ruderregatta (jeweils im Mai) mit rund 1'500 Athleten: verantwortlich für das Sicherheitskonzept (nautisch + Land), Permits, Koordination mit Behörden und Rettungsdiensten.",
         learning: '"1\'500 Athleten auf dem Wasser sicher betreuen verlangt Planung, Redundanz und die Fähigkeit, unter Druck Entscheidungen zu treffen."',
       },
       en: {
         title: 'Safety Chief: National Regatta',
         org: 'Schmerikon Rowing Regatta',
-        since: 'May 2026',
-        text: 'Head of safety on the organising committee of the national rowing regatta with around 1,500 athletes: responsible for the safety concept (nautical + land), permits, and coordination with authorities and emergency services.',
+        since: 'since 2023',
+        text: 'Head of safety on the organising committee of the national rowing regatta (held every May) with around 1,500 athletes: responsible for the safety concept (nautical + land), permits, and coordination with authorities and emergency services.',
         learning: '"Keeping 1,500 athletes safe on the water demands planning, redundancy and the ability to make decisions under pressure."',
       },
     },
