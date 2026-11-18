@@ -117,11 +117,9 @@ describe('public copy', () => {
     for (const m of [de, en]) expect(JSON.stringify(publicMessages(m))).not.toContain('\u2014');
   });
 
-  // Owner (2026-11-03): the English messages say "Zurich" ("around Zurich",
-  // "the Zurich area"); only German names the Zürcher Oberland. The English
-  // /about data (bio, timeline) names the region like German ("Zurich
-  // Oberland") and never says "Zurich area" (CV-claims review, 2026-11-19).
-  it('names the region in the English messages and page data consistently', () => {
+  // Owner (2026-11-03): English pages say "Zurich" ("around Zurich", "the
+  // Zurich area"); only German names the Zürcher Oberland.
+  it('never names the Oberland in English', () => {
     const englishData: string[] = [];
     const collect = (value: unknown, inEnglish: boolean): void => {
       if (typeof value === 'string') {
@@ -134,7 +132,7 @@ describe('public copy', () => {
     };
     collect(data, false);
     expect(JSON.stringify(publicMessages(en))).not.toMatch(/Oberland/);
-    for (const text of englishData) expect(text).not.toMatch(/Zurich area/);
+    for (const text of englishData) expect(text).not.toMatch(/Oberland/);
   });
 
   it('has no em dash in the page data', () => {
