@@ -26,7 +26,7 @@ export const ROWING_CARDS: RowingCard[] = [
       de: {
         title: 'Präsident & Vorstand',
         org: 'Ruderclub Rapperswil-Jona',
-        since: 'seit 2025',
+        since: 'seit 2024',
         text: 'Führung eines Vereins mit rund 200 Mitgliedern. Verantwortlich für Vorstand, Budget, strategische Ausrichtung.',
         items: [
           'Erstmals in der Vereinsgeschichte einen Cheftrainer angestellt und führe diesen',
@@ -39,7 +39,7 @@ export const ROWING_CARDS: RowingCard[] = [
       en: {
         title: 'President & Board',
         org: 'Rapperswil-Jona Rowing Club',
-        since: 'since 2025',
+        since: 'since 2024',
         text: 'Leading a club with around 200 members. Responsible for the board, budget and strategic direction.',
         items: [
           'Hired a head coach for the first time in the club\'s history and lead him',

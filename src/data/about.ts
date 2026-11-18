@@ -43,17 +43,10 @@ export const TIMELINE: TimelineRow[] = [
     },
   },
   {
-    year: '2025',
-    i18n: {
-      de: { items: ['Präsident Ruderclub Rapperswil-Jona'] },
-      en: { items: ['President, Rapperswil-Jona Rowing Club'] },
-    },
-  },
-  {
     year: '2024',
     i18n: {
-      de: { items: ['Praktikum IT-Audit, KPMG Assurance Technology Group'] },
-      en: { items: ['IT Audit Intern, KPMG Assurance Technology Group'] },
+      de: { items: ['Präsident Ruderclub Rapperswil-Jona', 'Praktikum IT-Audit, KPMG Assurance Technology Group'] },
+      en: { items: ['President, Rapperswil-Jona Rowing Club', 'IT Audit Intern, KPMG Assurance Technology Group'] },
     },
   },
   {
