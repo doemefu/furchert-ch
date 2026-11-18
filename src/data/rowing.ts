@@ -29,7 +29,7 @@ export const ROWING_CARDS: RowingCard[] = [
         since: 'seit 2025',
         text: 'Führung eines Vereins mit rund 200 Mitgliedern. Verantwortlich für Vorstand, Budget, strategische Ausrichtung.',
         items: [
-          'Erstmals in der Vereinsgeschichte einen Cheftrainer angestellt und führe ihn',
+          'Erstmals in der Vereinsgeschichte einen Cheftrainer angestellt und führe diesen',
           'Verantwortung für das WSZ 2.0 Infrastrukturprojekt (aktueller Kostenvoranschlag rund CHF 5 Mio., mit Stadt und externen Partnern)',
           'Stakeholder-Prozess mit Stadt und Partnern koordiniert',
           'Digitalisierung der Vereinskommunikation angestossen (→ Club Assist)',
