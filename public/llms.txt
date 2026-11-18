@@ -6,8 +6,8 @@
 - Examples of tools: Microsoft 365 Copilot for email and files, and voice-to-report apps for construction sites such as Benetics. Every example on the site is invented and labelled as such.
 - Not offered: own software products, licence resale, accounting and bookkeeping.
 - Data protection: the firm's data is kept in its own accounts with the tool vendors, not on his servers. According to Microsoft, Microsoft 365 Copilot processes prompts within the EU Data Boundary, which includes Switzerland; the boundary does not apply to web search queries sent to Bing when web search is on. Processing only in Switzerland is not assured. Before the start, a data sheet states which tool processes which data where, with all exceptions.
-- Background: trained as an application developer (EFZ) at UBS; IT audit internship at KPMG; studies Software Systems (BSc) at the University of Zurich.
-- Volunteer roles: president of the Ruderclub Rapperswil-Jona (about 200 members), safety chief of the national rowing regatta in Schmerikon, firefighter, J+S coach.
+- Background: trained as an application developer (EFZ) at UBS; IT audit internship at KPMG; studies Software Systems (BSc expected 2027) at the University of Zurich.
+- Volunteer roles: president of the Ruderclub Rapperswil-Jona (about 200 members; first head coach hired under his lead; building project with a cost estimate of about 5 million Swiss francs), safety chief of the national rowing regatta in Schmerikon (held every May, since 2023), firefighter, J+S coach.
 - German pages are under /de, English pages under /en.
 
 ## Pages
