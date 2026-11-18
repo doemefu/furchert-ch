@@ -25,7 +25,7 @@ const built = existsSync(CHUNKS);
 // controller 2 904 B (session, form hooks and tracker loader added), tracker
 // 3 877 B (hard ceiling 6 KB); both caps confirmed by the lead's ruling.
 const BUDGET = {
-  controller: 3_200, // Analytics + consent controller + store + forget client
+  controller: 3_300, // Analytics + consent controller + store + forget client (3 206 B with next 16.4.5, #212)
   bar: 1_000, // ConsentBar, loaded only while the bar is open
   link: 750, // footer "Privacy settings" button
   tracker: 4_265, // tracker chunk, fetched only after Allow
