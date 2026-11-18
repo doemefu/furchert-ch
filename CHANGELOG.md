@@ -233,6 +233,14 @@ All notable changes per milestone. Newest first.
 
 ### Fixed
 
+- **CV claim residues after #211**: the /about stat "B.Sc. 2027" is now "UZH"
+  with "Bachelor Software Systems, expected 2027"; "BSc" is gone from the home
+  and /it cards; the 2026 timeline says "Aufbau" / "Building up" instead of
+  "Freelancer" (not registered as self-employed); `llms.txt` and the
+  /automation about text say "Software Systems", not "computer science" /
+  "Informatik"; the English /about copy says "Zurich Oberland" instead of
+  "Zurich area". Lastmod bumped for `/`, `/about`, `/it`, `/automation`.
+
 - **Copilot data-boundary footnote and FAQ** (#165): /automation now names all
   three documented exceptions to the EU Data Boundary (Bing web search,
   Anthropic models if enabled, flex routing at peak load).
