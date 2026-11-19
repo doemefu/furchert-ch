@@ -488,7 +488,7 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 /* ── HOME AREAS DIRECTORY AND CLOSING BAND (redesign PR 10) ──
    Ruled rows, the offer largest; the row link says where it leads, no arrow.
    Band: one flat forest field per page, text white / --on-band-2. */
-.dir-wrap { padding-top: var(--section-y); padding-bottom: var(--section-y); }
+.dir-wrap { padding-bottom: var(--section-y); }
 .dir-head { padding-top: var(--space-3); border-top: 2px solid var(--rule); font-size: var(--text-h2); font-stretch: var(--stretch-heading); font-weight: var(--weight-heading); line-height: 1.05; color: var(--text-1); }
 .dir-rows { margin-top: var(--space-4); }
 .dir-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); padding: var(--space-4) 0; border-top: 1px solid var(--hairline-strong); color: var(--text-1); }
@@ -496,8 +496,12 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 /* The title link covers the whole row (tap area); its name is the title, the destination label is its description. */
 .dir-title a { color: inherit; text-decoration: none; }
 .dir-title a::after { content: ""; position: absolute; inset: 0; }
+.dir-title a:hover { opacity: 1; }
+/* Keyboard focus frames the whole row; the link's own ring is dropped then. */
+.dir-row:has(a:focus-visible) { outline: 2px solid var(--text-1); outline-offset: 2px; }
+.dir-title a:focus-visible { outline: none; }
 .dir-text { max-width: 60ch; font-size: var(--text-16); line-height: 1.45; color: var(--text-2); }
-.dir-go { justify-self: start; font-weight: 500; color: var(--accent-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+.dir-go { margin-top: var(--space-1); justify-self: start; font-weight: 500; color: var(--accent-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
 .dir-row:hover .dir-go { color: var(--accent); }
 .dir-row-main .dir-title { font-size: 2.125rem; }
 .dir-row-main .dir-text { font-size: var(--text-18); color: var(--text-1); }

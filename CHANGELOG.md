@@ -31,7 +31,7 @@ All notable changes per milestone. Newest first.
   `about.eng`; added: `teasers.<key>.go`, `cta.email`. Each area is one row
   with the link on the title (stretched over the row, destination label as
   its description). At 390 px the page shrinks from
-  4873 to 3215 px (DE).
+  4873 to 3075 px (DE).
 
 - **Home hero as a form head with the name** (redesign PR 9/11): the hero opens
   with the `FieldHead` Wer / Was / Wo (plus Antwort from 64rem): «Dominic
