@@ -1,7 +1,7 @@
 import { Archivo, DM_Mono } from 'next/font/google';
 
 // Archivo, variable (weight omitted = 100-900) with the width axis: body text
-// renders at 100%, display headings use font-stretch 78-80% (see globals.css).
+// renders at 100%, display headings will use --stretch-display / --stretch-heading (see globals.css).
 // Self-hosted at build time; next/font adds a metric-matched "Archivo Fallback".
 export const archivo = Archivo({
   subsets: ['latin'],

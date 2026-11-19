@@ -14,7 +14,7 @@ paths:
 - Co-locate component-only types; shared types in `src/types/`.
 - Static content as typed modules in `src/data/`; user-facing strings via next-intl (`src/i18n/messages/{de,en}.json`) — no hardcoded UI copy in components.
 - `src/styles/globals.css` is the single token source; reference CSS variables, never literal colours or font names. New code uses the redesign tokens (`var(--surface-page)`, `var(--text-1)`, `var(--accent)`, `var(--radius)`, `var(--font-sans)`, `--stretch-*`/`--weight-*`); the legacy ETHON tokens (`--blue-base`, `--n-60`, `--fs-*`) remain only until redesign PRs 2-11 migrate the components. Do not introduce a UI kit or a second styling system.
-- Typeface: Archivo only (`--font-sans`, body `font-stretch: 100%`, headings via `--stretch-display` / `--stretch-heading`); never a common AI-default face, and keep the browser fallbacks in the stack. Numbers use `font-variant-numeric: tabular-nums`.
+- Typeface: Archivo only (DM Mono remains on unmigrated spots until PR 11; `--font-sans`, body `font-stretch: 100%`, headings via `--stretch-display` / `--stretch-heading`); never a common AI-default face, and keep the browser fallbacks in the stack. Figures in tables, KPIs and prices use tabular-nums (target).
 - Public pages, once migrated (targets of PRs 2-11): sentence case, no all-caps labels, no mono font, no arrows on buttons or links, radius 4px, `.border-x` frame only from 64rem. Fix craft defects without asking; propose bigger direction changes first.
 - Accessibility: real `<button>`/`<a>`, labelled inputs, focus states (already in globals.css).
 

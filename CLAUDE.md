@@ -42,9 +42,10 @@
 
 ## Design rules (redesign «Formular», owner decision 2026-11-19)
 
-Spec: `business/06-website/design-system/vorschlag-20261119.md` § «Entscheid 19.11.2026». Implemented per PR; rules marked (target) are not yet in the code.
+Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, not in git) § «Entscheid 19.11.2026». Implemented per PR; rules marked (target) are not yet in the code.
 - Tokens: the new tokens in `globals.css` (`--surface-*`, `--text-1..3`, `--accent`, `--band`, `--radius: 4px`, ...) are the target; ETHON tokens are legacy until PR 11.
 - Font: Archivo only, body at `font-stretch: 100%`, display/headings via `--stretch-display` / `--stretch-heading`. Never a generic AI default font (Inter, Geist, DM Sans, Space Grotesk, serif display faces); the stack keeps browser fallbacks (`Helvetica Neue`, Arial, `system-ui`).
+- Figures in tables, KPIs and prices use tabular-nums (target).
 - Sentence case, no all-caps labels (target).
 - No mono font on public pages (target; DM Mono is removed in PR 11).
 - No arrows on buttons or links (target, PR 2).
@@ -85,7 +86,7 @@ src/*.env.ts             # lazy env accessors (auth, metrics, netmon, authadmin,
 src/data/                # typed static data (projects, cluster nodes, apps, home stats, ...)
 src/i18n/                # messages/{de,en}.json + next-intl config (navigation.ts, request.ts, routing.ts)
 src/proxy.ts             # next-intl locale routing (Next 16 proxy convention, formerly middleware.ts)
-src/styles/globals.css   # ETHON tokens
+src/styles/globals.css   # redesign + legacy ETHON tokens
 src/types/css.d.ts       # TS 6 CSS-module typing fix (TS2882)
 k8s/                     # deployment.yaml, kustomization.yaml (no separate service.yaml)
 Dockerfile
@@ -101,7 +102,7 @@ Process comes from the `homelab-workflow` plugin skills: `/homelab-workflow:star
 
 | Rule file | Covers |
 |-----------|--------|
-| `code-style-conventions.md` | TypeScript/React/Next, ETHON tokens, secrets |
+| `code-style-conventions.md` | TypeScript/React/Next, design tokens and rules, secrets |
 | `documentation-files.md` | README, OVERVIEW, INTERFACES, DEPLOYMENT, CONTRIBUTING, CHANGELOG |
 
 Review: request Copilot first; CodeRabbit is not installed here. If Copilot quota is exhausted, use `homelab-workflow:reviewer` plus `/homelab-workflow:review-gate` and state in a PR comment which path was used. Use context7 for current Next.js / next-intl / Auth.js docs when planning. Each milestone ends buildable and shippable.
