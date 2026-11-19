@@ -46,11 +46,6 @@
     "projects": { "title": "Software-Projekte", "text": "Eigener Login-Dienst, IoT-Plattform vom ESP32 bis zum Dashboard, KI-Assistent für den Ruderclub. Alles auf dem eigenen k3s-Cluster.", "go": "Zu den Projekten" },
     "automation": { "title": "KI für KMU", "text": "Rapport einsprechen statt tippen, Offerte aus der Anfrage: ein Ablauf aus Ihrem Alltag, eingerichtet und nach 6 Wochen gemessen.", "go": "Beispiele und Ablauf" }
   },
-  "about": {
-    "label": "Über mich",
-    "exp": "Erfahrung",
-    "eng": "Engagement & Rollen"
-  },
   "cta": {
     "together": "Ein Betrieb oder ein Projekt?",
     "togsub": "Betriebe: 30 Minuten Live-Demo, kostenlos, bei Ihnen oder per Video. Für Engineering-Stellen und Tech-Projekte von Infrastruktur bis Full-Stack: Schreiben Sie mir.",

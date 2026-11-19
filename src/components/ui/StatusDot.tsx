@@ -22,20 +22,17 @@ export function StatusDot({ status, label }: { status: DotStatus; label?: string
 }
 
 // LED plus the status text. The LED is decorative; the text names the status.
-// `onDark` is for dark bands: the label uses --n-20 for every status; the LED keeps its dot colour.
 export function StatusLabel({
   status,
-  onDark = false,
   children,
 }: {
   status: DotStatus;
-  onDark?: boolean;
   children: ReactNode;
 }) {
   return (
     <span className="led-label">
       <StatusDot status={status} />
-      <span className="led-text" data-status={status} data-on-dark={onDark ? '' : undefined}>
+      <span className="led-text" data-status={status}>
         {children}
       </span>
     </span>

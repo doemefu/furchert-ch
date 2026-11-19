@@ -21,11 +21,16 @@ All notable changes per milestone. Newest first.
   (`teasers.<key>.go`). `CTAStrip` is the flat forest band (`--band`, `.on-dark`)
   with «Live zeigen lassen» (inverse) and «E-Mail schreiben» (outline). Removed
   from the home page: `HomeStatusLine` (the live status stays on
-  `/projects/homelab`), the experience/engagement grid and the stat row (facts
-  already in the area text; `experience`, `engagement`, `home-stats` data
-  deleted), the icons, «MEHR» and the mono/uppercase bits. Messages removed:
-  `teasers.more`, `cta.examples`, `pages.home.areas`, `pages.home.status.*`;
-  added: `teasers.<key>.go`, `cta.email`. At 390 px the page shrinks from
+  `/projects/homelab`), the experience/engagement grid and the stat row (their
+  facts stay on /about, /rowing and /it and in `llms.txt`; the `experience`,
+  `engagement` and `home-stats` data modules are deleted), the icons, «MEHR»
+  and the mono/uppercase bits. Dead code from the status line is gone too:
+  `countLab` (with its tests) and the `onDark` prop of `StatusLabel`.
+  Messages removed: `teasers.more`, `cta.examples`, `pages.home.areas`,
+  `pages.home.status.*`, and the unused `about.label`, `about.exp`,
+  `about.eng`; added: `teasers.<key>.go`, `cta.email`. Each area is one row
+  with the link on the title (stretched over the row, destination label as
+  its description). At 390 px the page shrinks from
   4873 to 3215 px (DE).
 
 - **Home hero as a form head with the name** (redesign PR 9/11): the hero opens

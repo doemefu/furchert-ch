@@ -11,7 +11,7 @@ whole cluster — there is no separate admin app.
 ### Public (real)
 | Route | Page |
 |-------|------|
-| `/[locale]` | Home (hero, experience/engagement, teasers, stats, CTA) |
+| `/[locale]` | Home (hero with the example sheet, "Woran ich arbeite" directory, closing band) |
 | `/[locale]/about` | About (bio, facts, timeline, interests) |
 | `/[locale]/it` | IT & Tech |
 | `/[locale]/rowing` | Rowing |

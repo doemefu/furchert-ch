@@ -107,20 +107,25 @@ export default async function HomePage({
       {/* Areas (redesign PR 10): a ruled directory, the offer largest; every link says where it leads. */}
       <section>
         <div className="container border-x">
-          <div style={{ paddingTop: 'var(--section-y)' }}>
+          <div className="dir-wrap">
             <h2 className="dir-head">{t('pages.home.areasTitle')}</h2>
             <div className="dir-rows">
               {teaserKeys.map((key) => (
-                <Link
-                  key={key}
-                  href={`/${key}`}
-                  data-track={trackAttr('link', `home-tile-${key}`)}
-                  className={key === 'automation' ? 'dir-row dir-row-main' : 'dir-row'}
-                >
-                  <h3 className="dir-title">{t(`teasers.${key}.title`)}</h3>
+                <div key={key} className={key === 'automation' ? 'dir-row dir-row-main' : 'dir-row'}>
+                  <h3 className="dir-title">
+                    <Link
+                      href={`/${key}`}
+                      data-track={trackAttr('link', `home-tile-${key}`)}
+                      aria-describedby={`dir-go-${key}`}
+                    >
+                      {t(`teasers.${key}.title`)}
+                    </Link>
+                  </h3>
                   <p className="dir-text">{t(`teasers.${key}.text`)}</p>
-                  <span className="dir-go">{t(`teasers.${key}.go`)}</span>
-                </Link>
+                  <span className="dir-go" id={`dir-go-${key}`}>
+                    {t(`teasers.${key}.go`)}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
