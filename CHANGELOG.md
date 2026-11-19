@@ -4,6 +4,14 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Fixed
+
+- **JSON-LD dates are ISO 8601 date-times** (Search Console warning «Ungültiger
+  Datum/Uhrzeit-Wert für dateModified» on the ProfilePage). `jsonLd.ts` now
+  converts the date-only page dates to `YYYY-MM-DDT00:00:00+01:00` / `+02:00`
+  (Europe/Zurich, via `toIsoDateTime`) at serialization time. `PAGE_LAST_MODIFIED`
+  and the sitemap `lastmod` stay date-only.
+
 ### Changed
 
 - **Header and phone menu rebuilt** (redesign «Formular» PR 3/11): the header

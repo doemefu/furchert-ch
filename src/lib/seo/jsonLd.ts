@@ -43,6 +43,50 @@ export function serializeJsonLd(data: JsonLd): string {
     .replace(/\u2029/g, '\\u2029');
 }
 
+// Google reads `dateModified` and friends as ISO 8601 date-times (ProfilePage
+// docs); a bare date is flagged as invalid. `PAGE_LAST_MODIFIED` stays
+// date-only (sitemap lastmod), so the builders convert at serialization time.
+const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
+const DATE_TIME = /^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d+)?(Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
+
+function isRealDate(y: number, m: number, d: number): boolean {
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+}
+
+// Day of month of the last Sunday of the given month (1-based month).
+function lastSunday(year: number, month: number): number {
+  const last = new Date(Date.UTC(year, month, 0));
+  return last.getUTCDate() - last.getUTCDay();
+}
+
+// Europe/Zurich offset at 00:00 local time of a date (EU rules: CEST from the
+// last Sunday of March 02:00 to the last Sunday of October 03:00). Midnight of
+// the March switch day is still CET, midnight of the October switch day still
+// CEST.
+function zurichOffsetAtMidnight(y: number, m: number, d: number): string {
+  const key = m * 100 + d;
+  const summer = key > 300 + lastSunday(y, 3) && key <= 1000 + lastSunday(y, 10);
+  return summer ? '+02:00' : '+01:00';
+}
+
+// `2026-11-03` becomes `2026-11-03T00:00:00+01:00`; a value that already is a
+// date-time is returned unchanged. Anything else throws.
+export function toIsoDateTime(value: string): string {
+  const dt = DATE_TIME.exec(value);
+  if (dt) {
+    if (!isRealDate(Number(dt[1]), Number(dt[2]), Number(dt[3]))) {
+      throw new Error(`Invalid date-time: ${value}`);
+    }
+    return value;
+  }
+  const m = DATE_ONLY.exec(value);
+  if (!m) throw new Error(`Invalid date or date-time: ${value}`);
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  if (!isRealDate(y, mo, d)) throw new Error(`Invalid date: ${value}`);
+  return `${value}T00:00:00${zurichOffsetAtMidnight(y, mo, d)}`;
+}
+
 export interface PageJsonLdInput {
   locale: Locale;
   /** Canonical absolute URL of the localized page. */
@@ -77,7 +121,7 @@ export function buildHomeJsonLd(input: PageJsonLdInput & { description: string }
         name: input.name,
         description: input.description,
         inLanguage: input.locale,
-        dateModified: input.dateModified,
+        dateModified: toIsoDateTime(input.dateModified),
         isPartOf: { '@id': WEBSITE_ID },
         about: { '@id': PERSON_ID },
       },
@@ -99,7 +143,7 @@ export function buildProfilePageJsonLd(input: PageJsonLdInput): JsonLd {
         url: pageUrl,
         name: input.name,
         inLanguage: input.locale,
-        dateModified: input.dateModified,
+        dateModified: toIsoDateTime(input.dateModified),
         isPartOf: { '@id': WEBSITE_ID },
         mainEntity: ownerNode(),
       },
@@ -147,7 +191,7 @@ export function buildAutomationJsonLd(input: AutomationJsonLdInput): JsonLd {
         name: input.name,
         description: input.description,
         inLanguage: input.locale,
-        dateModified: input.dateModified,
+        dateModified: toIsoDateTime(input.dateModified),
         isPartOf: { '@id': WEBSITE_ID },
         about: { '@id': `${pageUrl}#service` },
         mainEntity: input.faq.map((item) => ({
@@ -193,7 +237,7 @@ export function buildHomelabJsonLd(input: HomelabJsonLdInput): JsonLd {
         name: input.name,
         description: input.description,
         inLanguage: input.locale,
-        dateModified: input.dateModified,
+        dateModified: toIsoDateTime(input.dateModified),
         isPartOf: { '@id': WEBSITE_ID },
         author: personNode(),
       },
