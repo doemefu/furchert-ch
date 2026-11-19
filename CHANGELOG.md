@@ -14,6 +14,25 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Home areas as a ruled directory, forest closing band, no Homelab band**
+  (redesign PR 10/11): the start page is now hero, example sheet, «Woran ich
+  arbeite», closing band, footer. The areas are ruled directory rows (the offer
+  largest) with text links that name their destination and carry no arrow
+  (`teasers.<key>.go`). `CTAStrip` is the flat forest band (`--band`, `.on-dark`)
+  with «Live zeigen lassen» (inverse) and «E-Mail schreiben» (outline). Removed
+  from the home page: `HomeStatusLine` (the live status stays on
+  `/projects/homelab`), the experience/engagement grid and the stat row (their
+  facts stay on /about, /rowing and /it and in `llms.txt`; the `experience`,
+  `engagement` and `home-stats` data modules are deleted), the icons, «MEHR»
+  and the mono/uppercase bits. Dead code from the status line is gone too:
+  `countLab` (with its tests) and the `onDark` prop of `StatusLabel`.
+  Messages removed: `teasers.more`, `cta.examples`, `pages.home.areas`,
+  `pages.home.status.*`, and the unused `about.label`, `about.exp`,
+  `about.eng`; added: `teasers.<key>.go`, `cta.email`. Each area is one row
+  with the link on the title (stretched over the row, destination label as
+  its description). At 390 px the page shrinks from
+  4873 to 3075 px (DE).
+
 - **Home hero as a form head with the name** (redesign PR 9/11): the hero opens
   with the `FieldHead` Wer / Was / Wo (plus Antwort from 64rem): «Dominic
   Furchert / Software Engineer», «KI für KMU», «Zürcher Oberland» (EN: Who /

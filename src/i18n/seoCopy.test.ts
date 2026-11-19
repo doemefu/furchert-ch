@@ -2,9 +2,6 @@ import { describe, expect, it } from 'vitest';
 import de from './messages/de.json';
 import en from './messages/en.json';
 import { BIO, FACTS, TIMELINE, INTERESTS } from '@/data/about';
-import { ENGAGEMENT } from '@/data/engagement';
-import { EXPERIENCE } from '@/data/experience';
-import { HOME_STATS } from '@/data/home-stats';
 import { LAB_SERVICES, LAB_SHOWCASE } from '@/data/homelab-lab';
 import { IT_CARDS, TECH_STACK } from '@/data/it';
 import { PROJECTS } from '@/data/projects';
@@ -119,7 +116,7 @@ describe('public copy', () => {
     return copy;
   };
   const data = {
-    BIO, FACTS, TIMELINE, INTERESTS, ENGAGEMENT, EXPERIENCE, HOME_STATS, LAB_SERVICES, LAB_SHOWCASE,
+    BIO, FACTS, TIMELINE, INTERESTS, LAB_SERVICES, LAB_SHOWCASE,
     IT_CARDS, TECH_STACK, PROJECTS, ROWING_CARDS,
     FAQS, EXAMPLE, PRICE_STEPS, PRICE_ADDON, WOW_TILES, CALC,
   };
