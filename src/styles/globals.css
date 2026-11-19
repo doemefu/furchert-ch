@@ -183,17 +183,27 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ── HOME HERO (#178) ──
-   The hero container keeps its min-height under the header; the split row is
-   a flex child that takes free height when the content below is short. Text left, example
-   sheet right from 64rem; one column (text, buttons, sheet) below. */
-.home-hero { display: flex; flex-direction: column; min-height: calc(100svh - var(--header-h)); }
-.home-hero-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
-.home-hero-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem; padding: var(--section-y) 0; }
-.home-hero-title { font-size: var(--fs-hero); }
+/* ── HOME HERO (#178, redesign PR 9) ──
+   Form head (Wer/Was/Wo, Antwort from 64rem), then headline, subtitle and the
+   two buttons, then the example sheet: below 64rem one column so the sheet
+   head sits in the first phone screen; from 64rem text 7fr left, sheet 5fr
+   right under the full-width head. */
+.home-hero-body { padding: var(--space-4) 0 var(--section-y); }
+.home-hero-split { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--space-6); }
+.home-hero-text { min-width: 0; }
+.home-hero-title { margin-top: var(--space-4); font-size: var(--text-hero); font-stretch: var(--stretch-display); font-weight: var(--weight-display); line-height: 1; letter-spacing: -.005em; color: var(--text-1); text-wrap: balance; }
+.home-hero-sub { max-width: 34rem; margin-top: var(--space-3); font-size: var(--text-17); line-height: 1.5; color: var(--text-2); }
+.home-hero-btns { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-5); }
+.home-hero-btns .btn { padding-inline: .875rem; }
+.home-hero-btns .btn:first-child { flex: 1 1 auto; }
 @media (min-width: 64rem) {
-  .home-hero-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
-  .home-hero-title { font-size: var(--fs-title); }
+  .home-hero-body { padding-top: var(--space-10); }
+  .home-hero-split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--space-16); align-items: start; margin-top: var(--space-8); }
+  .home-hero-title { margin-top: 0; line-height: .98; letter-spacing: -.01em; }
+  .home-hero-sub { margin-top: var(--space-5); font-size: var(--text-20); }
+  .home-hero-btns { margin-top: var(--space-8); }
+  .home-hero-btns .btn { padding-inline: 1.125rem; }
+  .home-hero-btns .btn:first-child { flex: none; }
 }
 @media (max-width: 39.99rem) {
   .home-status-facts { display: none; }
@@ -603,8 +613,9 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 .fr-sub { display: block; margin: 0; font-size: var(--text-16); line-height: 1.4; color: var(--text-2); }
 .fr-photo { display: grid; grid-template-columns: 3.5rem 1fr; grid-template-rows: auto auto 1fr; column-gap: var(--space-3); align-items: start; }
 .fr-photo > :not(.fh-photo) { grid-column: 2; }
-.fh-photo { grid-column: 1; grid-row: 1 / span 3; margin: 0; width: 3.5rem; height: 4.375rem; border-radius: 2px; background: var(--surface-raised); }
-.fh { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--rule); margin: 0; }
+.fh-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fh-photo { position: relative; overflow: hidden; grid-column: 1; grid-row: 1 / span 3; margin: 0; width: 3.5rem; height: 4.375rem; border-radius: 2px; background: var(--surface-raised); }
+.fh { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); border-top: 2px solid var(--rule); margin: 0; }
 .fh > .fr { padding: var(--space-2) var(--space-3) var(--space-3) 0; border-bottom: 1px solid var(--hairline-strong); }
 .fh > .fh-lead { grid-column: 1 / -1; }
 .fh > .fr:nth-child(odd):not(.fh-lead) { border-left: 1px solid var(--hairline-strong); padding-left: var(--space-3); }

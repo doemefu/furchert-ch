@@ -22,10 +22,20 @@
     }
   },
   "hero": {
-    "label": "Software Engineer · KI für KMU · Zürcher\u00a0Oberland",
+    "head": {
+      "whoLabel": "Wer",
+      "who": "Dominic Furchert",
+      "whoRole": "Software Engineer",
+      "whatLabel": "Was",
+      "what": "KI für KMU",
+      "whereLabel": "Wo",
+      "where": "Zürcher\u00a0Oberland",
+      "replyLabel": "Antwort",
+      "reply": "spätestens am nächsten Arbeitstag"
+    },
     "title1": "KI im Betrieb ist erst fertig,",
     "title2": " wenn Ihre Leute sie nutzen.",
-    "sub": "Dominic Furchert aus dem Zürcher Oberland. Ich helfe KMU, mit KI Büroarbeit zu sparen, etwa bei Offerten, Rapporten und Mails.",
+    "sub": "Ich helfe KMU, mit KI Büroarbeit zu sparen, etwa bei Offerten, Rapporten und Mails.",
     "cta1": "Über mich",
     "cta2": "KI für Ihren Betrieb",
     "seeProjects": "Projekte ansehen"

@@ -24,6 +24,16 @@ describe('FieldRow', () => {
     );
   });
 
+  it('renders the portrait image in the photo slot only with a photoSrc', () => {
+    // eslint-disable-next-line react/no-children-prop
+    const plain = renderToStaticMarkup(createElement(FieldRow, { label: 'Wer', photo: true, children: 'A' }));
+    expect(plain).toContain('<dd class="fh-photo" aria-hidden="true"></dd>');
+    // eslint-disable-next-line react/no-children-prop
+    const withImg = renderToStaticMarkup(createElement(FieldRow, { label: 'Wer', photo: true, photoSrc: '/portrait.jpg', photoAlt: 'Dominic Furchert', children: 'A' }));
+    expect(withImg).toContain('class="fr fr-photo"');
+    expect(withImg).toContain('<dd class="fh-photo" aria-hidden="true"><img src="/portrait.jpg" alt="Dominic Furchert" width="64" height="80"');
+  });
+
   it('adds the secondary line only when given', () => {
     expect(renderToStaticMarkup(row('Wer', 'A'))).not.toContain('fr-sub');
     expect(renderToStaticMarkup(row('Wer', 'A', 'Engineer'))).toContain('<dd class="fr-sub">Engineer</dd>');

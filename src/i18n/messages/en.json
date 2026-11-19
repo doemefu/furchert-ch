@@ -22,10 +22,20 @@
     }
   },
   "hero": {
-    "label": "Software Engineer · AI for SMEs · Zurich",
+    "head": {
+      "whoLabel": "Who",
+      "who": "Dominic Furchert",
+      "whoRole": "Software Engineer",
+      "whatLabel": "What",
+      "what": "AI for SMEs",
+      "whereLabel": "Where",
+      "where": "Zurich",
+      "replyLabel": "Reply",
+      "reply": "by the next working day at the latest"
+    },
     "title1": "AI in your business isn't done",
     "title2": " until your people use it.",
-    "sub": "Dominic Furchert, based near Zurich. I help small businesses save office time with AI, for example on quotes, reports and e-mails.",
+    "sub": "I help small businesses save office time with AI, for example on quotes, reports and e-mails.",
     "cta1": "About me",
     "cta2": "AI for your business",
     "seeProjects": "See projects"
