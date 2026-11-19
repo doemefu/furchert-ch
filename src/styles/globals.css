@@ -1,5 +1,7 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   ETHON design system — ported verbatim from the Claude Design prototype.
+   Tokens. The ETHON block below (`--n-*`, `--blue-*`, `--fs-*`, `--status-*`) and
+   DM Mono (`--mono`) are for the dashboard only (`.ethon`); public pages use the
+   redesign («Formular») tokens further down.
    Fonts: Archivo is injected by next/font as --font-archivo and exposed as
    --font-sans / --sans below (src/lib/fonts.ts, [locale] layout). DM Mono
    (--mono) loads only in the dashboard (src/lib/dashboardFont.ts).
@@ -37,7 +39,7 @@
   --ease: cubic-bezier(.22,1,.36,1);
   --dur-fast: 150ms;
   --dur-enter: 400ms;
-  /* Type scale (B1): 11 steps, 12px floor. */
+  /* Dashboard type scale (B1): 11 steps, 12px floor. */
   --fs-12: .75rem;    /* mono labels, nav, tags, table heads */
   --fs-13: .8125rem;  /* buttons, section kickers, mono meta, small body */
   --fs-14: .875rem;   /* captions, secondary text */
@@ -48,7 +50,7 @@
 }
 
 /* Redesign tokens (Formular / Oberland, decision 2026-11-19). Added next to the
-   ETHON tokens; components move over in later PRs, ETHON is removed at the end. */
+   ETHON tokens; public pages use these, the dashboard keeps ETHON via `.ethon`. */
 :root {
   /* surfaces and text */
   --surface-page: #f2f1ed;  --surface-card: #fbfaf8;  --surface-raised: #e6e4de;
@@ -202,6 +204,9 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--surface-raised); }
 ::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 3px; }
+/* The dashboard keeps its ETHON scrollbar (page scrollbar when a dashboard page shows). */
+.ethon ::-webkit-scrollbar-track, :root:has(.ethon)::-webkit-scrollbar-track { background: var(--n-10); }
+.ethon ::-webkit-scrollbar-thumb, :root:has(.ethon)::-webkit-scrollbar-thumb { background: var(--n-20); }
 
 /* ── HEADER AND PHONE MENU (redesign PR 3) ──
    Phone first: wordmark, "Kontakt" text link and the menu button. From 901px
@@ -268,11 +273,11 @@ details[open] > .ax-sum::after { content: "×"; }
 /* Contact columns: form | direct links (#175, #188). The outer sides sit on the
    one left/right edge, the --gutter sits on either side of the seam; stacked
    below 40rem with one hairline between the blocks. */
-.contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--hairline-strong); }
 .contact-col-form { padding: 3rem var(--gutter) 3rem 0; border-right: 1px solid rgba(162,167,176,.22); }
 .contact-col-direct { padding: 3rem 0 3rem var(--gutter); }
 @media (max-width: 39.99rem) {
-  .contact-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; border-top: 0; }
   .contact-col-form { border-right: 0; padding-inline: 0; }
   .contact-col-direct { padding-inline: 0; border-top: 1px solid rgba(162,167,176,.22); }
 }
@@ -467,7 +472,7 @@ a[href].text-link:hover { color: var(--accent); opacity: 1; }
 .dir-head { padding-top: var(--space-3); border-top: 2px solid var(--rule); font-size: var(--text-h2); font-stretch: var(--stretch-heading); font-weight: var(--weight-heading); line-height: 1.05; color: var(--text-1); }
 .dir-rows { margin-top: var(--space-4); }
 .dir-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); padding: var(--space-4) 0; border-top: 1px solid var(--hairline-strong); color: var(--text-1); }
-.dir-rows > .dir-row:first-child { border-top: 0; } /* the 2px head rule already separates */
+.dir-head + .dir-rows > .dir-row:first-child { border-top: 0; } /* the 2px head rule already separates */
 .dir-title { font-size: 1.5rem; font-stretch: var(--stretch-heading); font-weight: var(--weight-heading); line-height: 1.1; }
 /* The title link covers the whole row (tap area); its name is the title, the destination label is its description. */
 .dir-title a { color: inherit; text-decoration: none; }
@@ -657,7 +662,7 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 
 /* ── PAGE HEADER AND SECTION HEAD (redesign PR 8) ──
    PageHeader.tsx: sentence-case label, h1 in Archivo at display width, lead in
-   --text-2, a hairline below. Section heads (sectionStyles.ts, `sectionLabel`)
+   --text-2, no hairline (the next section's rule or content separates). Section heads (sectionStyles.ts, `sectionLabel`)
    use the same tokens under a 2px ink rule. */
 .ph { padding: var(--section-y) 0 var(--space-12); }
 .ph-label { margin-bottom: var(--space-3); font-size: var(--text-14); color: var(--text-3); }

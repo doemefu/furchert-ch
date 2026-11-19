@@ -6,8 +6,8 @@
 // variant and size for both answers, Decline first, nothing pre-selected,
 // no "accept all" and no "later". Non-modal: no focus trap, the page stays
 // usable. Esc hides the bar for this page load and stores nothing; scrolling
-// does nothing. Look: a twin of the header surface, the page's `.border-x`
-// grid continuing through it (globals.css "CONSENT BAR").
+// does nothing. Look: a raised surface with a hairline on top, the page's
+// `.border-x` grid continuing through it (globals.css "CONSENT BAR").
 import { useEffect, useRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';

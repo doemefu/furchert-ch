@@ -54,7 +54,7 @@ export default async function ContactPage({
     ...CONTACTS,
     { label: t('contact.labelLocation'), value: t('footer.location'), href: null },
   ];
-  const linkStyle = { fontSize: 'var(--fs-15)' };
+  const linkStyle = { fontSize: 'var(--text-16)' };
 
   return (
     <div>
@@ -91,19 +91,20 @@ export default async function ContactPage({
                     {c.label}
                   </div>
                   {'email' in c ? (
-                    <ContactEmail className="text-link" style={linkStyle} />
+                    <ContactEmail className="text-link text-link-block" style={linkStyle} />
                   ) : c.href ? (
                     <a
                       href={c.href}
                       target={c.href.startsWith('http') ? '_blank' : undefined}
                       rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-link"
+                      className="text-link text-link-block"
                       style={linkStyle}
                     >
                       {c.value}
+                      {c.href.startsWith('http') && <span className="sr-only"> {t('common.newTab')}</span>}
                     </a>
                   ) : (
-                    <span style={{ fontSize: 'var(--fs-15)', color: 'var(--text-2)' }}>{c.value}</span>
+                    <span style={{ fontSize: 'var(--text-16)', color: 'var(--text-2)' }}>{c.value}</span>
                   )}
                 </div>
               ))}

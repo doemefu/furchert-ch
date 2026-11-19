@@ -18,14 +18,14 @@ const headLabel = {
 };
 
 const bodyText = {
-  fontSize: 'var(--fs-16)',
+  fontSize: 'var(--text-16)',
   color: 'var(--text-2)',
   lineHeight: 1.6,
   letterSpacing: 0,
   maxWidth: '70ch',
 };
 
-const valueText = { fontSize: 'var(--fs-16)', color: 'var(--text-1)', marginTop: '.25rem' };
+const valueText = { fontSize: 'var(--text-16)', color: 'var(--text-1)', marginTop: '.25rem' };
 
 export function LegalPage({ copy }: { copy: LegalPageCopy }) {
   return (

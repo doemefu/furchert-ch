@@ -45,7 +45,7 @@
 Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, not in git) § «Entscheid 19.11.2026». **The redesign is complete (PR 1 to 11c, 2026-11-20).** Rules below are in the code; the dashboard stays on its legacy ETHON look via `.ethon` (spec «Abgrenzung Dashboard»).
 - Tokens: the new tokens in `globals.css` (`--surface-*`, `--text-1..3`, `--accent`, `--band`, `--radius: 4px`, ...) are the public design; the ETHON tokens (`--n-*`, `--blue-*`, `--fs-*`, `--status-*`) remain only for the dashboard (`.ethon`). Check the dashboard before deleting one.
 - Font: Archivo only, body at `font-stretch: 100%`, display/headings via `--stretch-display` / `--stretch-heading`. Never a generic AI default font (Inter, Geist, DM Sans, Space Grotesk, serif display faces); the stack keeps browser fallbacks (`Helvetica Neue`, Arial, `system-ui`).
-- Figures in tables, KPIs and prices use tabular-nums 
+- Figures in tables, KPIs and prices use tabular-nums.
 - Sentence case, no all-caps labels.
 - No mono font on public pages (done, PR 11c; DM Mono loads only in the dashboard via `src/lib/dashboardFont.ts`, never import it from public code).
 - No arrows on buttons or links on public pages (PR 2, PR 7b: done, no exceptions remain; dashboard excluded, see the spec's Abgrenzung Dashboard). Text links use `.text-link` / `.text-link-block`.
@@ -89,7 +89,7 @@ src/app/[locale]/        # public pages (about, contact, it, projects, rowing, a
 src/app/api/             # auth/[...nextauth], federated-logout, health (server-side proxies; no scan API)
 src/components/{ui,layout,analytics}/, Providers.tsx   # analytics/: consent bar + footer settings button, live since WA-6 (#158)
 src/lib/analytics/       # consent store + controller (client, pure TS; flags.ts ANALYTICS_UI_ENABLED), tracker/ (async chunk), server/ (/api/v, forward queue)
-src/lib/                 # server-side clients: metrics (Prometheus: cluster.ts, services.ts + pure serviceHealth.ts), netmon (data-service), authadmin (auth-service admin API), deviceadmin (device-service API + cron presets), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts
+src/lib/                 # server-side clients: metrics (Prometheus: cluster.ts, services.ts + pure serviceHealth.ts), netmon (data-service), authadmin (auth-service admin API), deviceadmin (device-service API + cron presets), contact (SMTP); auth/ (shared.ts: Basic auth + session-cookie name; sameOrigin.ts: logout CSRF check); fonts.ts (Archivo); dashboardFont.ts (DM Mono, dashboard only)
 src/*.env.ts             # lazy env accessors (auth, metrics, netmon, authadmin, deviceadmin, contact)
 src/data/                # typed static data (projects, cluster nodes, apps, ...)
 src/i18n/                # messages/{de,en}.json + next-intl config (navigation.ts, request.ts, routing.ts)
