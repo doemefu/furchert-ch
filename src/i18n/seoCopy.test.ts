@@ -73,17 +73,22 @@ describe('search-result copy', () => {
   });
 
   it('names one public place for the owner (owner decisions)', () => {
-    // Hero label, footer role and the location shown in the footer and on
-    // /contact: "Zürcher Oberland" in German (the regional SMEs read German),
+    // Hero label and the location shown in the footer and on /contact (the
+    // footer shows the role and the location on two lines, so `footer.role`
+    // carries no place and no middle dot since PR 4): "Zürcher Oberland" in German (the regional SMEs read German),
     // "Zurich" in English. The German label keeps the place on one line with a
     // no-break space.
     const plain = (text: string) => text.replace(/\u00a0/g, ' ');
     expect(de.hero.label).toContain('Zürcher\u00a0Oberland');
-    for (const text of [de.hero.label, de.footer.role, de.footer.location].map(plain)) {
+    for (const text of [de.hero.label, de.footer.location].map(plain)) {
       expect(text).toContain('Zürcher Oberland');
     }
     expect(en.footer.location).toBe('Zurich');
-    for (const text of [en.hero.label, en.footer.role]) expect(text).toMatch(/· Zurich$/);
+    expect(en.hero.label).toMatch(/· Zurich$/);
+    for (const m of [de, en]) {
+      expect(m.footer.role).not.toMatch(/·/);
+      expect(m.footer.role).not.toContain(m.footer.location);
+    }
     for (const m of [de, en]) {
       for (const text of [m.hero.label, m.footer.role, m.footer.location]) {
         expect(text).not.toMatch(/Rapperswil/);

@@ -6,6 +6,22 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Footer rebuilt** (redesign «Formular» PR 4/11): light footer under a 2px ink
+  rule, Archivo throughout (no mono, no all-caps labels). Four groups:
+  «Absender» (name, role and place on separate lines), «Kontakt» (e-mail link,
+  «Antwort spätestens am nächsten Arbeitstag», LinkedIn, GitHub), «Seiten» and
+  «Rechtliches» (Impressum, Datenschutz, Datenschutz-Einstellungen, language
+  link). Phone: two columns with the first two groups spanning both; from 48rem
+  four columns. Every link row is at least 44px high. The LinkedIn arrow is
+  gone; external links carry the screen-reader cue «(öffnet in neuem Tab)». The
+  bottom line shows «© 2026 Dominic Furchert», «Stand <date>» (the newest date
+  in `PAGE_LAST_MODIFIED`) and the quiet «Homelab» link with a lock icon to
+  `/dashboard`, the only place «Homelab» appears in the chrome. `footer.role`
+  is now «KI-Werkzeuge für KMU» without the place (the place is its own line);
+  `footer.navigation`/`social` are replaced by `sender`, `pages`, `legal`,
+  `email`, `reply`, `updated`, `homelab`. The e-mail link still renders the
+  address only in the browser.
+
 - **Header and phone menu rebuilt** (redesign «Formular» PR 3/11): the header
   shows the wordmark «Dominic Furchert» in Archivo 500 on an opaque page-colour
   bar. Desktop nav (from 901px) is sentence-case Archivo with a brick underline
@@ -23,7 +39,9 @@ All notable changes per milestone. Newest first.
   and menu (footer only, PR 4); the old `.burger` CSS and the `common.*`
   messages are removed. The rest of the page is `inert` while the menu is open.
   The header «Kontakt» entries carry the new source ids `header-contact`,
-  `header-contact-mobile` and `menu-contact`. New keys under `nav.*` (`menu`,
+  `header-contact-mobile` and `menu-contact`. From the #218 deploy, header
+  «Kontakt» clicks are recorded as `kind: cta` instead of `kind: nav` in web
+  analytics. New keys under `nav.*` (`menu`,
   `close`, `navLabel`, `groupBusiness`, `groupAbout`, `switchLang`, `desc.*`).
 
 - **Buttons and text links restyled** (redesign «Formular» PR 2/11): `Btn` has

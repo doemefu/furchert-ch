@@ -243,14 +243,19 @@
   },
   "footer": {
     "copy": "© 2026 Dominic Furchert",
-    "navigation": "Navigation",
+    "updated": "Updated {date}",
+    "sender": "Sender",
     "contact": "Contact",
-    "social": "Social",
-    "role": "AI tools for SMEs · Zurich",
+    "email": "Write an email",
+    "reply": "A reply by the next working day at the latest",
+    "pages": "Pages",
+    "legal": "Legal",
+    "role": "AI tools for SMEs",
     "location": "Zurich",
     "imprint": "Imprint",
     "privacy": "Privacy",
-    "privacySettings": "Privacy settings"
+    "privacySettings": "Privacy settings",
+    "homelab": "Homelab"
   },
   "analytics": {
     "consent": {

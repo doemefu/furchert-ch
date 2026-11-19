@@ -243,14 +243,19 @@
   },
   "footer": {
     "copy": "© 2026 Dominic Furchert",
-    "navigation": "Navigation",
+    "updated": "Stand {date}",
+    "sender": "Absender",
     "contact": "Kontakt",
-    "social": "Social",
-    "role": "KI-Werkzeuge für KMU · Zürcher Oberland",
+    "email": "E-Mail schreiben",
+    "reply": "Antwort spätestens am nächsten Arbeitstag",
+    "pages": "Seiten",
+    "legal": "Rechtliches",
+    "role": "KI-Werkzeuge für KMU",
     "location": "Zürcher Oberland",
     "imprint": "Impressum",
     "privacy": "Datenschutz",
-    "privacySettings": "Datenschutz-Einstellungen"
+    "privacySettings": "Datenschutz-Einstellungen",
+    "homelab": "Homelab"
   },
   "analytics": {
     "consent": {

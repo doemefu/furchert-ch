@@ -1,145 +1,101 @@
-// Ported verbatim from the prototype (shared.jsx Footer). Server component;
-// nav uses the locale-aware Link.
-import { getTranslations } from 'next-intl/server';
+// Site footer (redesign «Formular» PR 4). Server component; four groups under a
+// 2px ink rule: sender, contact, pages, legal. Phone: two columns with sender
+// and contact spanning both; from 48rem four columns. Last line: copyright, the
+// date of the newest page change and the quiet «Homelab» link to the dashboard.
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { ContactEmail } from '@/components/ui/ContactEmail';
 import { LazyPrivacySettingsLink } from '@/components/analytics/lazy';
 import { ANALYTICS_UI_ENABLED } from '@/lib/analytics/flags';
+import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
+import { FooterLocaleLink } from './FooterLocaleLink';
 
-const NAV_KEYS = ['about', 'it', 'rowing', 'projects', 'automation', 'contact'] as const;
+const NAV_KEYS = ['automation', 'about', 'it', 'rowing', 'projects'] as const;
+
+/** Newest ISO date in the lastmod registry: the last real content change of the site. */
+const LATEST_CONTENT_DATE = Object.values(PAGE_LAST_MODIFIED).reduce((a, b) => (b > a ? b : a));
 
 export async function Footer() {
   const t = await getTranslations();
-
-  const colTitle = {
-    fontFamily: 'var(--mono)',
-    fontSize: 'var(--fs-12)',
-    letterSpacing: '.05em',
-    textTransform: 'uppercase' as const,
-    color: 'var(--n-50)',
-    marginBottom: '.75rem',
-  };
-  const linkStyle = {
-    fontFamily: 'var(--mono)',
-    fontSize: 'var(--fs-12)',
-    textDecoration: 'none',
-    color: 'var(--n-50)',
-    cursor: 'pointer',
-    transition: 'color .15s',
-  };
+  const locale = await getLocale();
+  const date = new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : 'en-GB', {
+    day: 'numeric',
+    month: locale === 'de' ? 'numeric' : 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${LATEST_CONTENT_DATE}T00:00:00Z`));
+  const newTab = <span className="sr-only"> {t('pages.projects.newTab')}</span>;
 
   return (
-    <footer
-      className="on-dark"
-      style={{
-        background: 'var(--n-100)',
-        color: 'var(--n-40)',
-      }}
-    >
-      <div className="container border-x" style={{ paddingBlock: '3rem' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '2rem',
-            paddingBottom: '2rem',
-            borderBottom: '1px solid rgba(162,167,176,.1)',
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontFamily: 'var(--mono)',
-                fontSize: 'var(--fs-15)',
-                fontWeight: 500,
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
-                color: 'var(--white)',
-                marginBottom: '1rem',
-              }}
-            >
-              furchert.ch
-            </div>
-            <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-40)', lineHeight: 1.5 }}>
-              {t('footer.role')}
-            </p>
+    <footer className="ft">
+      <div className="container border-x ft-wrap">
+        <div className="ft-in">
+          <div className="ft-send">
+            <span className="ft-lab">{t('footer.sender')}</span>
+            <b>Dominic Furchert</b>
+            <span>{t('footer.role')}</span>
+            <span>{t('footer.location')}</span>
+          </div>
+
+          <div className="ft-contact">
+            <span className="ft-lab">{t('footer.contact')}</span>
+            <ul>
+              <li>
+                {/* The address is rendered only in the browser (#147). */}
+                <ContactEmail label={t('footer.email')} />
+              </li>
+              <li>
+                <span>{t('footer.reply')}</span>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/dominic-furchert" target="_blank" rel="noopener noreferrer">
+                  LinkedIn{newTab}
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/doemefu" target="_blank" rel="noopener noreferrer">
+                  GitHub{newTab}
+                </a>
+              </li>
+            </ul>
           </div>
 
           <div>
-            <div style={colTitle}>{t('footer.navigation')}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+            <span className="ft-lab">{t('footer.pages')}</span>
+            <ul>
               {NAV_KEYS.map((k) => (
-                <Link key={k} href={`/${k}`} style={linkStyle}>
-                  {t(`nav.${k}`)}
-                </Link>
+                <li key={k}>
+                  <Link href={`/${k}`}>{t(`nav.${k}`)}</Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
           <div>
-            <div style={colTitle}>{t('footer.contact')}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-              {/* The address is rendered only in the browser (#147). */}
-              <ContactEmail style={linkStyle} />
-              <span style={{ ...linkStyle, color: 'var(--n-40)', cursor: 'default' }}>
-                {t('footer.location')}
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <div style={colTitle}>{t('footer.social')}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-              <a
-                href="https://github.com/doemefu"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: '.5rem' }}
-              >
-                <Icon name="github" size={13} /> GitHub
-              </a>
-              <a
-                href="https://linkedin.com/in/dominic-furchert"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={linkStyle}
-              >
-                LinkedIn ↗
-              </a>
-            </div>
+            <span className="ft-lab">{t('footer.legal')}</span>
+            <ul>
+              <li>
+                <Link href="/imprint">{t('footer.imprint')}</Link>
+              </li>
+              <li>
+                <Link href="/privacy">{t('footer.privacy')}</Link>
+              </li>
+              <li>{ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink style={{}} />}</li>
+              <li>
+                <FooterLocaleLink />
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '1rem',
-            paddingTop: '1.5rem',
-            fontSize: 'var(--fs-13)',
-            color: 'var(--n-40)',
-          }}
-        >
+        <div className="ft-bot">
           <span>{t('footer.copy')}</span>
-          {/* Three links wrap on phones; unchanged while analytics is dark. */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '1.5rem',
-              ...(ANALYTICS_UI_ENABLED ? { flexWrap: 'wrap' as const, rowGap: '.5rem' } : null),
-            }}
-          >
-            <Link href="/imprint" style={{ ...linkStyle, color: 'var(--n-40)' }}>
-              {t('footer.imprint')}
-            </Link>
-            <Link href="/privacy" style={{ ...linkStyle, color: 'var(--n-40)' }}>
-              {t('footer.privacy')}
-            </Link>
-            {ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink style={{ ...linkStyle, color: 'var(--n-40)' }} />}
-          </div>
+          <span>{t('footer.updated', { date })}</span>
+          <Link href="/dashboard" prefetch={false}>
+            <Icon name="lock" size={14} />
+            {t('footer.homelab')}
+          </Link>
         </div>
       </div>
     </footer>
