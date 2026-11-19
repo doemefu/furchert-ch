@@ -87,83 +87,29 @@ export default async function ProjectDetailPage({
         />
       )}
       <div className="container border-x">
-        <div
-          style={{
-            padding: '2rem 0',
-            borderBottom: '1px solid rgba(162,167,176,.22)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '.75rem',
-          }}
-        >
+        <div className="pj-crumb">
           <Link
             href="/projects"
             data-track={trackAttr('link', 'project-back')}
-            style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-12)',
-              letterSpacing: '.05em',
-              textTransform: 'uppercase',
-              color: 'var(--blue-base)',
-              textDecoration: 'none',
-            }}
+            className="text-link text-link-block"
           >
             {t('pages.projects.crumbBack')}
           </Link>
-          <span style={{ color: 'var(--n-30)' }}>/</span>
-          <span
-            style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-12)',
-              color: 'var(--n-60)',
-            }}
-          >
-            {p.title}
-          </span>
+          <span aria-hidden="true">/</span>
+          <span>{p.title}</span>
         </div>
 
-        <div style={{ padding: '3rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-              marginBottom: '1.5rem',
-              flexWrap: 'wrap',
-            }}
-          >
-            <h1
-              style={{
-                fontFamily: 'var(--sans)',
-                fontSize: 'var(--fs-title)',
-                fontWeight: 500,
-                letterSpacing: '-.03em',
-                color: 'var(--n-100)',
-              }}
-            >
-              {p.title}
-            </h1>
+        <div className="ph">
+          <h1 className="ph-title">{p.title}</h1>
+          <p className="ph-status">
             <StatusLabel status={PROJECT_DOT[p.status]}>{STATUS_LABEL[locale][p.status]}</StatusLabel>
-          </div>
-          <p style={{ fontSize: 'var(--fs-lead)', color: 'var(--n-60)', lineHeight: 1.55, maxWidth: '60ch' }}>
-            {p.i18n[locale].detail}
           </p>
+          <p className="ph-sub">{p.i18n[locale].detail}</p>
         </div>
 
-        <div style={{ padding: '2rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p
-            style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-13)',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
-              color: 'var(--n-60)',
-              marginBottom: '1rem',
-            }}
-          >
-            {t('pages.projects.techStack')}
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
+        <div className="pj-sec">
+          <h2 className="sl">{t('pages.projects.techStack')}</h2>
+          <div className="pg-tags">
             {p.tags.map((tag) => (
               <Tag key={tag}>{tag}</Tag>
             ))}
@@ -172,7 +118,7 @@ export default async function ProjectDetailPage({
 
         {p.slug === 'homelab' && <HomelabSections locale={locale} />}
 
-        <div style={{ padding: '2rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="pg-acts">
           {p.github && (
             <Btn href={p.github}>
               <Icon name="github" size={14} /> GitHub <span className="sr-only">{t('pages.projects.newTab')}</span>

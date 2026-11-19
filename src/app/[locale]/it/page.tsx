@@ -6,6 +6,7 @@ import { buildPageMetadata } from '@/lib/seo/metadata';
 import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ExpCard } from '@/components/ui/ExpCard';
+import { FieldList, FieldRow } from '@/components/ui/FieldRow';
 import { IT_CARDS, TECH_STACK } from '@/data/it';
 import { trackAttr } from '@/data/track-ids';
 
@@ -45,55 +46,24 @@ export default async function ITPage({
         />
         <div>
           {IT_CARDS.map((c, i) => (
-            <ExpCard key={i} icon={c.icon} tags={c.tags} {...c.i18n[locale]} />
+            <ExpCard key={i} tags={c.tags} {...c.i18n[locale]} />
           ))}
         </div>
-        <div style={{ padding: '3rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p
-            style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-13)',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
-              color: 'var(--n-60)',
-              marginBottom: '1.5rem',
-            }}
-          >
-            {t('pages.it.techStack')}
-          </p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-              gap: '1rem',
-            }}
-          >
+        <div className="pg-sec">
+          <h2 className="sl">{t('pages.it.techStack')}</h2>
+          <FieldList className="ts">
             {TECH_STACK.map((s) => (
-              <div key={s.i18n.de.cat}>
-                <div
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: 'var(--fs-12)',
-                    letterSpacing: '.05em',
-                    textTransform: 'uppercase',
-                    color: 'var(--n-60)',
-                    marginBottom: '.5rem',
-                  }}
-                >
-                  {s.i18n[locale].cat}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+              <FieldRow key={s.i18n.de.cat} label={s.i18n[locale].cat} variant="text">
+                <ul className="ts-list">
                   {s.items.map((it) => (
-                    <span key={it} style={{ fontSize: 'var(--fs-14)', color: 'var(--n-70)' }}>
-                      {it}
-                    </span>
+                    <li key={it}>{it}</li>
                   ))}
-                </div>
-              </div>
+                </ul>
+              </FieldRow>
             ))}
-          </div>
+          </FieldList>
         </div>
-        <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="pg-acts">
           <Btn href="/projects" track={trackAttr('link', 'it-projects')}>
             {t('hero.seeProjects')}
           </Btn>

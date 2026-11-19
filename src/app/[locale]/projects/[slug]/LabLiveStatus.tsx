@@ -37,11 +37,6 @@ export interface LabLiveStatusProps {
 
 const POLL_MS = 60_000;
 const DOT: Record<LiveStatus, DotStatus> = { up: 'online', down: 'offline', unknown: 'unknown' };
-const mono = {
-  fontFamily: 'var(--mono)',
-  letterSpacing: '.05em',
-  textTransform: 'uppercase' as const,
-};
 
 export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }: LabLiveStatusProps) {
   // null = not loaded yet ("checking"); an empty map = loaded but nothing usable.
@@ -106,32 +101,14 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
 
   return (
     <div>
-      <p
-        aria-live="polite"
-        style={{
-          fontFamily: 'var(--sans)',
-          fontSize: 'var(--fs-18)',
-          fontWeight: 500,
-          letterSpacing: 0,
-          color: 'var(--n-100)',
-          marginBottom: '1.25rem',
-        }}
-      >
+      <p aria-live="polite" className="lh-sum">
         {summaryText}
       </p>
       <noscript>
-        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', marginBottom: '1rem' }}>{strings.noscript}</p>
+        <p className="lh-note">{strings.noscript}</p>
       </noscript>
-      <ul
-        style={{
-          listStyle: 'none',
-          margin: 0,
-          padding: 0,
-          border: '1px solid rgba(162,167,176,.22)',
-          borderRadius: '2px',
-        }}
-      >
-        {rows.map((row, i) => {
+      <ul className="lh-live">
+        {rows.map((row) => {
           const entry = live?.get(row.id);
           const status: LiveStatus = live === null ? 'unknown' : (entry?.status ?? 'unknown');
           const statusText = live === null ? strings.checking : strings[status];
@@ -141,36 +118,14 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
                 .replace('{days}', String(windowDays))
             : null;
           return (
-            <li
-              key={row.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                flexWrap: 'wrap',
-                padding: '1rem 1.25rem',
-                borderTop: i === 0 ? 'none' : '1px solid rgba(162,167,176,.22)',
-              }}
-            >
+            <li key={row.id}>
               <div style={{ flex: '1 1 220px', minWidth: 0 }}>
-                <div
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontSize: 'var(--fs-16)',
-                    fontWeight: 500,
-                    letterSpacing: 0,
-                    color: 'var(--n-100)',
-                  }}
-                >
-                  {row.label}
-                </div>
-                <div style={{ fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5 }}>{row.desc}</div>
+                <b>{row.label}</b>{' '}
+                <span className="lh-d">{row.desc}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                 <StatusLabel status={live === null ? 'unknown' : DOT[status]}>{statusText}</StatusLabel>
-                {uptime && (
-                  <span style={{ ...mono, textTransform: 'none', letterSpacing: 0, fontSize: 'var(--fs-12)', color: 'var(--n-60)', fontVariantNumeric: 'tabular-nums' }}>{uptime}</span>
-                )}
+                {uptime && <span className="lh-up">{uptime}</span>}
               </div>
             </li>
           );

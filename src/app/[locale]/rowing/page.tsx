@@ -46,36 +46,11 @@ export default async function RowingPage({
         />
         <div>
           {ROWING_CARDS.map((c, i) => (
-            <ExpCard key={i} icon={c.icon} tags={c.tags} {...c.i18n[locale]} />
+            <ExpCard key={i} tags={c.tags} {...c.i18n[locale]} />
           ))}
         </div>
 
-        <div
-          style={{
-            aspectRatio: '16/6',
-            background: 'var(--n-10)',
-            borderBottom: '1px solid rgba(162,167,176,.22)',
-            backgroundImage:
-              'linear-gradient(135deg, rgba(162,167,176,.08) 25%, transparent 25%, transparent 50%, rgba(162,167,176,.08) 50%, rgba(162,167,176,.08) 75%, transparent 75%, transparent)',
-            backgroundSize: '14px 14px',
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-start',
-          }}
-        >
-          <div
-            style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-12)',
-              color: 'var(--n-60)',
-              padding: '1rem 1.25rem',
-            }}
-          >
-            {t('pages.rowing.photoCaption')}
-          </div>
-        </div>
-
-        <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="pg-acts">
           <Btn href="/projects" track={trackAttr('link', 'rowing-projects')}>
             {t('hero.seeProjects')}
           </Btn>

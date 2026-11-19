@@ -14,6 +14,19 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Inner pages in the «Formular» system** (redesign PR 11a/11): /about, /it,
+  /rowing, /projects and /projects/[slug] (incl. the homelab sections and the
+  live status) lose all mono, upper-case and tracked labels, `--n-*` body text,
+  italics and `--n-10` fills. New `.sl`/`.tl`/`.xc`/`.ts`/`.pj-*`/`.lh-*`
+  classes in `globals.css`: about timeline with tabular-nums years, `ExpCard` as a
+  ruled row without icon box (one left edge), /it tech stack as FieldList,
+  /projects as the PR 10 directory rows, project page with a text-link breadcrumb,
+  homelab section heads in the `.dir-head` heading style. /rowing loses the photo
+  placeholder (`pages.rowing.photoCaption` removed); the redundant labels
+  «Was läuft» / «Live-Status» are dropped from the homelab page. Copy and page
+  dates are unchanged. `labelMono` removed from about (automation keeps its own
+  for PR 11b).
+
 - **Home areas as a ruled directory, forest closing band, no Homelab band**
   (redesign PR 10/11): the start page is now hero, example sheet, «Woran ich
   arbeite», closing band, footer. The areas are ruled directory rows (the offer
