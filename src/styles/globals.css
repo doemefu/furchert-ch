@@ -364,10 +364,50 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 .wow[open] .wow-when-open { display: inline; }
 .wow[open] .wow-when-closed { display: none; }
 .wow > summary:focus-visible,
-.wow a:focus-visible { outline: 2px solid var(--blue-base); outline-offset: 2px; }
+.wow a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .wow[open] .wow-step { animation: wow-in .45s cubic-bezier(.22,1,.36,1) calc(var(--i, 0) * 110ms) both; }
 .wow[open] .wow-bar { transform-origin: bottom; animation: wow-bar .45s ease-in-out calc(var(--b, 0) * 70ms) 3 alternate; }
 .wow[open] .wow-line path { stroke-dasharray: 1; animation: wow-draw .7s ease-out .15s both; }
+/* WOW TILES as «Formular» sheets (redesign PR 7b): 1px ink border, --radius, rows from
+   FieldList/FieldRow (hairlines), highlighter marks instead of coloured edges, sentence
+   case, no mono. The own tile differs by its accent tag, not by colour. */
+.wt { background: var(--surface-card); border: 1px solid var(--rule); border-radius: var(--radius); }
+.wt-sum { display: block; padding: 14px 16px; }
+.wt-title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-18); line-height: 1.3; font-weight: 500; color: var(--text-1); }
+.wt-body { display: block; margin: var(--space-1) 0 10px; font-size: var(--text-16); line-height: 1.45; color: var(--text-2); }
+.wt-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--tap); }
+.wt-toggle { padding: 10px 0; font-size: var(--text-14); color: var(--accent-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; white-space: nowrap; }
+.wt-panel { padding: 0 16px 16px; border-top: 1px solid var(--hairline-strong); }
+.wt-ptag { margin: 14px 0; }
+.wt-speech { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 6px; font-size: var(--text-13); line-height: 1rem; color: var(--text-3); }
+.wt-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.wt-bars > span { display: block; width: 2px; background: var(--text-2); }
+.wt-spoken { margin: 0; font-size: var(--text-16); line-height: 1.5; color: var(--text-1); }
+.wt-div { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--rule); font-size: var(--text-14); line-height: 1.4; color: var(--text-2); }
+.wt-sheet { margin-top: var(--space-1); }
+.wt-sheet .fr { padding: 10px 0 12px; border-top: 1px solid var(--hairline-strong); }
+.wt-sheet .fr:first-child { border-top: 0; }
+.wt-panel mark { background: var(--mark-ask); color: inherit; padding: 0 .2em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.wt-panel mark.hs-see { background: var(--mark-source); }
+.wt-note { margin: 12px 0 0; font-size: var(--text-14); line-height: 1.5; color: var(--text-3); max-width: 68ch; }
+.wt-close { margin: 12px 0 0; font-size: var(--text-16); line-height: 1.45; font-weight: 500; color: var(--text-1); }
+.wt-mail { padding: 10px 14px 12px; background: var(--surface-page); border: 1px solid var(--hairline-strong); border-radius: var(--radius); }
+.wt-mail-from { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-14); line-height: 1.4; color: var(--text-2); }
+.wt-mail-subject { margin: 2px 0 0; font-size: var(--text-16); line-height: 1.4; font-weight: 500; color: var(--text-1); }
+.wt-tab { width: 100%; margin-top: 2px; border-collapse: collapse; font-size: var(--text-14); line-height: 1.35; }
+.wt-tab th { padding: 6px 8px 6px 0; font-size: var(--text-13); line-height: 1rem; font-weight: 400; color: var(--text-3); text-align: left; vertical-align: top; }
+.wt-tab tbody th, .wt-tab td { padding: 7px 8px 7px 0; border-top: 1px dotted var(--hairline-strong); font-size: var(--text-14); color: var(--text-1); font-variant-numeric: tabular-nums; }
+.wt-tab tbody th { font-weight: 400; }
+.wt-tab td:last-child { padding-right: 0; color: var(--text-3); }
+.wt-src { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.wt-card { padding: 12px 14px; background: var(--surface-page); border: 1px solid var(--rule); border-radius: var(--radius); }
+.wt-card-h { display: flex; justify-content: space-between; gap: var(--space-2); margin: 0 0 var(--space-2); font-size: var(--text-13); line-height: 1rem; color: var(--text-3); }
+.wt-greet { margin: 0 0 var(--space-1); font-size: var(--text-16); font-weight: 500; color: var(--text-1); }
+.wt-items { list-style: none; margin: 0; padding: 0; }
+.wt-items li { padding: 8px 0; border-top: 1px solid var(--hairline-strong); font-size: var(--text-16); line-height: 1.45; color: var(--text-2); }
+.wt-items b { font-weight: 500; color: var(--text-1); }
+.wt-card-close { padding-top: 8px; border-top: 1px solid var(--hairline-strong); margin-top: 0; }
+.wt-links { display: flex; flex-wrap: wrap; column-gap: 1.25rem; margin: var(--space-2) 0 0; }
 @keyframes wow-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes wow-bar { from { transform: scaleY(.3); } to { transform: scaleY(1); } }
 @keyframes wow-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }

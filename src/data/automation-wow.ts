@@ -106,7 +106,7 @@ export const WOW_TILES: WowTile[] = [
             { label: 'Baustelle', value: 'Bachstrasse, Abschnitt 2' },
             { label: 'Arbeiten', value: 'Gasleitung von Hand freigelegt, nicht im Plan' },
             { label: 'Personal', value: '2 Personen, 09:30 bis 12:00' },
-            { label: 'Maschine', value: 'Bagger mit Maschinist, 2,5 Std.' },
+            { label: 'Maschine', value: 'Bagger mit Maschinist, 2,5\u00a0Std.' },
           ],
           openItem: {
             label: 'Pendenz',
@@ -129,7 +129,7 @@ export const WOW_TILES: WowTile[] = [
             { label: 'Site', value: 'Bachstrasse, section 2' },
             { label: 'Work', value: 'Gas line exposed by hand, not on the plan' },
             { label: 'Crew', value: '2 people, 09:30 to 12:00' },
-            { label: 'Machine', value: 'Excavator with operator, 2.5 h' },
+            { label: 'Machine', value: 'Excavator with operator, 2.5\u00a0h' },
           ],
           openItem: {
             label: 'Open item',
@@ -153,7 +153,7 @@ export const WOW_TILES: WowTile[] = [
         panelTag: 'Beispiel · fertiges Werkzeug',
         panel: {
           mailFrom: 'Von: R. Brunner, Musterdorf',
-          mailSubject: 'Betreff: Vorplatz neu machen, rund 120 m², Fotos im Anhang',
+          mailSubject: 'Betreff: Vorplatz neu machen, rund 120\u00a0m², Fotos im Anhang',
           foundTag: 'In Ihrer Ablage gefunden',
           foundText: 'Offerte ‹Vorplatz Musterweg 2025›',
           memory:
@@ -162,10 +162,10 @@ export const WOW_TILES: WowTile[] = [
             caption: 'Offerte-Entwurf',
             columns: ['Position', 'Menge', 'Preis'],
             rows: [
-              ['Belag abbrechen und entsorgen', 'ca. 120 m²', 'aus Ihrer Kalkulation'],
+              ['Belag abbrechen und entsorgen', 'ca. 120\u00a0m²', 'aus Ihrer Kalkulation'],
               ['Aushub und Fundation ergänzen', 'nach Ausmass', 'aus Ihrer Kalkulation'],
-              ['Neuer Belag', 'ca. 120 m²', 'aus Ihrer Kalkulation'],
-              ['Randabschluss', 'ca. 24 m', 'aus Ihrer Kalkulation'],
+              ['Neuer Belag', 'ca. 120\u00a0m²', 'aus Ihrer Kalkulation'],
+              ['Randabschluss', 'ca. 24\u00a0m', 'aus Ihrer Kalkulation'],
             ],
           },
           questionsLabel: 'Rückfragen',
@@ -184,7 +184,7 @@ export const WOW_TILES: WowTile[] = [
         panelTag: 'Example · ready-made tool',
         panel: {
           mailFrom: 'From: R. Brunner, Musterdorf',
-          mailSubject: 'Subject: New forecourt, about 120 m², photos attached',
+          mailSubject: 'Subject: New forecourt, about 120\u00a0m², photos attached',
           foundTag: 'Found in your files',
           foundText: 'Quote “Forecourt Musterweg 2025”',
           memory:
@@ -193,10 +193,10 @@ export const WOW_TILES: WowTile[] = [
             caption: 'Draft quote',
             columns: ['Item', 'Quantity', 'Price'],
             rows: [
-              ['Remove and dispose of asphalt', 'approx. 120 m²', 'from your costing'],
+              ['Remove and dispose of asphalt', 'approx. 120\u00a0m²', 'from your costing'],
               ['Excavation and sub-base', 'by measured quantity', 'from your costing'],
-              ['New asphalt surface', 'approx. 120 m²', 'from your costing'],
-              ['Kerb edging', 'approx. 24 m', 'from your costing'],
+              ['New asphalt surface', 'approx. 120\u00a0m²', 'from your costing'],
+              ['Kerb edging', 'approx. 24\u00a0m', 'from your costing'],
             ],
           },
           questionsLabel: 'Questions for the client',
@@ -216,7 +216,7 @@ export const WOW_TILES: WowTile[] = [
     kind: 'own',
     i18n: {
       de: {
-        title: 'Tagesübersicht um 5.30 Uhr',
+        title: 'Tagesübersicht um 5.30\u00a0Uhr',
         body: 'Frost in der Nacht, Betonieren am Donnerstag? Aus Wetter, Bauprogramm und Pendenzen.',
         kindLabel: 'Eigene Automation, später',
         panelTag: 'Beispiel · eigene Automation',
@@ -229,7 +229,7 @@ export const WOW_TILES: WowTile[] = [
             {
               label: 'Bodenplatte Hofstrasse, Donnerstag:',
               value:
-                'Für die Nacht auf Freitag sind −4 °C gemeldet, danach wird es milder. Mit Winterbeton und Abdeckung betonieren oder auf Freitag schieben? Falls Freitag: Betonwerk heute anrufen. Die Equipe könnte am Donnerstag an der Bachstrasse den Aushub für Abschnitt 3 machen.',
+                'Für die Nacht auf Freitag sind −4\u00a0°C gemeldet, danach wird es milder. Mit Winterbeton und Abdeckung betonieren oder auf Freitag schieben? Falls Freitag: Betonwerk heute anrufen. Die Equipe könnte am Donnerstag an der Bachstrasse den Aushub für Abschnitt 3 machen.',
             },
             {
               label: 'Anfragen:',
@@ -251,7 +251,7 @@ export const WOW_TILES: WowTile[] = [
         },
       },
       en: {
-        title: 'Daily overview at 5:30 am',
+        title: 'Daily overview at 5:30\u00a0am',
         body: 'Frost overnight, pour on Thursday? From the weather, your schedule and open items.',
         kindLabel: 'Own automation, later',
         panelTag: 'Example · own automation',
@@ -264,7 +264,7 @@ export const WOW_TILES: WowTile[] = [
             {
               label: 'Floor slab Hofstrasse, Thursday:',
               value:
-                '−4 °C is forecast for Thursday night, milder after that. Pour with cold-weather concrete and covers, or move it to Friday? If Friday: call the concrete plant today. On Thursday the crew could dig the excavation for section 3 at the Bachstrasse.',
+                '−4\u00a0°C is forecast for Thursday night, milder after that. Pour with cold-weather concrete and covers, or move it to Friday? If Friday: call the concrete plant today. On Thursday the crew could dig the excavation for section 3 at the Bachstrasse.',
             },
             {
               label: 'Enquiries:',

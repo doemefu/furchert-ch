@@ -48,10 +48,10 @@ Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, 
 - Figures in tables, KPIs and prices use tabular-nums (target).
 - Sentence case, no all-caps labels (target).
 - No mono font on public pages (target; DM Mono is removed in PR 11).
-- No arrows on buttons or links on public pages (PR 2; remaining: WowTiles tile links → PR 7b; dashboard excluded, see the spec's Abgrenzung Dashboard).
+- No arrows on buttons or links on public pages (PR 2, PR 7b: done, no exceptions remain; dashboard excluded, see the spec's Abgrenzung Dashboard). Text links use `.text-link` / `.text-link-block`.
 - Header and phone menu (PR 3, done): wordmark Archivo 500, sentence-case desktop nav, 44px targets, opaque sheet with dim layer, rows ≥64px, no Homelab entry (footer only).
 - Footer (PR 4, done): Archivo, four groups under a 2px ink rule, every link row ≥44px, external links carry the sr-only new-tab cue, «Homelab» (lock, `/dashboard`) only in the bottom line, «Stand» = newest `PAGE_LAST_MODIFIED` date.
-- Radius 4px for buttons (PR 2, done), inputs (PR 6, done) and the home example sheet (PR 7, done: `FieldRow` `variant="text"`/`meta`, highlighter marks, position `<table>`).
+- Radius 4px for buttons (PR 2, done), inputs (PR 6, done) and the home example sheet (PR 7, done: `FieldRow` `variant="text"`/`meta`, highlighter marks, position `<table>`) and the /automation example tiles (PR 7b, done: `.wt-*` in `globals.css`, FieldList/FieldRow rows, marks instead of coloured edges, own tile no longer blue; the rest of /automation follows in PR 11).
 - Form fields, Tag, StatusDot, Icon (PR 6, done): fields ≥48px with 16px text, `--field-border`, 2px `--accent` focus ring, errors `--negative` with icon; Tag quiet raised text tag; LED square, static; icons stroke 1.5, no `spark`. Shared components keep the ETHON look inside the dashboard via the `.ethon` wrapper (`dashboard/layout.tsx`).
 - `.border-x` frame only from 64rem (target, PR 8).
 
