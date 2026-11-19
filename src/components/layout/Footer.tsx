@@ -8,13 +8,10 @@ import { Icon } from '@/components/ui/Icon';
 import { ContactEmail } from '@/components/ui/ContactEmail';
 import { LazyPrivacySettingsLink } from '@/components/analytics/lazy';
 import { ANALYTICS_UI_ENABLED } from '@/lib/analytics/flags';
-import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
+import { latestContentDate } from '@/lib/seo/pages';
 import { FooterLocaleLink } from './FooterLocaleLink';
 
 const NAV_KEYS = ['automation', 'about', 'it', 'rowing', 'projects'] as const;
-
-/** Newest ISO date in the lastmod registry: the last real content change of the site. */
-const LATEST_CONTENT_DATE = Object.values(PAGE_LAST_MODIFIED).reduce((a, b) => (b > a ? b : a));
 
 export async function Footer() {
   const t = await getTranslations();
@@ -24,7 +21,7 @@ export async function Footer() {
     month: locale === 'de' ? 'numeric' : 'long',
     year: 'numeric',
     timeZone: 'UTC',
-  }).format(new Date(`${LATEST_CONTENT_DATE}T00:00:00Z`));
+  }).format(new Date(`${latestContentDate()}T00:00:00Z`));
   const newTab = <span className="sr-only"> {t('pages.projects.newTab')}</span>;
 
   return (
@@ -39,8 +36,8 @@ export async function Footer() {
           </div>
 
           <div className="ft-contact">
-            <span className="ft-lab">{t('footer.contact')}</span>
-            <ul>
+            <span className="ft-lab" id="ft-contact">{t('footer.contact')}</span>
+            <ul aria-labelledby="ft-contact">
               <li>
                 {/* The address is rendered only in the browser (#147). */}
                 <ContactEmail label={t('footer.email')} />
@@ -62,8 +59,8 @@ export async function Footer() {
           </div>
 
           <div>
-            <span className="ft-lab">{t('footer.pages')}</span>
-            <ul>
+            <span className="ft-lab" id="ft-pages">{t('footer.pages')}</span>
+            <ul aria-labelledby="ft-pages">
               {NAV_KEYS.map((k) => (
                 <li key={k}>
                   <Link href={`/${k}`}>{t(`nav.${k}`)}</Link>
@@ -73,18 +70,19 @@ export async function Footer() {
           </div>
 
           <div>
-            <span className="ft-lab">{t('footer.legal')}</span>
-            <ul>
+            <span className="ft-lab" id="ft-legal">{t('footer.legal')}</span>
+            <ul aria-labelledby="ft-legal">
               <li>
                 <Link href="/imprint">{t('footer.imprint')}</Link>
               </li>
               <li>
                 <Link href="/privacy">{t('footer.privacy')}</Link>
               </li>
-              <li>{ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink style={{}} />}</li>
               <li>
                 <FooterLocaleLink />
               </li>
+              {/* Client-only and hidden on /dashboard; `.ft-settings` hides the row while it is empty. */}
+              <li className="ft-settings">{ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink style={{}} />}</li>
             </ul>
           </div>
         </div>

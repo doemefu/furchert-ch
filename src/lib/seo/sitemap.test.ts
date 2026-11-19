@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import sitemap from '@/app/sitemap';
 import { buildPageMetadata, languageAlternates, localizedUrl } from './metadata';
-import { PAGE_LAST_MODIFIED, SITE_LAUNCH_DATE } from './pages';
+import { PAGE_LAST_MODIFIED, SITE_LAUNCH_DATE, latestContentDate } from './pages';
 import { LAB_CONTENT_UPDATED } from '@/data/homelab-lab';
 
 const entries = sitemap();
 const pages = Object.entries(PAGE_LAST_MODIFIED);
 
 describe('sitemap', () => {
+  it('latestContentDate is the newest registry date (footer «Stand»)', () => {
+    expect(latestContentDate()).toBe(Object.values(PAGE_LAST_MODIFIED).sort().at(-1));
+  });
+
   it('lists exactly the pages that have a last-modified date', () => {
     expect(entries.map((e) => e.url).sort()).toEqual(
       pages.map(([href]) => localizedUrl('de', href)).sort(),

@@ -45,6 +45,7 @@ const FILES: Record<string, string> = {
   'src/components/layout/Header.tsx': 'nav',
   'src/components/layout/MobileNav.tsx': 'nav',
   'src/components/layout/Footer.tsx': '',
+  'src/components/layout/FooterLocaleLink.tsx': 'nav',
   'src/components/ui/ContactEmail.tsx': 'contact',
   'src/components/analytics/ConsentBar.tsx': 'analytics.consent',
   'src/components/analytics/PrivacySettingsLink.tsx': '',

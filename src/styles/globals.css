@@ -505,6 +505,7 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 .ft li a, .ft li button { display: flex; align-items: center; min-height: var(--tap); font: inherit; font-size: var(--text-16); color: var(--text-1); }
 .ft li a, .ft li button, .ft-bot a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: var(--hairline-strong); }
 .ft li button { cursor: pointer; }
+.ft-settings:not(:has(button)) { display: none; }
 .ft li > span { display: block; color: var(--text-2); font-size: var(--text-14); padding: var(--space-1) 0 var(--space-2); }
 .ft-bot { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-5); padding-top: var(--space-1); border-top: 1px solid var(--hairline-strong); font-size: var(--text-14); color: var(--text-3); }
 .ft-bot > * { min-height: var(--tap); display: inline-flex; align-items: center; gap: .375rem; }

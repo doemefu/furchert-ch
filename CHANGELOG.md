@@ -27,7 +27,9 @@ All notable changes per milestone. Newest first.
   `/dashboard`, the only place «Homelab» appears in the chrome. `footer.role`
   is now «KI-Werkzeuge für KMU» without the place (the place is its own line);
   `footer.navigation`/`social` are replaced by `sender`, `pages`, `legal`,
-  `email`, `reply`, `updated`, `homelab`. The e-mail link still renders the
+  `email`, `reply`, `updated`, `homelab`. The GitHub icon and the «Kontakt» page link are gone from the footer (the
+  header carries «Kontakt»). Each footer list is labelled by its group title.
+  The e-mail link still renders the
   address only in the browser.
 
 - **Header and phone menu rebuilt** (redesign «Formular» PR 3/11): the header

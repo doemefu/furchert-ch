@@ -32,3 +32,8 @@ export const PAGE_LAST_MODIFIED = {
   '/projects/karaokee': '2026-11-08',
   '/projects/auth-service': '2026-11-08',
 } as const satisfies Record<string, `${number}-${number}-${number}`>;
+
+/** Newest date in the registry: the last real content change of the site (footer «Stand»). */
+export function latestContentDate(): string {
+  return Object.values(PAGE_LAST_MODIFIED).reduce((a, b) => (b > a ? b : a));
+}
