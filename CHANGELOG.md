@@ -16,7 +16,7 @@ All notable changes per milestone. Newest first.
 
 - **/automation leftovers in the «Formular» system** (redesign PR 11b/11, visual
   only, no copy change): no mono, upper-case or tracked label left in `<main>`
-  (labels are sentence case, 13-14px, `--text-3`; `labelMono` is now
+  (labels are sentence case, 13-14px, `--text-2`/`--text-3`; `labelMono` is now
   `labelText`, `fieldLabel`/`cardTitle`/`bodyText`/`footnoteStyle` and `HAIRLINE`
   use the redesign tokens). The hero loses the ETHON dot pattern, the `--n-10`
   band and the blue heading accent (page-head `.ph-*` classes). The example

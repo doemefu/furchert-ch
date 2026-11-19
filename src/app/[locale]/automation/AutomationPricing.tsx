@@ -120,7 +120,7 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
       <p style={leadStyle}>{t('processLead')}</p>
       <ol
         role="list"
-        className="cell-grid"
+        className="cell-grid ax-steps"
         style={{
           listStyle: 'none',
           padding: 0,

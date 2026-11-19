@@ -39,6 +39,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
               aria-expanded={isOpen}
               aria-controls={panelId}
               style={{
+                font: 'inherit',
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'space-between',
