@@ -19,13 +19,13 @@ const headLabel = {
 
 const bodyText = {
   fontSize: 'var(--fs-16)',
-  color: 'var(--n-60)',
+  color: 'var(--text-2)',
   lineHeight: 1.6,
   letterSpacing: 0,
   maxWidth: '70ch',
 };
 
-const valueText = { fontSize: 'var(--fs-16)', color: 'var(--n-100)', marginTop: '.25rem' };
+const valueText = { fontSize: 'var(--fs-16)', color: 'var(--text-1)', marginTop: '.25rem' };
 
 export function LegalPage({ copy }: { copy: LegalPageCopy }) {
   return (
@@ -44,7 +44,7 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
               <div style={label}>{copy.emailLabel}</div>
               <div style={valueText}>
                 {/* The address is rendered only in the browser (#147). */}
-                <ContactEmail style={{ color: 'var(--blue-base)', textDecoration: 'none' }} />
+                <ContactEmail className="text-link" />
               </div>
             </div>
           </div>

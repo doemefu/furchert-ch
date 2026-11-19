@@ -54,7 +54,7 @@ export default async function ContactPage({
     ...CONTACTS,
     { label: t('contact.labelLocation'), value: t('footer.location'), href: null },
   ];
-  const linkStyle = { fontSize: 'var(--fs-15)', color: 'var(--blue-base)', textDecoration: 'none' };
+  const linkStyle = { fontSize: 'var(--fs-15)' };
 
   return (
     <div>
@@ -91,18 +91,19 @@ export default async function ContactPage({
                     {c.label}
                   </div>
                   {'email' in c ? (
-                    <ContactEmail style={linkStyle} />
+                    <ContactEmail className="text-link" style={linkStyle} />
                   ) : c.href ? (
                     <a
                       href={c.href}
                       target={c.href.startsWith('http') ? '_blank' : undefined}
                       rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      className="text-link"
                       style={linkStyle}
                     >
                       {c.value}
                     </a>
                   ) : (
-                    <span style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)' }}>{c.value}</span>
+                    <span style={{ fontSize: 'var(--fs-15)', color: 'var(--text-2)' }}>{c.value}</span>
                   )}
                 </div>
               ))}
