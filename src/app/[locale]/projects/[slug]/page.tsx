@@ -108,7 +108,7 @@ export default async function ProjectDetailPage({
               textDecoration: 'none',
             }}
           >
-            ← {t('pages.projects.crumbBack')}
+            {t('pages.projects.crumbBack')}
           </Link>
           <span style={{ color: 'var(--n-30)' }}>/</span>
           <span

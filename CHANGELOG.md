@@ -11,8 +11,10 @@ All notable changes per milestone. Newest first.
   case, 4px radius, 48px minimum height (40px small variant with a 44px tap
   area), a visible focus ring and a press scale. Arrows are removed from all
   button labels and from the public-page text links (messages and
-  `automation-calc`); the dashboard is excluded. New `.text-link` / `.text-link-block` style (1px underline,
-  brick ink, 44px standalone tap height). The CTA strip and the sticky CTA use
+  `automation-calc`); remaining are the `WowTiles` tile links (PR 7b) and the
+  footer LinkedIn link (PR 4), and the dashboard is excluded. New `.text-link`
+  / `.text-link-block` style (1px underline, brick ink, 44px standalone tap
+  height). The CTA strip and the sticky CTA use
   `Btn`. The two home hero buttons now sit side by side at 390px.
 
 - **Site-wide typeface is now Archivo** (redesign «Formular» PR 1, owner
