@@ -20,7 +20,7 @@ describe('contact sources', () => {
   it('lists every call-to-action id once, including the callback link', () => {
     expect(new Set(FROM_IDS).size).toBe(FROM_IDS.length);
     expect(FROM_IDS).toContain('automation-callback');
-    for (const id of FROM_IDS) expect(id).toMatch(/^(automation|home|about|rowing)-[a-z-]+$/);
+    for (const id of FROM_IDS) expect(id).toMatch(/^(automation|home|about|rowing|header|menu)-[a-z-]+$/);
     expect(contactHref('automation-callback')).toBe('/contact?from=automation-callback');
   });
 
@@ -53,6 +53,8 @@ describe('call-to-action ids in use', () => {
     'src/app/[locale]/page.tsx',
     'src/app/[locale]/about/page.tsx',
     'src/app/[locale]/rowing/page.tsx',
+    'src/components/layout/Header.tsx',
+    'src/components/layout/MobileNav.tsx',
   ];
   const sources = CTA_FILES.map(read).join('\n');
   const literalIds = [...sources.matchAll(/contactHref\('([^']+)'\)/g)].map((m) => m[1]);

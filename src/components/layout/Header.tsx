@@ -9,6 +9,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
+import { contactHref } from '@/data/contact-sources';
+import { trackAttr } from '@/data/track-ids';
 import { MobileNav } from './MobileNav';
 import { DESKTOP_NAV, isNavActive } from './nav-items';
 
@@ -33,22 +35,22 @@ export function Header() {
           Dominic Furchert
         </Link>
 
-        <nav className="dnav" aria-label={t('mobileLabel')}>
+        <nav className="dnav" aria-label={t('navLabel')}>
           {DESKTOP_NAV.map((k) => (
             <Link key={k} href={`/${k}`} aria-current={isNavActive(pathname, k) ? 'page' : undefined}>
               {t(k)}
             </Link>
           ))}
-          <button type="button" className="dnav-lang" lang={otherLocale} onClick={switchLocale} data-track={`lang:${otherLocale}`}>
+          <button type="button" className="dnav-lang" lang={otherLocale} aria-label={t('switchLang')} onClick={switchLocale} data-track={`lang:${otherLocale}`}>
             {otherLocale.toUpperCase()}
           </button>
-          <Btn href="/contact" variant="primary" small>
+          <Btn href={contactHref('header-contact')} variant="primary" small track={trackAttr('cta', 'header-contact')}>
             {t('contact')}
           </Btn>
         </nav>
 
         {!menuOpen && (
-          <Link href="/contact" className="hd-k">
+          <Link href={contactHref('header-contact-mobile')} className="hd-k" data-track={trackAttr('cta', 'header-contact-mobile')}>
             {t('contact')}
           </Link>
         )}

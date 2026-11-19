@@ -8,7 +8,9 @@ import { useEffect, useRef, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
-import { nextTrapTarget } from '@/lib/a11y/drawer';
+import { contactHref } from '@/data/contact-sources';
+import { trackAttr } from '@/data/track-ids';
+import { cycleTarget } from '@/lib/a11y/drawer';
 import { ABOUT_NAV, BUSINESS_NAV, isNavActive } from './nav-items';
 
 const FOCUSABLE = 'a[href], button:not([disabled])';
@@ -43,6 +45,19 @@ export function MobileNav({ id, open, onClose, toggleRef, pathname, otherLocale,
 
     sheet.querySelector<HTMLElement>(FOCUSABLE)?.focus();
 
+    // Everything outside the header is inert while open (main, footer, the
+    // consent bar, the /automation sticky bar): no focus, no screen-reader
+    // reach. The header stays live because it holds the menu button.
+    const header = sheet.closest('header');
+    const inerted: Element[] = [];
+    for (const el of Array.from(document.body.children)) {
+      if (el === header || el.contains(header) || el.tagName === 'SCRIPT') continue;
+      if (!el.hasAttribute('inert')) {
+        el.setAttribute('inert', '');
+        inerted.push(el);
+      }
+    }
+
     const prevHtml = document.documentElement.style.overflow;
     const prevBody = document.body.style.overflow;
     document.documentElement.style.overflow = 'hidden';
@@ -54,11 +69,13 @@ export function MobileNav({ id, open, onClose, toggleRef, pathname, otherLocale,
         return;
       }
       if (e.key !== 'Tab') return;
-      const items = [toggle, ...sheet.querySelectorAll<HTMLElement>(FOCUSABLE)];
-      const target = nextTrapTarget(items.length, items.indexOf(document.activeElement as HTMLElement), e.shiftKey);
-      if (target === null) return;
+      // Every Tab is decided here, never left to the browser's tab order. The
+      // menu button is part of the cycle on purpose: it is the visible close
+      // control, so keyboard users can reach it without Escape.
       e.preventDefault();
-      (items[target] ?? sheet).focus();
+      const items = [toggle, ...sheet.querySelectorAll<HTMLElement>(FOCUSABLE)];
+      const active = items.indexOf(document.activeElement as HTMLElement);
+      items[cycleTarget(items.length, active, e.shiftKey)].focus();
     };
     document.addEventListener('keydown', onKey);
 
@@ -74,14 +91,17 @@ export function MobileNav({ id, open, onClose, toggleRef, pathname, otherLocale,
       mq.removeEventListener('change', onMq);
       document.documentElement.style.overflow = prevHtml;
       document.body.style.overflow = prevBody;
-      toggle.focus();
+      for (const el of inerted) el.removeAttribute('inert');
+      // After a resize-close the button is display:none and cannot take focus.
+      if (toggle.getClientRects().length > 0) toggle.focus();
     };
   }, [open, toggleRef]);
 
   const row = (key: string) => (
     <Link
       key={key}
-      href={`/${key}`}
+      href={key === 'contact' ? contactHref('menu-contact') : `/${key}`}
+      data-track={key === 'contact' ? trackAttr('cta', 'menu-contact') : undefined}
       className="mnav-i"
       aria-current={isNavActive(pathname, key) ? 'page' : undefined}
       onClick={onClose}
@@ -95,7 +115,7 @@ export function MobileNav({ id, open, onClose, toggleRef, pathname, otherLocale,
   return (
     <>
       <div className="mnav-dim" hidden={!open} aria-hidden="true" onClick={onClose} />
-      <nav id={id} ref={sheetRef} className="mnav" hidden={!open} aria-label={t('mobileLabel')} tabIndex={-1}>
+      <nav id={id} ref={sheetRef} className="mnav" hidden={!open} aria-label={t('navLabel')} tabIndex={-1}>
         <div className="mnav-grp">
           <span className="mnav-lab">{t('groupBusiness')}</span>
           {BUSINESS_NAV.map(row)}

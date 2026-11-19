@@ -16,6 +16,17 @@ export function nextTrapTarget(count: number, activeIndex: number, shift: boolea
 }
 
 /**
+ * Index to focus on every Tab/Shift+Tab inside a trap that decides each step
+ * itself (the phone menu), so it does not depend on the browser's tab order
+ * (Safari skips links by default). -1 (focus outside the list) counts as
+ * "before the first" for Tab and "after the last" for Shift+Tab. `count` > 0.
+ */
+export function cycleTarget(count: number, activeIndex: number, shift: boolean): number {
+  if (activeIndex === -1) return shift ? count - 1 : 0;
+  return (activeIndex + (shift ? -1 : 1) + count) % count;
+}
+
+/**
  * Id of the element `FieldError` renders for `field`. Assumes one error element
  * per field name on a page (true today: no field name repeats across forms).
  */

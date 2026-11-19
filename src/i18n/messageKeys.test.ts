@@ -10,7 +10,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ABOUT_NAV, BUSINESS_NAV, DESKTOP_NAV } from '@/components/layout/nav-items';
+import { ABOUT_NAV, BUSINESS_NAV } from '@/components/layout/nav-items';
 import { HEARD_VIA_IDS, heardViaMessageKey } from '@/data/contact-sources';
 import de from './messages/de.json';
 import en from './messages/en.json';
@@ -64,7 +64,6 @@ const templateValues = (template: string, src: string): string[] | undefined => 
     'privacyRight${n}': ['1', '2', '3'],
     'reliable${n}': ['1', '2', '3', '4'],
     'nav.${k}': arrayIn(src, 'NAV_KEYS'),
-    '${k}': [...DESKTOP_NAV],
     'desc.${key}': [...BUSINESS_NAV, ...ABOUT_NAV],
     'teasers.${key}.title': arrayIn(src, 'teaserKeys'),
     'teasers.${key}.text': arrayIn(src, 'teaserKeys'),

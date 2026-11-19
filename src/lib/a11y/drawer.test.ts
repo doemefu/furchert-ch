@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fieldAria, fieldErrorId, nextTrapTarget } from './drawer';
+import { cycleTarget, fieldAria, fieldErrorId, nextTrapTarget } from './drawer';
 
 describe('nextTrapTarget', () => {
   it('wraps Tab from the last element to the first', () => {
@@ -23,6 +23,23 @@ describe('nextTrapTarget', () => {
   it('focuses the dialog itself when nothing is focusable', () => {
     expect(nextTrapTarget(0, -1, false)).toBe(-1);
     expect(nextTrapTarget(0, -1, true)).toBe(-1);
+  });
+});
+
+describe('cycleTarget', () => {
+  it('steps forward and backward and wraps at both ends', () => {
+    expect(cycleTarget(4, 1, false)).toBe(2);
+    expect(cycleTarget(4, 3, false)).toBe(0);
+    expect(cycleTarget(4, 2, true)).toBe(1);
+    expect(cycleTarget(4, 0, true)).toBe(3);
+  });
+  it('treats focus outside the list as before the first / after the last', () => {
+    expect(cycleTarget(4, -1, false)).toBe(0);
+    expect(cycleTarget(4, -1, true)).toBe(3);
+  });
+  it('stays on a single element', () => {
+    expect(cycleTarget(1, 0, false)).toBe(0);
+    expect(cycleTarget(1, 0, true)).toBe(0);
   });
 });
 

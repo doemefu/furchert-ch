@@ -21,8 +21,10 @@ All notable changes per milestone. Newest first.
   link close it, focus returns to the button, body scroll is locked, and it
   closes when the viewport grows past 900px. «Homelab» is gone from header
   and menu (footer only, PR 4); the old `.burger` CSS and the `common.*`
-  messages are removed. New keys under `nav.*` (`menu`, `close`,
-  `mobileLabel`, `groupBusiness`, `groupAbout`, `switchLang`, `desc.*`).
+  messages are removed. The rest of the page is `inert` while the menu is open.
+  The header «Kontakt» entries carry the new source ids `header-contact`,
+  `header-contact-mobile` and `menu-contact`. New keys under `nav.*` (`menu`,
+  `close`, `navLabel`, `groupBusiness`, `groupAbout`, `switchLang`, `desc.*`).
 
 - **Buttons and text links restyled** (redesign «Formular» PR 2/11): `Btn` has
   three variants (`primary`, `secondary`, `inverse`), Archivo 500 in sentence
