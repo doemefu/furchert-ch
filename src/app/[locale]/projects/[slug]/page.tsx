@@ -108,7 +108,7 @@ export default async function ProjectDetailPage({
               textDecoration: 'none',
             }}
           >
-            ← {t('pages.projects.crumbBack')}
+            {t('pages.projects.crumbBack')}
           </Link>
           <span style={{ color: 'var(--n-30)' }}>/</span>
           <span
@@ -175,7 +175,7 @@ export default async function ProjectDetailPage({
         <div style={{ padding: '2rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {p.github && (
             <Btn href={p.github}>
-              <Icon name="github" size={14} /> GitHub <Icon name="ext" size={12} />
+              <Icon name="github" size={14} /> GitHub <span className="sr-only">{t('pages.projects.newTab')}</span>
             </Btn>
           )}
           <Btn href="/projects" track={trackAttr('link', 'project-back')}>

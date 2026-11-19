@@ -1,14 +1,20 @@
-// Ported from the prototype (shared.jsx Btn). Navigation uses the locale-aware
+// Button (redesign «Formular», PR 2). Looks live in globals.css (`.btn`),
+// keyed by `data-variant` and `data-size`. Navigation uses the locale-aware
 // next-intl Link for internal paths; external/mailto use a plain anchor.
-import type { CSSProperties, ReactNode } from 'react';
+// No arrows or icons that point somewhere: the label says what happens.
+import type { ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
+
+export type BtnVariant = 'primary' | 'secondary' | 'inverse';
 
 interface BtnProps {
   onClick?: () => void;
   href?: string;
-  dark?: boolean;
-  outline?: boolean;
+  /** primary: ink fill; secondary (default): ink outline; inverse: light fill for the dark band. */
+  variant?: BtnVariant;
   small?: boolean;
+  /** Passed to the internal `Link`; `false` for links that are swapped after hydration. */
+  prefetch?: boolean;
   // `submit` is needed for real forms (e.g. the contact form); the prototype
   // relied on a button's default in-form submit. Default stays `button` so
   // existing call sites are unchanged.
@@ -22,40 +28,20 @@ interface BtnProps {
 export function Btn({
   onClick,
   href,
-  dark,
-  outline,
+  variant = 'secondary',
   small,
+  prefetch,
   type = 'button',
   disabled,
   track,
   children,
 }: BtnProps) {
-  const base: CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '.5rem',
-    fontFamily: 'var(--mono)',
-    fontSize: small ? 'var(--fs-12)' : 'var(--fs-13)',
-    fontWeight: 400,
-    letterSpacing: small ? '.05em' : '.04em',
-    textTransform: 'uppercase',
-    textDecoration: 'none',
-    borderRadius: '2px',
-    cursor: 'pointer',
-    padding: small ? '0 1rem' : '0 1.5rem',
-    minHeight: small ? 36 : 48,
-    whiteSpace: 'nowrap',
-    transition: 'background-color .15s, color .15s, border-color .15s',
-    border: dark
-      ? '1px solid var(--n-90)'
-      : outline
-        ? '1px solid var(--blue-base)'
-        : '1px solid rgba(162,167,176,.35)',
-    background: dark ? 'var(--n-90)' : 'transparent',
-    color: dark ? 'var(--white)' : outline ? 'var(--blue-base)' : 'var(--n-100)',
+  const common = {
+    className: 'btn',
+    'data-variant': variant,
+    'data-size': small ? 'small' : undefined,
+    'data-track': track,
   };
-
-  const variant = dark ? 'dark' : outline ? 'outline' : 'default'; // hover styles in globals.css (#151)
 
   if (href) {
     const external = /^(https?:|mailto:|tel:)/.test(href);
@@ -66,10 +52,7 @@ export function Btn({
       return (
         <a
           href={href}
-          className="btn"
-          data-variant={variant}
-          data-track={track}
-          style={base}
+          {...common}
           target={newTab ? '_blank' : undefined}
           rel={newTab ? 'noopener noreferrer' : undefined}
         >
@@ -78,22 +61,14 @@ export function Btn({
       );
     }
     return (
-      <Link href={href} className="btn" data-variant={variant} data-track={track} style={base}>
+      <Link href={href} prefetch={prefetch} {...common}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button
-      type={type}
-      className="btn"
-      data-variant={variant}
-      data-track={track}
-      onClick={onClick}
-      disabled={disabled}
-      style={{ ...base, ...(disabled ? { opacity: 0.6, cursor: 'not-allowed' } : null) }}
-    >
+    <button type={type} {...common} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

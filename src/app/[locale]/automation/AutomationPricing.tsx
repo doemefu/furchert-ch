@@ -191,8 +191,8 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
       </div>
       <p style={footnoteStyle}>{t('priceFootnote')}</p>
       <div data-cta="prices" style={{ marginTop: 'clamp(1.5rem, 4vw, 2rem)' }}>
-        <Btn href={contactHref('automation-prices')} track={trackAttr('cta', 'automation-prices')} dark>
-          {t('pricesCta')} <Icon name="arrow" size={12} />
+        <Btn href={contactHref('automation-prices')} track={trackAttr('cta', 'automation-prices')} variant="primary">
+          {t('pricesCta')}
         </Btn>
       </div>
     </section>

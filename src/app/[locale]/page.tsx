@@ -140,11 +140,11 @@ export default async function HomePage({
                     marginTop: '2.5rem',
                   }}
                 >
-                  <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} dark>
-                    {t('hero.cta2')} <Icon name="arrow" size={12} />
+                  <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} variant="primary">
+                    {t('hero.cta2')}
                   </Btn>
                   <Btn href="/about" track={trackAttr('link', 'home-hero-about')}>
-                    {t('hero.cta1')} <Icon name="arrow" size={12} />
+                    {t('hero.cta1')}
                   </Btn>
                 </div>
               </div>

@@ -160,7 +160,7 @@ export default async function ProjectsPage({
               <Icon name="github" size={14} />
             </div>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
-              {t('pages.projects.allRepos')} <Icon name="ext" size={12} />
+              {t('pages.projects.allRepos')} <span className="sr-only">{t('pages.projects.newTab')}</span>
             </span>
           </a>
         </div>

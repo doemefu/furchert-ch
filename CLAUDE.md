@@ -48,8 +48,8 @@ Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, 
 - Figures in tables, KPIs and prices use tabular-nums (target).
 - Sentence case, no all-caps labels (target).
 - No mono font on public pages (target; DM Mono is removed in PR 11).
-- No arrows on buttons or links (target, PR 2).
-- Radius 4px for buttons, sheet and inputs (target).
+- No arrows on buttons or links on public pages (PR 2; remaining: WowTiles tile links → PR 7b, footer LinkedIn ↗ → PR 4; dashboard excluded, see the spec's Abgrenzung Dashboard).
+- Radius 4px for buttons (PR 2, done), sheet and inputs (target).
 - `.border-x` frame only from 64rem (target, PR 8).
 
 ## Tech Stack (pinned — see `package.json`)

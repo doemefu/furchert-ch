@@ -50,7 +50,7 @@ export const CALC: { i18n: Record<Locale, AutomationCalcCopy> } = {
         "Ab dem zweiten Jahr: rund CHF 3'600 pro Jahr für Abo und Lizenzen, bei rund CHF 7'500 Zeitwert pro Jahr.",
       ],
       note: 'Mit Ihren Zahlen rechnen wir in der Standortbestimmung.',
-      cta: 'Passt das zu Ihrem Betrieb? Live zeigen lassen →',
+      cta: 'Passt das zu Ihrem Betrieb? Live zeigen lassen',
     },
     en: {
       title: 'Sample calculation: civil engineering firm with 15 people',
@@ -68,7 +68,7 @@ export const CALC: { i18n: Record<Locale, AutomationCalcCopy> } = {
         "From year two: about CHF 3'600 a year for subscription and licences, against about CHF 7'500 time value a year.",
       ],
       note: 'We do the sums with your figures in the assessment.',
-      cta: 'Does this fit your firm? See it live →',
+      cta: 'Does this fit your firm? See it live',
     },
   },
 };

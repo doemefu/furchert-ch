@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
-import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -199,10 +198,10 @@ export default async function AboutPage({
 
         <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <Btn href="/projects" track={trackAttr('link', 'about-projects')}>
-            {t('hero.seeProjects')} <Icon name="arrow" size={12} />
+            {t('hero.seeProjects')}
           </Btn>
-          <Btn href={contactHref('about-contact')} track={trackAttr('cta', 'about-contact')} dark>
-            {t('nav.contact')} <Icon name="arrow" size={12} />
+          <Btn href={contactHref('about-contact')} track={trackAttr('cta', 'about-contact')} variant="primary">
+            {t('nav.contact')}
           </Btn>
         </div>
       </div>

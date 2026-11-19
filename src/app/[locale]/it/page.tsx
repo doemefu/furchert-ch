@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
 import { buildPageMetadata } from '@/lib/seo/metadata';
-import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ExpCard } from '@/components/ui/ExpCard';
@@ -96,10 +95,10 @@ export default async function ITPage({
         </div>
         <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <Btn href="/projects" track={trackAttr('link', 'it-projects')}>
-            {t('hero.seeProjects')} <Icon name="arrow" size={12} />
+            {t('hero.seeProjects')}
           </Btn>
-          <Btn href="/automation" track={trackAttr('link', 'it-automation')} dark>
-            {t('hero.cta2')} <Icon name="arrow" size={12} />
+          <Btn href="/automation" track={trackAttr('link', 'it-automation')} variant="primary">
+            {t('hero.cta2')}
           </Btn>
         </div>
       </div>

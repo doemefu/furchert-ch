@@ -19,7 +19,7 @@ const noSubscribe = () => () => {};
 interface ContactEmailProps {
   /** Visible text instead of the address, e.g. "E-Mail schreiben". */
   label?: ReactNode;
-  /** Rendered after the label or address, e.g. an arrow icon. */
+  /** Rendered after the label or address. */
   children?: ReactNode;
   /** Subject for the `mailto:` link. */
   subject?: string;
@@ -45,7 +45,7 @@ export function ContactEmail({ label, children, subject, btn, track, style, clas
 
   if (btn) {
     return (
-      <Btn href={href} track={track}>
+      <Btn href={href} track={track} prefetch={false}>
         {text}
         {children}
       </Btn>

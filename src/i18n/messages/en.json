@@ -21,7 +21,7 @@
     "rowing": { "title": "Rowing", "text": "President of the Rapperswil-Jona Rowing Club. Head of safety on the organising committee of the National Regatta Schmerikon." },
     "projects": { "title": "Software projects", "text": "Own login service, IoT platform from ESP32 to dashboard, AI assistant for the rowing club. All on my own k3s cluster." },
     "automation": { "title": "AI for SMEs", "text": "Dictate reports instead of typing them, draft quotes from enquiries: one workflow from your daily work, set up and measured after 6 weeks." },
-    "more": "More →"
+    "more": "More"
   },
   "about": {
     "label": "About me",
@@ -32,7 +32,7 @@
     "together": "A business or a project?",
     "togsub": "Businesses: a 30-minute live demo, free, on site or by video. For engineering roles and tech projects from infrastructure to full stack: write to me.",
     "primary": "See it live",
-    "examples": "See the examples first →"
+    "examples": "See the examples first"
   },
   "contact": {
     "label": "Contact",
@@ -74,7 +74,7 @@
     "sentSub": "I'll get back to you by the next working day at the latest, by email, or by phone if you asked for a call back.",
     "sentSubDemo": "I'll get back to you by the next working day at the latest with two suggested dates for the live demo, by email, or by phone if you asked for a call back. You don't need to prepare anything.",
     "sentPhone": "I'll call you on {phone}.",
-    "sentBack": "Back to the examples →",
+    "sentBack": "Back to the examples",
     "errorInvalid": "Please enter your name and a valid email address. For a call back, your phone number is enough.",
     "errorPhone": "Please enter a valid phone number.",
     "errorServer": "That didn't work. Please try again later or email {email} directly.",
@@ -131,10 +131,11 @@
       "metaTitle": "Projects: IoT, homelab and AI | Dominic Furchert",
       "metaDescription": "Dominic Furchert's own projects: an IoT platform with ESP32 and MQTT, a k3s homelab built with Ansible, an AI assistant for the rowing club, a login service.",
       "techStack": "Tech Stack",
-      "details": "Details →",
+      "details": "Details",
       "allRepos": "All repos on GitHub",
+      "newTab": "(opens in a new tab)",
       "crumbBack": "Projects",
-      "backAll": "← All projects"
+      "backAll": "All projects"
     },
     "lab": {
       "metaTitle": "Homelab: k3s cluster with live status",
@@ -175,7 +176,7 @@
       "heroTileCtaSimilar": "See something like it live",
       "heroCta": "See it live",
       "heroCtaMicro": "30 min · free · at your firm or by video",
-      "heroCallback": "Prefer the phone? Request a call back →",
+      "heroCallback": "Prefer the phone? Request a call back",
       "areaServed": "Zurich area",
       "workLabel": "How I work",
       "workHeading": "You know your firm. I know the tools.",
@@ -212,7 +213,7 @@
       "reliable3": "You always deal with me",
       "reliable4": "I keep appointments. If something comes up, I let you know beforehand.",
       "aboutCta": "See it live",
-      "aboutMiniMore": "More about me →",
+      "aboutMiniMore": "More about me",
       "bottomCtaHeading": "In 30 minutes you see what would work at your firm.",
       "bottomCtaSub": "You tell me what takes up your time. I show you what works today. If it won't help you, I'll tell you.",
       "bottomCtaAgenda": "How the half hour goes: for 10 minutes you tell me where things get stuck. For 15 minutes I show you what works today, with sample data; if you like, you speak a Regie report into the phone yourself. In the last 5 minutes you tell me whether you want more. You don't need to prepare anything.",

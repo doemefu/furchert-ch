@@ -41,6 +41,7 @@ const lead = {
 
 export async function HomelabSections({ locale }: { locale: Locale }) {
   const t = await getTranslations({ locale, namespace: 'pages.lab' });
+  const tProjects = await getTranslations({ locale, namespace: 'pages.projects' });
   const updated = new Intl.DateTimeFormat(LOCALE_TAG[locale], { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(LAB_CONTENT_UPDATED),
   );
@@ -104,7 +105,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
                       href={repo.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`${repo.label}: ${t('reposLabel')}`}
+                      aria-label={`${repo.label}: ${t('reposLabel')} ${tProjects('newTab')}`}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -116,7 +117,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
                         color: 'var(--blue-base)',
                       }}
                     >
-                      <Icon name="github" size={12} /> {repo.label} <Icon name="ext" size={11} />
+                      <Icon name="github" size={12} /> {repo.label}
                     </a>
                   ))}
                 </div>
