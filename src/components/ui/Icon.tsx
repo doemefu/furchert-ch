@@ -1,7 +1,8 @@
-// Icon set from the prototype (shared.jsx Icon), redesign PR 6: one 1.5 stroke, sizes 16 (default) and 18.
-// The dashboard keeps its thinner ETHON stroke via `.ethon svg *` in globals.css.
+// Icon set from the prototype (shared.jsx Icon), redesign PR 6: one 1.5 stroke, sizes 16 (default) and 20.
+// The dashboard keeps its thinner ETHON stroke via `.ethon .ic *` in globals.css.
 import { cloneElement, type CSSProperties, type ReactElement, type SVGProps } from 'react';
 
+// Keep in sync with the keys of `icons` below.
 export type IconName =
   | 'arrow' | 'lock' | 'github' | 'ext' | 'server' | 'globe' | 'code' | 'chip'
   | 'alert' | 'chart' | 'db' | 'flow' | 'git' | 'users' | 'mic' | 'boat'
@@ -38,5 +39,5 @@ export function Icon({ name, size = 16 }: { name: IconName | string; size?: numb
   };
   // Icons are decorative — they always sit next to text or a labelled parent.
   // Hide them from assistive tech and make them non-focusable in one place.
-  return cloneElement(icons[name] || icons.code, { 'aria-hidden': true, focusable: 'false' });
+  return cloneElement(icons[name] || icons.code, { 'aria-hidden': true, focusable: 'false', className: 'ic' });
 }

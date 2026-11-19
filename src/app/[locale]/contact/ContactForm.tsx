@@ -52,14 +52,6 @@ const choiceInputStyle: CSSProperties = {
   flexShrink: 0,
   accentColor: 'var(--accent)',
 };
-const textLinkStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  minHeight: 44,
-  fontSize: 'var(--text-16)',
-  color: 'var(--accent-ink)',
-  textDecoration: 'underline',
-};
 
 type ErrorCode = 'invalid' | 'phone' | 'server' | 'rate_limited';
 
@@ -166,7 +158,7 @@ export function ContactForm() {
       <div role="status" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
           <span style={{ color: 'var(--positive)' }}>
-            <Icon name="check" size={18} />
+            <Icon name="check" size={20} />
           </span>
           <h2
             ref={sentRef}
@@ -185,7 +177,7 @@ export function ContactForm() {
           </p>
         )}
         {sent.topic === 'demo' && (
-          <Link href="/automation" style={textLinkStyle} data-track={trackAttr('link', 'contact-automation')}>
+          <Link href="/automation" className="text-link text-link-block" data-track={trackAttr('link', 'contact-automation')}>
             {t('sentBack')}
           </Link>
         )}
@@ -348,7 +340,7 @@ export function ContactForm() {
       </div>
       {error && (
         <p id="contact-error" role="alert" className="contact-error">
-          <Icon name="alert" size={18} />
+          <Icon name="alert" size={20} />
           <span>{errorText(error)}</span>
         </p>
       )}
@@ -360,7 +352,7 @@ export function ContactForm() {
         <p style={helpStyle}>
           {t.rich('privacyNote', {
             link: (chunks) => (
-              <Link href="/privacy" style={{ color: 'var(--accent-ink)', textDecoration: 'underline' }}>
+              <Link href="/privacy" className="text-link text-link-block">
                 {chunks}
               </Link>
             ),
