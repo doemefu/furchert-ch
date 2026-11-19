@@ -68,7 +68,7 @@ export default async function AboutPage({
         <div className="cell-grid ab-facts">
           {FACTS.map((f, i) => (
             <div key={i} className="cell ab-fact">
-              <b>{f.value}</b>
+              <b>{f.value}</b>{' '}
               <span>{f.i18n[locale].label}</span>
             </div>
           ))}
@@ -76,10 +76,10 @@ export default async function AboutPage({
 
         <div className="pg-sec">
           <h2 className="sl">{t('pages.about.timeline')}</h2>
-          <ol className="tl">
+          <ol className="tl" role="list">
             {TIMELINE.map((row, ri) => (
               <li key={ri}>
-                <span className="tl-y">{row.year}</span>
+                <span className="tl-y">{row.year}</span>{' '}
                 <span className="tl-t">
                   {row.i18n[locale].items.map((item, ii) => (
                     <span key={ii}>{item}</span>

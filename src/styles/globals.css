@@ -516,9 +516,8 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 /* ── INNER PAGES (redesign PR 11a) ──
    /about, /it, /rowing, /projects and /projects/[slug]: sentence-case labels in
    --text-3, ruled rows instead of boxed cards, one left edge, no mono, no italics.
-   .sl = section label under a 2px ink rule; .lab = plain label; .pg-sec = section spacing. */
+   .sl = section label under a 2px ink rule; .pg-sec = section spacing. */
 .sl { font-weight: 400; padding-top: var(--space-3); border-top: 2px solid var(--rule); font-size: var(--text-14); line-height: 1.4; color: var(--text-3); }
-.lab { font-size: var(--text-14); line-height: 1.4; color: var(--text-3); }
 .pg-sec { padding: var(--section-y) 0 0; }
 .pg-text { font-size: var(--text-16); line-height: 1.6; color: var(--text-2); }
 .pg-acts { display: flex; flex-wrap: wrap; gap: var(--space-4); padding: var(--section-y) 0; }
@@ -553,17 +552,18 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 .pj-body { display: grid; gap: var(--space-3); }
 .pj-tags { display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .pj-side { display: grid; gap: var(--space-1); justify-items: start; }
-.pj-all { grid-column: 1 / -1; justify-self: start; }
+.pj-all { padding-top: var(--space-4); border-top: 1px solid var(--hairline-strong); }
 @media (min-width: 64rem) { .pj-side { justify-items: end; } }
 /* Project page: back link row and the homelab sections. */
 .pj-crumb { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--hairline-strong); font-size: var(--text-14); color: var(--text-3); }
+.pj-crumb + .ph { border-bottom: 0; }
 .ph-status { margin-top: var(--space-3); }
-.lh-sec { padding: var(--space-12) 0; border-bottom: 1px solid var(--hairline-strong); }
+.pj-sec { padding: var(--space-12) 0; }
 .lh-lead { max-width: 62ch; margin: var(--space-3) 0 var(--space-8); font-size: var(--text-16); line-height: 1.55; color: var(--text-2); }
 .lh-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, max(16rem, 30%)), 1fr)); border-top: 1px solid var(--hairline-strong); }
 .lh-item { display: flex; flex-direction: column; gap: var(--space-3); padding-block: var(--space-6); border-right: 1px solid var(--hairline-strong); border-bottom: 1px solid var(--hairline-strong); }
 .lh-item h3 { font-size: var(--text-18); font-weight: 500; line-height: 1.3; color: var(--text-1); }
-.lh-item p { font-size: var(--text-14); line-height: 1.55; color: var(--text-2); }
+.lh-item p { font-size: var(--text-16); line-height: 1.55; color: var(--text-2); }
 .lh-repos { display: flex; flex-wrap: wrap; column-gap: var(--space-4); margin-top: auto; }
 .lh-note { margin-top: var(--space-6); max-width: 68ch; font-size: var(--text-14); line-height: 1.55; color: var(--text-3); }
 .lh-sum { margin: 0 0 var(--space-4); font-size: var(--text-18); font-weight: 500; color: var(--text-1); }

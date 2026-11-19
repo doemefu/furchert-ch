@@ -87,7 +87,7 @@ export default async function ProjectDetailPage({
         />
       )}
       <div className="container border-x">
-        <nav className="pj-crumb" aria-label={t('pages.projects.crumbBack')}>
+        <div className="pj-crumb">
           <Link
             href="/projects"
             data-track={trackAttr('link', 'project-back')}
@@ -96,8 +96,8 @@ export default async function ProjectDetailPage({
             {t('pages.projects.crumbBack')}
           </Link>
           <span aria-hidden="true">/</span>
-          <span aria-current="page">{p.title}</span>
-        </nav>
+          <span>{p.title}</span>
+        </div>
 
         <div className="ph">
           <h1 className="ph-title">{p.title}</h1>
@@ -107,7 +107,7 @@ export default async function ProjectDetailPage({
           <p className="ph-sub">{p.i18n[locale].detail}</p>
         </div>
 
-        <div className="lh-sec">
+        <div className="pj-sec">
           <h2 className="sl">{t('pages.projects.techStack')}</h2>
           <div className="pg-tags">
             {p.tags.map((tag) => (

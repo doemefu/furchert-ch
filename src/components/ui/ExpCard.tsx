@@ -19,7 +19,12 @@ export function ExpCard({ title, org, since, text, items, learning, tags }: ExpC
       <h2 className="xc-title">{title}</h2>
       <p className="xc-org">
         {org}
-        {since && <span>{since}</span>}
+        {since && (
+          <>
+            {' '}
+            <span>{since}</span>
+          </>
+        )}
       </p>
       {text && <p className="xc-text">{text}</p>}
       {items && (

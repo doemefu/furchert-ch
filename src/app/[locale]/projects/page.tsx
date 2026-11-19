@@ -74,17 +74,17 @@ export default async function ProjectsPage({
                 </div>
               </div>
             ))}
-            <div className="dir-row">
-              <a
-                href="https://github.com/doemefu"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-link text-link-block pj-all"
-              >
-                {t('pages.projects.allRepos')} <span className="sr-only">{t('pages.projects.newTab')}</span>
-              </a>
-            </div>
           </div>
+          <p className="pj-all">
+            <a
+              href="https://github.com/doemefu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-link text-link-block"
+            >
+              {t('pages.projects.allRepos')} <span className="sr-only">{t('pages.projects.newTab')}</span>
+            </a>
+          </p>
         </div>
       </div>
     </div>

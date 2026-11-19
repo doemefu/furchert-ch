@@ -23,8 +23,8 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <section className="lh-sec">
-        <h2 className="sl">{t('showcaseHeading')}</h2>
+      <section className="pj-sec">
+        <h2 className="dir-head">{t('showcaseHeading')}</h2>
         <p className="lh-lead">{t('showcaseLead')}</p>
         <div className="cell-grid lh-grid">
           {LAB_SHOWCASE.map((item) => (
@@ -56,8 +56,8 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
         </p>
       </section>
 
-      <section className="lh-sec">
-        <h2 className="sl">{t('statusHeading')}</h2>
+      <section className="pj-sec">
+        <h2 className="dir-head">{t('statusHeading')}</h2>
         <p className="lh-lead">{t('statusLead', { days: LAB_UPTIME_WINDOW_DAYS })}</p>
         <LabLiveStatus
           locale={locale}

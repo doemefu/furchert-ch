@@ -120,7 +120,7 @@ export function LabLiveStatus({ locale, rows, windowDays, showUptime, strings }:
           return (
             <li key={row.id}>
               <div style={{ flex: '1 1 220px', minWidth: 0 }}>
-                <b>{row.label}</b>
+                <b>{row.label}</b>{' '}
                 <span className="lh-d">{row.desc}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
