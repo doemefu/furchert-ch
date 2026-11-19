@@ -91,23 +91,23 @@ function OfferBody({ p }: { p: OfferPanel }) {
           <mark className="hs-see">{p.foundText}</mark>
         </FieldRow>
         <FieldRow variant="text" label={p.table.caption} className="wow-step" style={step(2)}>
-          <table className="wt-tab">
+          <table className="wt-tab" role="table">
             <caption className="sr-only">{p.table.caption}</caption>
-            <thead>
-              <tr>
+            <thead role="rowgroup">
+              <tr role="row">
                 {p.table.columns.map((c) => (
-                  <th key={c} scope="col">
+                  <th key={c} scope="col" role="columnheader">
                     {c}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
               {p.table.rows.map(([item, qty, price]) => (
-                <tr key={item}>
-                  <th scope="row">{item}</th>
-                  <td>{qty}</td>
-                  <td>{price}</td>
+                <tr key={item} role="row">
+                  <th scope="row" role="rowheader">{item}</th>
+                  <td role="cell">{qty}</td>
+                  <td role="cell">{price}</td>
                 </tr>
               ))}
             </tbody>
