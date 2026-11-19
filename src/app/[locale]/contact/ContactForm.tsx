@@ -26,49 +26,31 @@ import { submitContact, type ContactTopic } from './actions';
 import { trackAttr } from '@/data/track-ids';
 import { formAnalyticsFlag, formAwaitFirstFlush } from '@/lib/analytics/formHooks';
 
-const labelStyle = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
-  color: 'var(--n-60)',
-};
-const inputStyle = {
-  padding: '.75rem 1rem',
-  border: '1px solid rgba(162,167,176,.35)',
-  borderRadius: '2px',
-  background: 'var(--n-10)',
-  fontFamily: 'var(--sans)',
-  fontSize: 'var(--fs-16)',
-  color: 'var(--n-100)',
-  outline: 'none',
+// Field box (border, 48 px, focus ring, error state): `.cf-input` in globals.css.
+const labelStyle: CSSProperties = {
+  fontSize: 'var(--text-14)',
+  fontWeight: 500,
+  lineHeight: 1.4,
+  color: 'var(--text-1)',
 };
 const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '.5rem' };
-const helpStyle: CSSProperties = { fontSize: 'var(--fs-13)', color: 'var(--n-60)', lineHeight: 1.5 };
+const helpStyle: CSSProperties = { fontSize: 'var(--text-14)', color: 'var(--text-3)', lineHeight: 1.5 };
 // Radio and checkbox rows: the whole row is the label, at least 44 px high.
 const choiceStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '.75rem',
   minHeight: 44,
-  fontFamily: 'var(--sans)',
-  fontSize: 'var(--fs-16)',
+  fontSize: 'var(--text-16)',
   lineHeight: 1.4,
-  color: 'var(--n-100)',
+  color: 'var(--text-1)',
   cursor: 'pointer',
 };
 const choiceInputStyle: CSSProperties = {
   width: '1.125rem',
   height: '1.125rem',
   flexShrink: 0,
-  accentColor: 'var(--blue-base)',
-};
-const textLinkStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  minHeight: 44,
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
-  color: 'var(--blue-base)',
-  textDecoration: 'none',
+  accentColor: 'var(--accent)',
 };
 
 type ErrorCode = 'invalid' | 'phone' | 'server' | 'rate_limited';
@@ -175,27 +157,27 @@ export function ContactForm() {
     return (
       <div role="status" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-          <span style={{ color: 'var(--status-online)' }}>
+          <span style={{ color: 'var(--positive)' }}>
             <Icon name="check" size={20} />
           </span>
           <h2
             ref={sentRef}
             tabIndex={-1}
-            style={{ fontFamily: 'var(--sans)', fontSize: 'var(--fs-18)', fontWeight: 500, color: 'var(--n-100)' }}
+            style={{ fontSize: 'var(--text-18)', fontWeight: 500, color: 'var(--text-1)' }}
           >
             {t('sent')}
           </h2>
         </div>
-        <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-60)', lineHeight: 1.55 }}>
+        <p style={{ fontSize: 'var(--text-16)', color: 'var(--text-2)', lineHeight: 1.55 }}>
           {sent.topic === 'demo' ? t('sentSubDemo') : t('sentSub')}
         </p>
         {sent.phone && (
-          <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', lineHeight: 1.55 }}>
+          <p style={{ fontSize: 'var(--text-16)', color: 'var(--text-2)', lineHeight: 1.55 }}>
             {t('sentPhone', { phone: sent.phone })}
           </p>
         )}
         {sent.topic === 'demo' && (
-          <Link href="/automation" style={textLinkStyle} data-track={trackAttr('link', 'contact-automation')}>
+          <Link href="/automation" className="text-link text-link-block" data-track={trackAttr('link', 'contact-automation')}>
             {t('sentBack')}
           </Link>
         )}
@@ -267,7 +249,7 @@ export function ContactForm() {
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           required
           maxLength={200}
-          style={inputStyle}
+          className="cf-input"
         />
       </div>
       <div style={fieldStyle}>
@@ -283,7 +265,7 @@ export function ContactForm() {
           required={!callback}
           maxLength={254}
           aria-describedby="contact-email-help"
-          style={inputStyle}
+          className="cf-input"
         />
         <p id="contact-email-help" style={helpStyle}>
           {t('reachHelp')}
@@ -320,7 +302,7 @@ export function ContactForm() {
           maxLength={40}
           aria-invalid={phoneInvalid || undefined}
           aria-describedby={phoneInvalid ? 'contact-error' : undefined}
-          style={inputStyle}
+          className="cf-input"
         />
       </div>
       <div style={fieldStyle}>
@@ -334,7 +316,8 @@ export function ContactForm() {
           placeholder={t('msgPlaceholder')}
           rows={5}
           maxLength={5000}
-          style={{ ...inputStyle, resize: 'vertical' }}
+          className="cf-input"
+          style={{ resize: 'vertical' }}
         />
       </div>
       <div style={fieldStyle}>
@@ -345,7 +328,7 @@ export function ContactForm() {
           id="contact-heard-via"
           value={form.heardVia}
           onChange={(e) => setForm({ ...form, heardVia: e.target.value })}
-          style={{ ...inputStyle, width: '100%', minWidth: 0 }}
+          className="cf-input"
         >
           <option value="">{t('heardViaNone')}</option>
           {HEARD_VIA_IDS.map((id) => (
@@ -356,8 +339,9 @@ export function ContactForm() {
         </select>
       </div>
       {error && (
-        <p id="contact-error" role="alert" style={{ fontSize: 'var(--fs-14)', color: '#dc2626', lineHeight: 1.5 }}>
-          {errorText(error)}
+        <p id="contact-error" role="alert" className="contact-error">
+          <Icon name="alert" size={20} />
+          <span>{errorText(error)}</span>
         </p>
       )}
       <Btn type="submit" variant="primary" disabled={pending}>
@@ -368,7 +352,7 @@ export function ContactForm() {
         <p style={helpStyle}>
           {t.rich('privacyNote', {
             link: (chunks) => (
-              <Link href="/privacy" style={{ color: 'var(--blue-base)', textDecoration: 'underline' }}>
+              <Link href="/privacy" className="text-link">
                 {chunks}
               </Link>
             ),

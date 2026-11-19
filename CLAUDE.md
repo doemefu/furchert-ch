@@ -51,7 +51,8 @@ Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, 
 - No arrows on buttons or links on public pages (PR 2; remaining: WowTiles tile links → PR 7b; dashboard excluded, see the spec's Abgrenzung Dashboard).
 - Header and phone menu (PR 3, done): wordmark Archivo 500, sentence-case desktop nav, 44px targets, opaque sheet with dim layer, rows ≥64px, no Homelab entry (footer only).
 - Footer (PR 4, done): Archivo, four groups under a 2px ink rule, every link row ≥44px, external links carry the sr-only new-tab cue, «Homelab» (lock, `/dashboard`) only in the bottom line, «Stand» = newest `PAGE_LAST_MODIFIED` date.
-- Radius 4px for buttons (PR 2, done), sheet and inputs (target).
+- Radius 4px for buttons (PR 2, done) and inputs (PR 6, done); sheet (target).
+- Form fields, Tag, StatusDot, Icon (PR 6, done): fields ≥48px with 16px text, `--field-border`, 2px `--accent` focus ring, errors `--negative` with icon; Tag quiet raised text tag; LED square, static; icons stroke 1.5, no `spark`. Shared components keep the ETHON look inside the dashboard via the `.ethon` wrapper (`dashboard/layout.tsx`).
 - `.border-x` frame only from 64rem (target, PR 8).
 
 ## Tech Stack (pinned — see `package.json`)

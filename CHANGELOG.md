@@ -14,6 +14,19 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Form fields, tag, status LED and icons** (redesign «Formular» PR 6/11):
+  the /contact form uses 14px Archivo 500 sentence-case labels, 48px fields with
+  16px text, the `--field-border` frame (4.1:1), radius 4 and a 2px `--accent`
+  focus ring (`.cf-input` in `globals.css`). Errors use `--negative` with an alert
+  icon; `role="alert"` is unchanged and the phone field now also gets the red
+  frame. Form logic, validation, anti-spam, analytics and `from` are untouched.
+  `Tag` is a quiet text tag (raised surface, `--text-2`, 14px, radius 4, no mono);
+  `StatusDot`/`StatusLabel` use the LED tokens and a 14px Archivo label, still a
+  static square. `Icon` draws everything at stroke 1.5 and gains `alert`; `spark`
+  is gone (home «KI für KMU» teaser uses `flow`, «Weiteres Engagement» uses
+  `users`) and `boat` is redrawn as a rowing shell (also visible on the dashboard). The dashboard keeps its ETHON
+  look: a new `dashboard/layout.tsx` adds a `.ethon` wrapper (a plain wrapper `div`) and the
+  legacy tag, LED and 1.2 stroke styles live under `.ethon` in `globals.css`.
 - **Footer rebuilt** (redesign «Formular» PR 4/11): light footer under a 2px ink
   rule, Archivo throughout (no mono, no all-caps labels). Four groups:
   «Absender» (name, role and place on separate lines), «Kontakt» (e-mail link,
