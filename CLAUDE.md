@@ -49,6 +49,7 @@ Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, 
 - Sentence case, no all-caps labels (target).
 - No mono font on public pages (target; DM Mono is removed in PR 11).
 - No arrows on buttons or links on public pages (PR 2; remaining: WowTiles tile links → PR 7b, footer LinkedIn ↗ → PR 4; dashboard excluded, see the spec's Abgrenzung Dashboard).
+- Header and phone menu (PR 3, done): wordmark Archivo 500, sentence-case desktop nav, 44px targets, opaque sheet with dim layer, rows ≥64px, no Homelab entry (footer only).
 - Radius 4px for buttons (PR 2, done), sheet and inputs (target).
 - `.border-x` frame only from 64rem (target, PR 8).
 

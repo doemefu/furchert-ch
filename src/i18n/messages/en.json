@@ -5,7 +5,21 @@
     "rowing": "Rowing",
     "projects": "Software projects",
     "automation": "AI for SMEs",
-    "contact": "Contact"
+    "contact": "Contact",
+    "menu": "Menu",
+    "close": "Close",
+    "mobileLabel": "Main menu",
+    "groupBusiness": "For businesses",
+    "groupAbout": "About me",
+    "switchLang": "Deutsch",
+    "desc": {
+      "automation": "Dictate a report instead of typing, a quote drafted from the enquiry",
+      "contact": "30-minute live demo, free, at your site or by video",
+      "about": "Software engineer. Club president. Firefighter",
+      "it": "COBOL at UBS, IT audit internship at KPMG, studies at UZH",
+      "rowing": "President of the Rapperswil-Jona rowing club",
+      "projects": "Own login service, IoT platform, AI assistant for the rowing club"
+    }
   },
   "hero": {
     "label": "Software Engineer · AI for SMEs · Zurich",
@@ -1184,9 +1198,5 @@
         }
       }
     }
-  },
-  "common": {
-    "menu": "Menu",
-    "homelab": "Homelab"
   }
 }

@@ -189,10 +189,37 @@ body {
 ::-webkit-scrollbar-track { background: var(--n-10); }
 ::-webkit-scrollbar-thumb { background: var(--n-20); border-radius: 3px; }
 
-/* ── RESPONSIVE NAV ── */
-@media (max-width: 900px) {
-  .desktop-nav { display: none !important; }
-  .burger { display: flex !important; align-items: center; justify-content: center; }
+/* ── HEADER AND PHONE MENU (redesign PR 3) ──
+   Phone first: wordmark, "Kontakt" text link and the menu button. From 901px
+   the desktop nav replaces them (the breakpoint moved to 900px in #215). */
+.site-header { position: fixed; inset: 0 0 auto; z-index: 100; height: var(--header-h); background: var(--surface-page); border-bottom: 1px solid var(--rule); }
+.site-header-in { height: 100%; display: flex; align-items: center; gap: var(--space-1); }
+.wm { margin-right: auto; display: inline-flex; align-items: center; min-height: var(--tap); font-weight: 500; font-size: var(--text-17); line-height: 1.15; color: var(--text-1); text-decoration: none; white-space: nowrap; }
+.hd-k { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 .625rem; font-size: var(--text-16); color: var(--text-1); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+.mbtn { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap); padding: 0 .75rem; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface-card); font: 500 var(--text-16)/1 var(--font-sans); color: var(--text-1); cursor: pointer; }
+.dnav { display: none; align-items: center; gap: 2px; }
+.dnav a:not(.btn), .dnav button { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 .625rem; font: 400 var(--text-16)/1 var(--font-sans); color: var(--text-2); text-decoration: none; white-space: nowrap; background: none; border: 0; cursor: pointer; }
+.dnav a[aria-current] { color: var(--text-1); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: .4em; }
+.dnav .dnav-lang { color: var(--text-3); }
+.dnav .btn { margin-left: var(--space-2); }
+.mnav-dim { position: fixed; inset: var(--header-h) 0 0; z-index: 90; background: rgb(28 27 25 / .5); animation: mnavFade var(--dur-menu) var(--ease) both; }
+.mnav { position: fixed; inset: var(--header-h) 0 auto; z-index: 95; max-height: calc(100dvh - var(--header-h)); overflow-y: auto; overscroll-behavior: contain; background: var(--surface-page); border-bottom: 1px solid var(--rule); padding: var(--space-1) var(--gutter) var(--space-6); animation: mnavRise var(--dur-menu) var(--ease) both; }
+.mnav[hidden], .mnav-dim[hidden] { display: none; }
+.mnav-grp { border-top: 1px solid var(--rule); padding-top: .625rem; margin-top: .75rem; }
+.mnav-grp:first-child { margin-top: var(--space-2); border-top-width: 2px; }
+.mnav-lab { display: block; font-size: var(--text-14); color: var(--text-3); }
+.mnav-i { display: grid; grid-template-columns: 1fr 16px; gap: 2px .75rem; align-items: center; padding: .625rem 0; min-height: 4rem; border-bottom: 1px solid var(--hairline-strong); color: var(--text-1); text-decoration: none; }
+.mnav-i b { font-weight: 500; font-size: var(--text-18); line-height: 1.3; justify-self: start; }
+.mnav-i span { grid-column: 1; font-size: var(--text-14); color: var(--text-3); line-height: 1.4; }
+.mnav-i svg { grid-column: 2; grid-row: 1 / span 2; color: var(--text-3); }
+.mnav-i[aria-current] b { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+.mnav-lang { margin-top: var(--space-5); }
+@keyframes mnavFade { from { opacity: 0; } }
+@keyframes mnavRise { from { opacity: 0; transform: translateY(calc(var(--rise) * -1)); } }
+@media (prefers-reduced-motion: reduce) { .mnav, .mnav-dim { animation: none; } }
+@media (min-width: 901px) {
+  .hd-k, .mbtn, .mnav, .mnav-dim { display: none !important; }
+  .dnav { display: flex; }
 }
 
 /* ── STAT GRID RESPONSIVE ── */

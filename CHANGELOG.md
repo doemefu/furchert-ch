@@ -6,6 +6,24 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Header and phone menu rebuilt** (redesign «Formular» PR 3/11): the header
+  shows the wordmark «Dominic Furchert» in Archivo 500 on an opaque page-colour
+  bar. Desktop nav (from 901px) is sentence-case Archivo with a brick underline
+  on the active page, the language switch and «Kontakt» as the primary button;
+  it does not wrap between 901 and 1024px in DE and EN. On phones «Kontakt» is
+  an underlined text link next to a «Menü» / «Menu» button (hamburger icon,
+  turns into «Schliessen» / «Close» with an X); both targets are 44px high.
+  The new `MobileNav` is an opaque sheet under the header with a dim layer
+  behind it, two groups («Für Betriebe», «Über mich»), rows of at least 64px
+  with a title, a one-line explanation and a chevron, `aria-current` plus a
+  brick underline on the active page, and a language button. Focus moves into
+  the menu and is trapped (`nextTrapTarget`), Escape, the dim layer and any
+  link close it, focus returns to the button, body scroll is locked, and it
+  closes when the viewport grows past 900px. «Homelab» is gone from header
+  and menu (footer only, PR 4); the old `.burger` CSS and the `common.*`
+  messages are removed. New keys under `nav.*` (`menu`, `close`,
+  `mobileLabel`, `groupBusiness`, `groupAbout`, `switchLang`, `desc.*`).
+
 - **Buttons and text links restyled** (redesign «Formular» PR 2/11): `Btn` has
   three variants (`primary`, `secondary`, `inverse`), Archivo 500 in sentence
   case, 4px radius, 48px minimum height (40px small variant with a 44px tap

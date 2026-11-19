@@ -4,7 +4,7 @@ import { cloneElement, type CSSProperties, type ReactElement, type SVGProps } fr
 export type IconName =
   | 'arrow' | 'lock' | 'github' | 'ext' | 'server' | 'globe' | 'code' | 'chip'
   | 'spark' | 'chart' | 'db' | 'flow' | 'git' | 'users' | 'mic' | 'boat'
-  | 'iot' | 'ai' | 'check' | 'cpu' | 'mail' | 'cloud';
+  | 'iot' | 'ai' | 'check' | 'cpu' | 'mail' | 'cloud' | 'menu' | 'close' | 'chevron';
 
 export function Icon({ name, size = 16 }: { name: IconName | string; size?: number }) {
   const s: CSSProperties = { width: size, height: size, display: 'block', flexShrink: 0 };
@@ -31,6 +31,9 @@ export function Icon({ name, size = 16 }: { name: IconName | string; size?: numb
     cpu: <svg style={s} viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" /><rect x="5.5" y="5.5" width="5" height="5" stroke="currentColor" strokeWidth="1" /><path d="M5 1v2M8 1v2M11 1v2M5 13v2M8 13v2M11 13v2M1 5h2M1 8h2M1 11h2M13 5h2M13 8h2M13 11h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" /></svg>,
     mail: <svg style={s} viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3" width="13" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" /><path d="M2 4l6 5 6-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>,
     cloud: <svg style={s} viewBox="0 0 16 16" fill="none"><path d="M4.5 12.5h7.25a2.75 2.75 0 00.3-5.48A4 4 0 004.3 6.9 2.8 2.8 0 004.5 12.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>,
+    menu: <svg style={s} viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>,
+    close: <svg style={s} viewBox="0 0 16 16" fill="none"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>,
+    chevron: <svg style={s} viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   };
   // Icons are decorative — they always sit next to text or a labelled parent.
   // Hide them from assistive tech and make them non-focusable in one place.
