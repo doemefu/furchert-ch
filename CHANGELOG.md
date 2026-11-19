@@ -21,7 +21,7 @@ All notable changes per milestone. Newest first.
   blue. The last public arrow (tile CTA) is gone. The /automation text links
   (`textLink` removed) use `.text-link` / `.text-link-block`. Number and unit
   in the tile data (`120 m²`, `24 m`, `2,5 Std.`, `−4 °C`, `5.30 Uhr`) are
-  joined by a no-break space. `FieldRow` takes an optional `style`. Content,
+  joined by a no-break space. `FieldRow` takes an optional `style`; the tile focus ring is now `--accent`; `Tag` loses its unused `contrast` prop. Content,
   order and open/close behaviour are unchanged; the dashboard keeps its look.
 
 - **Home example sheet rebuilt as a «Formular» sheet** (redesign PR 7/11): the

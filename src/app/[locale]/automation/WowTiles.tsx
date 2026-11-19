@@ -145,7 +145,7 @@ function OverviewBody({ p }: { p: OverviewPanel }) {
         aria-hidden="true"
         viewBox="0 0 100 24"
         preserveAspectRatio="none"
-        style={{ display: 'block', width: '100%', height: 24 }}
+        style={{ display: 'block', width: '100%', height: 16 }}
       >
         <path
           d="M10 0 C10 14 50 8 50 24 M50 0 L50 24 M90 0 C90 14 50 8 50 24"
