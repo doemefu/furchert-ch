@@ -25,6 +25,7 @@ describe('home hero sheet copy', () => {
       expect(JSON.stringify([h.sheetRowMail, h.sheetPosNo, h.sheetPrices])).not.toMatch(MONEY);
     }
     expect(home.de.sheetPrices.replace('{note}', PRICE_CELL.de)).toBe('Preise: aus Ihrer Kalkulation');
+    expect(home.en.sheetPrices.replace('{note}', PRICE_CELL.en)).toBe('Prices: from your costing');
   });
 
   it('shows at least 2 rows, every price cell is the costing note, no CHF amount', () => {

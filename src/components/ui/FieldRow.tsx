@@ -11,7 +11,7 @@ export interface FieldRowProps {
   children: ReactNode;
   /** Optional second line under the value. */
   secondary?: ReactNode;
-  /** Optional small line before the value (14px, `--text-2`), e.g. «Von: R. Brunner». */
+  /** Optional small line before the value (14px, `--text-2`), e.g. «Von: R. Brunner». meta is not combined with photo. */
   meta?: ReactNode;
   /** `text`: the value is running text (16px, weight 400, may hold a table or list), not a short field value. */
   variant?: 'text';

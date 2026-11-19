@@ -20,7 +20,7 @@ export async function HomeOfferSheet({ locale }: { locale: Locale }) {
   const p = tile.i18n[locale].panel;
   const [itemCol, quantityCol] = p.table.columns;
   // Every row carries the same price phrase; it is shown once, under the table.
-  const priceNote = p.table.rows[0][2];
+  const priceNote = p.table.rows[0]?.[2] ?? '';
 
   return (
     <figure className="hs">
@@ -56,7 +56,7 @@ export async function HomeOfferSheet({ locale }: { locale: Locale }) {
                 ))}
               </tbody>
             </table>
-            <p className="hs-price">{t('sheetPrices', { note: priceNote })}</p>
+            {priceNote ? <p className="hs-price">{t('sheetPrices', { note: priceNote })}</p> : null}
           </FieldRow>
           <FieldRow variant="text" label={p.questionsLabel}>
             <ul className="hs-ask">

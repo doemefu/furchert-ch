@@ -16,8 +16,8 @@ All notable changes per milestone. Newest first.
 
 - **Home example sheet rebuilt as a «Formular» sheet** (redesign PR 7/11): the
   invented quote example in the home hero (`HomeOfferSheet`) is now a card with a
-  1px ink border and radius 4 under a 2px ink rule, label line plus title in Archivo
-  at 80 % stretch, one `FieldRow` per step (incoming mail with the from-line above
+  1px ink border and radius 4 under a 2px ink rule, label line (Archivo 13px) plus the title in Archivo
+  at 80 % stretch (the title only), one `FieldRow` per step (incoming mail with the from-line above
   the subject, found quote as a blue highlighter mark, position list, questions as
   amber highlighter marks) and a closing line in weight 500. The position list is a
   real `<table>` with column headers (Pos./Position/Menge), numbers and quantities
