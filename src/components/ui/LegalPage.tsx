@@ -1,20 +1,20 @@
 // Impressum / Datenschutz layout (#16): the shared PageHeader, a contact block
 // with the owner's name and e-mail, then the text sections. Typography follows
-// the about page (mono uppercase labels, --n-60 body text).
+// the about page (sentence-case labels, --n-60 body text).
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ContactEmail } from '@/components/ui/ContactEmail';
 import { LEGAL_CONTACT, type LegalPageCopy } from '@/data/legal';
 
-const BORDER = '1px solid rgba(162,167,176,.22)';
-
+// Sentence case, no mono (redesign PR 8); `h2` labels carry the 2px ink rule.
 const labelMono = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-13)',
-  letterSpacing: '.04em',
-  textTransform: 'uppercase' as const,
-  color: 'var(--n-60)',
-  // DM Mono is loaded at 400/500 only; h2 would otherwise get a faux bold.
+  fontSize: 'var(--text-14)',
+  color: 'var(--text-3)',
   fontWeight: 400,
+};
+const headLabel = {
+  ...labelMono,
+  borderTop: '2px solid var(--rule)',
+  paddingTop: 'var(--space-3)',
 };
 
 const bodyText = {
@@ -33,8 +33,8 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
       <div className="container border-x">
         <PageHeader label={copy.label} title={copy.title} sub={copy.sub} />
 
-        <div style={{ padding: '3rem 0', borderBottom: BORDER }}>
-          <h2 style={{ ...labelMono, marginBottom: '1.5rem' }}>{copy.contactLabel}</h2>
+        <div style={{ paddingTop: 'var(--section-y)' }}>
+          <h2 style={{ ...headLabel, marginBottom: '1.5rem' }}>{copy.contactLabel}</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
             <div>
               <div style={labelMono}>{copy.nameLabel}</div>
@@ -51,8 +51,8 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
         </div>
 
         {copy.sections.map((section) => (
-          <section key={section.heading} style={{ padding: '2.5rem 0', borderBottom: BORDER }}>
-            <h2 style={{ ...labelMono, marginBottom: '1.25rem' }}>{section.heading}</h2>
+          <section key={section.heading} style={{ paddingTop: 'var(--section-y)' }}>
+            <h2 style={{ ...headLabel, marginBottom: '1.25rem' }}>{section.heading}</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {section.paragraphs.map((p, i) => (
                 <p key={i} style={bodyText}>
@@ -63,7 +63,7 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
           </section>
         ))}
 
-        <p style={{ ...labelMono, fontSize: 'var(--fs-12)', padding: '2rem 0 3rem' }}>
+        <p style={{ ...labelMono, padding: '2rem 0 3rem' }}>
           {copy.updatedLabel}: {copy.updated}
         </p>
       </div>

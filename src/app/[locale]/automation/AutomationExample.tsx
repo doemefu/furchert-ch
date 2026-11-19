@@ -11,7 +11,7 @@ import type { Locale } from '@/i18n/routing';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
 import { EXAMPLE, type ExampleField } from '@/data/automation-example';
-import { HAIRLINE, fieldLabel, h2Style, labelMono, leadStyle, sectionStyle } from './sectionStyles';
+import { HAIRLINE, fieldLabel, h2Style, sectionLabel, leadStyle, sectionStyle } from './sectionStyles';
 
 const panelTitle = {
   display: 'flex',
@@ -84,7 +84,7 @@ export async function AutomationExample({
 
   return (
     <section id="beispiel" aria-labelledby="example-heading" style={sectionStyle} data-track-section="beispiel">
-      <p style={labelMono}>{t('exampleLabel')}</p>
+      <p style={sectionLabel}>{t('exampleLabel')}</p>
       <h2 id="example-heading" style={h2Style}>
         {t('exampleHeading')}
       </h2>

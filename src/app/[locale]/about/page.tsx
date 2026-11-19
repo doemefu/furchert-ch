@@ -28,12 +28,15 @@ export async function generateMetadata({
   });
 }
 
+// Section eyebrow: sentence case, no mono (redesign PR 8). `sectionLabel` adds the 2px ink rule.
 const labelMono = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-13)',
-  letterSpacing: '.04em',
-  textTransform: 'uppercase' as const,
-  color: 'var(--n-60)',
+  fontSize: 'var(--text-14)',
+  color: 'var(--text-3)',
+};
+const sectionLabel = {
+  ...labelMono,
+  borderTop: '2px solid var(--rule)',
+  paddingTop: 'var(--space-3)',
 };
 
 export default async function AboutPage({
@@ -100,7 +103,8 @@ export default async function AboutPage({
           {FACTS.map((f, i) => (
             <div
               key={i}
-              style={{ padding: '2rem 1.5rem', borderRight: '1px solid rgba(162,167,176,.22)' }}
+              className="cell"
+              style={{ paddingBlock: '2rem', borderRight: '1px solid rgba(162,167,176,.22)' }}
             >
               <div
                 style={{
@@ -129,8 +133,8 @@ export default async function AboutPage({
           ))}
         </div>
 
-        <div style={{ padding: '3rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={{ ...labelMono, marginBottom: '2rem' }}>{t('pages.about.timeline')}</p>
+        <div style={{ paddingTop: 'var(--section-y)' }}>
+          <p style={{ ...sectionLabel, marginBottom: '2rem' }}>{t('pages.about.timeline')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {TIMELINE.map((row, ri) => (
               <div
@@ -187,8 +191,8 @@ export default async function AboutPage({
           </div>
         </div>
 
-        <div style={{ padding: '2.5rem 0', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-          <p style={{ ...labelMono, marginBottom: '1rem' }}>{t('pages.about.interests')}</p>
+        <div style={{ paddingTop: 'var(--section-y)' }}>
+          <p style={{ ...sectionLabel, marginBottom: '1rem' }}>{t('pages.about.interests')}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
             {INTERESTS.map((i) => (
               <Tag key={i}>{i}</Tag>
@@ -196,7 +200,7 @@ export default async function AboutPage({
           </div>
         </div>
 
-        <div style={{ padding: '2.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ padding: 'var(--section-y) 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <Btn href="/projects" track={trackAttr('link', 'about-projects')}>
             {t('hero.seeProjects')}
           </Btn>

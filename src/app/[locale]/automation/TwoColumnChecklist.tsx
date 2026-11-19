@@ -6,7 +6,7 @@
 // component; copy comes in as props. `CheckRow` is reused by "Wer ich bin".
 import type { ReactNode } from 'react';
 import { Icon } from '@/components/ui/Icon';
-import { HAIRLINE, footnoteStyle, h2Style, labelMono, leadStyle, sectionStyle } from './sectionStyles';
+import { HAIRLINE, footnoteStyle, h2Style, sectionLabel, leadStyle, sectionStyle } from './sectionStyles';
 
 const columnTitle = {
   fontFamily: 'var(--mono)',
@@ -69,7 +69,7 @@ export function TwoColumnChecklist({
   const headingId = `${id}-heading`;
   return (
     <section id={id} aria-labelledby={headingId} style={sectionStyle} data-track-section={trackSection}>
-      <p style={labelMono}>{label}</p>
+      <p style={sectionLabel}>{label}</p>
       <h2 id={headingId} style={h2Style}>
         {heading}
       </h2>

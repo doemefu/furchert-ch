@@ -1,41 +1,47 @@
 // Section styles shared by the /automation page and its section components.
-// Values are the page's existing ones (prototype section header: mono label,
-// h2, short lead); kept in one place so the new sections match the old.
+// Section head: sentence-case label, Archivo h2, short lead; kept in one place
+// so all sections match.
 import type { CSSProperties } from 'react';
 
 export const HAIRLINE = '1px solid rgba(162,167,176,.22)';
 
-// Phone spacing: the clamp() values equal the prototype's from about 800 px
-// wide and keep /automation within its screen budget on phones (#145).
+// Section opener (redesign PR 8): `--section-y` of space above a section, a 2px
+// ink rule over the label and the title, no hairline below (the next section's
+// rule separates). One left edge: the container's.
 export const sectionStyle: CSSProperties = {
-  padding: 'clamp(2.5rem, 8vw, 4rem) 0',
-  borderBottom: HAIRLINE,
+  paddingTop: 'var(--section-y)',
 };
 
-// n-60 instead of the prototype's label grey for AA contrast (#145).
+// Eyebrow of a section head: sentence case, 14px, no mono, no uppercase.
 export const labelMono: CSSProperties = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-13)',
-  letterSpacing: '.04em',
-  textTransform: 'uppercase',
-  color: 'var(--n-60)',
-  marginBottom: '1rem',
+  fontSize: 'var(--text-14)',
+  color: 'var(--text-3)',
+  marginBottom: 'var(--space-2)',
+};
+
+// The first element of a section head carries the 2px rule.
+export const sectionLabel: CSSProperties = {
+  ...labelMono,
+  borderTop: '2px solid var(--rule)',
+  paddingTop: 'var(--space-3)',
 };
 
 export const h2Style: CSSProperties = {
-  fontFamily: 'var(--sans)',
-  fontSize: 'var(--fs-h2)',
-  fontWeight: 500,
-  letterSpacing: '-.02em',
-  color: 'var(--n-100)',
-  marginBottom: '1rem',
+  fontSize: 'var(--text-h2)',
+  fontStretch: 'var(--stretch-heading)',
+  fontWeight: 'var(--weight-heading)' as CSSProperties['fontWeight'],
+  lineHeight: 1.05,
+  letterSpacing: 0,
+  color: 'var(--text-1)',
+  marginBottom: 'var(--space-4)',
+  textWrap: 'balance',
 };
 
 // Short direct answer under a question heading (GEO: quotable by AI search).
 export const leadStyle: CSSProperties = {
-  fontSize: 'var(--fs-16)',
-  color: 'var(--n-70)',
-  lineHeight: 1.55,
+  fontSize: 'var(--text-17)',
+  color: 'var(--text-2)',
+  lineHeight: 1.5,
   maxWidth: '62ch',
   marginBottom: 'clamp(1.5rem, 5vw, 2.5rem)',
 };

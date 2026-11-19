@@ -20,12 +20,15 @@ import { trackAttr } from '@/data/track-ids';
 const DOTS =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.3'/%3E%3C/svg%3E\")";
 
+// Section eyebrow: sentence case, no mono (redesign PR 8). `sectionLabel` adds the 2px ink rule.
 const labelMono = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-13)',
-  letterSpacing: '.04em',
-  textTransform: 'uppercase' as const,
-  color: 'var(--n-60)',
+  fontSize: 'var(--text-14)',
+  color: 'var(--text-3)',
+};
+const sectionLabel = {
+  ...labelMono,
+  borderTop: '2px solid var(--rule)',
+  paddingTop: 'var(--space-3)',
 };
 
 export async function generateMetadata({
@@ -78,7 +81,7 @@ export default async function HomePage({
       />
       {/* HERO — note: layout <main> already supplies paddingTop:var(--header-h),
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
-      <section style={{ background: 'var(--n-10)' }}>
+      <section>
         <div className="container border-x home-hero">
           <div className="home-hero-body">
             <div className="home-hero-split" style={{ position: 'relative' }}>
@@ -163,8 +166,9 @@ export default async function HomePage({
             }}
           >
             <div
+              className="cell"
               style={{
-                padding: '3rem var(--card-px)',
+                paddingBlock: '3rem',
                 borderRight: '1px solid rgba(162,167,176,.22)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
@@ -220,8 +224,9 @@ export default async function HomePage({
               </ul>
             </div>
             <div
+              className="cell"
               style={{
-                padding: '3rem var(--card-px)',
+                paddingBlock: '3rem',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
               }}
             >
@@ -281,17 +286,17 @@ export default async function HomePage({
 
       <HomeStatusLine />
 
-      <section style={{ background: 'var(--white)' }}>
+      <section>
         <div className="container border-x">
-          <div style={{ padding: '4rem 0 2.5rem', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
-            <p style={{ ...labelMono, marginBottom: '1rem' }}>{t('pages.home.areas')}</p>
+          <div style={{ padding: 'var(--section-y) 0 var(--space-10)', borderBottom: '1px solid rgba(162,167,176,.22)' }}>
+            <p style={{ ...sectionLabel, marginBottom: 'var(--space-2)' }}>{t('pages.home.areas')}</p>
             <h2
               style={{
-                fontFamily: 'var(--sans)',
-                fontSize: 'var(--fs-h2)',
-                fontWeight: 500,
-                letterSpacing: '-.02em',
-                color: 'var(--n-100)',
+                fontSize: 'var(--text-h2)',
+                fontStretch: 'var(--stretch-heading)',
+                fontWeight: 'var(--weight-heading)',
+                lineHeight: 1.05,
+                color: 'var(--text-1)',
                 maxWidth: '22ch',
               }}
             >
@@ -310,9 +315,9 @@ export default async function HomePage({
                 key={key}
                 href={`/${key}`}
                 data-track={trackAttr('link', `home-tile-${key}`)}
-                className="hover-card"
+                className="hover-card cell"
                 style={{
-                  padding: '2.5rem var(--card-px)',
+                  paddingBlock: '2.5rem',
                   borderRight: '1px solid rgba(162,167,176,.22)',
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}
@@ -383,8 +388,9 @@ export default async function HomePage({
             {HOME_STATS.map((s, i) => (
               <div
                 key={i}
+                className="cell"
                 style={{
-                  padding: '2.5rem var(--card-px)',
+                  paddingBlock: '2.5rem',
                   borderRight: '1px solid rgba(162,167,176,.22)',
                   borderBottom: '1px solid rgba(162,167,176,.22)',
                 }}

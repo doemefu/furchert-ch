@@ -14,6 +14,21 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Section heads, page header and page surface** (redesign PR 8/11): `PageHeader`
+  and the shared section styles (`sectionStyles.ts`, `LegalPage`, the home and
+  about heads) use Archivo at `--stretch-heading` / `--stretch-display`, a
+  sentence-case 14px label in `--text-3` instead of the mono uppercase eyebrow,
+  a lead in `--text-2` and a 2px ink rule over each section head; sections are
+  spaced with `--section-y`. One left edge: the `.border-x` frame only shows from
+  64rem (the container then pads its content by `--gutter`), phones have none, so
+  text gets the full width minus the gutter and the double margins on phones
+  (hero, cell grids, consent bar, footer) are gone. The body is on
+  `--surface-page`. Public links and the consent bar use a `--text-1` focus ring;
+  the dashboard (`.ethon`) keeps the blue ring, its own frame, background and
+  padding. The phone menu also marks elements appended to `<body>` after it
+  opened (the consent-bar host) `inert` (`MutationObserver`, `inertize` in
+  `lib/a11y/drawer.ts`, unit-tested). Content and section order are unchanged.
+
 - **/automation example tiles restyled as «Formular» sheets** (redesign PR 7b/11):
   `WowTiles` uses FieldList/FieldRow rows, highlighter marks instead of coloured
   edges, a 1px ink border with `--radius`, sentence-case labels and no mono (36
@@ -107,8 +122,9 @@ All notable changes per milestone. Newest first.
 
 - **Site-wide typeface is now Archivo** (redesign «Formular» PR 1, owner
   decision 2026-11-19): DM Sans is replaced by Archivo (variable, width axis,
-  self-hosted via `next/font`, metric-matched fallback with Helvetica Neue,
-  Arial and system-ui). All text renders at 100% width; DM Mono stays until the
+  self-hosted via `next/font`, fallbacks: the generated Arial-based «Archivo Fallback»
+  is metric-matched, then Helvetica Neue, Arial and system-ui). All non-mono
+  text renders at 100% width; DM Mono stays until the
   last redesign PR. The new design tokens are defined next to the ETHON tokens
   and are not used by components yet.
 

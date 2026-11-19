@@ -53,7 +53,8 @@ Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, 
 - Footer (PR 4, done): Archivo, four groups under a 2px ink rule, every link row ≥44px, external links carry the sr-only new-tab cue, «Homelab» (lock, `/dashboard`) only in the bottom line, «Stand» = newest `PAGE_LAST_MODIFIED` date.
 - Radius 4px for buttons (PR 2, done), inputs (PR 6, done) and the home example sheet (PR 7, done: `FieldRow` `variant="text"`/`meta`, highlighter marks, position `<table>`) and the /automation example tiles (PR 7b, done: `.wt-*` in `globals.css`, FieldList/FieldRow rows, marks instead of coloured edges, own tile no longer blue; the rest of /automation follows in PR 11).
 - Form fields, Tag, StatusDot, Icon (PR 6, done): fields ≥48px with 16px text, `--field-border`, 2px `--accent` focus ring, errors `--negative` with icon; Tag quiet raised text tag; LED square, static; icons stroke 1.5, no `spark`. Shared components keep the ETHON look inside the dashboard via the `.ethon` wrapper (`dashboard/layout.tsx`).
-- `.border-x` frame only from 64rem (target, PR 8).
+- Section and page heads (PR 8, done): `.ph*` (PageHeader) and `sectionStyles.ts` (`sectionLabel`, `h2Style`, `leadStyle`): sentence-case 14px label, Archivo heading at `--stretch-heading`, lead `--text-2`, 2px `--rule` over each section head, `--section-y` spacing, body on `--surface-page`.
+- `.border-x` frame only from 64rem (PR 8, done): phones have no frame and one left edge (`--gutter`); from 64rem the container pads its content by `--gutter`. The dashboard keeps its frame, background and padding via `.ethon` (`.ethon .border-x`, `.ethon .container`). Public focus ring is `--text-1`, the dashboard keeps `--blue-base`.
 
 ## Tech Stack (pinned — see `package.json`)
 

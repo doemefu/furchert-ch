@@ -18,7 +18,7 @@ import {
   cardTitle,
   footnoteStyle,
   h2Style,
-  labelMono,
+  sectionLabel,
   leadStyle,
   sectionStyle,
 } from './sectionStyles';
@@ -120,7 +120,7 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
 
   return (
     <section id="preise" aria-labelledby="prices-heading" style={sectionStyle} data-track-section="preise">
-      <p style={labelMono}>{t('processLabel')}</p>
+      <p style={sectionLabel}>{t('processLabel')}</p>
       <h2 id="prices-heading" style={h2Style}>
         {t('processHeading')}
       </h2>

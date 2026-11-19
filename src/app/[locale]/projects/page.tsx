@@ -57,9 +57,9 @@ export default async function ProjectsPage({
               key={p.slug}
               href={`/projects/${p.slug}`}
               data-track={trackAttr('link', `project-card-${p.slug}`)}
-              className="hover-card"
+              className="hover-card cell"
               style={{
-                padding: '2rem var(--card-px)',
+                paddingBlock: '2rem',
                 borderRight: '1px solid rgba(162,167,176,.22)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
                 // Prototype pages.jsx:417 — flex column with gap; tag row
@@ -133,9 +133,9 @@ export default async function ProjectsPage({
             href="https://github.com/doemefu"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover-card"
+            className="hover-card cell"
             style={{
-              padding: '2rem var(--card-px)',
+              paddingBlock: '2rem',
               borderRight: '1px solid rgba(162,167,176,.22)',
               borderBottom: '1px solid rgba(162,167,176,.22)',
               display: 'flex',
