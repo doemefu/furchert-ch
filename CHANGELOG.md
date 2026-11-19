@@ -74,6 +74,13 @@ All notable changes per milestone. Newest first.
 
 ### Added
 
+- **Form row and form head components** (redesign «Formular», PR 5/11): `FieldRow`
+  (field name above its value, optional second line; a `<div>` group of
+  `<dt>`/`<dd>`), `FieldList` (the `<dl>` wrapper for rows on their own) and
+  `FieldHead` (one `<dl>` with a 2px ink rule, hairlines, lead field, further
+  fields, an optional desktop-only `aside` field and an optional empty 4:5
+  photo slot). Not used on any page yet; the hero, example sheet and contact
+  page adopt them in later PRs.
 - **Usage statistics live** (#158, WA-6 of Epic doemefu/homelab#348,
   2026-11-09): the consent bar, the footer "Privacy settings" button and the
   consented tracker are turned on (`ANALYTICS_UI_ENABLED = true`), together

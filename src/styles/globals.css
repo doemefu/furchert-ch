@@ -517,6 +517,43 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
   .ft-bot { column-gap: var(--space-8); }
 }
 
+/* ── FORM ROW AND FORM HEAD (redesign PR 5) ──
+   FieldRow: field name above its value. FieldHead: one <dl>, 2px ink rule,
+   hairlines between fields; phone: lead field spans both columns, then two
+   columns (a lone last field spans both); from 64rem one line (lead 1.5fr,
+   --fh-n further fields, the desktop-only aside last). */
+.fl { margin: 0; }
+.fr { min-width: 0; }
+.fr-lab { display: block; font-size: var(--text-13); line-height: 1rem; color: var(--text-3); font-weight: 400; }
+.fr-val { display: block; margin: 2px 0 0; font-size: var(--text-17); line-height: 1.3; font-weight: 500; color: var(--text-1); }
+.fr-sub { display: block; margin: 0; font-size: var(--text-16); line-height: 1.4; color: var(--text-2); }
+.fr-photo { display: grid; grid-template-columns: 3.5rem 1fr; grid-template-rows: auto auto 1fr; column-gap: var(--space-3); align-items: start; }
+.fr-photo > :not(.fh-photo) { grid-column: 2; }
+.fh-photo { grid-column: 1; grid-row: 1 / span 3; margin: 0; width: 3.5rem; height: 4.375rem; border-radius: 2px; background: var(--surface-raised); }
+.fh { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--rule); margin: 0; }
+.fh > .fr { padding: var(--space-2) var(--space-3) var(--space-3) 0; border-bottom: 1px solid var(--hairline-strong); }
+.fh > .fh-lead { grid-column: 1 / -1; }
+.fh > .fr:nth-child(odd):not(.fh-lead) { border-left: 1px solid var(--hairline-strong); padding-left: var(--space-3); }
+.fh > .fh-desk { display: none; }
+@media (max-width: 63.999rem) {
+  /* a further field alone in its last phone row spans both columns (the aside is hidden here) */
+  .fh:not(.fh-has-aside) > .fr:last-child:nth-child(even):not(.fh-lead),
+  .fh-has-aside > .fr:nth-last-child(2):nth-child(even):not(.fh-lead) { grid-column: 1 / -1; }
+}
+@media (min-width: 64rem) {
+  .fh { grid-template-columns: 1.5fr repeat(var(--fh-n, 1), 1fr); }
+  .fh-solo { grid-template-columns: 1fr; }
+  .fh > .fh-lead { grid-column: auto; }
+  .fr-photo { grid-template-columns: 4rem 1fr; }
+  .fh-photo { width: 4rem; height: 5rem; }
+  .fh > .fh-desk { display: block; }
+  .fh > .fr { padding-right: var(--space-4); }
+  /* (n) matches every position. Both this rule and the phone rule for odd
+     cells are (0,4,0); this one comes later, so it wins. */
+  .fh > .fr:nth-child(n):not(.fh-lead) { border-left: 1px solid var(--hairline-strong); padding-left: var(--space-4); }
+  .fr-val { font-size: var(--text-18); }
+}
+
 /* /dashboard/analytics pages table: the same rows as cards on phones (WA-4b #156). */
 .wa-pages-cards { display: none; }
 @media (max-width: 640px) {
