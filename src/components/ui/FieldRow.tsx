@@ -3,7 +3,7 @@
 // is one description list, so the fields of a group live in one <dl> (screen
 // readers announce one list instead of one list per field): FieldHead renders
 // that <dl> itself, anything else wraps its rows in FieldList. A FieldRow
-// outside a <dl> is invalid HTML. Not used on a page yet (redesign PR 5).
+// outside a <dl> is invalid HTML. Used by the home example sheet (redesign PR 7).
 import type { ReactNode } from 'react';
 
 export interface FieldRowProps {
@@ -11,16 +11,21 @@ export interface FieldRowProps {
   children: ReactNode;
   /** Optional second line under the value. */
   secondary?: ReactNode;
+  /** Optional small line before the value (14px, `--text-2`), e.g. «Von: R. Brunner». */
+  meta?: ReactNode;
+  /** `text`: the value is running text (16px, weight 400, may hold a table or list), not a short field value. */
+  variant?: 'text';
   /** Empty, decorative photo slot (4:5) left of the field; FieldHead sets it for its lead field. */
   photo?: boolean;
   className?: string;
 }
 
-export function FieldRow({ label, children, secondary, photo = false, className }: FieldRowProps) {
-  const cls = ['fr', photo ? 'fr-photo' : '', className ?? ''].filter(Boolean).join(' ');
+export function FieldRow({ label, children, secondary, meta, variant, photo = false, className }: FieldRowProps) {
+  const cls = ['fr', variant === 'text' ? 'fr-text' : '', photo ? 'fr-photo' : '', className ?? ''].filter(Boolean).join(' ');
   return (
     <div className={cls}>
       <dt className="fr-lab">{label}</dt>
+      {meta ? <dd className="fr-meta">{meta}</dd> : null}
       <dd className="fr-val">{children}</dd>
       {secondary ? <dd className="fr-sub">{secondary}</dd> : null}
       {photo ? <dd className="fh-photo" aria-hidden="true"></dd> : null}

@@ -14,6 +14,19 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Home example sheet rebuilt as a «Formular» sheet** (redesign PR 7/11): the
+  invented quote example in the home hero (`HomeOfferSheet`) is now a card with a
+  1px ink border and radius 4 under a 2px ink rule, label line plus title in Archivo
+  at 80 % stretch, one `FieldRow` per step (incoming mail with the from-line above
+  the subject, found quote as a blue highlighter mark, position list, questions as
+  amber highlighter marks) and a closing line in weight 500. The position list is a
+  real `<table>` with column headers (Pos./Position/Menge), numbers and quantities
+  in tabular-nums, «Preise: aus Ihrer Kalkulation» shown once; at 320 px the quantity
+  column wraps instead of overflowing. All four positions now show on phones (the
+  `home-sheet-extra` hiding is gone). `FieldRow` gains `variant="text"` (16px, weight
+  400, may hold a table or list) and `meta` (14px `--text-2` line before the value).
+  New keys `pages.home.sheetRowMail`, `sheetPosNo`, `sheetPrices` (DE/EN); the
+  `/automation` data and WowTiles are unchanged.
 - **Form fields, tag, status LED and icons** (redesign «Formular» PR 6/11):
   the /contact form uses 14px Archivo 500 sentence-case labels, 48px fields with
   16px text, the `--field-border` frame (4.1:1), radius 4 and a 2px `--accent`

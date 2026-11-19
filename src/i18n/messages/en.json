@@ -101,6 +101,9 @@
       "sheetTag": "Example from a construction firm, names invented",
       "sheetTitle": "AI turns the customer's enquiry into a draft quote",
       "sheetAlt": "Example: AI drafts a quote from a customer enquiry for a construction firm",
+      "sheetRowMail": "Incoming, e-mail",
+      "sheetPosNo": "No.",
+      "sheetPrices": "Prices: {note}",
       "status": {
         "checking": "Checking status",
         "allUp": "All {total} public services are running",
