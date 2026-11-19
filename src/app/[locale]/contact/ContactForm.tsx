@@ -352,7 +352,7 @@ export function ContactForm() {
         <p style={helpStyle}>
           {t.rich('privacyNote', {
             link: (chunks) => (
-              <Link href="/privacy" className="text-link text-link-block">
+              <Link href="/privacy" className="text-link">
                 {chunks}
               </Link>
             ),
