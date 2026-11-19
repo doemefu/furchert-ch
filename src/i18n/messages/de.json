@@ -3,23 +3,23 @@
     "about": "Über mich",
     "it": "IT",
     "rowing": "Rudern",
-    "projects": "Projekte",
+    "projects": "Software-Projekte",
     "automation": "KI für KMU",
     "contact": "Kontakt"
   },
   "hero": {
     "label": "Software Engineer · KI für KMU · Zürcher\u00a0Oberland",
-    "title1": "Erst wenn Ihre Leute es nutzen,",
-    "title2": " ist es fertig.",
-    "sub": "Dominic Furchert aus dem Zürcher Oberland. Ich zeige Ihnen an Ihrem eigenen Alltag, wo KI Zeit spart, richte einen Ablauf so ein, dass er funktioniert, und messe nach 6 Wochen, ob er genutzt wird.",
-    "cta1": "Werdegang und Projekte",
+    "title1": "KI im Betrieb ist erst fertig,",
+    "title2": " wenn Ihre Leute sie nutzen.",
+    "sub": "Dominic Furchert aus dem Zürcher Oberland. Ich helfe KMU, mit KI Büroarbeit zu sparen, etwa bei Offerten, Rapporten und Mails.",
+    "cta1": "Über mich",
     "cta2": "KI für Ihren Betrieb",
     "seeProjects": "Projekte ansehen"
   },
   "teasers": {
     "it": { "title": "IT & Tech", "text": "COBOL bei der UBS, Praktikum IT-Audit bei KPMG, Embedded bei AMZ Racing, Studium an der UZH." },
     "rowing": { "title": "Rudern", "text": "Präsident des Ruderclubs Rapperswil-Jona. Chef Sicherheit im OK der Nationalen Regatta Schmerikon." },
-    "projects": { "title": "Projekte", "text": "Eigener Login-Dienst, IoT-Plattform vom ESP32 bis zum Dashboard, KI-Assistent für den Ruderclub. Alles auf dem eigenen k3s-Cluster." },
+    "projects": { "title": "Software-Projekte", "text": "Eigener Login-Dienst, IoT-Plattform vom ESP32 bis zum Dashboard, KI-Assistent für den Ruderclub. Alles auf dem eigenen k3s-Cluster." },
     "automation": { "title": "KI für KMU", "text": "Rapport einsprechen statt tippen, Offerte aus der Anfrage: ein Ablauf aus Ihrem Alltag, eingerichtet und nach 6 Wochen gemessen." },
     "more": "Mehr →"
   },
@@ -84,9 +84,9 @@
     "home": {
       "areas": "Bereiche",
       "areasTitle": "Woran ich arbeite",
-      "sheetTag": "Beispiel mit erfundenen Namen",
-      "sheetTitle": "Ein Ablauf: Anfrage wird Offertentwurf",
-      "sheetAlt": "Beispiel einer Offerte, die aus einer Kundenanfrage entworfen wurde",
+      "sheetTag": "Beispiel aus einer Baufirma, Namen erfunden",
+      "sheetTitle": "KI macht aus der Kundenanfrage einen Offertentwurf",
+      "sheetAlt": "Beispiel: KI entwirft für eine Baufirma eine Offerte aus einer Kundenanfrage",
       "status": {
         "checking": "Status wird geprüft",
         "allUp": "Alle {total} öffentlichen Dienste laufen",

@@ -3,23 +3,23 @@
     "about": "About",
     "it": "IT",
     "rowing": "Rowing",
-    "projects": "Projects",
+    "projects": "Software projects",
     "automation": "AI for SMEs",
     "contact": "Contact"
   },
   "hero": {
     "label": "Software Engineer · AI for SMEs · Zurich",
-    "title1": "It isn't done",
+    "title1": "AI in your business isn't done",
     "title2": " until your people use it.",
-    "sub": "Dominic Furchert, based near Zurich. I show you in your own daily work where AI saves time, set up one workflow so that it works, and measure after 6 weeks whether it is used.",
-    "cta1": "Background and projects",
+    "sub": "Dominic Furchert, based near Zurich. I help small businesses save office time with AI, for example on quotes, reports and e-mails.",
+    "cta1": "About me",
     "cta2": "AI for your business",
     "seeProjects": "See projects"
   },
   "teasers": {
     "it": { "title": "IT & Tech", "text": "COBOL at UBS, IT audit internship at KPMG, embedded systems at AMZ Racing, studies at UZH." },
     "rowing": { "title": "Rowing", "text": "President of the Rapperswil-Jona Rowing Club. Head of safety on the organising committee of the National Regatta Schmerikon." },
-    "projects": { "title": "Projects", "text": "Own login service, IoT platform from ESP32 to dashboard, AI assistant for the rowing club. All on my own k3s cluster." },
+    "projects": { "title": "Software projects", "text": "Own login service, IoT platform from ESP32 to dashboard, AI assistant for the rowing club. All on my own k3s cluster." },
     "automation": { "title": "AI for SMEs", "text": "Dictate reports instead of typing them, draft quotes from enquiries: one workflow from your daily work, set up and measured after 6 weeks." },
     "more": "More →"
   },
@@ -84,9 +84,9 @@
     "home": {
       "areas": "Areas",
       "areasTitle": "What I work on",
-      "sheetTag": "Example with invented names",
-      "sheetTitle": "One workflow: enquiry becomes draft quote",
-      "sheetAlt": "Example of a quote drafted from a customer enquiry",
+      "sheetTag": "Example from a construction firm, names invented",
+      "sheetTitle": "AI turns the customer's enquiry into a draft quote",
+      "sheetAlt": "Example: AI drafts a quote from a customer enquiry for a construction firm",
       "status": {
         "checking": "Checking status",
         "allUp": "All {total} public services are running",
