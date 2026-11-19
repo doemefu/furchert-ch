@@ -81,7 +81,7 @@ describe('buildHomeJsonLd', () => {
       name: 'furchert.ch — Dominic Furchert',
       description: 'Ich baue Systeme.',
       inLanguage: 'de',
-      dateModified: '2026-11-03',
+      dateModified: '2026-11-03T00:00:00+01:00',
       isPartOf: { '@id': WEBSITE_ID },
       about: { '@id': PERSON_ID },
     });
@@ -110,7 +110,7 @@ describe('buildProfilePageJsonLd', () => {
       url: 'https://furchert.ch/en/about',
       name: 'Software Engineer. Club President. Firefighter.',
       inLanguage: 'en',
-      dateModified: '2026-11-03',
+      dateModified: '2026-11-03T00:00:00+01:00',
       isPartOf: { '@id': WEBSITE_ID },
     });
     expect(page.mainEntity).toEqual(byType(home, 'Person'));

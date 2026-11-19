@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAutomationJsonLd, buildHomelabJsonLd, serializeJsonLd, SITE_URL } from './jsonLd';
+import { buildAutomationJsonLd, buildHomelabJsonLd, serializeJsonLd, SITE_URL, toIsoDateTime } from './jsonLd';
 
 const FAQ = [
   { q: 'Was kostet das?', a: 'Das hängt vom Ablauf ab.' },
@@ -113,7 +113,7 @@ describe('buildAutomationJsonLd', () => {
     const [page, service] = graph();
     expect((service.areaServed as Node).name).toBe('Zürcher Oberland');
     expect(page.inLanguage).toBe('de');
-    expect(page.dateModified).toBe('2026-11-03');
+    expect(page.dateModified).toBe('2026-11-03T00:00:00+01:00');
   });
 });
 
@@ -147,7 +147,7 @@ describe('buildHomelabJsonLd', () => {
     expect(page[0]['@type']).toBe('WebPage');
     expect(page[0].url).toBe(lab.pageUrl);
     expect(page[0].inLanguage).toBe('en');
-    expect(page[0].dateModified).toBe('2026-11-03');
+    expect(page[0].dateModified).toBe('2026-11-03T00:00:00+01:00');
     const author = page[0].author as Record<string, unknown>;
     expect(Object.keys(author).sort()).toEqual(['@id', '@type', 'name', 'sameAs', 'url']);
   });
@@ -155,5 +155,37 @@ describe('buildHomelabJsonLd', () => {
   it('carries no live values, hosts, contact data or prices', () => {
     const json = JSON.stringify(buildHomelabJsonLd(lab));
     expect(json).not.toMatch(/uptime|status|telephone|email|address|CHF|offers|\.furchert\.ch/i);
+  });
+});
+
+describe('toIsoDateTime', () => {
+  it('adds the winter offset (CET)', () => {
+    expect(toIsoDateTime('2026-11-03')).toBe('2026-11-03T00:00:00+01:00');
+    expect(toIsoDateTime('2026-01-15')).toBe('2026-01-15T00:00:00+01:00');
+  });
+
+  it('adds the summer offset (CEST)', () => {
+    expect(toIsoDateTime('2026-07-01')).toBe('2026-07-01T00:00:00+02:00');
+  });
+
+  it('handles both DST switch days at local midnight', () => {
+    // 2026: Sunday 29 March (CET until 02:00) and Sunday 25 October (CEST until 03:00).
+    expect(toIsoDateTime('2026-03-28')).toBe('2026-03-28T00:00:00+01:00');
+    expect(toIsoDateTime('2026-03-29')).toBe('2026-03-29T00:00:00+01:00');
+    expect(toIsoDateTime('2026-03-30')).toBe('2026-03-30T00:00:00+02:00');
+    expect(toIsoDateTime('2026-10-24')).toBe('2026-10-24T00:00:00+02:00');
+    expect(toIsoDateTime('2026-10-25')).toBe('2026-10-25T00:00:00+02:00');
+    expect(toIsoDateTime('2026-10-26')).toBe('2026-10-26T00:00:00+01:00');
+  });
+
+  it('returns a value that already is a date-time unchanged', () => {
+    expect(toIsoDateTime('2026-11-03T12:30:00+01:00')).toBe('2026-11-03T12:30:00+01:00');
+    expect(toIsoDateTime('2026-11-03T12:30:00Z')).toBe('2026-11-03T12:30:00Z');
+  });
+
+  it('throws on invalid input', () => {
+    for (const bad of ['', 'yesterday', '2026-13-01', '2026-02-30', '2026-11-3', '2026-11-03T25:00:00+01:00', '2026-11-03T12:00:00', '2026-02-30T00:00:00+01:00']) {
+      expect(() => toIsoDateTime(bad), bad).toThrow();
+    }
   });
 });
