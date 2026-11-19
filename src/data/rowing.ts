@@ -72,7 +72,7 @@ export const ROWING_CARDS: RowingCard[] = [
     },
   },
   {
-    icon: 'spark',
+    icon: 'users',
     tags: ['Feuerwehr (AdF)', 'J+S Sportcoach', 'Teamführung'],
     i18n: {
       de: {

@@ -48,7 +48,7 @@ const iconMap: Record<string, string> = {
   it: 'code',
   rowing: 'boat',
   projects: 'server',
-  automation: 'spark',
+  automation: 'flow',
 };
 
 export default async function HomePage({

@@ -138,7 +138,7 @@ describe('states (L2, L3)', () => {
     // #191: the status is announced once (visible text); the LED is decorative.
     expect(strip.match(/status\.disabled/g)).toHaveLength(1);
     expect(strip).not.toContain('role="img"');
-    expect(strip).toMatch(/<span aria-hidden="true" style="display:inline-block;width:8px;height:8px/);
+    expect(strip).toMatch(/<span aria-hidden="true" class="led" data-status="[a-z]+"><\/span>/);
     expect(strip).toContain('status.provisional{&quot;day&quot;:&quot;7 Nov 2026&quot;}');
     expect(strip).toContain('status.eventsToday');
   });
