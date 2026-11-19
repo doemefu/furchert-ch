@@ -75,19 +75,12 @@ All notable changes per milestone. Newest first.
 ### Added
 
 - **Form row and form head components** (redesign «Formular», PR 5/11): `FieldRow`
-  (field name above its value, optional second line, one `<dl>` per field) and
-  `FieldHead` (2px ink rule, hairlines, lead field plus further fields, optional
-  empty 4:5 photo slot). Not used on any page yet; the hero, example sheet and
-  contact page adopt them in later PRs.
-- **Usage statistics live** (#158, WA-6 of Epic doemefu/homelab#348,
-  2026-11-09): the consent bar, the footer "Privacy settings" button and the
-  consented tracker are turned on (`ANALYTICS_UI_ENABLED = true`), together
-  with the privacy section "Nutzungsstatistik (nur mit Einwilligung)" /
-  "Usage statistics (only with consent)" and the corrected cookie list. Data
-  appears on `/dashboard/analytics` once a day is final (the next morning).
-  The bar appears on the visitor's first interaction (tap, click, key, wheel,
-  scroll or focus), not while the page loads, and its text is split into two
-  paragraphs, so it never becomes the largest paint on phones.
+  (field name above its value, optional second line; a `<div>` group of
+  `<dt>`/`<dd>`), `FieldList` (the `<dl>` wrapper for rows on their own) and
+  `FieldHead` (one `<dl>` with a 2px ink rule, hairlines, lead field, further
+  fields, an optional desktop-only `aside` field and an optional empty 4:5
+  photo slot). Not used on any page yet; the hero, example sheet and contact
+  page adopt them in later PRs.
 
 - **Web analytics abuse limits, durable erasure and GPC/DNT, shipped dark**
   (#157, WA-5 of Epic doemefu/homelab#348). Everything below stays off
