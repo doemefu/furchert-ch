@@ -5,6 +5,8 @@ import { isLocale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
+import { FieldHead } from '@/components/ui/FieldHead';
+import { FieldRow } from '@/components/ui/FieldRow';
 import { CTAStrip } from '@/components/ui/CTAStrip';
 import { HomeStatusLine } from '@/components/layout/HomeStatusLine';
 import { HomeOfferSheet } from './HomeOfferSheet';
@@ -16,9 +18,7 @@ import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { buildHomeJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { trackAttr } from '@/data/track-ids';
-
-const DOTS =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.3'/%3E%3C/svg%3E\")";
+import { PORTRAIT_SRC } from '@/data/portrait';
 
 // Section eyebrow: sentence case, no mono (redesign PR 8). `sectionLabel` adds the 2px ink rule.
 const labelMono = {
@@ -83,66 +83,34 @@ export default async function HomePage({
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
       <section>
         <div className="container border-x home-hero">
+          {/* Form head (redesign PR 9): who, what, where; the name stands once in the content, here.
+              The photo slot only renders once PORTRAIT_SRC is set (src/data/portrait.ts). */}
           <div className="home-hero-body">
-            <div className="home-hero-split" style={{ position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  pointerEvents: 'none',
-                  backgroundImage: DOTS,
-                  backgroundRepeat: 'repeat',
-                  backgroundSize: '1.125rem',
-                }}
-              />
-              <div
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  textAlign: 'left',
-                  minWidth: 0,
-                }}
-              >
-                <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0 }}>{t('hero.label')}</p>
-                <h1
-                  className="home-hero-title"
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontWeight: 500,
-                    letterSpacing: '-.03em',
-                    lineHeight: 1,
-                    textWrap: 'balance',
-                    marginTop: '1rem',
-                  }}
+            <FieldHead
+              className="home-hero-head"
+              photo={PORTRAIT_SRC !== null}
+              lead={
+                <FieldRow
+                  label={t('hero.head.whoLabel')}
+                  secondary={t('hero.head.whoRole')}
+                  photoSrc={PORTRAIT_SRC ?? undefined}
                 >
-                  <span style={{ color: 'var(--n-100)' }}>{t('hero.title1')}</span>
-                  <span style={{ color: 'var(--n-100)' }}>{t('hero.title2')}</span>
+                  {t('hero.head.who')}
+                </FieldRow>
+              }
+              aside={<FieldRow label={t('hero.head.replyLabel')}>{t('hero.head.reply')}</FieldRow>}
+            >
+              <FieldRow label={t('hero.head.whatLabel')}>{t('hero.head.what')}</FieldRow>
+              <FieldRow label={t('hero.head.whereLabel')}>{t('hero.head.where')}</FieldRow>
+            </FieldHead>
+            <div className="home-hero-split">
+              <div className="home-hero-text">
+                <h1 className="home-hero-title">
+                  {t('hero.title1')}
+                  {t('hero.title2')}
                 </h1>
-                <p
-                  style={{
-                    fontFamily: 'var(--sans)',
-                    fontSize: 'var(--fs-lead)',
-                    color: 'var(--n-60)',
-                    maxWidth: '52ch',
-                    textWrap: 'balance',
-                    lineHeight: 1.45,
-                    letterSpacing: 0,
-                    marginTop: '1.5rem',
-                  }}
-                >
-                  {t('hero.sub')}
-                </p>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '.75rem',
-                    flexWrap: 'wrap',
-                    justifyContent: 'flex-start',
-                    marginTop: '2.5rem',
-                  }}
-                >
+                <p className="home-hero-sub">{t('hero.sub')}</p>
+                <div className="home-hero-btns">
                   <Btn href="/automation" track={trackAttr('link', 'home-hero-automation')} variant="primary">
                     {t('hero.cta2')}
                   </Btn>
@@ -151,7 +119,7 @@ export default async function HomePage({
                   </Btn>
                 </div>
               </div>
-              <div style={{ position: 'relative', minWidth: 0 }}>
+              <div className="home-hero-sheet">
                 <HomeOfferSheet locale={locale} />
               </div>
             </div>

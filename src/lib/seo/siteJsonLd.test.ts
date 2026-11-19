@@ -97,8 +97,8 @@ describe('buildHomeJsonLd', () => {
 
   it('uses a job title that the home page shows in both languages', () => {
     const jobTitle = String(byType(home, 'Person').jobTitle);
-    expect(de.hero.label).toContain(jobTitle);
-    expect(en.hero.label).toContain(jobTitle);
+    expect(de.hero.head.whoRole).toBe(jobTitle);
+    expect(en.hero.head.whoRole).toBe(jobTitle);
   });
 });
 

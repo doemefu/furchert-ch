@@ -3,8 +3,8 @@
 // <dl> whose groups are FieldRow divs. The lead field spans both columns on
 // phones, the other fields follow in two columns; from 64rem all fields share
 // one line, plus the optional desktop-only `aside` field. The optional photo
-// slot (4:5) stays an empty raised surface until a photo exists. Not used on
-// a page yet (redesign PR 5).
+// slot (4:5) is an empty raised surface unless the lead FieldRow has a
+// `photoSrc`. Used by the home hero (redesign PR 9).
 import type { CSSProperties, ReactElement } from 'react';
 import { Children, cloneElement } from 'react';
 import type { FieldRowProps } from './FieldRow';

@@ -14,6 +14,20 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Home hero as a form head with the name** (redesign PR 9/11): the hero opens
+  with the `FieldHead` Wer / Was / Wo (plus Antwort from 64rem): «Dominic
+  Furchert / Software Engineer», «KI für KMU», «Zürcher Oberland» (EN: Who /
+  What / Where / Reply, «Zurich»). The name now stands once in the content; the
+  subtitle starts with the offer. The H1 keeps its wording and is set in Archivo
+  at `--stretch-display` and `--text-hero`; the mono eyebrow (`hero.label`) and
+  the dot grid are gone. Below 64rem the hero is one column (head, H1, subtitle,
+  two buttons side by side, example sheet) so the sheet head sits in the first
+  phone screen; from 64rem the text is left and the sheet right under the
+  full-width head. The photo slot renders only when `PORTRAIT_SRC`
+  (`src/data/portrait.ts`, `null` for now) is set; `FieldRow` got an optional
+  `photoSrc`. Keys: `hero.head.*` added, `hero.label` removed, `hero.sub` without
+  the name.
+
 - **Section heads, page header and page surface** (redesign PR 8/11): `PageHeader`
   and the shared section styles (`sectionStyles.ts`, the home head) use Archivo
   at `--stretch-heading` / `--stretch-display`, a sentence-case 14px label in

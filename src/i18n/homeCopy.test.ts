@@ -1,6 +1,7 @@
 // Home hero sheet and status line copy (#178).
 import { describe, expect, it } from 'vitest';
 import { WOW_TILES } from '@/data/automation-wow';
+import { PORTRAIT_SRC } from '@/data/portrait';
 import de from './messages/de.json';
 import en from './messages/en.json';
 
@@ -71,5 +72,26 @@ describe('home status line copy', () => {
   it('has no ß in the German copy and no Oberland in English', () => {
     expect(JSON.stringify([home.de.sheetTag, home.de.sheetTitle, home.de.sheetAlt, home.de.status])).not.toContain('ß');
     expect(JSON.stringify(home.en)).not.toContain('Oberland');
+  });
+});
+
+describe('home hero form head copy (redesign PR 9)', () => {
+  it('has the same head keys in DE and EN, none empty', () => {
+    expect(Object.keys(en.hero.head).sort()).toEqual(Object.keys(de.hero.head).sort());
+    for (const m of [de, en]) {
+      for (const [key, value] of Object.entries(m.hero.head)) expect(value.length, key).toBeGreaterThan(0);
+    }
+  });
+
+  it('names the owner once in the hero content and has no eyebrow label', () => {
+    for (const m of [de, en]) {
+      const content = [m.hero.head.who, m.hero.head.whoRole, m.hero.head.what, m.hero.head.where, m.hero.head.reply, m.hero.title1, m.hero.title2, m.hero.sub, m.hero.cta1, m.hero.cta2];
+      expect(content.join(' ').match(/Furchert/g)).toHaveLength(1);
+      expect('label' in m.hero).toBe(false);
+    }
+  });
+
+  it('has no portrait yet, so the hero renders no photo slot', () => {
+    expect(PORTRAIT_SRC).toBeNull();
   });
 });

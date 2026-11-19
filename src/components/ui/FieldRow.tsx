@@ -4,6 +4,7 @@
 // readers announce one list instead of one list per field): FieldHead renders
 // that <dl> itself, anything else wraps its rows in FieldList. A FieldRow
 // outside a <dl> is invalid HTML. Used by the home example sheet (redesign PR 7) and the /automation WowTiles (PR 7b).
+import Image from 'next/image';
 import type { CSSProperties, ReactNode } from 'react';
 
 export interface FieldRowProps {
@@ -17,12 +18,14 @@ export interface FieldRowProps {
   variant?: 'text';
   /** Empty, decorative photo slot (4:5) left of the field; FieldHead sets it for its lead field. */
   photo?: boolean;
+  /** Portrait file shown in the photo slot (4:5, decorative, so `alt` is empty); without it the slot stays empty. Needs `photo`. */
+  photoSrc?: string;
   className?: string;
   /** Inline style, only for a per-row custom property such as the /automation tile step delay. */
   style?: CSSProperties;
 }
 
-export function FieldRow({ label, children, secondary, meta, variant, photo = false, className, style }: FieldRowProps) {
+export function FieldRow({ label, children, secondary, meta, variant, photo = false, photoSrc, className, style }: FieldRowProps) {
   const cls = ['fr', variant === 'text' ? 'fr-text' : '', photo ? 'fr-photo' : '', className ?? ''].filter(Boolean).join(' ');
   return (
     <div className={cls} style={style}>
@@ -30,7 +33,11 @@ export function FieldRow({ label, children, secondary, meta, variant, photo = fa
       {meta ? <dd className="fr-meta">{meta}</dd> : null}
       <dd className="fr-val">{children}</dd>
       {secondary ? <dd className="fr-sub">{secondary}</dd> : null}
-      {photo ? <dd className="fh-photo" aria-hidden="true"></dd> : null}
+      {photo ? (
+        <dd className="fh-photo" aria-hidden="true">
+          {photoSrc ? <Image src={photoSrc} alt="" fill sizes="64px" style={{ objectFit: 'cover' }} /> : null}
+        </dd>
+      ) : null}
     </div>
   );
 }
