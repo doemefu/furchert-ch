@@ -10,6 +10,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { ABOUT_NAV, BUSINESS_NAV } from '@/components/layout/nav-items';
 import { HEARD_VIA_IDS, heardViaMessageKey } from '@/data/contact-sources';
 import de from './messages/de.json';
 import en from './messages/en.json';
@@ -41,7 +42,8 @@ const FILES: Record<string, string> = {
   'src/app/[locale]/page.tsx': '',
   'src/app/[locale]/HomeOfferSheet.tsx': 'pages.home',
   'src/components/layout/HomeStatusLine.tsx': 'pages.home.status',
-  'src/components/layout/Header.tsx': '',
+  'src/components/layout/Header.tsx': 'nav',
+  'src/components/layout/MobileNav.tsx': 'nav',
   'src/components/layout/Footer.tsx': '',
   'src/components/ui/ContactEmail.tsx': 'contact',
   'src/components/analytics/ConsentBar.tsx': 'analytics.consent',
@@ -62,6 +64,7 @@ const templateValues = (template: string, src: string): string[] | undefined => 
     'privacyRight${n}': ['1', '2', '3'],
     'reliable${n}': ['1', '2', '3', '4'],
     'nav.${k}': arrayIn(src, 'NAV_KEYS'),
+    'desc.${key}': [...BUSINESS_NAV, ...ABOUT_NAV],
     'teasers.${key}.title': arrayIn(src, 'teaserKeys'),
     'teasers.${key}.text': arrayIn(src, 'teaserKeys'),
   };

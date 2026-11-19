@@ -5,7 +5,21 @@
     "rowing": "Rudern",
     "projects": "Software-Projekte",
     "automation": "KI für KMU",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "menu": "Menü",
+    "close": "Schliessen",
+    "navLabel": "Hauptmenü",
+    "groupBusiness": "Für Betriebe",
+    "groupAbout": "Über mich",
+    "switchLang": "English",
+    "desc": {
+      "automation": "Rapport einsprechen statt tippen, Offerte aus der Anfrage",
+      "contact": "30 Minuten Live-Demo, kostenlos, bei Ihnen oder per Video",
+      "about": "Software Engineer. Vereinspräsident. Feuerwehrmann",
+      "it": "COBOL bei der UBS, Praktikum IT-Audit bei KPMG, Studium an der UZH",
+      "rowing": "Präsident des Ruderclubs Rapperswil-Jona",
+      "projects": "Eigener Login-Dienst, IoT-Plattform, KI-Assistent für den Ruderclub"
+    }
   },
   "hero": {
     "label": "Software Engineer · KI für KMU · Zürcher\u00a0Oberland",
@@ -1184,9 +1198,5 @@
         }
       }
     }
-  },
-  "common": {
-    "menu": "Menu",
-    "homelab": "Homelab"
   }
 }

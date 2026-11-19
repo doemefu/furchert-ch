@@ -24,6 +24,9 @@ export const FROM_IDS = [
   'home-cta',
   'about-contact',
   'rowing-contact',
+  'header-contact',
+  'header-contact-mobile',
+  'menu-contact',
 ] as const;
 
 export type FromId = (typeof FROM_IDS)[number];
