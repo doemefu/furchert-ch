@@ -28,17 +28,6 @@ export async function generateMetadata({
   });
 }
 
-// Section eyebrow: sentence case, no mono (redesign PR 8). `sectionLabel` adds the 2px ink rule.
-const labelMono = {
-  fontSize: 'var(--text-14)',
-  color: 'var(--text-3)',
-};
-const sectionLabel = {
-  ...labelMono,
-  borderTop: '2px solid var(--rule)',
-  paddingTop: 'var(--space-3)',
-};
-
 export default async function AboutPage({
   params,
 }: {
@@ -68,139 +57,49 @@ export default async function AboutPage({
           sub={t('pages.about.headerSub')}
         />
 
-        <div
-          style={{
-            padding: '3rem 0',
-            borderBottom: '1px solid rgba(162,167,176,.22)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '2rem',
-          }}
-        >
+        <div className="ab-bio">
           {BIO[locale].map((p, i) => (
-            <p
-              key={i}
-              style={{
-                fontSize: 'var(--fs-16)',
-                color: 'var(--n-60)',
-                lineHeight: 1.6,
-                letterSpacing: 0,
-              }}
-            >
+            <p key={i} className="pg-text">
               {p}
             </p>
           ))}
         </div>
 
-        <div
-          className="cell-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            borderBottom: '1px solid rgba(162,167,176,.22)',
-          }}
-        >
+        <div className="cell-grid ab-facts">
           {FACTS.map((f, i) => (
-            <div
-              key={i}
-              className="cell"
-              style={{ paddingBlock: '2rem', borderRight: '1px solid rgba(162,167,176,.22)' }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--sans)',
-                  fontSize: 'var(--fs-h2)',
-                  fontVariantNumeric: 'tabular-nums',
-                  fontWeight: 500,
-                  letterSpacing: '-.02em',
-                  color: 'var(--n-100)',
-                  lineHeight: 1,
-                }}
-              >
-                {f.value}
-              </div>
-              <div
-                style={{
-                  fontSize: 'var(--fs-14)',
-                  color: 'var(--n-60)',
-                  marginTop: '.5rem',
-                  lineHeight: 1.4,
-                }}
-              >
-                {f.i18n[locale].label}
-              </div>
+            <div key={i} className="cell ab-fact">
+              <b>{f.value}</b>
+              <span>{f.i18n[locale].label}</span>
             </div>
           ))}
         </div>
 
-        <div style={{ paddingTop: 'var(--section-y)' }}>
-          <p style={{ ...sectionLabel, marginBottom: '2rem' }}>{t('pages.about.timeline')}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+        <div className="pg-sec">
+          <h2 className="sl">{t('pages.about.timeline')}</h2>
+          <ol className="tl">
             {TIMELINE.map((row, ri) => (
-              <div
-                key={ri}
-                style={{
-                  display: 'flex',
-                  gap: '2rem',
-                  paddingBottom: '1.5rem',
-                  borderLeft: '1px solid rgba(162,167,176,.22)',
-                  paddingLeft: '1.5rem',
-                  marginLeft: '2.5rem',
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '-2.75rem',
-                    top: '0',
-                    fontFamily: 'var(--mono)',
-                    fontSize: 'var(--fs-12)',
-                    letterSpacing: '.05em',
-                    textTransform: 'uppercase',
-                    color: 'var(--n-60)',
-                    width: '2.25rem',
-                    textAlign: 'right',
-                  }}
-                >
-                  {row.year}
-                </div>
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '-3.5px',
-                    top: '4px',
-                    width: 6,
-                    height: 6,
-                    background: 'var(--n-30)',
-                    borderRadius: '50%',
-                  }}
-                />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+              <li key={ri}>
+                <span className="tl-y">{row.year}</span>
+                <span className="tl-t">
                   {row.i18n[locale].items.map((item, ii) => (
-                    <span
-                      key={ii}
-                      style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', lineHeight: 1.4 }}
-                    >
-                      {item}
-                    </span>
+                    <span key={ii}>{item}</span>
                   ))}
-                </div>
-              </div>
+                </span>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
 
-        <div style={{ paddingTop: 'var(--section-y)' }}>
-          <p style={{ ...sectionLabel, marginBottom: '1rem' }}>{t('pages.about.interests')}</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
+        <div className="pg-sec">
+          <h2 className="sl">{t('pages.about.interests')}</h2>
+          <div className="pg-tags">
             {INTERESTS.map((i) => (
               <Tag key={i}>{i}</Tag>
             ))}
           </div>
         </div>
 
-        <div style={{ padding: 'var(--section-y) 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="pg-acts">
           <Btn href="/projects" track={trackAttr('link', 'about-projects')}>
             {t('hero.seeProjects')}
           </Btn>

@@ -132,8 +132,7 @@
       "headerTitle": "200 members. A national regatta. A CHF 5M project.",
       "headerSub": "Voluntary, and at least as instructive as any computer-science module.",
       "metaTitle": "President, Rapperswil-Jona Rowing Club | Dominic Furchert",
-      "metaDescription": "Dominic Furchert, president of the Rapperswil-Jona Rowing Club (about 200 members), is safety chief of the Schmerikon regatta (about 1,500 athletes).",
-      "photoCaption": "Photo · Regatta Schmerikon"
+      "metaDescription": "Dominic Furchert, president of the Rapperswil-Jona Rowing Club (about 200 members), is safety chief of the Schmerikon regatta (about 1,500 athletes)."
     },
     "projects": {
       "headerLabel": "Projects",
@@ -151,12 +150,10 @@
     "lab": {
       "metaTitle": "Homelab: k3s cluster with live status",
       "metaDescription": "Dominic Furchert's private homelab: a k3s cluster of Raspberry Pis and MacBook Airs with its own login service, IoT and AI. With live service status.",
-      "showcaseLabel": "What runs",
       "showcaseHeading": "What runs in the homelab?",
       "showcaseLead": "A k3s cluster of four machines with its own login service, IoT platform, network monitoring and AI services, managed as code and documented on GitHub.",
       "showcaseUpdated": "Description last updated",
       "reposLabel": "Code on GitHub",
-      "statusLabel": "Live status",
       "statusHeading": "Is the homelab running right now?",
       "statusLead": "The display refreshes about once a minute from the cluster metrics. For each public service it shows whether it is running now and what share of the time it was ready over the last {days} days.",
       "statusNote": "This is measured inside the cluster (at least one pod is ready), not from outside. Restarts and updates count as downtime; time when a service is deliberately switched off does not count. The homelab is private and runs without any guarantee.",

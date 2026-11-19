@@ -18,14 +18,14 @@ export const PAGE_LAST_MODIFIED = {
   '/it': '2026-11-19',
   // Construction-first offer, Gate-0 prices, example tiles (#145).
   '/automation': '2026-11-19',
-  '/rowing': '2026-11-18',
-  '/projects': '2026-11-08',
+  '/rowing': '2026-11-19',
+  '/projects': '2026-11-19',
   // Sie form, call back and source fields (#145, part 2).
   '/contact': '2026-11-07',
   // Legal pages (#16); bump when the copy in src/data/legal.ts changes.
   '/imprint': '2026-11-05',
   '/privacy': '2026-11-09',
-  '/projects/iot-platform': '2026-11-08',
+  '/projects/iot-platform': '2026-11-19',
   // The page shows this date itself ("Stand der Beschreibung").
   '/projects/homelab': LAB_CONTENT_UPDATED,
   '/projects/club-assist': '2026-11-08',

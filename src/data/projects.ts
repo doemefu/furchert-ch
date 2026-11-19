@@ -27,13 +27,13 @@ export const PROJECTS: Project[] = [
     i18n: {
       de: {
         summary:
-          'Vom Sensor bis zum Dashboard: ESP32-Firmware in C++ → MQTT → device-service (Spring Boot, InfluxDB, WebSocket) → Next.js-Dashboard.',
+          'Vom Sensor bis zum Dashboard: ESP32-Firmware in C++, MQTT, device-service (Spring Boot, InfluxDB, WebSocket), Next.js-Dashboard.',
         detail:
           'Ein IoT-System von der Firmware bis zum Dashboard. Der ESP32 im Terrarium sendet Temperatur und Luftfeuchtigkeit per MQTT. Der device-service speichert die Messwerte in InfluxDB, schaltet Licht und Regen nach Zeitplan und meldet Zustände per WebSocket. Ein Admin-Dashboard auf furchert.ch zeigt sie live und erlaubt die Steuerung.',
       },
       en: {
         summary:
-          'From sensor to dashboard: ESP32 firmware in C++ → MQTT → device-service (Spring Boot, InfluxDB, WebSocket) → Next.js dashboard.',
+          'From sensor to dashboard: ESP32 firmware in C++, MQTT, device-service (Spring Boot, InfluxDB, WebSocket), Next.js dashboard.',
         detail:
           'An IoT system from firmware to dashboard. The ESP32 in the terrarium sends temperature and humidity via MQTT. The device-service stores the readings in InfluxDB, switches light and rain on a schedule and reports states over WebSocket. An admin dashboard on furchert.ch shows them live and allows control.',
       },
