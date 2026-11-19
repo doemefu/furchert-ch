@@ -28,16 +28,12 @@ import { AutomationExample } from './AutomationExample';
 import { ExampleCalc } from './ExampleCalc';
 import { AutomationPricing } from './AutomationPricing';
 import { StickyCta } from './StickyCta';
-import { HAIRLINE, labelMono } from './sectionStyles';
+import { labelText, sectionLabel, sectionStyle } from './sectionStyles';
 import { automationJsonLdText, buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
 import { FAQAccordion } from './FAQAccordion';
 import { trackAttr } from '@/data/track-ids';
-
-// The home page's dot pattern on the light hero.
-const DOTS =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23a2a7b0' opacity='.3'/%3E%3C/svg%3E\")";
 
 // Date of the last content change; shown on the page, used as
 // `dateModified` in the JSON-LD and as the sitemap's lastmod. Update it in
@@ -96,54 +92,23 @@ export default async function AutomationPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
-      {/* HERO (light). `data-cta`: the sticky bar waits until it has left. */}
-      <div
-        data-cta="hero"
-        data-track-section="hero"
-        style={{
-          background: 'var(--n-10)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: DOTS,
-            backgroundRepeat: 'repeat',
-            backgroundSize: '1.125rem',
-            pointerEvents: 'none',
-          }}
-        />
+      {/* HERO. `data-cta`: the sticky bar waits until it has left. */}
+      <div data-cta="hero" data-track-section="hero">
         <div
           className="container border-x"
           style={{
-            position: 'relative',
-            paddingTop: 'clamp(2rem, 8vw, 6rem)',
+            paddingTop: 'var(--section-y)',
             paddingBottom: 'clamp(2.5rem, 6.5vw, 5rem)',
           }}
         >
-          <p style={{ ...labelMono, textTransform: 'none', letterSpacing: 0, marginBottom: 'clamp(.75rem, 2vw, 1.5rem)' }}>{t('heroLabel')}</p>
-          <h1
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'var(--fs-title)',
-              fontWeight: 500,
-              letterSpacing: '-.03em',
-              lineHeight: 1.05,
-              color: 'var(--n-100)',
-              maxWidth: '22ch',
-              textWrap: 'balance',
-              marginBottom: 'clamp(1rem, 2vw, 1.5rem)',
-            }}
-          >
+          <p className="ph-label">{t('heroLabel')}</p>
+          <h1 className="ph-title" style={{ marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
             {t('heroTitlePre')}
-            <span style={{ color: 'var(--blue-base)' }}>{t('heroTitleEm')}</span>
+            {t('heroTitleEm')}
             {t('heroTitlePost')}
           </h1>
           <WowTiles locale={locale} />
-          <p style={{ marginTop: '.75rem', fontSize: 'var(--fs-14)', color: 'var(--n-60)', lineHeight: 1.5 }}>
+          <p style={{ ...labelText, marginTop: '.75rem', lineHeight: 1.5 }}>
             {t('heroTilesNote')}
           </p>
           <div style={{ marginTop: '1.25rem' }}>
@@ -151,14 +116,7 @@ export default async function AutomationPage({
               {t('heroCta')}
             </Btn>
           </div>
-          <p
-            style={{
-              marginTop: '.75rem',
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-12)',
-              color: 'var(--n-60)',
-            }}
-          >
+          <p style={{ ...labelText, marginTop: '.75rem' }}>
             {t('heroCtaMicro')}
           </p>
           <Link
@@ -172,9 +130,9 @@ export default async function AutomationPage({
           <p
             style={{
               marginTop: '.5rem',
-              fontSize: 'var(--fs-16)',
-              color: 'var(--n-70)',
-              lineHeight: 1.55,
+              fontSize: 'var(--text-16)',
+              color: 'var(--text-2)',
+              lineHeight: 1.5,
               maxWidth: '62ch',
             }}
           >
@@ -212,48 +170,28 @@ export default async function AutomationPage({
           id="ueber-mich"
           data-track-section="ueber-mich"
           aria-labelledby="about-heading"
-          style={{ padding: 'clamp(2rem, 6vw, 3rem) 0', borderBottom: HAIRLINE }}
+          style={sectionStyle}
         >
           <h2
             id="about-heading"
             style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'var(--fs-18)',
-              fontWeight: 500,
-              letterSpacing: 0,
-              color: 'var(--n-100)',
+              ...sectionLabel,
+              fontWeight: 400,
+              marginBottom: 'var(--space-3)',
             }}
           >
             Dominic Furchert
           </h2>
-          <p
-            style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-12)',
-              color: 'var(--n-60)',
-              margin: '.25rem 0 .75rem',
-            }}
-          >
-            {t('aboutMiniRole')}
-          </p>
-          <p style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)', lineHeight: 1.55, maxWidth: '62ch' }}>
+          <p style={{ ...labelText, margin: '0 0 .75rem' }}>{t('aboutMiniRole')}</p>
+          <p style={{ fontSize: 'var(--text-16)', color: 'var(--text-2)', lineHeight: 1.5, maxWidth: '62ch' }}>
             {t('aboutMiniText')}
           </p>
-          <div
-            className="about-mini-box"
-            style={{
-              marginTop: '1.5rem',
-              padding: 'clamp(1rem, 4vw, 1.25rem) clamp(1rem, 4vw, 1.5rem)',
-              background: 'var(--blue-wash)',
-              maxWidth: '40rem',
-            }}
-          >
+          <div className="about-mini-box" style={{ marginTop: '1.5rem' }}>
             <h3
               style={{
-                fontFamily: 'var(--mono)',
-                fontSize: 'var(--fs-12)',
+                fontSize: 'var(--text-14)',
                 fontWeight: 400,
-                color: 'var(--blue-base)',
+                color: 'var(--text-2)',
                 marginBottom: '.75rem',
               }}
             >
@@ -289,97 +227,58 @@ export default async function AutomationPage({
           id="faq"
           data-track-section="faq"
           aria-labelledby="faq-heading"
-          style={{ padding: '3rem 0', borderBottom: HAIRLINE }}
+          style={{ ...sectionStyle, paddingBottom: 'var(--section-y)' }}
         >
           <h2
             id="faq-heading"
             style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-13)',
+              ...sectionLabel,
               fontWeight: 400,
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
-              color: 'var(--n-60)',
-              marginBottom: '1.5rem',
+              marginBottom: 'var(--space-4)',
             }}
           >
             {t('faqLabel')}
           </h2>
           <FAQAccordion items={faqItems} />
-          <p
-            style={{
-              marginTop: '2rem',
-              fontFamily: 'var(--mono)',
-              fontSize: 'var(--fs-12)',
-              letterSpacing: '.04em',
-              color: 'var(--n-60)',
-            }}
-          >
+          <p style={{ ...labelText, marginTop: '2rem' }}>
             {t('updatedLabel')}: <time dateTime={LAST_UPDATED}>{updatedDate}</time>
           </p>
         </section>
-
-        {/* CLOSING CTA, after the FAQ. `data-cta`: the sticky bar hides here. */}
-        <section
-          data-cta="final"
-          data-track-section="final"
-          aria-labelledby="final-heading"
-          style={{ padding: '4rem 0', textAlign: 'center' }}
-        >
-          <h2
-            id="final-heading"
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'var(--fs-h2)',
-              fontWeight: 500,
-              letterSpacing: '-.02em',
-              color: 'var(--n-100)',
-              maxWidth: '42ch',
-              margin: '0 auto 1rem',
-              textWrap: 'balance',
-            }}
-          >
-            {t('bottomCtaHeading')}
-          </h2>
-          <p
-            style={{
-              fontSize: 'var(--fs-16)',
-              color: 'var(--n-70)',
-              lineHeight: 1.55,
-              maxWidth: '56ch',
-              margin: '0 auto 1rem',
-            }}
-          >
-            {t('bottomCtaSub')}
-          </p>
-          <p
-            style={{
-              fontSize: 'var(--fs-15)',
-              color: 'var(--n-60)',
-              lineHeight: 1.55,
-              maxWidth: '60ch',
-              margin: '0 auto 2rem',
-            }}
-          >
-            {t('bottomCtaAgenda')}
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Btn href={contactHref('automation-final')} track={trackAttr('cta', 'automation-final')} variant="primary">
-              {t('bottomCtaPrimary')}
-            </Btn>
-            {/* The address is rendered only in the browser (#147). */}
-            <ContactEmail btn label={t('bottomCtaSecondary')} subject={t('mailSubject')} />
-          </div>
-          <Link
-            href={contactHref('automation-callback')}
-            data-track={trackAttr('cta', 'automation-callback')}
-            className="text-link text-link-block"
-            style={{ display: 'flex', width: 'fit-content', margin: '1rem auto 0' }}
-          >
-            {t('heroCallback')}
-          </Link>
-        </section>
       </div>
+
+      {/* CLOSING CTA, after the FAQ. `data-cta`: the sticky bar hides here. */}
+      <section
+        className="band on-dark"
+        data-cta="final"
+        data-track-section="final"
+        aria-labelledby="final-heading"
+      >
+        <div className="container band-in">
+          <div>
+            <h2 id="final-heading" className="band-title">
+              {t('bottomCtaHeading')}
+            </h2>
+            <p className="band-text">{t('bottomCtaSub')}</p>
+            <p className="band-text">{t('bottomCtaAgenda')}</p>
+          </div>
+          <div className="band-side">
+            <div className="band-acts">
+              <Btn href={contactHref('automation-final')} track={trackAttr('cta', 'automation-final')} variant="inverse">
+                {t('bottomCtaPrimary')}
+              </Btn>
+              {/* The address is rendered only in the browser (#147). */}
+              <ContactEmail btn label={t('bottomCtaSecondary')} subject={t('mailSubject')} />
+            </div>
+            <Link
+              href={contactHref('automation-callback')}
+              data-track={trackAttr('cta', 'automation-callback')}
+              className="text-link text-link-block"
+            >
+              {t('heroCallback')}
+            </Link>
+          </div>
+        </div>
+      </section>
       <StickyCta
         href={contactHref('automation-sticky')}
         track={trackAttr('cta', 'automation-sticky')}

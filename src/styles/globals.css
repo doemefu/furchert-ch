@@ -25,9 +25,8 @@
   --white: #ffffff;
   --header-h: 4rem;
   --card-px: 2rem; /* #167: card side padding; 1.25rem below 40rem */
-  /* Status / tier accents (used by project status pills and the check
-     marks of the /automation examples). Kept as plain tokens so the
-     palette stays in one place. */
+  /* Status / tier accents (project status pills). `--tier-mid` is no longer used by the
+     /automation examples (marks since PR 7b/11b); unused tokens go in PR 11c. */
   --tier-high: #22c55e;
   --tier-mid:  #f59e0b;
   --tier-long: #94a3b8;
@@ -266,17 +265,24 @@ input:focus, textarea:focus {
 /* ── CONTACT FORM (#145) ──
    Field, focus and placeholder styles: see "CONTACT FORM FIELDS" (PR 6) below. */
 
-/* «Wer ich bin» box on /automation (#188): its left side sits on the frame
-   line, so it draws no left border; below about 44rem it spans the full
-   width and drops the right border too. */
-.about-mini-box {
-  border-top: 1px solid rgba(14,60,166,.12);
-  border-right: 1px solid rgba(14,60,166,.12);
-  border-bottom: 1px solid rgba(14,60,166,.12);
-}
-@media (max-width: 43.99rem) {
-  .about-mini-box { border-right: 0; }
-}
+/* «Wer ich bin» list on /automation (#188, PR 11b): a ruled block on the one left
+   edge, no tinted box. */
+.about-mini-box { max-width: 40rem; padding-top: var(--space-3); border-top: 1px solid var(--hairline-strong); }
+
+/* /automation example and prices (redesign PR 11b): the draft is a FieldList, the
+   lines a person must check are highlighter marks, disclosures are text toggles
+   with a plain + / × (no rotating arrows). */
+.ax-sheet .fr { padding: 8px 0 10px; border-top: 1px solid var(--hairline-strong); }
+.ax-sheet .fr:first-child { border-top: 0; }
+.ax-line { display: block; margin-bottom: 2px; }
+.ax-check { display: block; width: fit-content; margin: 4px 0; padding: 0 .2em; font-size: var(--text-14); line-height: 1.4; background: var(--mark-ask); color: var(--text-1); }
+.ax-sum { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--tap); border-top: 1px solid var(--hairline-strong); font-size: var(--text-14); color: var(--accent-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; cursor: pointer; list-style: none; position: relative; padding-right: 1.75rem; }
+.cell .ax-sum:focus-visible { outline-offset: 2px; }
+.ax-sum::-webkit-details-marker { display: none; }
+.ax-sum::after { content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: var(--text-20); line-height: 1; }
+details[open] > .ax-sum::after { content: "×"; }
+/* Stacked pricing steps (one column) get a hairline between them. */
+@media (max-width: 29.99rem) { .ax-steps > li + li { border-top: 1px solid var(--hairline-strong); } }
 
 /* Contact columns: form | direct links (#175, #188). The outer sides sit on the
    one left/right edge, the --gutter sits on either side of the seam; stacked
@@ -457,8 +463,8 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 }
 
 /* ── AUTOMATION STICKY CTA (phones, #145) ──
-   StickyCta.tsx toggles `hidden`; this block sets the look (a twin of the
-   header) and keeps the bar off wider screens. No transition. */
+   StickyCta.tsx toggles `hidden`; this block sets the look (page surface at 94%,
+   hairline on top) and keeps the bar off wider screens. No transition. */
 .sticky-cta {
   position: fixed;
   inset: auto 0 0;
@@ -467,22 +473,19 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: .625rem 1.75rem calc(.625rem + env(safe-area-inset-bottom));
-  background: rgba(250,250,255,.92);
+  padding: .625rem var(--gutter) calc(.625rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--surface-page) 94%, transparent);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(162,167,176,.22);
+  border-top: 1px solid var(--hairline-strong);
 }
 .sticky-cta[hidden] { display: none; }
-/* #167: placed after the base rule so the 16px inset wins the cascade. */
-@media (max-width: 39.99rem) { .sticky-cta { padding-inline: 1rem; } }
 .sticky-cta-micro {
   display: flex;
   flex-direction: column;
-  font-family: var(--mono);
-  font-size: var(--fs-12);
+  font-size: var(--text-13);
   line-height: 1.4;
-  color: var(--n-70);
+  color: var(--text-2);
 }
 @media (min-width: 821px) { .sticky-cta { display: none; } }
 /* ── HOME AREAS DIRECTORY AND CLOSING BAND (redesign PR 10) ──
@@ -577,12 +580,14 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 .band-title { font-size: 2rem; font-stretch: var(--stretch-heading); font-weight: var(--weight-heading); line-height: 1.05; color: var(--on-band-1); }
 .band-text { max-width: 56ch; margin-top: var(--space-2); font-size: var(--text-17); line-height: 1.45; color: var(--on-band-2); }
 .band-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.band-side { display: grid; gap: var(--space-2); justify-items: stretch; }
 @media (max-width: 39.99rem) { .band-acts { flex-direction: column; align-items: stretch; } }
 @media (min-width: 64rem) {
   .band { padding: var(--space-12) 0; }
   .band-in { padding-inline: var(--gutter); grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--space-16); align-items: end; }
   .band-title { font-size: 2.75rem; }
   .band-acts { justify-content: flex-end; }
+  .band-side { justify-items: end; }
 }
 /* Below 360 px the micro text and the button do not fit side by side; the
    button keeps its right gutter and the microline under the hero button

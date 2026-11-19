@@ -1,24 +1,24 @@
 // Two-column checklist section of /automation ("So arbeite ich", "Ihre
-// Daten"): label, heading, lead, an optional grey column of dash rows and a
-// blue column of check rows, then an optional footnote. Extracted from the
+// Daten"): label, heading, lead, an optional raised column of dash rows and a
+// tinted column of check rows, then an optional footnote. Extracted from the
 // page's former data protection block (same borders, backgrounds and rows);
-// `left` is optional so a section can show the blue column alone. Server
+// `left` is optional so a section can show the tinted column alone. Server
 // component; copy comes in as props. `CheckRow` is reused by "Wer ich bin".
 import type { ReactNode } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { HAIRLINE, footnoteStyle, h2Style, sectionLabel, leadStyle, sectionStyle } from './sectionStyles';
 
 const columnTitle = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
-  letterSpacing: '.05em',
-  textTransform: 'uppercase' as const,
+  fontSize: 'var(--text-14)',
+  fontWeight: 400,
+  lineHeight: 1.4,
+  color: 'var(--text-2)',
   marginBottom: '1rem',
 };
 
 const rowList = { listStyle: 'none', padding: 0, margin: 0 };
 
-// Blue check row on --blue-wash (the former "So gehe ich vor" rows).
+// Check row (the former "So gehe ich vor" rows).
 export function CheckRow({ children }: { children: ReactNode }) {
   return (
     <li
@@ -27,13 +27,13 @@ export function CheckRow({ children }: { children: ReactNode }) {
         gap: '.75rem',
         alignItems: 'flex-start',
         padding: '.5rem 0',
-        borderTop: '1px solid rgba(14,60,166,.1)',
-        fontSize: 'var(--fs-14)',
-        lineHeight: 1.5,
-        color: 'var(--n-70)',
+        borderTop: '1px solid var(--hairline-strong)',
+        fontSize: 'var(--text-16)',
+        lineHeight: 1.45,
+        color: 'var(--text-2)',
       }}
     >
-      <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '2px' }}>
+      <span style={{ color: 'var(--accent-ink)', flexShrink: 0, marginTop: '3px' }}>
         <Icon name="check" size={16} />
       </span>
       <span>{children}</span>
@@ -85,8 +85,8 @@ export function TwoColumnChecklist({
         }}
       >
         {left && (
-          <div style={{ padding: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--n-10)', borderRight: HAIRLINE }}>
-            <h3 style={{ ...columnTitle, fontWeight: 400, color: 'var(--n-60)' }}>{left.title}</h3>
+          <div className="cell" style={{ paddingBlock: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--surface-raised)', borderRight: HAIRLINE }}>
+            <h3 style={columnTitle}>{left.title}</h3>
             <ul role="list" style={rowList}>
               {left.items.map((item) => (
                 <li
@@ -96,10 +96,10 @@ export function TwoColumnChecklist({
                     gap: '.75rem',
                     alignItems: 'flex-start',
                     padding: '.5rem 0',
-                    borderTop: '1px solid rgba(162,167,176,.12)',
-                    fontSize: 'var(--fs-14)',
-                    lineHeight: 1.5,
-                    color: 'var(--n-60)',
+                    borderTop: '1px solid var(--hairline-strong)',
+                    fontSize: 'var(--text-16)',
+                    lineHeight: 1.45,
+                    color: 'var(--text-2)',
                   }}
                 >
                   <span
@@ -112,7 +112,7 @@ export function TwoColumnChecklist({
                       alignItems: 'center',
                     }}
                   >
-                    <span style={{ display: 'block', width: 10, height: 1, background: 'var(--n-40)' }} />
+                    <span style={{ display: 'block', width: 10, height: 1, background: 'var(--text-3)' }} />
                   </span>
                   <span>{item}</span>
                 </li>
@@ -120,8 +120,8 @@ export function TwoColumnChecklist({
             </ul>
           </div>
         )}
-        <div style={{ padding: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--blue-wash)' }}>
-          <h3 style={{ ...columnTitle, fontWeight: 400, color: 'var(--blue-base)' }}>{right.title}</h3>
+        <div className="cell" style={{ paddingBlock: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--accent-wash)' }}>
+          <h3 style={columnTitle}>{right.title}</h3>
           <ul role="list" style={rowList}>
             {right.items.map((item) => (
               <CheckRow key={item}>{item}</CheckRow>

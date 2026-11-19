@@ -3,7 +3,8 @@
 // so all sections match.
 import type { CSSProperties } from 'react';
 
-export const HAIRLINE = '1px solid rgba(162,167,176,.22)';
+// Hairline of tables, panels and rows (redesign token).
+export const HAIRLINE = '1px solid var(--hairline-strong)';
 
 // Section opener (redesign PR 8): `--section-y` of space above a section, a 2px
 // ink rule over the label and the title, no hairline below (the next section's
@@ -12,8 +13,8 @@ export const sectionStyle: CSSProperties = {
   paddingTop: 'var(--section-y)',
 };
 
-// Eyebrow of a section head: sentence case, 14px, no mono, no uppercase.
-export const labelMono: CSSProperties = {
+// Small label: sentence case, 14px, `--text-3`, no mono, no uppercase.
+export const labelText: CSSProperties = {
   fontSize: 'var(--text-14)',
   color: 'var(--text-3)',
   marginBottom: 'var(--space-2)',
@@ -21,7 +22,7 @@ export const labelMono: CSSProperties = {
 
 // The first element of a section head carries the 2px rule.
 export const sectionLabel: CSSProperties = {
-  ...labelMono,
+  ...labelText,
   borderTop: '2px solid var(--rule)',
   paddingTop: 'var(--space-3)',
 };
@@ -46,34 +47,32 @@ export const leadStyle: CSSProperties = {
   marginBottom: 'clamp(1.5rem, 5vw, 2.5rem)',
 };
 
-// Card title (h3): the prototype's process-step title.
+// Card title (h3).
 export const cardTitle: CSSProperties = {
-  fontFamily: 'var(--sans)',
-  fontSize: 'var(--fs-18)',
+  fontSize: 'var(--text-18)',
   fontWeight: 500,
-  letterSpacing: 0,
-  color: 'var(--n-100)',
+  lineHeight: 1.3,
+  color: 'var(--text-1)',
 };
 
-// Small mono field label (dt). n-60 instead of the label grey for AA contrast.
+// Field label (th, caption of a name-value pair): sentence case, 13px, `--text-3`.
 export const fieldLabel: CSSProperties = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
-  letterSpacing: '.05em',
-  textTransform: 'uppercase',
-  color: 'var(--n-60)',
+  fontSize: 'var(--text-13)',
+  lineHeight: '1rem',
+  color: 'var(--text-3)',
 };
 
+// Running text.
 export const bodyText: CSSProperties = {
-  fontSize: 'var(--fs-15)',
-  color: 'var(--n-70)',
-  lineHeight: 1.55,
+  fontSize: 'var(--text-16)',
+  color: 'var(--text-2)',
+  lineHeight: 1.5,
 };
 
 export const footnoteStyle: CSSProperties = {
   marginTop: 'clamp(1rem, 3vw, 1.5rem)',
-  fontSize: 'var(--fs-14)',
-  color: 'var(--n-60)',
-  lineHeight: 1.55,
+  fontSize: 'var(--text-14)',
+  color: 'var(--text-3)',
+  lineHeight: 1.5,
   maxWidth: '68ch',
 };
