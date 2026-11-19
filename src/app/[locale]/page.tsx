@@ -82,18 +82,18 @@ export default async function HomePage({
       {/* HERO — note: layout <main> already supplies paddingTop:var(--header-h),
           so (unlike the prototype) we do NOT repeat it here (worklog F2). */}
       <section>
-        <div className="container border-x home-hero">
+        <div className="container border-x">
           {/* Form head (redesign PR 9): who, what, where; the name stands once in the content, here.
               The photo slot only renders once PORTRAIT_SRC is set (src/data/portrait.ts). */}
           <div className="home-hero-body">
             <FieldHead
-              className="home-hero-head"
               photo={PORTRAIT_SRC !== null}
               lead={
                 <FieldRow
                   label={t('hero.head.whoLabel')}
                   secondary={t('hero.head.whoRole')}
                   photoSrc={PORTRAIT_SRC ?? undefined}
+                  photoAlt={t('hero.head.who')}
                 >
                   {t('hero.head.who')}
                 </FieldRow>
@@ -119,7 +119,7 @@ export default async function HomePage({
                   </Btn>
                 </div>
               </div>
-              <div className="home-hero-sheet">
+              <div style={{ minWidth: 0 }}>
                 <HomeOfferSheet locale={locale} />
               </div>
             </div>

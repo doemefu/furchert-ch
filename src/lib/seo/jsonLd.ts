@@ -11,7 +11,7 @@ export type JsonLd = Record<string, unknown>;
 const OWNER_NAME = 'Dominic Furchert';
 // The same profile links the footer shows.
 const OWNER_PROFILES = ['https://github.com/doemefu', 'https://linkedin.com/in/dominic-furchert'];
-// Shown in the home hero label and on the about page.
+// Shown in the home hero «Wer» field and on the about page.
 const OWNER_JOB_TITLE = 'Software Engineer';
 
 // Stable `@id`s: every page refers to the same site and the same person, so

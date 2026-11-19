@@ -19,7 +19,7 @@ All notable changes per milestone. Newest first.
   Furchert / Software Engineer», «KI für KMU», «Zürcher Oberland» (EN: Who /
   What / Where / Reply, «Zurich»). The name now stands once in the content; the
   subtitle starts with the offer. The H1 keeps its wording and is set in Archivo
-  at `--stretch-display` and `--text-hero`; the mono eyebrow (`hero.label`) and
+  at `--stretch-display` and `--text-hero`; the eyebrow (`hero.label`) and
   the dot grid are gone. Below 64rem the hero is one column (head, H1, subtitle,
   two buttons side by side, example sheet) so the sheet head sits in the first
   phone screen; from 64rem the text is left and the sheet right under the

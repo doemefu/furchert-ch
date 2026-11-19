@@ -1,7 +1,6 @@
 // Home hero sheet and status line copy (#178).
 import { describe, expect, it } from 'vitest';
 import { WOW_TILES } from '@/data/automation-wow';
-import { PORTRAIT_SRC } from '@/data/portrait';
 import de from './messages/de.json';
 import en from './messages/en.json';
 
@@ -89,9 +88,5 @@ describe('home hero form head copy (redesign PR 9)', () => {
       expect(content.join(' ').match(/Furchert/g)).toHaveLength(1);
       expect('label' in m.hero).toBe(false);
     }
-  });
-
-  it('has no portrait yet, so the hero renders no photo slot', () => {
-    expect(PORTRAIT_SRC).toBeNull();
   });
 });
