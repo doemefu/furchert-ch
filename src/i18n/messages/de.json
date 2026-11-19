@@ -21,7 +21,7 @@
     "rowing": { "title": "Rudern", "text": "Präsident des Ruderclubs Rapperswil-Jona. Chef Sicherheit im OK der Nationalen Regatta Schmerikon." },
     "projects": { "title": "Software-Projekte", "text": "Eigener Login-Dienst, IoT-Plattform vom ESP32 bis zum Dashboard, KI-Assistent für den Ruderclub. Alles auf dem eigenen k3s-Cluster." },
     "automation": { "title": "KI für KMU", "text": "Rapport einsprechen statt tippen, Offerte aus der Anfrage: ein Ablauf aus Ihrem Alltag, eingerichtet und nach 6 Wochen gemessen." },
-    "more": "Mehr →"
+    "more": "Mehr"
   },
   "about": {
     "label": "Über mich",
@@ -32,7 +32,7 @@
     "together": "Ein Betrieb oder ein Projekt?",
     "togsub": "Betriebe: 30 Minuten Live-Demo, kostenlos, bei Ihnen oder per Video. Für Engineering-Stellen und Tech-Projekte von Infrastruktur bis Full-Stack: Schreiben Sie mir.",
     "primary": "Live zeigen lassen",
-    "examples": "Zuerst die Beispiele ansehen →"
+    "examples": "Zuerst die Beispiele ansehen"
   },
   "contact": {
     "label": "Kontakt",
@@ -74,7 +74,7 @@
     "sentSub": "Ich melde mich spätestens am nächsten Arbeitstag, per E-Mail oder per Telefon, wenn Sie einen Rückruf gewünscht haben.",
     "sentSubDemo": "Ich melde mich spätestens am nächsten Arbeitstag mit zwei Terminvorschlägen für die Live-Demo, per E-Mail oder per Telefon, wenn Sie einen Rückruf gewünscht haben. Vorbereiten müssen Sie nichts.",
     "sentPhone": "Ich rufe Sie unter {phone} an.",
-    "sentBack": "Zurück zu den Beispielen →",
+    "sentBack": "Zurück zu den Beispielen",
     "errorInvalid": "Bitte geben Sie Ihren Namen und eine gültige E-Mail-Adresse an. Für einen Rückruf genügt die Telefonnummer.",
     "errorPhone": "Bitte geben Sie eine gültige Telefonnummer an.",
     "errorServer": "Das hat nicht geklappt. Bitte versuchen Sie es später noch einmal oder schreiben Sie direkt an {email}.",
@@ -131,10 +131,11 @@
       "metaTitle": "Projekte: IoT, Homelab und KI | Dominic Furchert",
       "metaDescription": "Projekte von Dominic Furchert: IoT-Plattform mit ESP32 und MQTT, k3s-Homelab mit Ansible, KI-Assistent für den Ruderclub, eigener Login-Dienst.",
       "techStack": "Tech Stack",
-      "details": "Details →",
+      "details": "Details",
       "allRepos": "Alle Repos auf GitHub",
+      "newTab": "(öffnet in neuem Tab)",
       "crumbBack": "Projekte",
-      "backAll": "← Alle Projekte"
+      "backAll": "Alle Projekte"
     },
     "lab": {
       "metaTitle": "Homelab: k3s-Cluster mit Live-Status",
@@ -175,7 +176,7 @@
       "heroTileCtaSimilar": "So etwas live sehen",
       "heroCta": "Live zeigen lassen",
       "heroCtaMicro": "30 Min. · kostenlos · bei Ihnen oder per Video",
-      "heroCallback": "Lieber telefonieren? Rückruf anfordern →",
+      "heroCallback": "Lieber telefonieren? Rückruf anfordern",
       "areaServed": "Zürcher Oberland",
       "workLabel": "So arbeite ich",
       "workHeading": "Sie kennen Ihren Betrieb. Ich kenne die Werkzeuge.",
@@ -212,7 +213,7 @@
       "reliable3": "Sie reden immer mit mir",
       "reliable4": "Termine halte ich. Kommt etwas dazwischen, melde ich mich vorher.",
       "aboutCta": "Live zeigen lassen",
-      "aboutMiniMore": "Mehr über mich →",
+      "aboutMiniMore": "Mehr über mich",
       "bottomCtaHeading": "In 30 Minuten sehen Sie, was bei Ihnen ginge.",
       "bottomCtaSub": "Sie sagen, was Sie Zeit kostet. Ich zeige, was heute geht. Bringt es bei Ihnen nichts, sage ich es Ihnen.",
       "bottomCtaAgenda": "So läuft die halbe Stunde: 10 Minuten erzählen Sie, wo es klemmt. 15 Minuten zeige ich, was heute geht, mit Beispieldaten; wenn Sie wollen, sprechen Sie selbst eine Regie ins Handy. In den letzten 5 Minuten sagen Sie, ob Sie mehr wollen. Vorbereiten müssen Sie nichts.",

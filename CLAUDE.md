@@ -48,7 +48,7 @@ Spec: `../business/06-website/design-system/vorschlag-20261119.md` (local-only, 
 - Figures in tables, KPIs and prices use tabular-nums (target).
 - Sentence case, no all-caps labels (target).
 - No mono font on public pages (target; DM Mono is removed in PR 11).
-- No arrows on buttons (PR 2, done); arrows on some text links in messages remain until their section PR (target).
+- No arrows on buttons or links on public pages (done in PR 2; dashboard excluded, see the spec's Abgrenzung Dashboard).
 - Radius 4px for buttons (PR 2, done), sheet and inputs (target).
 - `.border-x` frame only from 64rem (target, PR 8).
 

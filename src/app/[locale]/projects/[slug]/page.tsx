@@ -175,7 +175,7 @@ export default async function ProjectDetailPage({
         <div style={{ padding: '2rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {p.github && (
             <Btn href={p.github}>
-              <Icon name="github" size={14} /> GitHub
+              <Icon name="github" size={14} /> GitHub <span className="sr-only">{t('pages.projects.newTab')}</span>
             </Btn>
           )}
           <Btn href="/projects" track={trackAttr('link', 'project-back')}>

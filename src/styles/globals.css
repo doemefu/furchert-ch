@@ -285,6 +285,7 @@ a[href].btn {
 .btn[data-size="small"]::after { content: ""; position: absolute; inset: -2px 0; }
 .btn:not(:disabled):active { transform: scale(var(--press-scale)); }
 .btn:disabled { opacity: .6; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { .btn:not(:disabled):active { transform: none; } }
 .btn:focus-visible { outline: 2px solid var(--text-1); outline-offset: 3px; }
 .btn[data-variant="primary"] { background: var(--button-primary); border-color: var(--button-primary); color: #fff; }
 .btn[data-variant="primary"]:not(:disabled):hover { background: var(--button-primary-hover); border-color: var(--button-primary-hover); }
@@ -297,6 +298,12 @@ a[href].btn {
 .on-dark .btn[data-variant="secondary"] { border-color: rgb(255 255 255 / .5); color: #fff; }
 .on-dark .btn[data-variant="secondary"]:not(:disabled):hover { background: rgb(255 255 255 / .12); border-color: #fff; }
 
+/* Visually hidden text for screen readers (e.g. the new-tab cue on links). */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
 /* ── TEXT LINK (redesign PR 2) ──
    Underlined 1px, offset .22em, brick ink; `.text-link-block` is the
    standalone variant with a 44 px tap height. */
@@ -305,12 +312,16 @@ a[href].btn {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: .22em;
-  transition: color var(--dur-fast) var(--ease);
 }
-.text-link:hover { color: var(--accent); opacity: 1; }
+/* `a[href]` above sets an opacity transition and hover; these win here. */
+.text-link,
+a[href].text-link { transition: color var(--dur-fast) var(--ease); }
+.text-link:hover,
+a[href].text-link:hover { color: var(--accent); opacity: 1; }
 .text-link-block { display: inline-flex; align-items: center; min-height: var(--tap); }
 .on-dark .text-link { color: var(--on-band-1); }
-.on-dark .text-link:hover { color: var(--on-band-2); }
+.on-dark .text-link:hover,
+.on-dark a[href].text-link:hover { color: var(--on-band-2); }
 
 /* ── HOVER CARD ──
    Prototype teaser/project cards were <div onClick> with an inline
@@ -376,7 +387,7 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 .cta-actions { align-items: center; }
 @media (max-width: 39.99rem) {
   .cta-actions { flex-direction: column; align-items: stretch; width: 100%; }
-    .cta-actions > .cta-text { align-self: flex-start; }
+  .cta-actions > .cta-text { align-self: flex-start; }
 }
 /* Below 360 px the micro text and the button do not fit side by side; the
    button keeps its right gutter and the microline under the hero button

@@ -13,6 +13,8 @@ interface BtnProps {
   /** primary: ink fill; secondary (default): ink outline; inverse: light fill for the dark band. */
   variant?: BtnVariant;
   small?: boolean;
+  /** Passed to the internal `Link`; `false` for links that are swapped after hydration. */
+  prefetch?: boolean;
   // `submit` is needed for real forms (e.g. the contact form); the prototype
   // relied on a button's default in-form submit. Default stays `button` so
   // existing call sites are unchanged.
@@ -28,6 +30,7 @@ export function Btn({
   href,
   variant = 'secondary',
   small,
+  prefetch,
   type = 'button',
   disabled,
   track,
@@ -58,7 +61,7 @@ export function Btn({
       );
     }
     return (
-      <Link href={href} {...common}>
+      <Link href={href} prefetch={prefetch} {...common}>
         {children}
       </Link>
     );
