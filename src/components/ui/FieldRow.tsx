@@ -3,8 +3,8 @@
 // is one description list, so the fields of a group live in one <dl> (screen
 // readers announce one list instead of one list per field): FieldHead renders
 // that <dl> itself, anything else wraps its rows in FieldList. A FieldRow
-// outside a <dl> is invalid HTML. Used by the home example sheet (redesign PR 7).
-import type { ReactNode } from 'react';
+// outside a <dl> is invalid HTML. Used by the home example sheet (redesign PR 7) and the /automation WowTiles (PR 7b).
+import type { CSSProperties, ReactNode } from 'react';
 
 export interface FieldRowProps {
   label: ReactNode;
@@ -18,12 +18,14 @@ export interface FieldRowProps {
   /** Empty, decorative photo slot (4:5) left of the field; FieldHead sets it for its lead field. */
   photo?: boolean;
   className?: string;
+  /** Inline style, only for a per-row custom property such as the /automation tile step delay. */
+  style?: CSSProperties;
 }
 
-export function FieldRow({ label, children, secondary, meta, variant, photo = false, className }: FieldRowProps) {
+export function FieldRow({ label, children, secondary, meta, variant, photo = false, className, style }: FieldRowProps) {
   const cls = ['fr', variant === 'text' ? 'fr-text' : '', photo ? 'fr-photo' : '', className ?? ''].filter(Boolean).join(' ');
   return (
-    <div className={cls}>
+    <div className={cls} style={style}>
       <dt className="fr-lab">{label}</dt>
       {meta ? <dd className="fr-meta">{meta}</dd> : null}
       <dd className="fr-val">{children}</dd>

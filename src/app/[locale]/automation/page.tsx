@@ -28,7 +28,7 @@ import { AutomationExample } from './AutomationExample';
 import { ExampleCalc } from './ExampleCalc';
 import { AutomationPricing } from './AutomationPricing';
 import { StickyCta } from './StickyCta';
-import { HAIRLINE, labelMono, textLink } from './sectionStyles';
+import { HAIRLINE, labelMono } from './sectionStyles';
 import { automationJsonLdText, buildAutomationJsonLd, serializeJsonLd } from '@/lib/seo/jsonLd';
 import { buildPageMetadata, localizedUrl } from '@/lib/seo/metadata';
 import { PAGE_LAST_MODIFIED } from '@/lib/seo/pages';
@@ -164,7 +164,8 @@ export default async function AutomationPage({
           <Link
             href={contactHref('automation-callback')}
             data-track={trackAttr('cta', 'automation-callback')}
-            style={{ ...textLink, display: 'flex', width: 'fit-content' }}
+            className="text-link text-link-block"
+            style={{ display: 'flex', width: 'fit-content' }}
           >
             {t('heroCallback')}
           </Link>
@@ -277,7 +278,7 @@ export default async function AutomationPage({
             <Btn href={contactHref('automation-about')} track={trackAttr('cta', 'automation-about')} variant="primary">
               {t('aboutCta')}
             </Btn>
-            <Link href="/about" style={textLink} data-track={trackAttr('link', 'automation-about-page')}>
+            <Link href="/about" className="text-link text-link-block" data-track={trackAttr('link', 'automation-about-page')}>
               {t('aboutMiniMore')}
             </Link>
           </div>
@@ -372,7 +373,8 @@ export default async function AutomationPage({
           <Link
             href={contactHref('automation-callback')}
             data-track={trackAttr('cta', 'automation-callback')}
-            style={{ ...textLink, display: 'flex', width: 'fit-content', margin: '1rem auto 0' }}
+            className="text-link text-link-block"
+            style={{ display: 'flex', width: 'fit-content', margin: '1rem auto 0' }}
           >
             {t('heroCallback')}
           </Link>

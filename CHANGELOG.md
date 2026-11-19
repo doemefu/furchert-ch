@@ -14,6 +14,20 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **/automation example tiles restyled as «Formular» sheets** (redesign PR 7b/11):
+  `WowTiles` uses FieldList/FieldRow rows, highlighter marks instead of coloured
+  edges, a 1px ink border with `--radius`, sentence-case labels and no mono (36
+  mono/uppercase labels fewer on /automation); the «own» tile is no longer ETHON
+  blue. The last public arrow (tile CTA) is gone. The /automation text links
+  (`textLink` removed) use `.text-link` / `.text-link-block`. Number and unit
+  in the tile data (`120 m²`, `24 m`, `2,5 Std.`, `−4 °C`, `5.30 Uhr`) are
+  joined by a no-break space. Below 24rem the offer position table stacks
+  (item line, then quantity and price; the header row stays for screen readers,
+  the table keeps explicit ARIA roles). `FieldRow` takes an optional `style`;
+  the tile focus ring is now `--accent`; `Tag` loses its unused `contrast`
+  prop. Content, order and open/close behaviour are unchanged; the dashboard
+  keeps its look.
+
 - **Home example sheet rebuilt as a «Formular» sheet** (redesign PR 7/11): the
   invented quote example in the home hero (`HomeOfferSheet`) is now a card with a
   1px ink border and radius 4 under a 2px ink rule, label line (Archivo 13px) plus the title in Archivo

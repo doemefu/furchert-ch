@@ -279,6 +279,7 @@ describe('automation page copy', () => {
 });
 
 describe('automation example tiles', () => {
+  // Short texts shown as tags or, for `foundTag`, as a FieldRow label (all are length-limited).
   const tags = (locale: Locale) =>
     WOW_TILES.flatMap((w) => {
       const c = w.i18n[locale];

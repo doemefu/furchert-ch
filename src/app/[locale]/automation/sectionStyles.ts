@@ -71,16 +71,3 @@ export const footnoteStyle: CSSProperties = {
   lineHeight: 1.55,
   maxWidth: '68ch',
 };
-
-// Standalone mono text link with a 44 px target (tile links, calc link,
-// "Mehr über mich").
-export const textLink: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '.4rem',
-  minHeight: 44,
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
-  color: 'var(--blue-base)',
-  textDecoration: 'none',
-};
