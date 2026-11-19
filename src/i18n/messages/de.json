@@ -41,11 +41,10 @@
     "seeProjects": "Projekte ansehen"
   },
   "teasers": {
-    "it": { "title": "IT & Tech", "text": "COBOL bei der UBS, Praktikum IT-Audit bei KPMG, Embedded bei AMZ Racing, Studium an der UZH." },
-    "rowing": { "title": "Rudern", "text": "Präsident des Ruderclubs Rapperswil-Jona. Chef Sicherheit im OK der Nationalen Regatta Schmerikon." },
-    "projects": { "title": "Software-Projekte", "text": "Eigener Login-Dienst, IoT-Plattform vom ESP32 bis zum Dashboard, KI-Assistent für den Ruderclub. Alles auf dem eigenen k3s-Cluster." },
-    "automation": { "title": "KI für KMU", "text": "Rapport einsprechen statt tippen, Offerte aus der Anfrage: ein Ablauf aus Ihrem Alltag, eingerichtet und nach 6 Wochen gemessen." },
-    "more": "Mehr"
+    "it": { "title": "IT & Tech", "text": "COBOL bei der UBS, Praktikum IT-Audit bei KPMG, Embedded bei AMZ Racing, Studium an der UZH.", "go": "Mehr zu IT" },
+    "rowing": { "title": "Rudern", "text": "Präsident des Ruderclubs Rapperswil-Jona. Chef Sicherheit im OK der Nationalen Regatta Schmerikon.", "go": "Mehr zum Rudern" },
+    "projects": { "title": "Software-Projekte", "text": "Eigener Login-Dienst, IoT-Plattform vom ESP32 bis zum Dashboard, KI-Assistent für den Ruderclub. Alles auf dem eigenen k3s-Cluster.", "go": "Zu den Projekten" },
+    "automation": { "title": "KI für KMU", "text": "Rapport einsprechen statt tippen, Offerte aus der Anfrage: ein Ablauf aus Ihrem Alltag, eingerichtet und nach 6 Wochen gemessen.", "go": "Beispiele und Ablauf" }
   },
   "about": {
     "label": "Über mich",
@@ -56,7 +55,7 @@
     "together": "Ein Betrieb oder ein Projekt?",
     "togsub": "Betriebe: 30 Minuten Live-Demo, kostenlos, bei Ihnen oder per Video. Für Engineering-Stellen und Tech-Projekte von Infrastruktur bis Full-Stack: Schreiben Sie mir.",
     "primary": "Live zeigen lassen",
-    "examples": "Zuerst die Beispiele ansehen"
+    "email": "E-Mail schreiben"
   },
   "contact": {
     "label": "Kontakt",
@@ -106,7 +105,6 @@
   },
   "pages": {
     "home": {
-      "areas": "Bereiche",
       "areasTitle": "Woran ich arbeite",
       "sheetTag": "Beispiel aus einer Baufirma, Namen erfunden",
       "sheetTitle": "KI macht aus der Kundenanfrage einen Offertentwurf",
@@ -114,15 +112,6 @@
       "sheetRowMail": "Eingang, Mail",
       "sheetPosNo": "Pos.",
       "sheetPrices": "Preise: {note}",
-      "status": {
-        "checking": "Status wird geprüft",
-        "allUp": "Alle {total} öffentlichen Dienste laufen",
-        "someDown": "{down} von {total} Diensten gerade gestört",
-        "partial": "{up} von {total} Diensten in Betrieb, Rest unbekannt",
-        "unknown": "Status gerade nicht verfügbar",
-        "facts": "Homelab · {nodes} Rechner im Cluster",
-        "link": "Live-Status ansehen"
-      },
       "metaTitle": "Dominic Furchert | Software Engineer · KI für KMU",
       "metaDescription": "Dominic Furchert, Software Engineer im Zürcher Oberland, richtet in KMU einen KI-Ablauf ein und misst, ob er genutzt wird. Dazu Projekte, Homelab, Rudern."
     },

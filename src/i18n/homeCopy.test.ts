@@ -1,4 +1,4 @@
-// Home hero sheet and status line copy (#178).
+// Home hero sheet and areas copy (#178, redesign PR 10).
 import { describe, expect, it } from 'vitest';
 import { WOW_TILES } from '@/data/automation-wow';
 import de from './messages/de.json';
@@ -47,21 +47,10 @@ describe('home hero sheet copy', () => {
   });
 });
 
-describe('home status line copy', () => {
-  it('has the same keys in DE and EN', () => {
-    expect(Object.keys(en.pages.home.status).sort()).toEqual(Object.keys(de.pages.home.status).sort());
-  });
-
-  it('keeps the same placeholders in DE and EN', () => {
-    const slots = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-    for (const [key, value] of Object.entries(de.pages.home.status)) {
-      expect(slots(en.pages.home.status[key as keyof typeof en.pages.home.status]), key).toEqual(slots(value));
-    }
-  });
-
+describe('home copy', () => {
   it('has no trailing periods and no em dash', () => {
     for (const h of [home.de, home.en]) {
-      for (const v of [h.sheetTag, h.sheetTitle, h.sheetAlt, ...Object.values(h.status)]) {
+      for (const v of [h.sheetTag, h.sheetTitle, h.sheetAlt]) {
         expect(v.endsWith('.'), v).toBe(false);
         expect(v).not.toContain('—');
       }
@@ -69,8 +58,19 @@ describe('home status line copy', () => {
   });
 
   it('has no ß in the German copy and no Oberland in English', () => {
-    expect(JSON.stringify([home.de.sheetTag, home.de.sheetTitle, home.de.sheetAlt, home.de.status])).not.toContain('ß');
+    expect(JSON.stringify([home.de.sheetTag, home.de.sheetTitle, home.de.sheetAlt])).not.toContain('ß');
     expect(JSON.stringify(home.en)).not.toContain('Oberland');
+  });
+});
+
+describe('home areas directory copy (redesign PR 10)', () => {
+  it('gives every area a destination label in DE and EN, no arrow, no trailing period', () => {
+    for (const m of [de, en]) {
+      for (const [key, v] of Object.entries(m.teasers)) {
+        expect(v.go.length, key).toBeGreaterThan(0);
+        expect(v.go).not.toMatch(/[→↗>]|\.$/);
+      }
+    }
   });
 });
 

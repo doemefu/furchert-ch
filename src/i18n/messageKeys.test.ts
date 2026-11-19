@@ -41,7 +41,6 @@ const FILES: Record<string, string> = {
   'src/app/[locale]/contact/page.tsx': '',
   'src/app/[locale]/page.tsx': '',
   'src/app/[locale]/HomeOfferSheet.tsx': 'pages.home',
-  'src/components/layout/HomeStatusLine.tsx': 'pages.home.status',
   'src/components/layout/Header.tsx': 'nav',
   'src/components/layout/MobileNav.tsx': 'nav',
   'src/components/layout/Footer.tsx': '',
@@ -68,6 +67,7 @@ const templateValues = (template: string, src: string): string[] | undefined => 
     'desc.${key}': [...BUSINESS_NAV, ...ABOUT_NAV],
     'teasers.${key}.title': arrayIn(src, 'teaserKeys'),
     'teasers.${key}.text': arrayIn(src, 'teaserKeys'),
+    'teasers.${key}.go': arrayIn(src, 'teaserKeys'),
   };
   return values[template];
 };

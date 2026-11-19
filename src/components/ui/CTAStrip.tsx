@@ -1,10 +1,9 @@
-// Ported verbatim from the prototype (shared.jsx CTAStrip).
-// Text is passed in by the (server) page so this stays a plain presentational
-// component reusable from any tree. Optional (#145): `primary`, an internal
-// link shown first in the row, and `examples`, a text link under `togsub`.
-// Without them the strip renders as in the prototype.
-import { Link } from '@/i18n/navigation';
-import { Icon } from './Icon';
+// Closing band (redesign PR 10): one flat forest field (`--band`) per page with
+// the question, a short line and two buttons: inverse «Live zeigen lassen»
+// (`primary`) and the outline e-mail button. `.on-dark` keeps the focus rings
+// and the outline button visible on the forest. Text is passed in by the
+// (server) page; the e-mail label is passed in too, the address itself is only
+// rendered in the browser (#147).
 import { Btn } from './Btn';
 import { ContactEmail } from './ContactEmail';
 
@@ -19,64 +18,27 @@ export function CTAStrip({
   together,
   togsub,
   primary,
-  examples,
+  emailLabel,
 }: {
   together: string;
   togsub: string;
-  primary?: StripLink;
-  examples?: StripLink;
+  primary: StripLink;
+  emailLabel: string;
 }) {
   return (
-    <div className="on-dark" style={{ background: 'var(--n-90)' }}>
-      <div
-        className="container border-x"
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-          paddingBlock: '3rem',
-        }}
-      >
+    <section className="band on-dark">
+      <div className="container band-in">
         <div>
-          <h3
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 'var(--fs-h2)',
-              fontWeight: 500,
-              letterSpacing: '-.02em',
-              color: 'var(--white)',
-            }}
-          >
-            {together}
-          </h3>
-          <p style={{ color: 'var(--n-40)', marginTop: '.5rem', fontSize: 'var(--fs-16)' }}>{togsub}</p>
-          {examples && (
-            <Link href={examples.href} className="text-link text-link-block">
-              {examples.label}
-            </Link>
-          )}
+          <h2 className="band-title">{together}</h2>
+          <p className="band-text">{togsub}</p>
         </div>
-        <div className="cta-actions" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          {primary && (
-            <Btn href={primary.href} variant="inverse" track={primary.track}>
-              {primary.label}
-            </Btn>
-          )}
-          {/* The address is rendered only in the browser (#147). */}
-          <ContactEmail btn />
-          <a
-            href="https://github.com/doemefu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cta-text text-link text-link-block"
-            style={{ gap: '.5rem' }}
-          >
-            <Icon name="github" size={14} /> github/doemefu
-          </a>
+        <div className="band-acts">
+          <Btn href={primary.href} variant="inverse" track={primary.track}>
+            {primary.label}
+          </Btn>
+          <ContactEmail btn label={emailLabel} />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
