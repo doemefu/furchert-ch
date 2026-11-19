@@ -48,7 +48,7 @@ export function HomeStatusLine() {
   const led: DotStatus = summary === null ? 'unknown' : LED[summary];
 
   return (
-    <div style={{ borderTop: '1px solid rgba(162,167,176,.22)', background: 'var(--n-100)' }}>
+    <div className="on-dark" style={{ borderTop: '1px solid rgba(162,167,176,.22)', background: 'var(--n-100)' }}>
       <div
         className="container"
         style={{

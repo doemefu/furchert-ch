@@ -141,7 +141,7 @@ body {
   margin-inline: auto;
 }
 @media (min-width: 64rem) {
-  .container { max-width: calc(100% - 7rem); }
+  .container { max-width: calc(100% - 3.5rem); }
   .border-x {
     border-left:  1px solid rgba(162,167,176,.22);
     border-right: 1px solid rgba(162,167,176,.22);
@@ -172,11 +172,12 @@ body {
    grids, or the 1px reach is lost. */
 .cell-grid { margin-right: -1px; clip-path: inset(0 1px 0 0); }
 .cell-grid :focus-visible { outline-offset: -4px; }
-/* Plain cells (`.cell`) sit on the one left edge: no inner left padding, the
-   seam is followed by a --gutter gap (redesign PR 8). Tinted panels keep their own padding. */
-.cell-grid { column-gap: var(--gutter); }
-.cell { padding-inline: 0 var(--gutter); }
-.ethon .cell-grid { column-gap: 0; }
+/* Plain cells (`.cell`, redesign PR 8): the grid bleeds by --gutter on both sides
+   (to the viewport edge below 64rem, to the frame line from 64rem) so the seams
+   and hairlines run edge to edge, while each cell's text sits on the one left
+   edge after its own --gutter padding. Grids with tinted panels are unaffected. */
+.cell-grid:has(> .cell) { margin-left: calc(-1 * var(--gutter)); margin-right: calc(-1 * var(--gutter) - 1px); }
+.cell { padding-inline: var(--gutter); }
 
 /* ── KEYFRAMES ── */
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -270,16 +271,16 @@ input:focus, textarea:focus {
   .about-mini-box { border-right: 0; }
 }
 
-/* Contact columns: form | direct links (#175, #188). Inset by --card-px on both
-   sides so the inputs clear the frame line; stacked below 40rem with one
-   hairline between the blocks. */
+/* Contact columns: form | direct links (#175, #188). The outer sides sit on the
+   one left/right edge, the --gutter sits on either side of the seam; stacked
+   below 40rem with one hairline between the blocks. */
 .contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.contact-col-form { padding: 3rem var(--card-px); border-right: 1px solid rgba(162,167,176,.22); }
-.contact-col-direct { padding: 3rem var(--card-px); }
+.contact-col-form { padding: 3rem var(--gutter) 3rem 0; border-right: 1px solid rgba(162,167,176,.22); }
+.contact-col-direct { padding: 3rem 0 3rem var(--gutter); }
 @media (max-width: 39.99rem) {
   .contact-grid { grid-template-columns: 1fr; }
-  .contact-col-form { border-right: 0; }
-  .contact-col-direct { border-top: 1px solid rgba(162,167,176,.22); }
+  .contact-col-form { border-right: 0; padding-inline: 0; }
+  .contact-col-direct { padding-inline: 0; border-top: 1px solid rgba(162,167,176,.22); }
 }
 
 /* ── FOCUS RING (#151, redesign PR 8) ──

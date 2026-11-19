@@ -39,7 +39,7 @@ export const h2Style: CSSProperties = {
 
 // Short direct answer under a question heading (GEO: quotable by AI search).
 export const leadStyle: CSSProperties = {
-  fontSize: 'var(--text-17)',
+  fontSize: 'var(--text-18)',
   color: 'var(--text-2)',
   lineHeight: 1.5,
   maxWidth: '62ch',

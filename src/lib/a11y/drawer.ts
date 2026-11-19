@@ -43,7 +43,7 @@ export function fieldAria(hasError: boolean, field: string): { 'aria-invalid'?: 
   return hasError ? { 'aria-invalid': true, 'aria-describedby': fieldErrorId(field) } : {};
 }
 
-/** The slice of an element `inertizeLateArrivals` needs (a DOM `Element` fits). */
+/** The slice of an element `inertize` needs (a DOM `Element` fits). */
 export interface InertCandidate {
   tagName: string;
   hasAttribute(name: string): boolean;
@@ -57,8 +57,8 @@ export interface InertCandidate {
  * Used for the phone menu's body children, both at open and for children added
  * later (the consent bar host).
  */
-export function inertize(candidates: Iterable<InertCandidate>, header: InertCandidate | null): InertCandidate[] {
-  const changed: InertCandidate[] = [];
+export function inertize<T extends InertCandidate>(candidates: Iterable<T>, header: InertCandidate | null): T[] {
+  const changed: T[] = [];
   for (const el of candidates) {
     if (el === header || (header !== null && el.contains(header)) || el.tagName === 'SCRIPT') continue;
     if (el.hasAttribute('inert')) continue;
@@ -66,4 +66,17 @@ export function inertize(candidates: Iterable<InertCandidate>, header: InertCand
     changed.push(el);
   }
   return changed;
+}
+
+/**
+ * The element nodes (nodeType 1) among the nodes added in a batch of
+ * `MutationObserver` records; text and comment nodes are dropped. Call it as
+ * `addedElements<Node, Element>(records)`.
+ */
+export function addedElements<N extends { nodeType: number }, E extends N>(
+  records: Iterable<{ addedNodes: Iterable<N> }>,
+): E[] {
+  const out: E[] = [];
+  for (const r of records) for (const n of r.addedNodes) if (n.nodeType === 1) out.push(n as E);
+  return out;
 }

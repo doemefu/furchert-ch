@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cycleTarget, fieldAria, fieldErrorId, inertize, nextTrapTarget, type InertCandidate } from './drawer';
+import { cycleTarget, fieldAria, fieldErrorId, addedElements, inertize, nextTrapTarget, type InertCandidate } from './drawer';
 
 describe('nextTrapTarget', () => {
   it('wraps Tab from the last element to the first', () => {
@@ -82,10 +82,18 @@ describe('inertize', () => {
     const script = fakeEl('SCRIPT');
     expect(inertize([wrapper, script], header)).toEqual([]);
   });
-  it('handles a late arrival such as the consent-bar host', () => {
-    const header = fakeEl('HEADER');
-    const host = fakeEl('DIV');
-    expect(inertize([host], header)).toEqual([host]);
-    expect(host.inert).toBe(true);
+});
+
+describe('addedElements', () => {
+  it('keeps element nodes from every record and drops text and comments', () => {
+    const a = { nodeType: 1 };
+    const b = { nodeType: 1 };
+    const text = { nodeType: 3 };
+    const comment = { nodeType: 8 };
+    const records = [{ addedNodes: [a, text] }, { addedNodes: [comment] }, { addedNodes: [b] }];
+    expect(addedElements<{ nodeType: number }, { nodeType: number }>(records)).toEqual([a, b]);
+  });
+  it('returns an empty list when nothing was added', () => {
+    expect(addedElements([{ addedNodes: [] }])).toEqual([]);
   });
 });

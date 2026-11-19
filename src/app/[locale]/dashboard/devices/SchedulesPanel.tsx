@@ -413,8 +413,10 @@ function ScheduleDrawer({
 
   // Portalled to <body>: the page's layout wrappers form a stacking context
   // below the fixed site header, which would otherwise cover the drawer top.
+  // `.ethon` again: outside the dashboard layout wrapper the drawer would lose the ETHON look.
   return createPortal(
     <div
+      className="ethon"
       onClick={onClose}
       style={{ position: 'fixed', inset: 0, background: 'rgba(8,24,61,.35)', zIndex: 300, display: 'flex', justifyContent: 'flex-end' }}
     >

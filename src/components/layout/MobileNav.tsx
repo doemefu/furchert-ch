@@ -10,7 +10,7 @@ import { Link } from '@/i18n/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { contactHref } from '@/data/contact-sources';
 import { trackAttr } from '@/data/track-ids';
-import { cycleTarget, inertize } from '@/lib/a11y/drawer';
+import { addedElements, cycleTarget, inertize } from '@/lib/a11y/drawer';
 import { ABOUT_NAV, BUSINESS_NAV, isNavActive } from './nav-items';
 
 const FOCUSABLE = 'a[href], button:not([disabled])';
@@ -51,10 +51,9 @@ export function MobileNav({ id, open, onClose, toggleRef, pathname, otherLocale,
     // appended to <body> after the menu opened (the consent-bar host) are
     // caught by the observer below; all are recorded and un-inerted on close.
     const header = sheet.closest('header');
-    const inerted: Element[] = inertize(Array.from(document.body.children), header) as Element[];
+    const inerted: Element[] = inertize(Array.from(document.body.children), header);
     const observer = new MutationObserver((records) => {
-      const added = records.flatMap((r) => Array.from(r.addedNodes)).filter((n): n is Element => n instanceof Element);
-      inerted.push(...(inertize(added, header) as Element[]));
+      inerted.push(...inertize(addedElements<Node, Element>(records), header));
     });
     observer.observe(document.body, { childList: true });
 

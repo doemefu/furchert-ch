@@ -15,17 +15,21 @@ All notable changes per milestone. Newest first.
 ### Changed
 
 - **Section heads, page header and page surface** (redesign PR 8/11): `PageHeader`
-  and the shared section styles (`sectionStyles.ts`, `LegalPage`, the home and
-  about heads) use Archivo at `--stretch-heading` / `--stretch-display`, a
-  sentence-case 14px label in `--text-3` instead of the mono uppercase eyebrow,
-  a lead in `--text-2` and a 2px ink rule over each section head; sections are
-  spaced with `--section-y`. One left edge: the `.border-x` frame only shows from
-  64rem (the container then pads its content by `--gutter`), phones have none, so
-  text gets the full width minus the gutter and the double margins on phones
-  (hero, cell grids, consent bar, footer) are gone. The body is on
-  `--surface-page`. Public links and the consent bar use a `--text-1` focus ring;
-  the dashboard (`.ethon`) keeps the blue ring, its own frame, background and
-  padding. The phone menu also marks elements appended to `<body>` after it
+  and the shared section styles (`sectionStyles.ts`, the home head) use Archivo
+  at `--stretch-heading` / `--stretch-display`, a sentence-case 14px label in
+  `--text-3` instead of the mono uppercase eyebrow, a lead in `--text-2` and a
+  2px ink rule over each section head; sections are spaced with `--section-y`.
+  The legal and about section heads are labels only (sentence case, 2px rule).
+  One left edge: the `.border-x` frame only shows from 64rem (the container then
+  pads its content by `--gutter`), below 64rem there is none, so text gets the
+  full width minus the gutter and the double margins (hero, consent bar, footer,
+  contact columns) are gone. Plain grid cells (`.cell`) bleed by `--gutter` so
+  hairlines run edge to edge while the text keeps the one left edge. The body is
+  on `--surface-page`.
+  `--surface-page`. All public focusable elements use a `--text-1` focus ring; the dashboard
+  (`.ethon`, also its portalled drawers) keeps the blue ring, its own frame,
+  background and padding. The shared header and footer pad by `--gutter` from
+  64rem, so they sit further in on /dashboard as well. The phone menu also marks elements appended to `<body>` after it
   opened (the consent-bar host) `inert` (`MutationObserver`, `inertize` in
   `lib/a11y/drawer.ts`, unit-tested). Content and section order are unchanged.
 
