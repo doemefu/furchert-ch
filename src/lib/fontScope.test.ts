@@ -16,14 +16,26 @@ const walk = (dir: string): string[] =>
   });
 
 describe('DM Mono scope', () => {
-  it('is imported only from the dashboard route', () => {
-    const importers = walk(join(ROOT, 'src'))
+  const sources = () =>
+    walk(join(ROOT, 'src'))
       .filter((f) => /\.(ts|tsx)$/.test(f))
       .map((f) => relative(ROOT, f))
-      .filter((f) => !f.endsWith('fontScope.test.ts'))
-      .filter((f) => /from\s+['"][^'"]*dashboardFont['"]/.test(readFileSync(join(ROOT, f), 'utf8')));
-    expect(importers.length).toBeGreaterThan(0);
-    for (const f of importers) expect(f.startsWith(DASHBOARD), f).toBe(true);
+      .filter((f) => !f.endsWith('fontScope.test.ts'));
+
+  it('is imported only by these three dashboard files', () => {
+    const importers = sources()
+      .filter((f) => /from\s+['"][^'"]*dashboardFont['"]/.test(readFileSync(join(ROOT, f), 'utf8')))
+      .sort();
+    expect(importers).toEqual([
+      join(DASHBOARD, 'auth/UsersPanel.tsx'),
+      join(DASHBOARD, 'devices/SchedulesPanel.tsx'),
+      join(DASHBOARD, 'layout.tsx'),
+    ]);
+  });
+
+  it('is loaded (DM_Mono) only in src/lib/dashboardFont.ts', () => {
+    const loaders = sources().filter((f) => /\bDM_Mono\b/.test(readFileSync(join(ROOT, f), 'utf8')));
+    expect(loaders).toEqual(['src/lib/dashboardFont.ts']);
   });
 
   it('is used in globals.css only by .ethon and .svc-* rules', () => {

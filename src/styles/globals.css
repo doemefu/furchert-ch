@@ -274,12 +274,12 @@ details[open] > .ax-sum::after { content: "×"; }
    one left/right edge, the --gutter sits on either side of the seam; stacked
    below 40rem with one hairline between the blocks. */
 .contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--hairline-strong); }
-.contact-col-form { padding: 3rem var(--gutter) 3rem 0; border-right: 1px solid rgba(162,167,176,.22); }
+.contact-col-form { padding: 3rem var(--gutter) 3rem 0; border-right: 1px solid var(--hairline-strong); }
 .contact-col-direct { padding: 3rem 0 3rem var(--gutter); }
 @media (max-width: 39.99rem) {
   .contact-grid { grid-template-columns: 1fr; border-top: 0; }
   .contact-col-form { border-right: 0; padding-inline: 0; }
-  .contact-col-direct { padding-inline: 0; border-top: 1px solid rgba(162,167,176,.22); }
+  .contact-col-direct { padding-inline: 0; border-top: 1px solid var(--hairline-strong); }
 }
 
 /* ── FOCUS RING (#151, redesign PR 8) ──
@@ -585,7 +585,7 @@ a[href].text-link:hover { color: var(--accent); opacity: 1; }
   position: fixed;
   inset: auto 0 0;
   z-index: 95;
-  /* Solid, not the header's 94 % glass: whatever the bar covers (a reopened
+  /* Solid, not glass: whatever the bar covers (a reopened
      bar sits over the footer) must not shine through and lower the contrast of
      the current-choice label (review of #159, F2). */
   background: var(--surface-raised);
