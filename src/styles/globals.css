@@ -1,6 +1,7 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    ETHON design system — ported verbatim from the Claude Design prototype.
-   Fonts (DM Sans / DM Mono) are injected by next/font as --sans / --mono
+   Fonts: Archivo is injected by next/font as --font-archivo and exposed as
+   --font-sans / --sans below; DM Mono (--mono) stays until redesign PR 11
    (see src/lib/fonts.ts + the [locale] layout).
    a11y deviations from the prototype values: #151 (status dot tones, ink
    tokens, focus ring, button hover, motion tokens, darker muted text).
@@ -61,10 +62,50 @@
   --fs-hero: clamp(2.4rem, 7vw, 4.75rem);
 }
 
+/* Redesign tokens (Formular / Oberland, decision 2026-11-19). Added next to the
+   ETHON tokens; components move over in later PRs, ETHON is removed at the end. */
+:root {
+  /* surfaces and text */
+  --surface-page: #f2f1ed;  --surface-card: #fbfaf8;  --surface-raised: #e6e4de;
+  --text-1: #1c1b19;  --text-2: #4d4841;  --text-3: #67615a;
+  --hairline: rgb(28 27 25 / .12);  --hairline-strong: rgb(28 27 25 / .22);
+  --rule: var(--text-1);
+  --field-border: #7a746b;
+
+  /* action and accent */
+  --button-primary: #1c1b19;  --button-primary-hover: #3a3631;
+  --accent: #9b3a22;  --accent-ink: #86321c;  --accent-wash: #f2e1d8;  --accent-on-dark: #e2875f;
+
+  /* example sheet highlighter */
+  --mark-source: #d9e5ee;  --mark-ask: #f1e3c4;
+
+  /* the one colour field per page */
+  --band: #22402a;  --on-band-1: #ffffff;  --on-band-2: #c9d6c0;
+
+  /* status */
+  --positive: #2e7a47;  --positive-led: #3f9a5c;  --warning: #8a5a00;  --warning-led: #b07a0c;
+  --negative: #b0263a;  --negative-led: #d23b4e;
+
+  /* type */
+  --font-sans: var(--font-archivo), "Helvetica Neue", Arial, system-ui, sans-serif;
+  --sans: var(--font-sans); /* legacy name used by existing components */
+  --stretch-display: 78%;  --weight-display: 560;
+  --stretch-heading: 80%;  --weight-heading: 540;
+  --text-13: .8125rem;
+  --text-14: .875rem;  --text-16: 1rem;  --text-17: 1.0625rem;  --text-18: 1.125rem;  --text-20: 1.25rem;
+  --text-h3: clamp(1.5rem, 1.35rem + .6vw, 1.6875rem);
+  --text-h2: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+  --text-hero: clamp(2.5625rem, 1.6rem + 4vw, 4.875rem);
+
+  /* shape */
+  --radius: 4px;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
-  font-family: var(--sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
+  font-stretch: 100%;
   background: var(--n-10);
   color: var(--n-100);
   -webkit-font-smoothing: antialiased;

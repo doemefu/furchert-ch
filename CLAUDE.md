@@ -37,8 +37,19 @@
 - Before any merge, wait for the Copilot review and fix or answer every comment (CodeRabbit is not installed here).
 - All code, comments, and documentation in **English**.
 - Minimize diff size: no drive-by refactors, no style-only churn, no renames unless required.
-- Treat the prototype as the starting point, not as a spec to match pixel for pixel. Fix craft defects (spacing, doubled lines, contrast, touch targets, alignment, type scale) without asking. Propose bigger direction changes (new sections, hero concepts, brand colours, layout of whole pages) before building them. Keep the ETHON tokens and the `.border-x` frame.
+- Treat the prototype as the starting point, not as a spec to match pixel for pixel. Fix craft defects (spacing, doubled lines, contrast, touch targets, alignment, type scale) without asking. Propose bigger direction changes (new sections, hero concepts, brand colours, layout of whole pages) before building them. The ETHON tokens stay only until redesign PRs 2-11 have moved the public pages to the new tokens (decision 2026-11-19, below); `.border-x` becomes desktop-only (>= 64rem, target).
 - Always run the relevant lint/typecheck/test/build commands for the touched area and record results in the worklog.
+
+## Design rules (redesign «Formular», owner decision 2026-11-19)
+
+Spec: `business/06-website/design-system/vorschlag-20261119.md` § «Entscheid 19.11.2026». Implemented per PR; rules marked (target) are not yet in the code.
+- Tokens: the new tokens in `globals.css` (`--surface-*`, `--text-1..3`, `--accent`, `--band`, `--radius: 4px`, ...) are the target; ETHON tokens are legacy until PR 11.
+- Font: Archivo only, body at `font-stretch: 100%`, display/headings via `--stretch-display` / `--stretch-heading`. Never a generic AI default font (Inter, Geist, DM Sans, Space Grotesk, serif display faces); the stack keeps browser fallbacks (`Helvetica Neue`, Arial, `system-ui`).
+- Sentence case, no all-caps labels (target).
+- No mono font on public pages (target; DM Mono is removed in PR 11).
+- No arrows on buttons or links (target, PR 2).
+- Radius 4px for buttons, sheet and inputs (target).
+- `.border-x` frame only from 64rem (target, PR 8).
 
 ## Tech Stack (pinned — see `package.json`)
 
@@ -52,8 +63,8 @@
 | i18n | next-intl (`de` default, `en`; `/` → `/de`) | 4.14.9 |
 | Auth | Auth.js (next-auth) generic OIDC → auth.furchert.ch | 5.0.0-beta.32 |
 | Mail | nodemailer (contact form → iCloud SMTP) | 10.1.2 |
-| Styling | ETHON design tokens in `src/styles/globals.css` (no UI kit) | — |
-| Fonts | DM Sans + DM Mono (`next/font`) | — |
+| Styling | Redesign tokens («Formular», `--surface-*`, `--text-*`, `--accent`, `--radius`, ...) next to the legacy ETHON tokens in `src/styles/globals.css` (no UI kit) | — |
+| Fonts | Archivo, variable with `wdth` axis (`next/font/google`, `--font-archivo`); DM Mono only until redesign PR 11 | — |
 | Deploy | Docker (standalone) → k3s `apps` ns → Flux CD → Cloudflare Tunnel | base image `node:22.23.4-alpine`, digest-pinned in the `Dockerfile` (Dependabot `docker`); CI pulls it via `mirror.gcr.io` (#118) |
 
 Exact versions are pinned in `package.json` and the `Dockerfile` base image. Note: `@types/node` is pinned to 26.6.5 while the runtime is Node 22 — a known, harmless mismatch.
