@@ -4,6 +4,15 @@ All notable changes per milestone. Newest first.
 
 ## [Unreleased]
 
+### Changed
+
+- **Site-wide typeface is now Archivo** (redesign «Formular» PR 1, owner
+  decision 2026-11-19): DM Sans is replaced by Archivo (variable, width axis,
+  self-hosted via `next/font`, metric-matched fallback with Helvetica Neue,
+  Arial and system-ui). All text renders at 100% width; DM Mono stays until the
+  last redesign PR. The new design tokens are defined next to the ETHON tokens
+  and are not used by components yet.
+
 ### Added
 
 - **Usage statistics live** (#158, WA-6 of Epic doemefu/homelab#348,
