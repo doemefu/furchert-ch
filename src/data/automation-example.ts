@@ -69,11 +69,11 @@ export const EXAMPLE: { i18n: Record<Locale, AutomationExampleCopy> } = {
           label: 'Personal und Maschinen',
           lines: [
             {
-              text: 'Di, 17.11., 09:30 bis 12:00: 2 Personen, je 2,5 Std.',
+              text: 'Di, 17.11., 09:30 bis 12:00: 2 Personen, je 2,5\u00a0Std.',
               check: 'Funktion fehlt (Polier, Facharbeiter, Bauarbeiter …), sie bestimmt den Regieansatz',
             },
             {
-              text: 'Bagger mit Maschinist, 2,5 Std.',
+              text: 'Bagger mit Maschinist, 2,5\u00a0Std.',
               check: 'Zwei Bagger in Ihrer Maschinenliste, bitte wählen',
             },
           ],

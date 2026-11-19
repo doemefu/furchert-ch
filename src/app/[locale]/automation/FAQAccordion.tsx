@@ -29,7 +29,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
         const panelId = `faq-panel-${i}`;
         const buttonId = `faq-button-${i}`;
         return (
-          <div key={i} style={{ borderTop: '1px solid rgba(162,167,176,.22)' }}>
+          <div key={i} style={{ borderTop: '1px solid var(--hairline-strong)' }}>
             <h3 style={{ margin: 0, font: 'inherit' }}>
             <button
               type="button"
@@ -43,7 +43,9 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '1.25rem 0',
+                gap: '1rem',
+                minHeight: 'var(--tap)',
+                padding: '.75rem 0',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -52,11 +54,10 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
             >
               <span
                 style={{
-                  fontFamily: 'var(--sans)',
-                  fontSize: 'var(--fs-16)',
+                  fontSize: 'var(--text-17)',
                   fontWeight: 500,
-                  letterSpacing: 0,
-                  color: 'var(--n-100)',
+                  lineHeight: 1.3,
+                  color: 'var(--text-1)',
                 }}
               >
                 {faq.q}
@@ -64,14 +65,13 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
               <span
                 aria-hidden="true"
                 style={{
-                  fontFamily: 'var(--mono)',
-                  fontSize: 'var(--fs-14)',
-                  color: 'var(--n-60)',
-                  transition: 'transform .2s',
-                  transform: isOpen ? 'rotate(45deg)' : 'none',
+                  flexShrink: 0,
+                  fontSize: 'var(--text-20)',
+                  lineHeight: 1,
+                  color: 'var(--text-2)',
                 }}
               >
-                +
+                {isOpen ? '×' : '+'}
               </span>
             </button>
             </h3>
@@ -82,9 +82,9 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
               hidden={!isOpen}
               style={{
                 paddingBottom: '1.25rem',
-                fontSize: 'var(--fs-15)',
-                color: 'var(--n-60)',
-                lineHeight: 1.55,
+                fontSize: 'var(--text-16)',
+                color: 'var(--text-2)',
+                lineHeight: 1.5,
                 maxWidth: '64ch',
               }}
             >

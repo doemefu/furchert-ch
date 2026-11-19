@@ -4,7 +4,7 @@
 // (`terms`) in body size and always visible; inclusions behind a native
 // <details>. Then the own automation as "possible later", the price footnote
 // and the call to action. Server component. Built from the prototype's
-// process step cells (mono "0n" numeral, title) and the check rows of the
+// process step cells ("0n" numeral, title) and the check rows of the
 // page's two-column blocks.
 import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
@@ -24,21 +24,20 @@ import {
 } from './sectionStyles';
 import { trackAttr } from '@/data/track-ids';
 
+// Small label above the add-on: sentence case, 14px.
 const subLine = {
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
-  letterSpacing: '.05em',
-  textTransform: 'uppercase' as const,
-  color: 'var(--blue-base)',
+  fontSize: 'var(--text-14)',
+  lineHeight: 1.4,
+  color: 'var(--text-3)',
 };
 
 function PriceLine({ c }: { c: PackageCopy }) {
   return (
     <>
-      <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums', marginTop: '.25rem' }}>{c.price}</p>
-      {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--blue-base)', fontVariantNumeric: 'tabular-nums' }}>{c.priceAlt}</p>}
+      <p style={{ ...cardTitle, color: 'var(--accent-ink)', fontVariantNumeric: 'tabular-nums', marginTop: '.25rem' }}>{c.price}</p>
+      {c.priceAlt && <p style={{ ...cardTitle, color: 'var(--accent-ink)', fontVariantNumeric: 'tabular-nums' }}>{c.priceAlt}</p>}
       {c.priceNote && (
-        <p style={{ fontSize: 'var(--fs-14)', color: 'var(--n-70)', marginTop: '.25rem' }}>
+        <p style={{ fontSize: 'var(--text-14)', color: 'var(--text-2)', marginTop: '.25rem' }}>
           {c.priceNote}
         </p>
       )}
@@ -47,7 +46,7 @@ function PriceLine({ c }: { c: PackageCopy }) {
 }
 
 function Summary({ c }: { c: PackageCopy }) {
-  return <p style={{ ...bodyText, color: 'var(--n-60)', margin: '1rem 0' }}>{c.summary}</p>;
+  return <p style={{ ...bodyText, margin: '1rem 0' }}>{c.summary}</p>;
 }
 
 function Terms({ c }: { c: PackageCopy }) {
@@ -70,13 +69,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
       {c.includes.length > 0 && (
         <details>
           <summary
-            style={{
-              padding: '.75rem 0',
-              borderTop: '1px solid rgba(162,167,176,.12)',
-              cursor: 'pointer',
-              ...subLine,
-              fontSize: 'var(--fs-12)',
-            }}
+            className="ax-sum"
           >
             {includesLabel}
           </summary>
@@ -89,13 +82,13 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
                   gap: '.5rem',
                   alignItems: 'flex-start',
                   padding: '.5rem 0',
-                  borderTop: '1px solid rgba(162,167,176,.12)',
-                  fontSize: 'var(--fs-14)',
-                  color: 'var(--n-70)',
-                  lineHeight: 1.5,
+                  borderTop: '1px solid var(--hairline)',
+                  fontSize: 'var(--text-16)',
+                  color: 'var(--text-2)',
+                  lineHeight: 1.45,
                 }}
               >
-                <span style={{ color: 'var(--blue-base)', flexShrink: 0, marginTop: '.25rem' }}>
+                <span style={{ color: 'var(--accent-ink)', flexShrink: 0, marginTop: '.25rem' }}>
                   <Icon name="check" size={14} />
                 </span>
                 {item}
@@ -105,7 +98,7 @@ function Details({ c, includesLabel }: { c: PackageCopy; includesLabel: string }
         </details>
       )}
       {c.excludes && (
-        <p style={{ fontSize: 'var(--fs-13)', color: 'var(--n-60)', lineHeight: 1.5, marginTop: '.75rem' }}>
+        <p style={{ fontSize: 'var(--text-14)', color: 'var(--text-3)', lineHeight: 1.5, marginTop: '.75rem' }}>
           {c.excludes}
         </p>
       )}
@@ -131,9 +124,8 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
         style={{
           listStyle: 'none',
           padding: 0,
-          // Longhands only: an inline `margin` would cancel .cell-grid's margin-right.
+          // Longhands only: an inline `margin` would cancel .cell-grid's margins.
           marginBlock: 0,
-          marginLeft: 0,
           display: 'grid',
           // Up to four columns; two on tablets, one on phones.
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(15rem, 22%)), 1fr))',
@@ -142,15 +134,14 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
         {PRICE_STEPS.map((step, i) => {
           const c = step.i18n[locale];
           return (
-            <li key={step.id} style={{ padding: 'clamp(1.25rem, 5vw, 2rem)', borderRight: HAIRLINE }}>
+            <li key={step.id} className="cell" style={{ paddingBlock: 'clamp(1.25rem, 5vw, 2rem)', borderRight: HAIRLINE }}>
               <div
                 aria-hidden="true"
                 style={{
-                  fontFamily: 'var(--mono)',
-                  fontSize: 'var(--fs-24)',
+                  fontSize: 'var(--text-h3)',
                   fontWeight: 400,
-                  letterSpacing: '-.01em',
-                  color: 'var(--n-20)',
+                  fontVariantNumeric: 'tabular-nums',
+                  color: 'var(--text-3)',
                   lineHeight: 1,
                   marginBottom: 'clamp(.5rem, 2vw, 1rem)',
                 }}
@@ -167,24 +158,23 @@ export async function AutomationPricing({ locale }: { locale: Locale }) {
         })}
       </ol>
       <div
+        className="cell-grid"
         style={{
           marginTop: 'clamp(1.5rem, 4vw, 2rem)',
-          padding: 'clamp(1.25rem, 5vw, 2rem)',
           borderTop: HAIRLINE,
           borderBottom: HAIRLINE,
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-          gap: '0 2rem',
         }}
       >
-        <div>
+        <div className="cell" style={{ paddingBlock: 'clamp(1.25rem, 5vw, 2rem)' }}>
           <p style={{ ...subLine, marginBottom: '.25rem' }}>{t('addonLabel')}</p>
           <h3 style={cardTitle}>{addon.name}</h3>
           <PriceLine c={addon} />
           <Summary c={addon} />
         </div>
         {addon.includes.length > 0 && (
-          <div>
+          <div className="cell" style={{ paddingBlock: 'clamp(1.25rem, 5vw, 2rem)' }}>
             <Details c={addon} includesLabel={includesLabel} />
           </div>
         )}

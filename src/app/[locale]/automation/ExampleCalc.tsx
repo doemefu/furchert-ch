@@ -40,12 +40,12 @@ export function ExampleCalc({ locale }: { locale: Locale }) {
         </thead>
         <tbody>
           {c.rows.map((row) => (
-            <tr key={row.label} style={{ borderBottom: '1px solid rgba(162,167,176,.12)' }}>
+            <tr key={row.label} style={{ borderBottom: '1px solid var(--hairline)' }}>
               <th scope="row" style={{ ...cell, fontWeight: 400, textAlign: 'left' }}>
                 {row.label}
               </th>
               <td style={num}>{row.today}</td>
-              <td style={{ ...num, color: 'var(--blue-base)' }}>{row.byVoice}</td>
+              <td style={{ ...num, color: 'var(--accent-ink)' }}>{row.byVoice}</td>
             </tr>
           ))}
         </tbody>

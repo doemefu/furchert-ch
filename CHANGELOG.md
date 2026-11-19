@@ -14,6 +14,18 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **/automation leftovers in the «Formular» system** (redesign PR 11b/11, visual
+  only, no copy change): no mono, upper-case or tracked label left in `<main>`
+  (labels are sentence case, 13-14px, `--text-3`; `labelMono` is now
+  `labelText`, `fieldLabel`/`cardTitle`/`bodyText`/`footnoteStyle` and `HAIRLINE`
+  use the redesign tokens). The hero loses the ETHON dot pattern, the `--n-10`
+  band and the blue heading accent (page-head `.ph-*` classes). The example
+  draft is a FieldList with highlighter marks; panels are `.cell`s on
+  `--surface-raised`, `--surface-card` and `--accent-wash`, so text sits on the one
+  left edge, pricing steps included. Disclosures and the FAQ have 44px tap
+  targets and a plain + / ×. «Wer ich bin» is a ruled list, the closing call to
+  action is the forest `.band.on-dark`, `.sticky-cta-micro` is no longer mono.
+  «2,5 Std.» in the example data uses a no-break space.
 - **Inner pages in the «Formular» system** (redesign PR 11a/11): /about, /it,
   /rowing, /projects and /projects/[slug] (incl. the homelab sections and the
   live status) lose all mono, upper-case and tracked labels, `--n-*` body text,

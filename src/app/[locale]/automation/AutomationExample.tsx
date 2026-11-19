@@ -1,25 +1,27 @@
 // Before/after example (src/data/automation-example.ts): a site foreman's
 // voice message after Regie work and the draft report made from it, labelled
 // as an invented example. Server component. Layout follows the page's
-// two-column blocks (two bordered panels: n-10 for the input, blue-wash for
-// the draft). Lines a person must check carry an amber mark derived from
-// --tier-mid. The first fields are always visible; the rest sit behind a
-// native <details>. `children` (the sample calculation) follow the text.
+// two-column blocks (two cell panels: --surface-raised for the input,
+// --surface-card for the draft). The draft is a FieldList; lines a person must
+// check carry a highlighter mark. The first fields are always visible; the
+// rest sit behind a native <details>. `children` (the sample calculation) follow the text.
 import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/i18n/routing';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/Tag';
+import { FieldList, FieldRow } from '@/components/ui/FieldRow';
 import { EXAMPLE, type ExampleField } from '@/data/automation-example';
-import { HAIRLINE, fieldLabel, h2Style, sectionLabel, leadStyle, sectionStyle } from './sectionStyles';
+import { HAIRLINE, h2Style, sectionLabel, leadStyle, sectionStyle } from './sectionStyles';
 
 const panelTitle = {
   display: 'flex',
   alignItems: 'center',
   gap: '.5rem',
-  fontFamily: 'var(--mono)',
-  fontSize: 'var(--fs-12)',
+  fontSize: 'var(--text-14)',
   fontWeight: 400,
+  lineHeight: 1.4,
+  color: 'var(--text-2)',
   marginBottom: '1rem',
 };
 
@@ -28,44 +30,18 @@ const VISIBLE_FIELDS = 4;
 
 function Fields({ fields }: { fields: ExampleField[] }) {
   return (
-    <dl style={{ margin: 0 }}>
+    <FieldList className="ax-sheet">
       {fields.map((field) => (
-        <div
-          key={field.label}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(5.5rem, 28%) 1fr',
-            gap: '.75rem',
-            padding: '.5rem 0',
-            borderTop: '1px solid rgba(14,60,166,.1)',
-          }}
-        >
-          <dt style={{ ...fieldLabel, paddingTop: '.25rem' }}>{field.label}</dt>
-          <dd style={{ margin: 0, fontSize: 'var(--fs-14)', color: 'var(--n-80)', lineHeight: 1.5 }}>
-            {field.lines.map((line) => (
-              <div key={line.text} style={{ marginBottom: '2px' }}>
-                {line.text}
-                {line.check && (
-                  <span
-                    style={{
-                      display: 'block',
-                      margin: '.25rem 0 .25rem',
-                      padding: '2px .5rem',
-                      fontSize: 'var(--fs-13)',
-                      color: 'var(--n-80)',
-                      background: 'color-mix(in srgb, var(--tier-mid) 16%, var(--white))',
-                      borderLeft: '2px solid var(--tier-mid)',
-                    }}
-                  >
-                    {line.check}
-                  </span>
-                )}
-              </div>
-            ))}
-          </dd>
-        </div>
+        <FieldRow key={field.label} variant="text" label={field.label}>
+          {field.lines.map((line) => (
+            <span key={line.text} className="ax-line">
+              {line.text}
+              {line.check && <mark className="ax-check">{line.check}</mark>}
+            </span>
+          ))}
+        </FieldRow>
       ))}
-    </dl>
+    </FieldList>
   );
 }
 
@@ -101,17 +77,17 @@ export async function AutomationExample({
           borderBottom: HAIRLINE,
         }}
       >
-        <div style={{ padding: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--n-10)', borderRight: HAIRLINE }}>
-          <h3 style={{ ...panelTitle, color: 'var(--n-60)' }}>
+        <div className="cell" style={{ paddingBlock: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--surface-raised)', borderRight: HAIRLINE }}>
+          <h3 style={panelTitle}>
             <Icon name="mic" size={14} />
             {ex.inputTitle}
           </h3>
           <blockquote
             style={{
               margin: 0,
-              fontSize: 'var(--fs-15)',
-              lineHeight: 1.65,
-              color: 'var(--n-80)',
+              fontSize: 'var(--text-16)',
+              lineHeight: 1.6,
+              color: 'var(--text-1)',
               maxWidth: '60ch',
             }}
           >
@@ -120,8 +96,8 @@ export async function AutomationExample({
             {quoteClose}
           </blockquote>
         </div>
-        <div style={{ padding: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--blue-wash)' }}>
-          <h3 style={{ ...panelTitle, color: 'var(--blue-base)' }}>
+        <div className="cell" style={{ paddingBlock: 'clamp(1rem, 4vw, 1.5rem)', background: 'var(--surface-card)' }}>
+          <h3 style={panelTitle}>
             <Icon name="ai" size={14} />
             {ex.outputTitle}
           </h3>
@@ -129,16 +105,7 @@ export async function AutomationExample({
           {more.length > 0 && (
             <details>
               <summary
-                style={{
-                  padding: '.75rem 0',
-                  borderTop: '1px solid rgba(14,60,166,.1)',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--mono)',
-                  fontSize: 'var(--fs-12)',
-                  letterSpacing: '.05em',
-                  textTransform: 'uppercase',
-                  color: 'var(--blue-base)',
-                }}
+                className="ax-sum"
               >
                 {t('exampleAllFields')}
               </summary>
@@ -150,9 +117,9 @@ export async function AutomationExample({
       <p
         style={{
           marginTop: 'clamp(1rem, 3vw, 1.5rem)',
-          fontSize: 'var(--fs-15)',
-          color: 'var(--n-70)',
-          lineHeight: 1.55,
+          fontSize: 'var(--text-16)',
+          color: 'var(--text-2)',
+          lineHeight: 1.5,
           maxWidth: '68ch',
         }}
       >
