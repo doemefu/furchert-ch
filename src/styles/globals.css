@@ -109,7 +109,7 @@ body {
   font-family: var(--font-sans);
   font-stretch: 100%;
   background: var(--surface-page);
-  color: var(--n-100);
+  color: var(--text-1);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -136,7 +136,7 @@ body {
 @media (min-width: 80rem) {
   .container { max-width: min(100rem, calc(100% - 11rem)); }
 }
-.ethon { background: var(--n-10); }
+.ethon { background: var(--n-10); color: var(--n-100); }
 .ethon .container { max-width: calc(100% - 3.5rem); }
 @media (min-width: 80rem) { .ethon .container { max-width: min(100rem, calc(100% - 11rem)); } }
 @media (max-width: 39.99rem) { .ethon .container { max-width: calc(100% - 2rem); } }
@@ -200,8 +200,8 @@ body {
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--n-10); }
-::-webkit-scrollbar-thumb { background: var(--n-20); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--surface-raised); }
+::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 3px; }
 
 /* ── HEADER AND PHONE MENU (redesign PR 3) ──
    Phone first: wordmark, "Kontakt" text link and the menu button. From 901px
@@ -237,8 +237,8 @@ body {
   .dnav { display: flex; }
 }
 
-/* ── INPUT FOCUS ── */
-input:focus, textarea:focus {
+/* ── INPUT FOCUS (dashboard only; the public contact form has its own, see below) ── */
+.ethon input:focus, .ethon textarea:focus {
   border-color: var(--blue-base) !important;
   box-shadow: 0 0 0 3px rgba(14,60,166,.25); /* alpha .08 -> .25 (#151) */
 }
@@ -827,7 +827,7 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 
 /* Contact form fields: 48 px, 16 px text, 3:1 border, 2px accent focus ring,
    negative-token error state. Replaces the shared blue focus look for this form
-   (the global `input:focus` rule keeps serving the dashboard). */
+   (the `.ethon input:focus` rule serves the dashboard only). */
 .cf-input { width: 100%; min-width: 0; min-height: 48px; padding: .75rem 1rem; border: 1px solid var(--field-border); border-radius: var(--radius); background: var(--surface-card); font-family: var(--font-sans); font-size: var(--text-16); line-height: 1.4; color: var(--text-1); }
 .contact-form .cf-input:focus { border-color: var(--accent) !important; box-shadow: none; }
 .contact-form .cf-input:focus-visible,
