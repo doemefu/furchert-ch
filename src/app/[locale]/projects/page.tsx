@@ -63,7 +63,7 @@ export default async function ProjectsPage({
                 borderRight: '1px solid rgba(162,167,176,.22)',
                 borderBottom: '1px solid rgba(162,167,176,.22)',
                 // Prototype pages.jsx:417 — flex column with gap; tag row
-                // uses marginTop:'auto' so the "Details →" line sits at the
+                // uses marginTop:'auto' so the "Details" line sits at the
                 // bottom of unequal-height cards. Intended, keep it.
                 display: 'flex',
                 flexDirection: 'column',
