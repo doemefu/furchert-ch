@@ -33,6 +33,30 @@ describe('FieldRow', () => {
     expect(renderToStaticMarkup(row('Wer', 'A', undefined, 'extra'))).toContain('class="fr extra"');
   });
 
+  it('text variant adds fr-text and no meta dd unless given', () => {
+    // eslint-disable-next-line react/no-children-prop
+    const html = renderToStaticMarkup(createElement(FieldRow, { label: 'Wo', variant: 'text', children: 'A' }));
+    expect(html).toBe('<div class="fr fr-text"><dt class="fr-lab">Wo</dt><dd class="fr-val">A</dd></div>');
+  });
+
+  it('puts the meta line between label and value', () => {
+    const html = renderToStaticMarkup(
+      // eslint-disable-next-line react/no-children-prop
+      createElement(FieldRow, { label: 'Eingang', variant: 'text', meta: 'Von: R. Brunner', children: 'Betreff' }),
+    );
+    expect(html).toBe(
+      '<div class="fr fr-text"><dt class="fr-lab">Eingang</dt><dd class="fr-meta">Von: R. Brunner</dd><dd class="fr-val">Betreff</dd></div>',
+    );
+  });
+
+  it('takes a table as the value of a text field', () => {
+    const html = renderToStaticMarkup(
+      // eslint-disable-next-line react/no-children-prop
+      createElement(FieldRow, { label: 'Entwurf', variant: 'text', children: createElement('table', null) }),
+    );
+    expect(html).toContain('<dd class="fr-val"><table></table></dd>');
+  });
+
   it('FieldList wraps rows in one dl', () => {
     const html = renderToStaticMarkup(createElement(FieldList, null, row('A', '1'), row('B', '2')));
     expect(html.startsWith('<dl class="fl">')).toBe(true);

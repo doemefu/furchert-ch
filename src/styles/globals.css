@@ -174,7 +174,7 @@ body {
 }
 @media (max-width: 39.99rem) {
   .home-hero-split { padding: 3rem 1rem; }
-  .home-sheet-extra, .home-status-facts { display: none; }
+  .home-status-facts { display: none; }
 }
 
 /* ── PAGE ENTRY ── */
@@ -546,6 +546,33 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
   .fh > .fr:nth-child(n):not(.fh-lead) { border-left: 1px solid var(--hairline-strong); padding-left: var(--space-4); }
   .fr-val { font-size: var(--text-18); }
 }
+
+/* FieldRow value variant «text» (PR 7): running text at 16px/400, optional meta line before it. */
+.fr-meta { display: block; margin: 2px 0 0; font-size: var(--text-14); line-height: 1.4; color: var(--text-2); }
+.fr-text .fr-val { margin-top: 2px; font-size: var(--text-16); line-height: 1.4; font-weight: 400; }
+
+/* HOME EXAMPLE SHEET (redesign PR 7): label and title under a 2px ink rule, then a card
+   with a 1px ink border; one FieldRow per step, hairlines between, highlighter marks
+   instead of coloured borders. Position list = table, 36px number column, quantity right. */
+.hs { margin: 0; border-top: 2px solid var(--rule); padding-top: var(--space-3); }
+.hs-cap { display: block; }
+.hs-lab { display: block; font-size: var(--text-13); line-height: 1rem; color: var(--text-3); }
+.hs-title { display: block; margin-top: var(--space-1); font-size: var(--text-h3); line-height: 1.05; font-stretch: var(--stretch-heading); font-weight: var(--weight-heading); color: var(--text-1); text-wrap: balance; }
+.hs-sheet { margin-top: 14px; background: var(--surface-card); border: 1px solid var(--rule); border-radius: var(--radius); }
+.hs-sheet .fr, .hs-close { padding: 10px 14px 12px; border-top: 1px solid var(--hairline-strong); }
+.hs-sheet .fr:first-child { border-top: 0; }
+.hs-close { margin: 0; font-size: var(--text-16); line-height: 1.45; font-weight: 500; color: var(--text-1); }
+.hs mark { background: var(--mark-ask); color: inherit; padding: 0 .2em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.hs mark.hs-see { background: var(--mark-source); }
+.hs-pos { width: 100%; margin-top: 2px; border-collapse: collapse; font-size: var(--text-16); line-height: 1.35; }
+.hs-pos th { padding: 6px 0; font-size: var(--text-13); line-height: 1rem; font-weight: 400; color: var(--text-3); text-align: left; }
+.hs-pos td { padding: 7px 0; vertical-align: top; border-top: 1px dotted var(--hairline-strong); }
+.hs-pos th:first-child, .hs-pos td:first-child { width: 36px; padding-right: var(--space-1); }
+.hs-pos td:first-child, .hs-pos td:last-child { font-size: var(--text-14); font-variant-numeric: tabular-nums; color: var(--text-2); }
+.hs-pos th:last-child, .hs-pos td:last-child { width: 7rem; padding-left: var(--space-3); text-align: right; }
+@media (min-width: 24rem) { .hs-pos th:last-child, .hs-pos td:last-child { width: auto; white-space: nowrap; } }
+.hs-price { margin: var(--space-1) 0 0; font-size: var(--text-14); line-height: 1.4; color: var(--text-3); }
+.hs-ask { list-style: none; margin: var(--space-1) 0 0; padding: 0; display: grid; gap: var(--space-1); justify-items: start; }
 
 /* /dashboard/analytics pages table: the same rows as cards on phones (WA-4b #156). */
 .wa-pages-cards { display: none; }

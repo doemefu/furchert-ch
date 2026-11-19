@@ -16,6 +16,18 @@ describe('home hero sheet copy', () => {
     expect(home.en.sheetTag).toContain('invented');
   });
 
+  it('has the row labels and the single price note in both locales, no CHF amount', () => {
+    for (const locale of ['de', 'en'] as const) {
+      const h = home[locale];
+      expect(h.sheetRowMail.length).toBeGreaterThan(0);
+      expect(h.sheetPosNo.length).toBeGreaterThan(0);
+      expect(h.sheetPrices).toContain('{note}');
+      expect(JSON.stringify([h.sheetRowMail, h.sheetPosNo, h.sheetPrices])).not.toMatch(MONEY);
+    }
+    expect(home.de.sheetPrices.replace('{note}', PRICE_CELL.de)).toBe('Preise: aus Ihrer Kalkulation');
+    expect(home.en.sheetPrices.replace('{note}', PRICE_CELL.en)).toBe('Prices: from your costing');
+  });
+
   it('shows at least 2 rows, every price cell is the costing note, no CHF amount', () => {
     for (const locale of ['de', 'en'] as const) {
       const panel = offer.i18n[locale].panel as unknown as {
