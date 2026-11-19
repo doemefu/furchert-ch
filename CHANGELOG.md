@@ -25,13 +25,13 @@ All notable changes per milestone. Newest first.
   full width minus the gutter and the double margins (hero, consent bar, footer,
   contact columns) are gone. Plain grid cells (`.cell`) bleed by `--gutter` so
   hairlines run edge to edge while the text keeps the one left edge. The body is
-  on `--surface-page`.
-  `--surface-page`. All public focusable elements use a `--text-1` focus ring; the dashboard
-  (`.ethon`, also its portalled drawers) keeps the blue ring, its own frame,
-  background and padding. The shared header and footer pad by `--gutter` from
-  64rem, so they sit further in on /dashboard as well. The phone menu also marks elements appended to `<body>` after it
-  opened (the consent-bar host) `inert` (`MutationObserver`, `inertize` in
-  `lib/a11y/drawer.ts`, unit-tested). Content and section order are unchanged.
+  on `--surface-page`. All public focusable elements use a `--text-1` focus ring;
+  the dashboard (`.ethon`, also its portalled drawers) keeps the blue ring, its
+  own frame, background and padding. The shared header and footer pad by
+  `--gutter` from 64rem, so they sit further in on /dashboard as well. The phone
+  menu also marks elements appended to `<body>` after it opened (the consent-bar
+  host) `inert` (`MutationObserver`, `inertize` in `lib/a11y/drawer.ts`,
+  unit-tested). Content and section order are unchanged.
 
 - **/automation example tiles restyled as «Formular» sheets** (redesign PR 7b/11):
   `WowTiles` uses FieldList/FieldRow rows, highlighter marks instead of coloured
