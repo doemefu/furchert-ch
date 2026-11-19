@@ -490,6 +490,33 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 .footer-settings { background: none; border: 0; padding: 0; text-align: left; }
 .footer-settings:hover { opacity: .85; }
 
+/* ── FOOTER (redesign PR 4) ──
+   2px ink rule on top, hairlines between groups, every link row 44 px. Phone:
+   two columns, sender and contact span both; from 48rem four columns. */
+.ft { background: var(--surface-page); color: var(--text-1); padding-block: var(--space-6); }
+.ft-wrap { padding-inline: var(--space-4); }
+.ft-in { border-top: 2px solid var(--rule); padding-top: var(--space-3); display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-4); }
+.ft-in > div { padding: var(--space-2) 0 var(--space-3); min-width: 0; }
+.ft-send, .ft-contact { grid-column: 1 / -1; border-bottom: 1px solid var(--hairline-strong); }
+.ft-lab { display: block; font-size: var(--text-13); color: var(--text-3); }
+.ft-send b { display: block; font-weight: 500; font-size: var(--text-17); margin-top: 2px; }
+.ft-send span:not(.ft-lab) { display: block; color: var(--text-2); font-size: var(--text-16); }
+.ft ul { list-style: none; margin-top: 2px; }
+.ft li a, .ft li button { display: flex; align-items: center; min-height: var(--tap); font: inherit; font-size: var(--text-16); color: var(--text-1); }
+.ft li a, .ft li button, .ft-bot a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: var(--hairline-strong); }
+.ft li button { cursor: pointer; }
+.ft-settings:not(:has(button)) { display: none; }
+.ft li > span { display: block; color: var(--text-2); font-size: var(--text-14); padding: var(--space-1) 0 var(--space-2); }
+.ft-bot { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-5); padding-top: var(--space-1); border-top: 1px solid var(--hairline-strong); font-size: var(--text-14); color: var(--text-3); }
+.ft-bot > * { min-height: var(--tap); display: inline-flex; align-items: center; gap: .375rem; }
+.ft-bot a { color: var(--text-3); }
+@media (min-width: 48rem) {
+  .ft-wrap { padding-inline: var(--space-8); }
+  .ft-in { grid-template-columns: 1.4fr 1.4fr 1fr 1fr; column-gap: var(--space-8); }
+  .ft-send, .ft-contact { grid-column: auto; border-bottom: 0; }
+  .ft-bot { column-gap: var(--space-8); }
+}
+
 /* /dashboard/analytics pages table: the same rows as cards on phones (WA-4b #156). */
 .wa-pages-cards { display: none; }
 @media (max-width: 640px) {
