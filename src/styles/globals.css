@@ -527,7 +527,7 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
 .fr-lab { display: block; font-size: var(--text-13); line-height: 1rem; color: var(--text-3); font-weight: 400; }
 .fr-val { display: block; margin: 2px 0 0; font-size: var(--text-17); line-height: 1.3; font-weight: 500; color: var(--text-1); }
 .fr-sub { display: block; margin: 0; font-size: var(--text-16); line-height: 1.4; color: var(--text-2); }
-.fr-photo { display: grid; grid-template-columns: 3.5rem 1fr; column-gap: var(--space-3); align-items: start; }
+.fr-photo { display: grid; grid-template-columns: 3.5rem 1fr; grid-template-rows: auto auto 1fr; column-gap: var(--space-3); align-items: start; }
 .fr-photo > :not(.fh-photo) { grid-column: 2; }
 .fh-photo { grid-column: 1; grid-row: 1 / span 3; margin: 0; width: 3.5rem; height: 4.375rem; border-radius: 2px; background: var(--surface-raised); }
 .fh { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--rule); margin: 0; }
@@ -547,9 +547,9 @@ html:has(#fa-consent-bar) .sticky-cta { display: none; }
   .fr-photo { grid-template-columns: 4rem 1fr; }
   .fh-photo { width: 4rem; height: 5rem; }
   .fh > .fh-desk { display: block; }
-  /* (n) matches every position: it adds the specificity (0,3,0) needed to beat
-     the phone rule for odd cells above, which has two pseudo-classes. */
-  .fh > .fr:nth-child(n) { padding-right: var(--space-4); }
+  .fh > .fr { padding-right: var(--space-4); }
+  /* (n) matches every position. Both this rule and the phone rule for odd
+     cells are (0,4,0); this one comes later, so it wins. */
   .fh > .fr:nth-child(n):not(.fh-lead) { border-left: 1px solid var(--hairline-strong); padding-left: var(--space-4); }
   .fr-val { font-size: var(--text-18); }
 }

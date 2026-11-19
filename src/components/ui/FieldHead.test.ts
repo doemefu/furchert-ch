@@ -10,9 +10,11 @@ const row = (label: string, value: string, secondary?: string, className?: strin
   // eslint-disable-next-line react/no-children-prop
   createElement(FieldRow, { label, secondary, className, children: value });
 
-const head = (props: { photo?: boolean; aside?: ReactElement<FieldRowProps>; className?: string } = {}, ...kids: unknown[]) =>
+type Kid = ReactElement<FieldRowProps> | false | null | undefined;
+
+const head = (props: { photo?: boolean; aside?: ReactElement<FieldRowProps>; className?: string } = {}, ...kids: Array<Kid | Kid[]>) =>
   renderToStaticMarkup(
-    createElement(FieldHead, { lead: row('Wer', 'Dominic'), ...props }, ...(kids as ReactElement[])),
+    createElement(FieldHead, { lead: row('Wer', 'Dominic'), ...props }, ...kids),
   );
 
 describe('FieldRow', () => {
@@ -52,6 +54,12 @@ describe('FieldHead', () => {
     const html = head({}, two[0], false, null, two[1]);
     expect(html).toContain('--fh-n:2');
     expect(html.match(/class="fr[ "]/g)).toHaveLength(3);
+  });
+
+  it('accepts conditional children and mapped arrays', () => {
+    const cond = false as boolean;
+    const html = head({}, cond && row('Nie', 'x'), [row('A', '1'), row('B', '2')]);
+    expect(html).toContain('--fh-n:2');
   });
 
   it('skips --fh-n and marks the head solo without further fields', () => {

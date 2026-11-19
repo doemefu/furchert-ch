@@ -10,6 +10,7 @@ import { Children, cloneElement } from 'react';
 import type { FieldRowProps } from './FieldRow';
 
 type Field = ReactElement<FieldRowProps>;
+type Child = Field | false | null | undefined;
 
 export function FieldHead({
   lead,
@@ -25,7 +26,7 @@ export function FieldHead({
   /** Extra field shown last, from 64rem only (e.g. «Antwort»). */
   aside?: Field;
   /** The remaining fields: FieldRow elements passed directly, not wrapped in a Fragment. Falsy values are dropped. */
-  children?: ReactElement | ReactElement[] | false | null;
+  children?: Child | Array<Child | Child[]>;
   className?: string;
 }) {
   const rest = Children.toArray(children);
@@ -35,7 +36,7 @@ export function FieldHead({
     .join(' ');
   return (
     <dl className={cls} style={n > 0 ? ({ '--fh-n': n } as CSSProperties) : undefined}>
-      {cloneElement(lead, { photo, className: ['fh-lead', lead.props.className].filter(Boolean).join(' ') })}
+      {cloneElement(lead, { photo: photo || lead.props.photo, className: ['fh-lead', lead.props.className].filter(Boolean).join(' ') })}
       {rest}
       {aside
         ? cloneElement(aside, { className: ['fh-desk', aside.props.className].filter(Boolean).join(' ') })
