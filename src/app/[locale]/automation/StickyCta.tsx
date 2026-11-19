@@ -13,7 +13,6 @@
 // contact page; nothing is sent or stored.
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 
 const noSubscribe = () => () => {};
@@ -72,8 +71,8 @@ export function StickyCta({
         <span>{micro1}</span>
         <span>{micro2}</span>
       </p>
-      <Btn href={href} track={track} dark>
-        {label} <Icon name="arrow" size={12} />
+      <Btn href={href} track={track} variant="primary">
+        {label}
       </Btn>
     </div>,
     document.body,

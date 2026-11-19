@@ -250,14 +250,67 @@ a[href] { transition: opacity var(--dur-fast) var(--ease); }
 a[href]:hover { opacity: .85; }
 a.btn:hover { opacity: 1; }
 
-/* ── BUTTON HOVER (#151) ──
-   Btn.tsx colours are inline styles, so the hover needs !important; the
-   selectors exclude disabled buttons. Must stay after the link rules. */
-.btn[data-variant="dark"]:not(:disabled):hover { background-color: var(--n-80) !important; border-color: var(--n-80) !important; }
-.btn[data-variant="outline"]:not(:disabled):hover { background-color: var(--blue-wash) !important; }
-.btn[data-variant="default"]:not(:disabled):hover { background-color: var(--white) !important; }
-/* CTA strip primary on dark (#167): the inline white needs !important, as above. */
-.cta-primary:hover { background-color: var(--n-20) !important; border-color: var(--n-20) !important; }
+/* ── BUTTON (redesign PR 2) ──
+   Btn.tsx only sets `data-variant` / `data-size`. Transitions touch colour,
+   background, border and transform only. Must stay after the link rules. */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: var(--text-16);
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* `a[href]` above sets an opacity transition; the button list wins here. */
+.btn,
+a[href].btn {
+  transition:
+    color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    transform var(--dur-press) var(--ease);
+}
+.btn[data-size="small"] { min-height: 40px; padding: 0 .875rem; font-size: 15px; }
+/* A 40 px button keeps a 44 px tap area. */
+.btn[data-size="small"]::after { content: ""; position: absolute; inset: -2px 0; }
+.btn:not(:disabled):active { transform: scale(var(--press-scale)); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn:focus-visible { outline: 2px solid var(--text-1); outline-offset: 3px; }
+.btn[data-variant="primary"] { background: var(--button-primary); border-color: var(--button-primary); color: #fff; }
+.btn[data-variant="primary"]:not(:disabled):hover { background: var(--button-primary-hover); border-color: var(--button-primary-hover); }
+.btn[data-variant="secondary"] { background: transparent; border-color: var(--text-1); color: var(--text-1); }
+.btn[data-variant="secondary"]:not(:disabled):hover { background: var(--surface-raised); }
+.btn[data-variant="inverse"] { background: var(--surface-card); border-color: var(--surface-card); color: var(--text-1); }
+.btn[data-variant="inverse"]:not(:disabled):hover { background: var(--surface-raised); border-color: var(--surface-raised); }
+/* On the dark band the outline button turns white. */
+.on-dark .btn:focus-visible { outline-color: #fff; }
+.on-dark .btn[data-variant="secondary"] { border-color: rgb(255 255 255 / .5); color: #fff; }
+.on-dark .btn[data-variant="secondary"]:not(:disabled):hover { background: rgb(255 255 255 / .12); border-color: #fff; }
+
+/* ── TEXT LINK (redesign PR 2) ──
+   Underlined 1px, offset .22em, brick ink; `.text-link-block` is the
+   standalone variant with a 44 px tap height. */
+.text-link {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
+  transition: color var(--dur-fast) var(--ease);
+}
+.text-link:hover { color: var(--accent); opacity: 1; }
+.text-link-block { display: inline-flex; align-items: center; min-height: var(--tap); }
+.on-dark .text-link { color: var(--on-band-1); }
+.on-dark .text-link:hover { color: var(--on-band-2); }
 
 /* ── HOVER CARD ──
    Prototype teaser/project cards were <div onClick> with an inline
@@ -323,8 +376,7 @@ a.hover-card:hover { opacity: 1; background: var(--n-10); }
 .cta-actions { align-items: center; }
 @media (max-width: 39.99rem) {
   .cta-actions { flex-direction: column; align-items: stretch; width: 100%; }
-  .cta-actions > a:not(.cta-text) { justify-content: center; }
-  .cta-actions > .cta-text { align-self: flex-start; }
+    .cta-actions > .cta-text { align-self: flex-start; }
 }
 /* Below 360 px the micro text and the button do not fit side by side; the
    button keeps its right gutter and the microline under the hero button

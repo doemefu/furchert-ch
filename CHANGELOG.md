@@ -6,6 +6,14 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Buttons and text links restyled** (redesign «Formular» PR 2/11): `Btn` has
+  three variants (`primary`, `secondary`, `inverse`), Archivo 500 in sentence
+  case, 4px radius, 48px minimum height (40px small variant with a 44px tap
+  area), a visible focus ring and a press scale. Arrows are removed from all
+  button labels. New `.text-link` / `.text-link-block` style (1px underline,
+  brick ink, 44px standalone tap height). The CTA strip and the sticky CTA use
+  `Btn`. The two home hero buttons now sit side by side at 390px.
+
 - **Site-wide typeface is now Archivo** (redesign «Formular» PR 1, owner
   decision 2026-11-19): DM Sans is replaced by Archivo (variable, width axis,
   self-hosted via `next/font`, metric-matched fallback with Helvetica Neue,

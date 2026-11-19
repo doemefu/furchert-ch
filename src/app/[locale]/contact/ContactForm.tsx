@@ -360,8 +360,8 @@ export function ContactForm() {
           {errorText(error)}
         </p>
       )}
-      <Btn type="submit" dark disabled={pending}>
-        {pending ? '…' : topic === 'demo' ? t('sendDemo') : t('send')} <Icon name="arrow" size={12} />
+      <Btn type="submit" variant="primary" disabled={pending}>
+        {pending ? '…' : topic === 'demo' ? t('sendDemo') : t('send')}
       </Btn>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
         <p style={helpStyle}>{t('noPressure')}</p>

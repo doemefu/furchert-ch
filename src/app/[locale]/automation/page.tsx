@@ -18,7 +18,6 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { isLocale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
-import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
 import { ContactEmail } from '@/components/ui/ContactEmail';
 import { FAQS, faqsForMarkup } from '@/data/automation-faqs';
@@ -148,8 +147,8 @@ export default async function AutomationPage({
             {t('heroTilesNote')}
           </p>
           <div style={{ marginTop: '1.25rem' }}>
-            <Btn href={contactHref('automation-hero')} track={trackAttr('cta', 'automation-hero')} dark>
-              {t('heroCta')} <Icon name="arrow" size={12} />
+            <Btn href={contactHref('automation-hero')} track={trackAttr('cta', 'automation-hero')} variant="primary">
+              {t('heroCta')}
             </Btn>
           </div>
           <p
@@ -275,8 +274,8 @@ export default async function AutomationPage({
               marginTop: '1.5rem',
             }}
           >
-            <Btn href={contactHref('automation-about')} track={trackAttr('cta', 'automation-about')} dark>
-              {t('aboutCta')} <Icon name="arrow" size={12} />
+            <Btn href={contactHref('automation-about')} track={trackAttr('cta', 'automation-about')} variant="primary">
+              {t('aboutCta')}
             </Btn>
             <Link href="/about" style={textLink} data-track={trackAttr('link', 'automation-about-page')}>
               {t('aboutMiniMore')}
@@ -364,8 +363,8 @@ export default async function AutomationPage({
             {t('bottomCtaAgenda')}
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Btn href={contactHref('automation-final')} track={trackAttr('cta', 'automation-final')} dark>
-              {t('bottomCtaPrimary')} <Icon name="arrow" size={12} />
+            <Btn href={contactHref('automation-final')} track={trackAttr('cta', 'automation-final')} variant="primary">
+              {t('bottomCtaPrimary')}
             </Btn>
             {/* The address is rendered only in the browser (#147). */}
             <ContactEmail btn label={t('bottomCtaSecondary')} subject={t('mailSubject')} />
