@@ -42,3 +42,41 @@ export function fieldErrorId(field: string): string {
 export function fieldAria(hasError: boolean, field: string): { 'aria-invalid'?: true; 'aria-describedby'?: string } {
   return hasError ? { 'aria-invalid': true, 'aria-describedby': fieldErrorId(field) } : {};
 }
+
+/** The slice of an element `inertize` needs (a DOM `Element` fits). */
+export interface InertCandidate {
+  tagName: string;
+  hasAttribute(name: string): boolean;
+  setAttribute(name: string, value: string): void;
+  contains(other: unknown): boolean;
+}
+
+/**
+ * Marks every candidate `inert` unless it is the header (or holds it), a script,
+ * or already inert, and returns the ones it changed so the caller can undo it.
+ * Used for the phone menu's body children, both at open and for children added
+ * later (the consent bar host).
+ */
+export function inertize<T extends InertCandidate>(candidates: Iterable<T>, header: InertCandidate | null): T[] {
+  const changed: T[] = [];
+  for (const el of candidates) {
+    if (el === header || (header !== null && el.contains(header)) || el.tagName === 'SCRIPT') continue;
+    if (el.hasAttribute('inert')) continue;
+    el.setAttribute('inert', '');
+    changed.push(el);
+  }
+  return changed;
+}
+
+/**
+ * The element nodes (nodeType 1) among the nodes added in a batch of
+ * `MutationObserver` records; text and comment nodes are dropped. Call it as
+ * `addedElements<Node, Element>(records)`.
+ */
+export function addedElements<N extends { nodeType: number }, E extends N>(
+  records: Iterable<{ addedNodes: Iterable<N> }>,
+): E[] {
+  const out: E[] = [];
+  for (const r of records) for (const n of r.addedNodes) if (n.nodeType === 1) out.push(n as E);
+  return out;
+}

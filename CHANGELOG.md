@@ -14,6 +14,25 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Section heads, page header and page surface** (redesign PR 8/11): `PageHeader`
+  and the shared section styles (`sectionStyles.ts`, the home head) use Archivo
+  at `--stretch-heading` / `--stretch-display`, a sentence-case 14px label in
+  `--text-3` instead of the mono uppercase eyebrow, a lead in `--text-2` and a
+  2px ink rule over each section head; sections are spaced with `--section-y`.
+  The legal and about section heads are labels only (sentence case, 2px rule).
+  One left edge: the `.border-x` frame only shows from 64rem (the container then
+  pads its content by `--gutter`), below 64rem there is none, so text gets the
+  full width minus the gutter and the double margins (hero, consent bar, footer,
+  contact columns) are gone. Plain grid cells (`.cell`) bleed by `--gutter` so
+  hairlines run edge to edge while the text keeps the one left edge. The body is
+  on `--surface-page`. All public focusable elements use a `--text-1` focus ring;
+  the dashboard (`.ethon`, also its portalled drawers) keeps the blue ring, its
+  own frame, background and padding. The shared header and footer pad by
+  `--gutter` from 64rem, so they sit further in on /dashboard as well. The phone
+  menu also marks elements appended to `<body>` after it opened (the consent-bar
+  host) `inert` (`MutationObserver`, `inertize` in `lib/a11y/drawer.ts`,
+  unit-tested). Content and section order are unchanged.
+
 - **/automation example tiles restyled as «Formular» sheets** (redesign PR 7b/11):
   `WowTiles` uses FieldList/FieldRow rows, highlighter marks instead of coloured
   edges, a 1px ink border with `--radius`, sentence-case labels and no mono (36
@@ -107,8 +126,9 @@ All notable changes per milestone. Newest first.
 
 - **Site-wide typeface is now Archivo** (redesign «Formular» PR 1, owner
   decision 2026-11-19): DM Sans is replaced by Archivo (variable, width axis,
-  self-hosted via `next/font`, metric-matched fallback with Helvetica Neue,
-  Arial and system-ui). All text renders at 100% width; DM Mono stays until the
+  self-hosted via `next/font`, fallbacks: the generated Arial-based «Archivo Fallback»
+  is metric-matched, then Helvetica Neue, Arial and system-ui). All non-mono
+  text renders at 100% width; DM Mono stays until the
   last redesign PR. The new design tokens are defined next to the ETHON tokens
   and are not used by components yet.
 
