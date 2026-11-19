@@ -71,11 +71,8 @@ export default async function ContactPage({
           <div className="contact-col-direct">
             <p
               style={{
-                fontFamily: 'var(--mono)',
-                fontSize: 'var(--fs-13)',
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
-                color: 'var(--n-60)',
+                fontSize: 'var(--text-14)',
+                color: 'var(--text-3)',
                 marginBottom: '1.5rem',
               }}
             >
@@ -86,11 +83,8 @@ export default async function ContactPage({
                 <div key={c.label}>
                   <div
                     style={{
-                      fontFamily: 'var(--mono)',
-                      fontSize: 'var(--fs-12)',
-                      letterSpacing: '.05em',
-                      textTransform: 'uppercase',
-                      color: 'var(--n-60)',
+                      fontSize: 'var(--text-14)',
+                      color: 'var(--text-3)',
                       marginBottom: '.25rem',
                     }}
                   >

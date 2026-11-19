@@ -5,14 +5,14 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { ContactEmail } from '@/components/ui/ContactEmail';
 import { LEGAL_CONTACT, type LegalPageCopy } from '@/data/legal';
 
-// Sentence case, no mono (redesign PR 8); `h2` labels carry the 2px ink rule.
-const labelMono = {
+// Sentence-case label (14px, --text-3), as on the other pages; `h2` labels carry the 2px ink rule.
+const label = {
   fontSize: 'var(--text-14)',
   color: 'var(--text-3)',
   fontWeight: 400,
 };
 const headLabel = {
-  ...labelMono,
+  ...label,
   borderTop: '2px solid var(--rule)',
   paddingTop: 'var(--space-3)',
 };
@@ -37,11 +37,11 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
           <h2 style={{ ...headLabel, marginBottom: '1.5rem' }}>{copy.contactLabel}</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
             <div>
-              <div style={labelMono}>{copy.nameLabel}</div>
+              <div style={label}>{copy.nameLabel}</div>
               <div style={valueText}>{LEGAL_CONTACT.name}</div>
             </div>
             <div>
-              <div style={labelMono}>{copy.emailLabel}</div>
+              <div style={label}>{copy.emailLabel}</div>
               <div style={valueText}>
                 {/* The address is rendered only in the browser (#147). */}
                 <ContactEmail style={{ color: 'var(--blue-base)', textDecoration: 'none' }} />
@@ -63,7 +63,7 @@ export function LegalPage({ copy }: { copy: LegalPageCopy }) {
           </section>
         ))}
 
-        <p style={{ ...labelMono, padding: '2rem 0 3rem' }}>
+        <p style={{ ...label, padding: '2rem 0 3rem' }}>
           {copy.updatedLabel}: {copy.updated}
         </p>
       </div>

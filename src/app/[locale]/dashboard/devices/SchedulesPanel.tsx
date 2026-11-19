@@ -10,6 +10,7 @@
 // event handlers, never during render.
 import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
+import { dmMono } from '@/lib/dashboardFont';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import type { CronPreset } from '@/lib/deviceadmin/cron';
@@ -416,7 +417,7 @@ function ScheduleDrawer({
   // `.ethon` again: outside the dashboard layout wrapper the drawer would lose the ETHON look.
   return createPortal(
     <div
-      className="ethon"
+      className={`ethon ${dmMono.variable}`}
       onClick={onClose}
       style={{ position: 'fixed', inset: 0, background: 'rgba(8,24,61,.35)', zIndex: 300, display: 'flex', justifyContent: 'flex-end' }}
     >

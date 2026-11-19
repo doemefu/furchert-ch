@@ -14,6 +14,24 @@ All notable changes per milestone. Newest first.
 
 ### Changed
 
+- **Redesign cleanup, last PR (PR 11c/11, visual only, no copy change):** DM
+  Mono is gone from the public pages. It loads only in the dashboard
+  (`src/lib/dashboardFont.ts`, applied on the `.ethon` layout wrapper and on the
+  two portalled drawers), so public pages request one font file (Archivo)
+  instead of three; the dashboard renders pixel-identical. LegalPage `labelMono`
+  is the plain sentence-case `label`; the contact page's «Or directly» block
+  loses its mono upper-case labels; the consent bar sits on `--surface-raised`
+  with a sentence-case current-choice label. Removed: `.hover-card`,
+  `.stat-grid-4`, the unused `--tier-*`, `--blue-dark`, `--blue-light` and
+  `--fs-lead/h2/title/hero` tokens and the dead `icon` fields of `it`, `rowing`,
+  `homelab-lab` and `projects` data. The new-tab hint is one shared key
+  (`common.newTab`). Footer lists carry `role="list"`; `PrivacySettingsLink`
+  takes an optional `style`. The /automation tile list has no extra side padding
+  (one left edge; opened tiles are shorter at 390px). Project pages without
+  homelab sections no longer leave a double section gap above the buttons, and
+  page heads and the first directory row no longer draw a hairline that stops
+  at the content edge (the next section's 2px rule separates).
+
 - **/automation leftovers in the «Formular» system** (redesign PR 11b/11, visual
   only, no copy change): no mono, upper-case or tracked label left in `<main>`
   (labels are sentence case, 13-14px, `--text-2`/`--text-3`; `labelMono` is now

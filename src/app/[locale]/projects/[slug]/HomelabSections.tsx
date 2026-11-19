@@ -16,7 +16,7 @@ import { LabLiveStatus } from './LabLiveStatus';
 
 export async function HomelabSections({ locale }: { locale: Locale }) {
   const t = await getTranslations({ locale, namespace: 'pages.lab' });
-  const tProjects = await getTranslations({ locale, namespace: 'pages.projects' });
+  const tCommon = await getTranslations({ locale, namespace: 'common' });
   const updated = new Intl.DateTimeFormat(LOCALE_TAG[locale], { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(LAB_CONTENT_UPDATED),
   );
@@ -39,7 +39,7 @@ export async function HomelabSections({ locale }: { locale: Locale }) {
                       href={repo.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`${repo.label}: ${t('reposLabel')} ${tProjects('newTab')}`}
+                      aria-label={`${repo.label}: ${t('reposLabel')} ${tCommon('newTab')}`}
                       className="text-link text-link-block"
                       style={{ fontSize: 'var(--text-14)' }}
                     >

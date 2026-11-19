@@ -109,6 +109,22 @@ describe('message keys', () => {
     });
   }
 
+  it('share one new-tab hint (common.newTab) between the footer and the project pages', () => {
+    for (const locale of [de, en]) {
+      expect(locale.common.newTab).toBeTruthy();
+      expect(locale.pages.projects).not.toHaveProperty('newTab');
+    }
+    for (const file of [
+      'src/components/layout/Footer.tsx',
+      'src/app/[locale]/projects/page.tsx',
+      'src/app/[locale]/projects/[slug]/page.tsx',
+      'src/app/[locale]/projects/[slug]/HomelabSections.tsx',
+    ]) {
+      expect(read(file), file).toMatch(/common\.newTab|namespace: 'common'/);
+      expect(read(file), file).not.toContain('projects.newTab');
+    }
+  });
+
   it('are all used on /automation (no retired copy left behind)', () => {
     const used = new Set(
       Object.entries(FILES)

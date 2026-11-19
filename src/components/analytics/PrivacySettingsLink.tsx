@@ -40,7 +40,7 @@ function subscribe(onChange: () => void) {
 const getSnapshot = () => ui;
 const getServerSnapshot = () => null;
 
-export function PrivacySettingsLink({ style }: { style: CSSProperties }) {
+export function PrivacySettingsLink({ style }: { style?: CSSProperties }) {
   const t = useTranslations();
   const path = usePathname();
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);

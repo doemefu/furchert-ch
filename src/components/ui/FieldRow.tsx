@@ -3,7 +3,7 @@
 // is one description list, so the fields of a group live in one <dl> (screen
 // readers announce one list instead of one list per field): FieldHead renders
 // that <dl> itself, anything else wraps its rows in FieldList. A FieldRow
-// outside a <dl> is invalid HTML. Used by the home hero form head (redesign PR 9), the home example sheet (PR 7) the /automation WowTiles (PR 7b) and the /automation example draft (PR 11b).
+// outside a <dl> is invalid HTML. Used by the home hero form head (redesign PR 9), the home example sheet (PR 7), the /automation WowTiles (PR 7b) and the /automation example draft (PR 11b).
 import type { CSSProperties, ReactNode } from 'react';
 
 export interface FieldRowProps {

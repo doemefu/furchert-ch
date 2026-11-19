@@ -1,6 +1,6 @@
 // Bilingual content for /it. DE = prototype verbatim (pages.jsx PageIT),
 // EN = faithful translation. Per-record locale maps (worklog F-Q2);
-// icon/tags are locale-invariant.
+// tags are locale-invariant.
 import type { Locale } from '@/i18n/routing';
 
 export interface ExpCardI18n {
@@ -12,14 +12,12 @@ export interface ExpCardI18n {
 }
 
 export interface ItCard {
-  icon: string;
   tags: string[];
   i18n: Record<Locale, ExpCardI18n>;
 }
 
 export const IT_CARDS: ItCard[] = [
   {
-    icon: 'code',
     tags: ['Java', 'Spring Boot', 'REST', 'SQL', 'OpenAPI', 'BWL'],
     i18n: {
       de: {
@@ -39,7 +37,6 @@ export const IT_CARDS: ItCard[] = [
     },
   },
   {
-    icon: 'server',
     tags: ['COBOL', 'JCL', 'DB2', 'Ansible', 'Mainframe'],
     i18n: {
       de: {
@@ -59,7 +56,6 @@ export const IT_CARDS: ItCard[] = [
     },
   },
   {
-    icon: 'globe',
     tags: ['ERP', 'SAP', 'IT Audit', 'ITGC', 'Compliance'],
     i18n: {
       de: {
@@ -79,7 +75,6 @@ export const IT_CARDS: ItCard[] = [
     },
   },
   {
-    icon: 'chip',
     tags: ['C / C++', 'Embedded', 'Sensoren', 'Formula Student'],
     i18n: {
       de: {

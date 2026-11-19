@@ -1,4 +1,7 @@
 {
+  "common": {
+    "newTab": "(öffnet in neuem Tab)"
+  },
   "nav": {
     "about": "Über mich",
     "it": "IT",
@@ -143,7 +146,6 @@
       "techStack": "Tech Stack",
       "details": "Details",
       "allRepos": "Alle Repos auf GitHub",
-      "newTab": "(öffnet in neuem Tab)",
       "crumbBack": "Projekte",
       "backAll": "Alle Projekte"
     },

@@ -9,6 +9,7 @@
 // prototype's DISABLED does not exist).
 import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
+import { dmMono } from '@/lib/dashboardFont';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { IDLE, type ActionState } from '@/lib/authadmin/forms';
@@ -292,7 +293,7 @@ function UserDrawer({
   // `.ethon` again: outside the dashboard layout wrapper the drawer would lose the ETHON look.
   return createPortal(
     <div
-      className="ethon"
+      className={`ethon ${dmMono.variable}`}
       onClick={onClose}
       style={{ position: 'fixed', inset: 0, background: 'rgba(8,24,61,.35)', zIndex: 300, display: 'flex', justifyContent: 'flex-end' }}
     >
