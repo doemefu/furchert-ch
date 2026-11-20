@@ -121,7 +121,7 @@ export default async function ProjectDetailPage({
         <div className="pg-acts">
           {p.github && (
             <Btn href={p.github}>
-              <Icon name="github" size={14} /> GitHub <span className="sr-only">{t('pages.projects.newTab')}</span>
+              <Icon name="github" size={14} /> GitHub <span className="sr-only">{t('common.newTab')}</span>
             </Btn>
           )}
           <Btn href="/projects" track={trackAttr('link', 'project-back')}>

@@ -82,7 +82,7 @@ export default async function ProjectsPage({
               rel="noopener noreferrer"
               className="text-link text-link-block"
             >
-              {t('pages.projects.allRepos')} <span className="sr-only">{t('pages.projects.newTab')}</span>
+              {t('pages.projects.allRepos')} <span className="sr-only">{t('common.newTab')}</span>
             </a>
           </p>
         </div>

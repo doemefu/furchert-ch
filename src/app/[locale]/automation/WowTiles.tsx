@@ -195,7 +195,7 @@ export async function WowTiles({ locale }: { locale: Locale }) {
       role="list"
       style={{
         listStyle: 'none',
-        padding: '0 .75rem',
+        padding: 0,
         margin: 0,
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 18rem), 1fr))',

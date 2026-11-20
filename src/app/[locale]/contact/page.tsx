@@ -54,7 +54,7 @@ export default async function ContactPage({
     ...CONTACTS,
     { label: t('contact.labelLocation'), value: t('footer.location'), href: null },
   ];
-  const linkStyle = { fontSize: 'var(--fs-15)', color: 'var(--blue-base)', textDecoration: 'none' };
+  const linkStyle = { fontSize: 'var(--text-16)' };
 
   return (
     <div>
@@ -71,11 +71,8 @@ export default async function ContactPage({
           <div className="contact-col-direct">
             <p
               style={{
-                fontFamily: 'var(--mono)',
-                fontSize: 'var(--fs-13)',
-                letterSpacing: '.04em',
-                textTransform: 'uppercase',
-                color: 'var(--n-60)',
+                fontSize: 'var(--text-14)',
+                color: 'var(--text-3)',
                 marginBottom: '1.5rem',
               }}
             >
@@ -86,29 +83,28 @@ export default async function ContactPage({
                 <div key={c.label}>
                   <div
                     style={{
-                      fontFamily: 'var(--mono)',
-                      fontSize: 'var(--fs-12)',
-                      letterSpacing: '.05em',
-                      textTransform: 'uppercase',
-                      color: 'var(--n-60)',
+                      fontSize: 'var(--text-14)',
+                      color: 'var(--text-3)',
                       marginBottom: '.25rem',
                     }}
                   >
                     {c.label}
                   </div>
                   {'email' in c ? (
-                    <ContactEmail style={linkStyle} />
+                    <ContactEmail className="text-link text-link-block" style={linkStyle} />
                   ) : c.href ? (
                     <a
                       href={c.href}
                       target={c.href.startsWith('http') ? '_blank' : undefined}
                       rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      className="text-link text-link-block"
                       style={linkStyle}
                     >
                       {c.value}
+                      {c.href.startsWith('http') && <span className="sr-only"> {t('common.newTab')}</span>}
                     </a>
                   ) : (
-                    <span style={{ fontSize: 'var(--fs-15)', color: 'var(--n-70)' }}>{c.value}</span>
+                    <span style={{ fontSize: 'var(--text-16)', color: 'var(--text-2)' }}>{c.value}</span>
                   )}
                 </div>
               ))}

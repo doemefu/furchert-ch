@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
-import { archivo, dmMono } from '@/lib/fonts';
+import { archivo } from '@/lib/fonts';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Providers } from '@/components/Providers';
@@ -41,7 +41,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${archivo.variable} ${dmMono.variable}`}>
+    <html lang={locale} className={archivo.variable}>
       <body>
         <NextIntlClientProvider messages={messages}>
           <Providers>

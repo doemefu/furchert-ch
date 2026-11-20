@@ -1,6 +1,6 @@
 // Bilingual content for /rowing. DE = prototype verbatim (pages.jsx
 // PageRowing), EN = faithful translation. Per-record locale maps (F-Q2);
-// icon/tags locale-invariant.
+// tags locale-invariant.
 import type { Locale } from '@/i18n/routing';
 
 export interface RowingCardI18n {
@@ -13,14 +13,12 @@ export interface RowingCardI18n {
 }
 
 export interface RowingCard {
-  icon: string;
   tags: string[];
   i18n: Record<Locale, RowingCardI18n>;
 }
 
 export const ROWING_CARDS: RowingCard[] = [
   {
-    icon: 'boat',
     tags: ['Leadership', 'Stakeholder Mgmt', 'Budgeting', 'CHF 5M Projekt'],
     i18n: {
       de: {
@@ -52,7 +50,6 @@ export const ROWING_CARDS: RowingCard[] = [
     },
   },
   {
-    icon: 'chip',
     tags: ['Event Mgmt', 'Safety', 'Permits', "~1'500 Athleten"],
     i18n: {
       de: {
@@ -72,7 +69,6 @@ export const ROWING_CARDS: RowingCard[] = [
     },
   },
   {
-    icon: 'users',
     tags: ['Feuerwehr (AdF)', 'J+S Sportcoach', 'Teamführung'],
     i18n: {
       de: {

@@ -14,9 +14,9 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 
 ## implementer
 
-- Read the exported Claude Design prototype (ETHON) in addition to the contracts as the starting point. Follow the redesign tokens and the rules in CLAUDE.md § Design rules (legacy ETHON tokens, `--fs-*` and `.cell-grid` only in components not yet migrated, until PR 11; `.border-x` stays and becomes desktop-only, from 64rem, in PR 8); fix craft defects freely, propose bigger direction changes first.
+- Read `CLAUDE.md` § Design rules: the public pages follow the «Formular» redesign (complete since PR 11c: redesign tokens, Archivo only, `.border-x` from 64rem, `.cell`, FieldRow). The dashboard keeps the legacy ETHON look via `.ethon`. Fix craft defects freely, propose bigger direction changes first.
 - Server Components by default; `'use client'` only where interactivity needs it. Shared types in `src/types/`, component-only types co-located.
-- Styling: redesign tokens from `src/styles/globals.css` (`var(--surface-page)`, `var(--text-1)`, `var(--accent)`, ...); legacy ETHON tokens only in components not yet migrated. No UI kit, no second styling system.
+- Styling: redesign tokens from `src/styles/globals.css` (`var(--surface-page)`, `var(--text-1)`, `var(--accent)`, ...); ETHON tokens and DM Mono only in the dashboard (`.ethon`, `src/lib/dashboardFont.ts`). No UI kit, no second styling system.
 - Copy via next-intl (`src/i18n/messages/{de,en}.json`), static content typed in `src/data/`; no hardcoded UI strings. Both locales must work; `/` redirects to `/de`.
 - Backend calls only from server route handlers (`src/app/api/...`) or server components, using cluster-internal FQDNs. Never expose the OIDC access token to the browser. Gate OIDC routes server-side (session + role check), not only in the UI.
 - `/automation` is a static offer page without any AI backend: no Claude API, no AI endpoint, no `/api/scan/*`, no persistence, no outbound calls; its examples are illustrative and labelled in UI and code comments. `/automation/scan` is retired and redirects.
@@ -28,7 +28,7 @@ Repo-specific additions for the `homelab-workflow` plugin agents; each agent rea
 
 Review in addition to the generic checklist:
 - OIDC access tokens never reach the browser; OIDC-gated routes enforced server-side; admin write actions gated on `role=ADMIN` per the service `INTERFACES.md` files.
-- Design: the UI is consistent with the redesign tokens and CLAUDE.md § Design rules (legacy ETHON tokens only in components not yet migrated) in DE and EN; craft fixes are welcome, bigger direction changes need a proposal; where the live code deliberately deviates from the prototype, the live code wins.
+- Design: the UI is consistent with the redesign tokens and CLAUDE.md § Design rules (ETHON tokens only in the dashboard, `.ethon`) in DE and EN; craft fixes are welcome, bigger direction changes need a proposal; where the live code deliberately deviates from the prototype, the live code wins.
 - Backend request/response shapes match `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules"); surfaces without a real endpoint are labelled placeholders, never fabricated "live" data.
 - `/automation` stays a static offer page: no outbound network calls, no AI or scan API routes, no fake success; its examples are labelled as illustrative.
 - Server vs. client components used appropriately; data fetched server-side.
@@ -58,7 +58,7 @@ Additional checks:
 - Secrets and auth: OIDC access token stays server-side; OIDC-gated routes enforced server-side; admin writes require `role=ADMIN`; no `.env` committed, k8s env via `secretKeyRef`.
 - Automation = static offer page: plan keeps `/automation` without any AI backend (no Claude API, no AI endpoint, no persistence, no accidental backend wiring); `/automation/scan` stays retired.
 - Backend integration: consumed endpoints exist in `../auth-service/INTERFACES.md` / `../device-service/README.md` ("REST Endpoints", "Schedules") (not invented); shapes correct; failure handled (backend down, 401/403); surfaces without an endpoint are explicit placeholders.
-- Design: consistent with the redesign tokens and CLAUDE.md § Design rules (legacy ETHON tokens only in components not yet migrated; DE+EN); craft fixes are welcome, bigger direction changes need a proposal; the superseded `furchert-ch-website-spec.md` is not followed by mistake.
+- Design: consistent with the redesign tokens and CLAUDE.md § Design rules (ETHON tokens only in the dashboard, `.ethon`; DE+EN); craft fixes are welcome, bigger direction changes need a proposal; the superseded `furchert-ch-website-spec.md` is not followed by mistake.
 - Next.js: server/client split correct, data fetched server-side, both locales handled, `/` to `/de` redirect intact, no required in-memory state across pod restarts.
 - Failure mode question: what does the user see if auth-service or device-service is unavailable?
 - Resumability: milestone ends buildable and shippable.

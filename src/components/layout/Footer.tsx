@@ -22,7 +22,7 @@ export async function Footer() {
     year: 'numeric',
     timeZone: 'UTC',
   }).format(new Date(`${latestContentDate()}T00:00:00Z`));
-  const newTab = <span className="sr-only"> {t('pages.projects.newTab')}</span>;
+  const newTab = <span className="sr-only"> {t('common.newTab')}</span>;
 
   return (
     <footer className="ft">
@@ -37,7 +37,7 @@ export async function Footer() {
 
           <div className="ft-contact">
             <span className="ft-lab" id="ft-contact">{t('footer.contact')}</span>
-            <ul aria-labelledby="ft-contact">
+            <ul role="list" aria-labelledby="ft-contact">
               <li>
                 {/* The address is rendered only in the browser (#147). */}
                 <ContactEmail label={t('footer.email')} />
@@ -60,7 +60,7 @@ export async function Footer() {
 
           <div>
             <span className="ft-lab" id="ft-pages">{t('footer.pages')}</span>
-            <ul aria-labelledby="ft-pages">
+            <ul role="list" aria-labelledby="ft-pages">
               {NAV_KEYS.map((k) => (
                 <li key={k}>
                   <Link href={`/${k}`}>{t(`nav.${k}`)}</Link>
@@ -71,7 +71,7 @@ export async function Footer() {
 
           <div>
             <span className="ft-lab" id="ft-legal">{t('footer.legal')}</span>
-            <ul aria-labelledby="ft-legal">
+            <ul role="list" aria-labelledby="ft-legal">
               <li>
                 <Link href="/imprint">{t('footer.imprint')}</Link>
               </li>
@@ -82,7 +82,7 @@ export async function Footer() {
                 <FooterLocaleLink />
               </li>
               {/* Client-only and hidden on /dashboard; `.ft-settings` hides the row while it is empty. */}
-              <li className="ft-settings">{ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink style={{}} />}</li>
+              <li className="ft-settings">{ANALYTICS_UI_ENABLED && <LazyPrivacySettingsLink />}</li>
             </ul>
           </div>
         </div>

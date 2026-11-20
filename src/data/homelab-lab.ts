@@ -55,7 +55,6 @@ export const LAB_SERVICES: Record<LabServiceId, Record<Locale, { label: string; 
 
 export interface LabShowcaseItem {
   id: string;
-  icon: string;
   i18n: Record<Locale, { title: string; text: string }>;
   /** Public repositories only. */
   repos: ReadonlyArray<{ label: string; href: string }>;
@@ -66,7 +65,6 @@ const GH = 'https://github.com/doemefu';
 export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
   {
     id: 'cluster',
-    icon: 'server',
     i18n: {
       de: {
         title: 'Cluster und GitOps',
@@ -81,7 +79,6 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
   },
   {
     id: 'identity',
-    icon: 'lock',
     i18n: {
       de: {
         title: 'Eigener Login-Dienst',
@@ -96,7 +93,6 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
   },
   {
     id: 'iot',
-    icon: 'chip',
     i18n: {
       de: {
         title: 'IoT-Plattform',
@@ -114,7 +110,6 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
   },
   {
     id: 'network',
-    icon: 'chart',
     i18n: {
       de: {
         title: 'Netzwerk-Monitoring',
@@ -129,7 +124,6 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
   },
   {
     id: 'ai',
-    icon: 'ai',
     i18n: {
       de: {
         title: 'KI und Automation',
@@ -144,7 +138,6 @@ export const LAB_SHOWCASE: ReadonlyArray<LabShowcaseItem> = [
   },
   {
     id: 'site',
-    icon: 'globe',
     i18n: {
       de: {
         title: 'Diese Website',

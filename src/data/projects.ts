@@ -12,7 +12,6 @@ export interface Project {
   status: ProjectStatus;
   tags: string[]; // locale-invariant
   github: string | null;
-  icon: string;
   i18n: Record<Locale, { summary: string; detail: string }>;
 }
 
@@ -23,7 +22,6 @@ export const PROJECTS: Project[] = [
     status: 'live',
     tags: ['ESP32', 'C++', 'MQTT', 'Spring Boot', 'InfluxDB', 'PostgreSQL', 'WebSocket', 'Next.js', 'Kubernetes'],
     github: 'https://github.com/doemefu/homelab-device-service',
-    icon: 'chip',
     i18n: {
       de: {
         summary:
@@ -45,7 +43,6 @@ export const PROJECTS: Project[] = [
     status: 'live',
     tags: ['Ansible', 'k3s', 'Kubernetes', 'Cloudflare', 'Raspberry Pi', 'Longhorn', 'SOPS'],
     github: 'https://github.com/doemefu/homelab',
-    icon: 'server',
     i18n: {
       de: {
         summary:
@@ -67,7 +64,6 @@ export const PROJECTS: Project[] = [
     status: 'wip',
     tags: ['Open WebUI', 'LiteLLM', 'n8n', 'PostgreSQL', 'pgvector'],
     github: null,
-    icon: 'boat',
     i18n: {
       de: {
         summary:
@@ -89,7 +85,6 @@ export const PROJECTS: Project[] = [
     status: 'done',
     tags: ['Spring Boot 4', 'REST', 'OpenAPI', 'React', 'TypeScript'],
     github: 'https://github.com/doemefu/very-cool-karaoke-client',
-    icon: 'mic',
     i18n: {
       de: {
         summary:
@@ -111,7 +106,6 @@ export const PROJECTS: Project[] = [
     status: 'live',
     tags: ['OIDC', 'OAuth 2.1', 'Spring Authorization Server', 'JWT'],
     github: 'https://github.com/doemefu/homelab-auth-service',
-    icon: 'lock',
     i18n: {
       de: {
         summary:
