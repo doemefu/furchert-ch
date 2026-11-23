@@ -17,8 +17,8 @@
   "dependencies": {
     "next": "16.4.6",
     "next-auth": "5.0.0-beta.32",
-    "next-intl": "4.15.1",
-    "nodemailer": "10.6.0",
+    "next-intl": "4.15.3",
+    "nodemailer": "10.6.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "server-only": "0.0.1"
@@ -30,6 +30,6 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.6",
     "typescript": "6.0.3",
-    "vitest": "5.1.0"
+    "vitest": "5.1.1"
   }
 }
